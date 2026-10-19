@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ejercicios de Fundamentos · Hacking ético</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#5f5e58;--line:#e4e1d8;--card:#ffffff;--accent:#0b6e4f;--code:#f1efe8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
+nav.top{font-size:14px;color:var(--muted);margin-bottom:24px}
+nav.top a{color:var(--muted)}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px}
+h2{font-size:20px;margin:36px 0 10px;padding-top:12px;border-top:1px solid var(--line)}
+h3{font-size:17px;margin:20px 0 6px}
+p.lead{color:var(--muted);font-size:18px;margin:0 0 20px}
+a{color:var(--accent)}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:14px}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:14px}
+pre code{padding:0;background:none}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.cards{display:grid;gap:12px}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--fg)}
+.card b{color:var(--accent)}
+.card span{display:block;color:var(--muted);font-size:14px;margin-top:4px}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px}
+footer{margin-top:48px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Fundamentos, alcance y herramientas</a></nav>
+
+<h1>Ejercicios de Fundamentos</h1>
+<p class="lead">Ficheros de partida y laboratorios del bloque. Cada carpeta de <code>01-fundamentos/ejercicios/</code> es un ejercicio que se levanta con Docker; el enunciado está en su tema.</p>
+
+<h2>Cómo conseguir los ficheros</h2>
+<pre><code>git clone https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico.git
+cd documentacion-hacking-etico/01-fundamentos/ejercicios</code></pre>
+<p>Para empezar tu repositorio de entregas, copia <code>plantilla-alumno/</code> (en la raíz) y trabaja cada bloque en su carpeta: <code>fundamentos/</code>, <code>redes-inalambricas/</code>…</p>
+
+<h2>Qué debe haber en tu repositorio al poner la etiqueta</h2>
+<table><thead><tr><th>Ruta</th><th>Contenido</th><th>Tema</th></tr></thead><tbody>
+<tr><td><code>fundamentos/puesto.txt</code></td><td>Salida de <code>git --version</code>, <code>docker compose version</code> y una respuesta de tu IA.</td><td><a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a></td></tr>
+<tr><td><code>fundamentos/alcance.html</code></td><td>La plantilla de alcance rellena para la empresa ficticia.</td><td><a href="../docs/01-etica-ley-y-alcance.html">Ética, ley y alcance</a></td></tr>
+<tr><td><code>fundamentos/terraform/</code></td><td>El Terraform corregido (sin <code>.terraform/</code> ni <code>tfstate</code>).</td><td><a href="../docs/03-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
+<tr><td><code>fundamentos/trivy-antes.txt</code>, <code>fundamentos/trivy-despues.txt</code></td><td>Salida de Trivy antes y después de corregir. La segunda sin avisos altos ni críticos.</td><td><a href="../docs/03-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
+<tr><td><code>fundamentos/inventario/red.txt</code>, <code>fundamentos/inventario/nube.txt</code></td><td>Salida de nmap sobre la red del laboratorio y de la CLI de AWS sobre la cuenta emulada.</td><td><a href="../docs/04-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
+<tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/alertas/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="../docs/04-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
+</tbody></table>
+<p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>
+
+<h2 id="01-empresa-con-terraform">01 · Empresa con Terraform</h2>
+<p>Carpeta <code>01-empresa-con-terraform/</code>. Enunciado: <a href="../docs/03-la-empresa-en-floci.html">La empresa en Floci</a>.</p>
+<ol>
+<li>Copia <code>plantilla-alumno/alcance.html</code> a <code>fundamentos/alcance.html</code> y rellénalo: objetivo (la cuenta emulada en tu portátil), qué se permite, quién autoriza (el docente) y fechas.</li>
+<li>Copia la carpeta del ejercicio a <code>fundamentos/</code> de tu repositorio y levanta la nube: <code>docker compose up -d floci</code>.</li>
+<li>Pasa Trivy y guarda la salida: <code>docker compose run --rm trivy | tee fundamentos/trivy-antes.txt</code>.</li>
+<li>Por cada aviso, pide a la IA que explique qué significa y qué cambio propone, compruébalo en la documentación del recurso de Terraform y aplícalo. Repite Trivy hasta que no quede ningún aviso alto ni crítico: <code>fundamentos/trivy-despues.txt</code>.</li>
+<li>Despliega en Floci y comprueba con la CLI de AWS que la empresa existe:
+<pre><code>docker compose run --rm terraform init
+docker compose run --rm terraform apply
+docker compose run --rm aws s3 ls
+docker compose run --rm aws iam list-users</code></pre></li>
+</ol>
+<h3>Cómo se valora</h3>
+<ul>
+<li>Trivy sin avisos altos ni críticos sobre el Terraform entregado.</li>
+<li>El Terraform sigue desplegando sin errores. Corregir no es borrar: la empresa necesita su bucket, su usuario y su cortafuegos.</li>
+<li>Commits a lo largo del trabajo, no un volcado final.</li>
+</ul>
+
+<h2 id="02-mini-auditoria">02 · Mini auditoría</h2>
+<p>Carpeta <code>02-mini-auditoria/</code>. Enunciado: <a href="../docs/04-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a>.</p>
+<table><thead><tr><th>Contenedor</th><th>Dirección</th><th>Qué es</th></tr></thead><tbody>
+<tr><td><code>floci</code></td><td>172.28.0.10</td><td>La cuenta AWS emulada de la empresa (puerto 4566).</td></tr>
+<tr><td><code>web</code></td><td>172.28.0.20</td><td>Servidor web de la empresa. Suricata escucha pegado a él.</td></tr>
+<tr><td><code>datos</code></td><td>172.28.0.30</td><td>Base de datos de la empresa.</td></tr>
+<tr><td><code>auditor</code></td><td>dinámica</td><td>Tu puesto: nmap dentro de la misma red.</td></tr>
+</tbody></table>
+<ol>
+<li>Levanta el laboratorio (<code>docker compose up -d</code>) y vuelve a desplegar el Terraform corregido del ejercicio 01 contra este Floci, para que la cuenta tenga contenido.</li>
+<li><b>Reconocimiento:</b> qué equipos hay en la red. <code>docker compose run --rm auditor -sn 172.28.0.0/24</code>.</li>
+<li><b>Enumeración:</b> qué servicio y versión hay en cada uno (<code>-sV</code> sobre las tres direcciones) y qué recursos tiene la cuenta (<code>aws s3 ls</code>, <code>aws iam list-users</code>, <code>aws ec2 describe-security-groups</code>). Todo a <code>fundamentos/inventario/red.txt</code> y <code>fundamentos/inventario/nube.txt</code>.</li>
+<li>Mira la web con <code>curl</code> desde el auditor (portada y <code>robots.txt</code>) y anota qué descubres.</li>
+<li><b>Detección:</b> <code>python3 etiquetar.py</code> resume las alertas de Suricata por fase y por origen. Guarda la salida en <code>fundamentos/alertas/resumen.txt</code>.</li>
+<li>Escribe al menos una regla propia en <code>suricata/local.rules</code> (sid a partir de 1000100) que detecte algo que hayas hecho y que no saltara, reinicia Suricata y comprueba que salta. Entrega el fichero en <code>fundamentos/alertas/local.rules</code>.</li>
+</ol>
+<p><b>Opcional:</b> en <code>02-mini-auditoria/floci-ec2/</code> hay un Terraform que pide a Floci una instancia EC2 de verdad (un contenedor). Si arranca y aparece en <code>docker ps</code>, es la base de lo que haremos en Redes y sistemas.</p>
+
+<footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
+</main>
+</body>
+</html>

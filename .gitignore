@@ -31,3 +31,10 @@ crash.log
 *.pem
 *.key
 credentials
+
+# Salidas de los laboratorios
+**/salidas/*
+!**/salidas/.gitkeep
+
+# Herramientas locales
+.claude/

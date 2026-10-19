@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Primer commit · Hacking ético</title>
+<title>IA: local o en la nube · Hacking ético</title>
 <style>
 /* Layout: una página por tema. Cabecera con bloque y semana; después secciones en vertical y al final la comprobación y la navegación entre temas. */
 :root {
@@ -74,26 +74,26 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 </head>
 <body>
 <div class="wrap">
-<nav class="top"><a href="../">Hacking ético</a> · <a href="./">Presentación</a></nav>
+<nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Presentación</a></nav>
 <header>
 <p class="eyebrow">Presentación · Semana 1</p>
-<h1>Primer commit</h1>
-<p class="lead">El primer commit del curso deja constancia de que el puesto de trabajo está listo.</p>
+<h1>IA: local o en la nube</h1>
+<p class="lead">La IA es vuestra compañera durante todo el curso. Elegís dónde corre; la regla para usarla es la misma.</p>
 </header>
 <section class="seccion">
-<ol>
-<li>Clona tu repositorio privado de la organización y crea la carpeta <code>fundamentos/</code>.</li>
-<li>Guarda en <code>fundamentos/puesto.txt</code> la salida de <code>git --version</code>, <code>docker compose version</code> y una respuesta de tu IA a «qué es un escaneo de puertos».</li>
-<li>Commit y push. Es el primero de los que se miran en la entrega del bloque.</li>
-</ol>
+<div class="tabla"><table><thead><tr><th>Opción</th><th>Qué es</th><th>Cómo empezar</th></tr></thead><tbody>
+<tr><td>Local con Ollama</td><td>Los datos no salen de tu equipo. Unos 8 GB de RAM libres para modelos pequeños.</td><td><a href="https://ollama.com/download">ollama.com/download</a>, después <code>ollama pull llama3.2</code> y <code>ollama run llama3.2</code>.</td></tr>
+<tr><td>En la nube</td><td>El asistente que prefieras (Claude, ChatGPT u otro) desde el navegador o su aplicación.</td><td>Cuenta propia. Nunca pegues contraseñas, claves ni datos reales de terceros.</td></tr>
+</tbody></table></div>
+<div class="ia"><p class="eyebrow">Regla de la IA para todo el curso</p><p>Lo que diga la IA se comprueba contra la salida real de la herramienta antes de darlo por bueno. Si no coincide, gana la herramienta.</p></div>
 </section>
 <section class="seccion">
 <h2>Comprobación</h2>
 <ul class="check">
-<li><code>fundamentos/puesto.txt</code> subido a tu repositorio</li>
+<li>IA local o en la nube respondiendo</li>
 </ul>
 </section>
-<nav class="temas" aria-label="Temas de la presentación"><a href="05-ia.html">← IA: local o en la nube</a><a href="../01-fundamentos/01-hackea-el-ranking.html">Fundamentos: Hackea el ranking →</a></nav>
+<nav class="temas" aria-label="Temas de la presentación"><a href="04-docker.html">← Docker</a><a href="06-hackea-el-ranking.html">Hackea el ranking →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 </body>

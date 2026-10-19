@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IA: local o en la nube · Hacking ético</title>
+<title>Docker · Hacking ético</title>
 <style>
 /* Layout: una página por tema. Cabecera con bloque y semana; después secciones en vertical y al final la comprobación y la navegación entre temas. */
 :root {
@@ -74,26 +74,27 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 </head>
 <body>
 <div class="wrap">
-<nav class="top"><a href="../">Hacking ético</a> · <a href="./">Presentación</a></nav>
+<nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Presentación</a></nav>
 <header>
 <p class="eyebrow">Presentación · Semana 1</p>
-<h1>IA: local o en la nube</h1>
-<p class="lead">La IA es vuestra compañera durante todo el curso. Elegís dónde corre; la regla para usarla es la misma.</p>
+<h1>Docker</h1>
+<p class="lead">Docker levanta los laboratorios del curso, empezando por Floci, la cuenta AWS emulada.</p>
 </header>
 <section class="seccion">
-<div class="tabla"><table><thead><tr><th>Opción</th><th>Qué es</th><th>Cómo empezar</th></tr></thead><tbody>
-<tr><td>Local con Ollama</td><td>Los datos no salen de tu equipo. Unos 8 GB de RAM libres para modelos pequeños.</td><td><a href="https://ollama.com/download">ollama.com/download</a>, después <code>ollama pull llama3.2</code> y <code>ollama run llama3.2</code>.</td></tr>
-<tr><td>En la nube</td><td>El asistente que prefieras (Claude, ChatGPT u otro) desde el navegador o su aplicación.</td><td>Cuenta propia. Nunca pegues contraseñas, claves ni datos reales de terceros.</td></tr>
-</tbody></table></div>
-<div class="ia"><p class="eyebrow">Regla de la IA para todo el curso</p><p>Lo que diga la IA se comprueba contra la salida real de la herramienta antes de darlo por bueno. Si no coincide, gana la herramienta.</p></div>
+<ol>
+<li>Docker. <b>Windows:</b> Docker Desktop con el motor WSL 2. <b>macOS:</b> Docker Desktop. <b>Linux:</b> Docker Engine y tu usuario en el grupo <code>docker</code>.
+<pre><code>docker run --rm hello-world
+docker compose version</code></pre></li>
+<li>Con Docker funcionando podréis levantar Floci, la cuenta AWS emulada en la que trabajaremos todo el curso. Si hay tiempo, dejadla descargando: <code>docker pull floci/floci:latest</code>.</li>
+</ol>
 </section>
 <section class="seccion">
 <h2>Comprobación</h2>
 <ul class="check">
-<li>IA local o en la nube respondiendo</li>
+<li><code>docker run --rm hello-world</code> funciona</li>
 </ul>
 </section>
-<nav class="temas" aria-label="Temas de la presentación"><a href="04-docker.html">← Docker</a><a href="06-primer-commit.html">Primer commit →</a></nav>
+<nav class="temas" aria-label="Temas de la presentación"><a href="03-git-y-github.html">← Git y GitHub</a><a href="05-ia.html">IA: local o en la nube →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 </body>

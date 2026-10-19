@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>La empresa en Floci · Hacking ético</title>
+<title>Fases de un ataque y auditoría vigilada · Hacking ético</title>
 <style>
 /* Layout: una página por tema del bloque. Cabecera con bloque, semana y criterios; después secciones en vertical y al final la comprobación y la navegación entre temas. */
 :root {
@@ -74,42 +74,48 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 </head>
 <body>
 <div class="wrap">
-<nav class="top"><a href="../">Hacking ético</a> · <a href="./">Fundamentos, alcance y herramientas</a></nav>
+<nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Fundamentos, alcance y herramientas</a></nav>
 <header>
-<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semana 2</p>
-<h1>La empresa en Floci</h1>
-<p class="lead">Desplegar la empresa ficticia en la cuenta AWS emulada corrigiendo sus fallos de configuración antes de que lleguen a producción.</p>
-<div class="meta"><span>Criterios <b>c, h</b></span></div>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semana 3</p>
+<h1>Fases de un ataque y auditoría vigilada</h1>
+<p class="lead">Recorrer las primeras fases de un ataque sobre el laboratorio de la empresa mientras un sensor anota lo que ve, y descubrir qué pasos dejan rastro y cuáles no.</p>
+<div class="meta"><span>Criterios <b>e, h</b></span><span>Ejercicio: <a href="../ejercicios/#02-mini-auditoria">02 · Mini auditoría</a></span></div>
 </header>
 <section class="seccion">
-<h2>Terraform, Floci y Trivy</h2>
-<ol>
-<li><b>Floci</b> es la cuenta AWS emulada: un contenedor que responde a los mismos comandos que AWS. Toda la empresa ficticia del curso vive ahí. Se levanta con <code>docker compose up -d floci</code>.</li>
-<li><b>Terraform</b> describe la infraestructura en ficheros: buckets, usuarios, permisos, cortafuegos. Lo escrito es lo que se despliega, así que los fallos de configuración se pueden encontrar leyendo.</li>
-<li><b>Trivy</b> lee esos ficheros y avisa de configuraciones peligrosas con su gravedad. Es la primera herramienta de detección de vulnerabilidades del curso.</li>
-</ol>
-<p>Pasáis Trivy sobre el Terraform heredado «del equipo anterior», leéis cada aviso con vuestra IA y lo corregís hasta que no quede ninguno alto ni crítico.</p>
-<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Lo que proponga la IA para cada aviso se comprueba en la documentación del recurso de Terraform antes de aplicarlo. Corregir no es borrar: si Trivy calla porque habéis quitado el bucket, la empresa se ha quedado sin copias de seguridad.</p></div>
+<h2>Cómo se desarrolla un ataque</h2>
+<div class="tabla"><table><thead><tr><th>Fase</th><th>Qué busca el atacante</th><th>En el laboratorio</th></tr></thead><tbody>
+<tr><td>1. Reconocimiento</td><td>Qué hay: equipos, dominios, personas.</td><td>Barrido de la red con nmap.</td></tr>
+<tr><td>2. Enumeración</td><td>Qué servicio, qué versión, qué recursos.</td><td>Versiones con nmap, recursos de la cuenta con la CLI de AWS, páginas de la web.</td></tr>
+<tr><td>3. Explotación</td><td>Entrar aprovechando un fallo.</td><td>No se hace en este bloque. Llega en <a href="../../03-redes-y-sistemas/">Redes y sistemas</a>.</td></tr>
+<tr><td>4. Mantener el acceso</td><td>Poder volver.</td><td><a href="../../04-sistemas-comprometidos/">Sistemas comprometidos</a>.</td></tr>
+<tr><td>5. Borrar huellas</td><td>Que nadie lo note.</td><td>Precisamente lo que el sensor intenta impedir.</td></tr>
+</tbody></table></div>
 </section>
 <section class="seccion">
-<h2>Desplegar y comprobar</h2>
+<h2>Mini auditoría</h2>
+<p>El laboratorio es la empresa ficticia: su nube emulada, su servidor web y su base de datos en una misma red, y un sensor <b>Suricata</b> pegado al servidor web que anota en <code>eve.json</code> cada cosa que reconoce. Vuestro puesto es otro contenedor de esa red.</p>
 <ol>
-<li><code>terraform init</code> y <code>terraform apply</code> contra Floci.</li>
-<li>Comprobación con la CLI de AWS: el bucket, el usuario y el grupo de seguridad existen y tienen la configuración corregida.</li>
-<li>Commit con el Terraform y las dos salidas de Trivy.</li>
+<li>Reconocimiento y enumeración con nmap y con la CLI de AWS. Todo lo que saquéis va al inventario, que es un fichero en vuestro repositorio, no un informe.</li>
+<li>Una visita a la web con <code>curl</code>: portada y <code>robots.txt</code>. Lo que un sitio pide que no se indexe suele ser lo más interesante.</li>
+<li><code>etiquetar.py</code> resume las alertas del sensor por fase y por origen. Comparadlo con lo que habéis hecho.</li>
+<li>Una regla propia: algo que hayáis hecho y que el sensor no viera. La escribís, reiniciáis Suricata y comprobáis que ahora salta.</li>
 </ol>
+</section>
+<section class="seccion">
+<h2>Lo que el sensor no vio</h2>
+<p>¿Qué pasos de vuestra auditoría no generaron ninguna alerta? Pista: el sensor está pegado al servidor web.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pedid a la IA la explicación de por qué unos pasos dejaron alertas y otros no, y comprobadla contra <code>eve.json</code> antes de darla por buena. La respuesta se comenta en clase; no hay que redactarla.</p></div>
 </section>
 
 <section class="seccion">
 <h2>Comprobación</h2>
 <ul class="check">
-<li><code>fundamentos/trivy-antes.txt</code> con avisos y <code>fundamentos/trivy-despues.txt</code> sin altos ni críticos</li>
-<li><code>terraform apply</code> termina sin errores y <code>aws s3 ls</code> muestra el bucket</li>
-<li>Terraform corregido subido a tu repositorio</li>
+<li><code>fundamentos/inventario/red.txt</code> y <code>fundamentos/inventario/nube.txt</code></li>
+<li><code>fundamentos/alertas/resumen.txt</code> y <code>fundamentos/alertas/local.rules</code> con una regla vuestra que salta</li>
 </ul>
 </section>
 
-<nav class="temas" aria-label="Temas del bloque"><a href="03-seguridad-y-vulnerabilidades.html">← Seguridad, vulnerabilidades y ataques</a><a href="05-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada →</a></nav>
+<nav class="temas" aria-label="Temas del bloque"><a href="03-la-empresa-en-floci.html">← La empresa en Floci</a><a href="05-herramientas-y-darknets.html">Herramientas y darknets →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 </body>

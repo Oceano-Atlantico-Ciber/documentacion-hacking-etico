@@ -1,0 +1,55 @@
+# Empresa con Terraform · Cuenta AWS emulada (Floci) + Terraform + Trivy. Solo hace falta Docker.
+#   docker compose up -d floci                                   # la nube
+#   docker compose run --rm trivy                                # buscar fallos de configuración
+#   docker compose run --rm terraform init && docker compose run --rm terraform apply
+#   docker compose run --rm aws s3 ls                            # comprobar con la CLI de AWS
+name: fundamentos-empresa-terraform
+services:
+  floci:
+    image: floci/floci:latest
+    container_name: floci
+    ports:
+      - "4566:4566"
+    environment:
+      FLOCI_HOSTNAME: floci
+      FLOCI_DEFAULT_REGION: eu-west-1
+      FLOCI_STORAGE_MODE: persistent
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data
+    volumes:
+      - floci-data:/app/data
+    networks: [lab]
+
+  terraform:
+    image: hashicorp/terraform:1.9
+    working_dir: /work
+    volumes:
+      - ./terraform:/work
+    environment: &aws
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: eu-west-1
+      AWS_ENDPOINT_URL: http://floci:4566
+    networks: [lab]
+    profiles: [herramientas]
+
+  aws:
+    image: amazon/aws-cli:2.22.0
+    environment: *aws
+    networks: [lab]
+    profiles: [herramientas]
+
+  trivy:
+    image: aquasec/trivy:0.58.0
+    command: config --severity HIGH,CRITICAL /work
+    volumes:
+      - ./terraform:/work:ro
+      - trivy-cache:/root/.cache
+    profiles: [herramientas]
+
+networks:
+  lab:
+    name: lab
+
+volumes:
+  floci-data:
+  trivy-cache:

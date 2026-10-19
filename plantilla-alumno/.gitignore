@@ -1,0 +1,33 @@
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+
+# Capturas y salidas pesadas
+*.pcap
+*.pcapng
+*.cap
+
+# Secretos: nunca se suben
+.env
+*.pem
+*.key
+credentials

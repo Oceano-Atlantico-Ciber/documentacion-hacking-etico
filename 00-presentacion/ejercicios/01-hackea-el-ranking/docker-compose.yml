@@ -1,0 +1,17 @@
+# "Hack the Leaderboard" game. MODE=trusted (trusts the browser) or MODE=validated (calculates the score on the server).
+#   MODE=trusted docker compose up -d --remove-orphans
+#   MODE=validated docker compose up -d --force-recreate --remove-orphans
+services:
+  game:
+    image: python:3.12-alpine
+    container_name: leaderboard-game
+    working_dir: /app
+    command: python -u server/server.py
+    environment:
+      MODE: ${MODE:-trusted}
+    volumes:
+      - ./server:/app/server:ro
+      - ./web:/app/web:ro
+    ports:
+      - "8080:8080"
+    restart: unless-stopped

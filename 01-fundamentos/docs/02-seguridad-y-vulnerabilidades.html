@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fases de un ataque y auditoría vigilada · Hacking ético</title>
+<title>Seguridad, vulnerabilidades y ataques · Hacking ético</title>
 <style>
 /* Layout: una página por tema del bloque. Cabecera con bloque, semana y criterios; después secciones en vertical y al final la comprobación y la navegación entre temas. */
 :root {
@@ -74,48 +74,33 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 </head>
 <body>
 <div class="wrap">
-<nav class="top"><a href="../">Hacking ético</a> · <a href="./">Fundamentos, alcance y herramientas</a></nav>
+<nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Fundamentos, alcance y herramientas</a></nav>
 <header>
-<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semana 3</p>
-<h1>Fases de un ataque y auditoría vigilada</h1>
-<p class="lead">Recorrer las primeras fases de un ataque sobre el laboratorio de la empresa mientras un sensor anota lo que ve, y descubrir qué pasos dejan rastro y cuáles no.</p>
-<div class="meta"><span>Criterios <b>e, h</b></span></div>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semanas 2 y 3</p>
+<h1>Seguridad, vulnerabilidades y ataques</h1>
+<p class="lead">Las cuatro propiedades que protege la seguridad y cómo se clasifican los fallos y los ataques que las rompen, con ejemplos que ya conocéis.</p>
+<div class="meta"><span>Criterios <b>d, f, g, h</b></span></div>
 </header>
 <section class="seccion">
-<h2>Cómo se desarrolla un ataque</h2>
-<div class="tabla"><table><thead><tr><th>Fase</th><th>Qué busca el atacante</th><th>En el laboratorio</th></tr></thead><tbody>
-<tr><td>1. Reconocimiento</td><td>Qué hay: equipos, dominios, personas.</td><td>Barrido de la red con nmap.</td></tr>
-<tr><td>2. Enumeración</td><td>Qué servicio, qué versión, qué recursos.</td><td>Versiones con nmap, recursos de la cuenta con la CLI de AWS, páginas de la web.</td></tr>
-<tr><td>3. Explotación</td><td>Entrar aprovechando un fallo.</td><td>No se hace en este bloque. Llega en <a href="../03-redes-y-sistemas/">Redes y sistemas</a>.</td></tr>
-<tr><td>4. Mantener el acceso</td><td>Poder volver.</td><td><a href="../04-sistemas-comprometidos/">Sistemas comprometidos</a>.</td></tr>
-<tr><td>5. Borrar huellas</td><td>Que nadie lo note.</td><td>Precisamente lo que el sensor intenta impedir.</td></tr>
-</tbody></table></div>
+<h2>Las cuatro propiedades</h2>
+<p>Qué rompía cada truco del <a href="../../00-presentacion/docs/06-hackea-el-ranking.html">minijuego</a>: <b>integridad</b> (puntuación falsa), <b>autenticidad</b> (cambiar la puntuación de otro), <b>disponibilidad</b> (vaciar el ranking) y <b>confidencialidad</b> (la ruta de administración visible en el código). Toda vulnerabilidad rompe al menos una.</p>
 </section>
 <section class="seccion">
-<h2>Mini auditoría</h2>
-<p>El laboratorio es la empresa ficticia: su nube emulada, su servidor web y su base de datos en una misma red, y un sensor <b>Suricata</b> pegado al servidor web que anota en <code>eve.json</code> cada cosa que reconoce. Vuestro puesto es otro contenedor de esa red.</p>
-<ol>
-<li>Reconocimiento y enumeración con nmap y con la CLI de AWS. Todo lo que saquéis va al inventario, que es un fichero en vuestro repositorio, no un informe.</li>
-<li>Una visita a la web con <code>curl</code>: portada y <code>robots.txt</code>. Lo que un sitio pide que no se indexe suele ser lo más interesante.</li>
-<li><code>etiquetar.py</code> resume las alertas del sensor por fase y por origen. Comparadlo con lo que habéis hecho.</li>
-<li>Una regla propia: algo que hayáis hecho y que el sensor no viera. La escribís, reiniciáis Suricata y comprobáis que ahora salta.</li>
-</ol>
-</section>
-<section class="seccion">
-<h2>Lo que el sensor no vio</h2>
-<p>¿Qué pasos de vuestra auditoría no generaron ninguna alerta? Pista: el sensor está pegado al servidor web.</p>
-<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pedid a la IA la explicación de por qué unos pasos dejaron alertas y otros no, y comprobadla contra <code>eve.json</code> antes de darla por buena. La respuesta se comenta en clase; no hay que redactarla.</p></div>
-</section>
-
-<section class="seccion">
-<h2>Comprobación</h2>
-<ul class="check">
-<li><code>fundamentos/inventario/red.txt</code> y <code>fundamentos/inventario/nube.txt</code></li>
-<li><code>fundamentos/alertas/resumen.txt</code> y <code>fundamentos/alertas/local.rules</code> con una regla vuestra que salta</li>
+<h2>Tipos de vulnerabilidad</h2>
+<ul>
+<li><b>De diseño:</b> el juego se fiaba del cliente. No la arregla un parche, la arregla cambiar cómo funciona.</li>
+<li><b>De configuración:</b> el bucket público y el permiso total de <a href="03-la-empresa-en-floci.html">la empresa en Floci</a>. Las encuentra Trivy.</li>
+<li><b>De software:</b> una versión con un fallo conocido (un CVE). Las delata la enumeración de versiones de la <a href="04-fases-y-auditoria.html">auditoría</a>.</li>
+<li><b>Humanas:</b> contraseñas débiles, engaños. Se tratan en <a href="../../04-sistemas-comprometidos/">Sistemas comprometidos</a>.</li>
 </ul>
+<p>Para documentar cualquiera se responden cuatro preguntas: dónde está, cuál es el fallo, qué permite y cómo se corrige. Lo practicáis con <a href="../../00-presentacion/docs/06-hackea-el-ranking.html#documentar">cada bandera del juego</a>.</p>
+</section>
+<section class="seccion">
+<h2>Tipos de ataque</h2>
+<p>Los ataques se clasifican por la propiedad que rompen: leer lo que no debes (confidencialidad), cambiarlo (integridad), tumbar el servicio (disponibilidad) o hacerte pasar por otro (autenticidad).</p>
 </section>
 
-<nav class="temas" aria-label="Temas del bloque"><a href="04-la-empresa-en-floci.html">← La empresa en Floci</a><a href="06-herramientas-y-darknets.html">Herramientas y darknets →</a></nav>
+<nav class="temas" aria-label="Temas del bloque"><a href="01-etica-ley-y-alcance.html">← Ética, ley y alcance</a><a href="03-la-empresa-en-floci.html">La empresa en Floci →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 </body>

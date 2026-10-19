@@ -56,26 +56,28 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 
 <h2>Itinerario</h2>
 <table><thead><tr><th>Semana</th><th>Temas</th><th>Criterios</th></tr></thead><tbody>
-<tr><td>1 · 21 y 22 oct</td><td><a href="../00-presentacion/">Presentación</a> y <a href="01-hackea-el-ranking.html">Hackea el ranking</a>.</td><td>a, c, e</td></tr>
-<tr><td>2 · 28 y 29 oct</td><td><a href="01-hackea-el-ranking.html#documentar">De truco a vulnerabilidad</a>, <a href="02-etica-ley-y-alcance.html">Ética, ley y alcance</a>, <a href="03-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a> y <a href="04-la-empresa-en-floci.html">La empresa en Floci</a>.</td><td>b, c, d, f, h</td></tr>
-<tr><td>3 · 4 y 5 nov</td><td><a href="05-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a> y <a href="06-herramientas-y-darknets.html">Herramientas y darknets</a>. Entrega del bloque.</td><td>a, e, g, h, i</td></tr>
+<tr><td>1 · 21 y 22 oct</td><td><a href="../00-presentacion/">Presentación</a>, con el minijuego <a href="../00-presentacion/docs/06-hackea-el-ranking.html">Hackea el ranking</a>.</td><td>a, c, e</td></tr>
+<tr><td>2 · 28 y 29 oct</td><td><a href="../00-presentacion/docs/06-hackea-el-ranking.html#documentar">De truco a vulnerabilidad</a>, <a href="docs/01-etica-ley-y-alcance.html">Ética, ley y alcance</a>, <a href="docs/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a> y <a href="docs/03-la-empresa-en-floci.html">La empresa en Floci</a>.</td><td>b, c, d, f, h</td></tr>
+<tr><td>3 · 4 y 5 nov</td><td><a href="docs/04-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a> y <a href="docs/05-herramientas-y-darknets.html">Herramientas y darknets</a>. Entrega del bloque.</td><td>a, e, g, h, i</td></tr>
 </tbody></table>
 
 <h2>Temas</h2>
 <div class="cards">
-<a class="card" href="01-hackea-el-ranking.html"><b>Hackea el ranking</b> · criterios c, e, h<span>Minijuego con alcance, notas de cada prueba y de truco a vulnerabilidad documentada.</span></a>
-<a class="card" href="02-etica-ley-y-alcance.html"><b>Ética, ley y alcance</b> · criterios b, c<span>Hacking, hacking ético, test de intrusión, hacktivismo y delito; el alcance por escrito; caja negra y caja blanca.</span></a>
-<a class="card" href="03-seguridad-y-vulnerabilidades.html"><b>Seguridad, vulnerabilidades y ataques</b> · criterios d, f, g, h<span>Las cuatro propiedades, tipos de vulnerabilidad y tipos de ataque.</span></a>
-<a class="card" href="04-la-empresa-en-floci.html"><b>La empresa en Floci</b> · criterios c, h<span>Terraform con fallos corregido con Trivy y desplegado en la cuenta AWS emulada.</span></a>
-<a class="card" href="05-fases-y-auditoria.html"><b>Fases de un ataque y auditoría vigilada</b> · criterios e, h<span>nmap y CLI de AWS sobre el laboratorio, Suricata anotando cada fase y una regla propia.</span></a>
-<a class="card" href="06-herramientas-y-darknets.html"><b>Herramientas y darknets</b> · criterios a, i<span>Qué herramienta para qué organización; ClearNet, Deep Web y Dark Web.</span></a>
+<a class="card" href="docs/01-etica-ley-y-alcance.html"><b>Ética, ley y alcance</b> · criterios b, c<span>Hacking, hacking ético, test de intrusión, hacktivismo y delito; el alcance por escrito; caja negra y caja blanca.</span></a>
+<a class="card" href="docs/02-seguridad-y-vulnerabilidades.html"><b>Seguridad, vulnerabilidades y ataques</b> · criterios d, f, g, h<span>Las cuatro propiedades, tipos de vulnerabilidad y tipos de ataque.</span></a>
+<a class="card" href="docs/03-la-empresa-en-floci.html"><b>La empresa en Floci</b> · criterios c, h<span>Terraform con fallos corregido con Trivy y desplegado en la cuenta AWS emulada.</span></a>
+<a class="card" href="docs/04-fases-y-auditoria.html"><b>Fases de un ataque y auditoría vigilada</b> · criterios e, h<span>nmap y CLI de AWS sobre el laboratorio, Suricata anotando cada fase y una regla propia.</span></a>
+<a class="card" href="docs/05-herramientas-y-darknets.html"><b>Herramientas y darknets</b> · criterios a, i<span>Qué herramienta para qué organización; ClearNet, Deep Web y Dark Web.</span></a>
 </div>
+
+<h2>Ejercicios</h2>
+<div class="cards"><a class="card" href="ejercicios/"><b>Ejercicios de Fundamentos</b><span>01 · Empresa con Terraform · 02 · Mini auditoría. Ficheros de partida, cómo levantarlos y qué entregar.</span></a></div>
 
 <h2>En Floci</h2>
 <p>La empresa ficticia del curso vive en una cuenta AWS emulada con Floci. En este bloque la desplegamos con Terraform corrigiendo sus fallos de configuración, hacemos su primer inventario y la vigilamos con Suricata.</p>
 
 <h2 id="entrega">Entrega</h2>
-<p>Una sola entrega para todo el bloque: la etiqueta <code>entrega-fundamentos</code> antes del jueves 5 de noviembre a las 23:59. Todo el trabajo del bloque va en la carpeta <code>fundamentos/</code> de tu repositorio; lo que hay que dejar en ella aparece en la comprobación de cada tema.</p>
+<p>Una sola entrega para todo el bloque: la etiqueta <code>entrega-fundamentos</code> antes del jueves 5 de noviembre a las 23:59. Todo el trabajo del bloque va en la carpeta <code>fundamentos/</code> de tu repositorio; lo que hay que dejar en ella está en la <a href="ejercicios/">tabla de ejercicios</a>.</p>
 <pre><code>git tag entrega-fundamentos
 git push origin entrega-fundamentos</code></pre>
 

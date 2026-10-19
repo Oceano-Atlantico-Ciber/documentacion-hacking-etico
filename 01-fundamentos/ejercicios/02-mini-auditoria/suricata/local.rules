@@ -1,0 +1,8 @@
+# Reglas del sensor de la empresa. Cada regla lleva en el mensaje la FASE del ataque que delata.
+# sid 1000001-1000099: reservados para esta práctica. Añade las tuyas a partir de 1000100.
+alert tcp any any -> any any (msg:"RECONOCIMIENTO barrido de puertos"; flags:S; threshold:type both, track by_src, count 20, seconds 5; classtype:attempted-recon; sid:1000001; rev:1;)
+alert icmp any any -> any any (msg:"RECONOCIMIENTO ping"; itype:8; threshold:type limit, track by_src, count 1, seconds 30; classtype:attempted-recon; sid:1000002; rev:1;)
+alert http any any -> any any (msg:"ENUMERACION sonda HTTP de nmap"; http.user_agent; content:"Nmap"; nocase; classtype:attempted-recon; sid:1000003; rev:1;)
+alert http any any -> any any (msg:"ENUMERACION peticion con curl"; http.user_agent; content:"curl"; nocase; classtype:attempted-recon; sid:1000004; rev:1;)
+alert http any any -> any any (msg:"ENUMERACION ruta de administracion"; http.uri; content:"/admin"; classtype:web-application-activity; sid:1000005; rev:1;)
+alert http any any -> any any (msg:"ENUMERACION fichero robots.txt"; http.uri; content:"/robots.txt"; classtype:web-application-activity; sid:1000006; rev:1;)

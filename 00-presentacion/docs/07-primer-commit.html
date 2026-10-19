@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Seguridad, vulnerabilidades y ataques · Hacking ético</title>
+<title>Primer commit · Hacking ético</title>
 <style>
-/* Layout: una página por tema del bloque. Cabecera con bloque, semana y criterios; después secciones en vertical y al final la comprobación y la navegación entre temas. */
+/* Layout: una página por tema. Cabecera con bloque y semana; después secciones en vertical y al final la comprobación y la navegación entre temas. */
 :root {
   --bg: #f4f5f2;
   --surface: #ffffff;
@@ -74,33 +74,26 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 </head>
 <body>
 <div class="wrap">
-<nav class="top"><a href="../">Hacking ético</a> · <a href="./">Fundamentos, alcance y herramientas</a></nav>
+<nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Presentación</a></nav>
 <header>
-<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semanas 2 y 3</p>
-<h1>Seguridad, vulnerabilidades y ataques</h1>
-<p class="lead">Las cuatro propiedades que protege la seguridad y cómo se clasifican los fallos y los ataques que las rompen, con ejemplos que ya conocéis.</p>
-<div class="meta"><span>Criterios <b>d, f, g, h</b></span></div>
+<p class="eyebrow">Presentación · Semana 1</p>
+<h1>Primer commit</h1>
+<p class="lead">El primer commit del curso deja constancia de que el puesto de trabajo está listo.</p>
 </header>
 <section class="seccion">
-<h2>Las cuatro propiedades</h2>
-<p>Qué rompía cada truco del <a href="01-hackea-el-ranking.html">minijuego</a>: <b>integridad</b> (puntuación falsa), <b>autenticidad</b> (cambiar la puntuación de otro), <b>disponibilidad</b> (vaciar el ranking) y <b>confidencialidad</b> (la ruta de administración visible en el código). Toda vulnerabilidad rompe al menos una.</p>
+<ol>
+<li>Clona tu repositorio privado de la organización y crea la carpeta <code>fundamentos/</code>.</li>
+<li>Guarda en <code>fundamentos/puesto.txt</code> la salida de <code>git --version</code>, <code>docker compose version</code> y una respuesta de tu IA a «qué es un escaneo de puertos».</li>
+<li>Commit y push. Es el primero de los que se miran en la entrega del bloque.</li>
+</ol>
 </section>
 <section class="seccion">
-<h2>Tipos de vulnerabilidad</h2>
-<ul>
-<li><b>De diseño:</b> el juego se fiaba del cliente. No la arregla un parche, la arregla cambiar cómo funciona.</li>
-<li><b>De configuración:</b> el bucket público y el permiso total de <a href="04-la-empresa-en-floci.html">la empresa en Floci</a>. Las encuentra Trivy.</li>
-<li><b>De software:</b> una versión con un fallo conocido (un CVE). Las delata la enumeración de versiones de la <a href="05-fases-y-auditoria.html">auditoría</a>.</li>
-<li><b>Humanas:</b> contraseñas débiles, engaños. Se tratan en <a href="../04-sistemas-comprometidos/">Sistemas comprometidos</a>.</li>
+<h2>Comprobación</h2>
+<ul class="check">
+<li><code>fundamentos/puesto.txt</code> subido a tu repositorio</li>
 </ul>
-<p>Para documentar cualquiera se responden cuatro preguntas: dónde está, cuál es el fallo, qué permite y cómo se corrige. Lo practicáis con <a href="01-hackea-el-ranking.html#documentar">cada bandera del juego</a>.</p>
 </section>
-<section class="seccion">
-<h2>Tipos de ataque</h2>
-<p>Los ataques se clasifican por la propiedad que rompen: leer lo que no debes (confidencialidad), cambiarlo (integridad), tumbar el servicio (disponibilidad) o hacerte pasar por otro (autenticidad).</p>
-</section>
-
-<nav class="temas" aria-label="Temas del bloque"><a href="02-etica-ley-y-alcance.html">← Ética, ley y alcance</a><a href="04-la-empresa-en-floci.html">La empresa en Floci →</a></nav>
+<nav class="temas" aria-label="Temas de la presentación"><a href="06-hackea-el-ranking.html">← Hackea el ranking</a><a href="../../01-fundamentos/">Fundamentos, alcance y herramientas →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 </body>
