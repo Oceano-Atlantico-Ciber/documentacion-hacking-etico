@@ -1,5 +1,0 @@
-# S14 · SSH y contraseñas
-
-Material de la clase: pendiente.
-
-Enunciado del ejercicio: [ejercicios-hacking-etico/semanas/s14](https://github.com/Oceano-Atlantico-Ciber/ejercicios-hacking-etico/tree/main/semanas/s14).

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hacking ético</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#5f5e58;--line:#e4e1d8;--card:#ffffff;--accent:#0b6e4f;--code:#f1efe8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
+nav.top{font-size:14px;color:var(--muted);margin-bottom:24px}
+nav.top a{color:var(--muted)}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px}
+h2{font-size:20px;margin:36px 0 10px;padding-top:12px;border-top:1px solid var(--line)}
+h3{font-size:17px;margin:20px 0 6px}
+p.lead{color:var(--muted);font-size:18px;margin:0 0 20px}
+a{color:var(--accent)}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:14px}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:14px}
+pre code{padding:0;background:none}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.cards{display:grid;gap:12px}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--fg)}
+.card b{color:var(--accent)}
+.card span{display:block;color:var(--muted);font-size:14px;margin-top:4px}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px}
+footer{margin-top:48px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+
+
+<h1>Hacking ético</h1>
+<p class="lead">Material de la asignatura organizado por los resultados de aprendizaje del módulo 5025 (Real Decreto 479/2020, 65 horas). Cada apartado se irá completando a medida que avancemos.</p>
+<h2>Resultados de aprendizaje</h2>
+<div class="cards"><a class="card" href="ra1/"><b>RA1</b> · Determina herramientas de monitorización para detectar vulnerabilidades aplicando técnicas de hacking ético.<span>Determinación de las herramientas de monitorización para detectar vulnerabilidades</span></a><a class="card" href="ra2/"><b>RA2</b> · Ataca y defiende en entornos de prueba, comunicaciones inalámbricas consiguiendo acceso a redes para demostrar sus vulnerabilidades.<span>Ataque y defensa en entorno de pruebas de las comunicaciones inalámbricas</span></a><a class="card" href="ra3/"><b>RA3</b> · Ataca y defiende en entornos de prueba, redes y sistemas consiguiendo acceso a información y sistemas de terceros.<span>Ataque y defensa en entorno de pruebas de redes y sistemas para acceder a sistemas de terceros</span></a><a class="card" href="ra4/"><b>RA4</b> · Consolida y utiliza sistemas comprometidos garantizando accesos futuros.<span>Consolidación y utilización de sistemas comprometidos</span></a><a class="card" href="ra5/"><b>RA5</b> · Ataca y defiende en entornos de prueba, aplicaciones web consiguiendo acceso a datos o funcionalidades no autorizadas.<span>Ataque y defensa en entorno de pruebas de aplicaciones web</span></a></div>
+<h2>Consulta</h2>
+<ul><li><a href="glosario.html">Glosario de herramientas</a></li></ul>
+<h2>Repositorios de la asignatura</h2>
+<div class="cards"><a class="card" href="https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico"><b>documentacion-hacking-etico</b> (este)<span>Público. Material de clase organizado por resultados de aprendizaje y glosario.</span></a><a class="card" href="https://github.com/Oceano-Atlantico-Ciber/ejercicios-hacking-etico"><b>ejercicios-hacking-etico</b><span>Público. Enunciados, ficheros de partida, normas de entrega y plantilla de vuestro repositorio.</span></a><div class="card"><b>soluciones-hacking-etico</b><span>Privado, solo para el docente.</span></div></div>
+<h2>Normas de entrega</h2>
+<ol>
+<li>Cada semana se entrega con <b>una etiqueta <code>entrega-sNN</code></b> en vuestro repositorio (por ejemplo <code>entrega-s01</code>), creada <b>antes del jueves</b>.</li>
+<li><b>Se corrige lo que hay en la etiqueta.</b> Lo que subáis después a <code>main</code> no cuenta para esa entrega.</li>
+<li>Al subir la etiqueta, GitHub Actions pasa Trivy sobre el repositorio; si encuentra fallos HIGH o CRITICAL, la ejecución falla.</li>
+<li>Nada de secretos en el repositorio (claves, contraseñas, ficheros <code>.env</code>).</li>
+</ol>
+<pre><code>git tag entrega-s01
+git push origin entrega-s01</code></pre>
+
+<footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
+</main>
+</body>
+</html>
