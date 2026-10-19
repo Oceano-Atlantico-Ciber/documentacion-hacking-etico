@@ -1,114 +1,156 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Clase 1 · Hacking ético</title>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Clase 1 Hacking ético</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#5f5e58;--line:#e4e1d8;--card:#ffffff;--accent:#0b6e4f;--code:#f1efe8}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522}}
-:root[data-theme="dark"]{--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
-nav.top{font-size:14px;color:var(--muted);margin-bottom:24px}
-nav.top a{color:var(--muted)}
-h1{font-size:30px;line-height:1.2;margin:0 0 8px}
-h2{font-size:20px;margin:36px 0 10px;padding-top:12px;border-top:1px solid var(--line)}
-h3{font-size:17px;margin:20px 0 6px}
-p.lead{color:var(--muted);font-size:18px;margin:0 0 20px}
-a{color:var(--accent)}
-code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:14px}
-pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:14px}
-pre code{padding:0;background:none}
-table{width:100%;border-collapse:collapse;font-size:15px}
-th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--muted);font-weight:600}
-.cards{display:grid;gap:12px}
-.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--fg)}
-.card b{color:var(--accent)}
-.card span{display:block;color:var(--muted);font-size:14px;margin-top:4px}
-.note{background:var(--card);border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px}
-footer{margin-top:48px;color:var(--muted);font-size:13px}
+/* Layout: una página por clase. Cabecera con bloque, fecha y meta; después los periodos como una agenda vertical (hora a la izquierda, contenido a la derecha) y al final la lista de comprobación. */
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --ink: #1b2229;
+  --muted: #5d6771;
+  --line: #d6dad5;
+  --accent: #0f6b64;
+  --accent-soft: #dcefec;
+  --ia: #9a4d12;
+  --ia-soft: #f8e7d8;
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+    --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+  --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 40px 72px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 700; }
+h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+ul, ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+a { color: var(--accent); }
+code { font: 500 .88em var(--f-mono); background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+pre { margin: 0; background: var(--ink); color: var(--bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; font: 13.5px/1.5 var(--f-mono); }
+pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+.eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+header { display: grid; gap: 14px; }
+.lead { color: var(--muted); max-width: 62ch; font-size: 17px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 14px; }
+.meta b { color: var(--ink); font-weight: 600; }
+
+/* Agenda */
+.dia { display: grid; gap: 18px; }
+.dia > h2 { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.periodo { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 20px; }
+.periodo .hora { font: 500 12px/1.5 var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding-top: 4px; }
+.periodo .hora b { display: block; font: 700 22px/1 var(--f-display); color: var(--accent); text-transform: none; letter-spacing: 0; margin-bottom: 4px; }
+.periodo .que { display: grid; gap: 12px; min-width: 0; }
+.periodo .que > h3 { font-size: 19px; }
+@media (max-width: 560px) { .periodo { grid-template-columns: 1fr; gap: 8px; } }
+
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tabla { overflow-x: auto; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.ia { background: var(--ia-soft); border-left: 3px solid var(--ia); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+.ia .eyebrow { color: var(--ia); }
+.alcance { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; border-radius: 8px; display: grid; gap: 6px; }
+.check { display: grid; gap: 8px; list-style: none; padding: 0; }
+.check li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; }
+.check li::before { content: ""; width: 16px; height: 16px; border: 1.5px solid var(--accent); border-radius: 3px; margin-top: 4px; }
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+@media (prefers-reduced-motion: no-preference) { a { transition: color .15s; } }
 </style>
-</head>
-<body>
-<main>
-<nav class="top"><a href="../">Hacking ético</a> / <a href="./">RA1</a></nav>
-
+<div class="wrap">
+<header>
+<p class="eyebrow">Bloque 1 · Herramientas para detectar vulnerabilidades · Semana 1 de 3</p>
 <h1>Clase 1 · Presentación y puesto de trabajo</h1>
-<p><b>Miércoles 21 de octubre</b></p>
-<p class="lead">Clase práctica. Ver que con curiosidad y práctica se hacen cosas reales sin saberlo todo, y salir con el equipo listo para el resto del curso.</p>
+<p class="lead">Ver que con curiosidad y práctica se hacen cosas reales sin saberlo todo, y salir con el equipo listo para el resto del curso.</p>
+<div class="meta"><span>Miércoles <b>21 de octubre</b> · 3 periodos</span><span>Jueves <b>22 de octubre</b> · 1 periodo</span><span>Ejercicio: <a href="https://oceano-atlantico-ciber.github.io/ejercicios-hacking-etico/ra1/#s01">semana 1</a></span></div>
+</header>
 
-<h2>1. Presentación</h2>
+<section class="dia">
+<h2>Miércoles</h2>
+<div class="periodo"><div class="hora"><b>1.º</b>periodo</div><div class="que">
+<h3>Quién os da clase y por qué esto se aprende haciendo</h3>
 <ul>
-<li>A qué se dedica el docente: trabajo como SRE (fiabilidad de sistemas en producción) y cómo se relaciona con la seguridad.</li>
+<li>A qué se dedica el docente: SRE (fiabilidad de sistemas en producción) y qué tiene que ver con la seguridad.</li>
 <li>Experiencia práctica en hacking con proyectos propios, con <b>demostración en vivo</b>.</li>
-<li>Nadie sabe de todo: lo que cuenta es saber buscar, probar, romper en un entorno controlado y aprender de ello.</li>
+<li>Nadie sabe de todo: lo que cuenta es mirar, probar, romper en un entorno controlado y aprender de ello.</li>
+<li>Cómo funciona la asignatura: el documento del curso, una cuenta AWS emulada por alumno, la IA como compañera y una entrega por bloque en git.</li>
 <li>Regla del curso: solo se ataca lo que está dentro del alcance autorizado.</li>
 </ul>
+</div></div>
 
-<h2>2. Git y GitHub</h2>
+<div class="periodo"><div class="hora"><b>2.º</b>periodo</div><div class="que">
+<h3>Git, GitHub y Docker</h3>
 <ol>
-<li>Instala Git: <a href="https://git-scm.com/downloads">git-scm.com/downloads</a> (en Linux, <code>sudo apt install git</code>).</li>
-<li>Configura tu identidad:
+<li>Instala Git (<a href="https://git-scm.com/downloads">git-scm.com/downloads</a>; en Linux, <code>sudo apt install git</code>) y configura tu identidad:
 <pre><code>git config --global user.name "Tu Nombre"
 git config --global user.email "tu@correo"
 git config --global init.defaultBranch main</code></pre></li>
-<li>Crea una cuenta en <a href="https://github.com">github.com</a> si no la tienes y pásale tu usuario al docente.</li>
-<li>Comprueba: <code>git --version</code></li>
-</ol>
-
-<h2>3. Docker</h2>
-<ul>
-<li><b>Windows:</b> Docker Desktop con el motor WSL 2 (<a href="https://docs.docker.com/desktop/">docs.docker.com/desktop</a>).</li>
-<li><b>macOS:</b> Docker Desktop.</li>
-<li><b>Linux:</b> Docker Engine (<a href="https://docs.docker.com/engine/install/">docs.docker.com/engine/install</a>) y tu usuario en el grupo <code>docker</code>.</li>
-</ul>
+<li>Cuenta en <a href="https://github.com">github.com</a> si no la tienes. Pásale tu usuario al docente: con él se crea tu repositorio privado en la organización de la asignatura.</li>
+<li>Docker. <b>Windows:</b> Docker Desktop con el motor WSL 2. <b>macOS:</b> Docker Desktop. <b>Linux:</b> Docker Engine y tu usuario en el grupo <code>docker</code>.
 <pre><code>docker run --rm hello-world
-docker compose version</code></pre>
-<p>Con Docker funcionando podréis levantar Floci, la cuenta AWS emulada en la que trabajaremos todo el curso.</p>
-
-<h2>4. IA: local o en la nube</h2>
-<p>Elige una opción; las dos sirven para el curso.</p>
-<h3>Opción A · Local con Ollama</h3>
-<p>Los datos no salen de tu equipo. Necesita unos 8 GB de RAM libres para modelos pequeños.</p>
-<ol>
-<li>Instala Ollama: <a href="https://ollama.com/download">ollama.com/download</a>.</li>
-<li>Descarga un modelo pequeño y pruébalo:
-<pre><code>ollama pull llama3.2
-ollama run llama3.2 "Explica en una frase qué es un escaneo de puertos"</code></pre></li>
+docker compose version</code></pre></li>
+<li>Con Docker funcionando podréis levantar Floci, la cuenta AWS emulada en la que trabajaremos todo el curso. Si hay tiempo, dejadla descargando: <code>docker pull floci/floci:latest</code>.</li>
 </ol>
-<h3>Opción B · En la nube</h3>
-<p>El asistente que prefieras (por ejemplo Claude o ChatGPT) desde el navegador o su aplicación.</p>
-<p class="note"><b>Regla para las dos:</b> nunca pegues en una IA en la nube contraseñas, claves ni datos reales de terceros.</p>
+<h3>IA: local o en la nube, a elegir</h3>
+<div class="tabla"><table><thead><tr><th>Opción</th><th>Qué es</th><th>Cómo empezar</th></tr></thead><tbody>
+<tr><td>Local con Ollama</td><td>Los datos no salen de tu equipo. Unos 8 GB de RAM libres para modelos pequeños.</td><td><a href="https://ollama.com/download">ollama.com/download</a>, después <code>ollama pull llama3.2</code> y <code>ollama run llama3.2</code>.</td></tr>
+<tr><td>En la nube</td><td>El asistente que prefieras (Claude, ChatGPT u otro) desde el navegador o su aplicación.</td><td>Cuenta propia. Nunca pegues contraseñas, claves ni datos reales de terceros.</td></tr>
+</tbody></table></div>
+<div class="ia"><p class="eyebrow">Regla de la IA para todo el curso</p><p>Lo que diga la IA se comprueba contra la salida real de la herramienta antes de darlo por bueno. Si no coincide, gana la herramienta.</p></div>
+</div></div>
 
-<h2>5. Minijuego «Hackea el ranking»</h2>
-<p>El docente despliega un juego en Floci, la nube emulada del curso (una web con su API y un ranking), y os da la dirección en la red del aula. El objetivo es subir al primer puesto del ranking… sin jugar limpio. Cada truco que funcione os da una <b>flag</b> que aparece en el marcador del proyector.</p>
-<h3>Alcance (léelo antes de empezar)</h3>
-<p class="note">Autorizado: <b>solo</b> la dirección del juego que da el docente, <b>solo</b> durante esta clase. Nada de atacar la red del aula, los equipos de compañeros ni ningún otro servicio. Fuera de esto, lo mismo sería delito.</p>
-<h3>Con qué contáis</h3>
-<ul>
-<li>El navegador y sus herramientas de desarrollo (F12).</li>
-<li>La terminal y <code>curl</code>.</li>
-<li>Vuestra IA, para que os explique lo que vayáis encontrando.</li>
-</ul>
-<h3>Mientras jugáis, apuntad</h3>
-<ul>
-<li>Qué habéis probado y en qué orden: es el principio de las fases de un ataque.</li>
-<li>Qué funcionó, por qué creéis que funcionó y cómo lo arreglaríais. Lo usaremos en la siguiente clase.</li>
-</ul>
+<div class="periodo"><div class="hora"><b>3.º</b>periodo</div><div class="que">
+<h3>Minijuego «Hackea el ranking»</h3>
+<p>El docente despliega en su equipo un juego (una web con su API y un ranking) y os da la dirección en la red del aula. El objetivo es subir al primer puesto del ranking sin jugar limpio. Cada fallo del servidor que aprovechéis pone una <b>bandera</b> junto a vuestro nombre en el marcador del proyector.</p>
+<div class="alcance"><p class="eyebrow">Alcance</p><p>Autorizado: <b>solo</b> la dirección del juego que da el docente, <b>solo</b> durante esta clase. Nada de atacar la red del aula, los equipos de compañeros ni ningún otro servicio. Fuera de esto, lo mismo sería delito.</p></div>
+<p><b>Con qué contáis:</b> el navegador y sus herramientas de desarrollo (F12), la terminal y <code>curl</code>, y vuestra IA para que os explique lo que vayáis encontrando.</p>
+<p><b>Mientras jugáis, apuntad</b> qué habéis probado y en qué orden (es el principio de las fases de un ataque), qué funcionó, por qué creéis que funcionó y cómo lo arreglaríais. En la clase 2 cada truco se convierte en una vulnerabilidad documentada.</p>
+</div></div>
+</section>
 
+<section class="dia">
+<h2>Jueves</h2>
+<div class="periodo"><div class="hora"><b>1</b>periodo</div><div class="que">
+<h3>Primer commit</h3>
+<ol>
+<li>Clona tu repositorio privado de la organización y crea la carpeta <code>ra1/</code>.</li>
+<li>Guarda en <code>ra1/puesto.txt</code> la salida de <code>git --version</code>, <code>docker compose version</code> y una respuesta de tu IA a «qué es un escaneo de puertos».</li>
+<li>Commit y push. Es el primero de los que se miran en la entrega del bloque.</li>
+<li>Con el tiempo que quede: el servidor del juego pasa a modo <b>validado</b>. Probad si los trucos de ayer siguen funcionando y pensad por qué.</li>
+</ol>
+</div></div>
+</section>
+
+<section class="dia">
 <h2>Comprobación final</h2>
-<ul>
-<li>☐ <code>git --version</code> responde y tu identidad está configurada</li>
-<li>☐ Usuario de GitHub enviado al docente</li>
-<li>☐ <code>docker run --rm hello-world</code> funciona</li>
-<li>☐ IA local o en la nube respondiendo</li>
-<li>☐ Al menos una flag en el marcador y vuestras notas guardadas</li>
+<ul class="check">
+<li><code>git --version</code> responde y tu identidad está configurada</li>
+<li>Usuario de GitHub enviado al docente</li>
+<li><code>docker run --rm hello-world</code> funciona</li>
+<li>IA local o en la nube respondiendo</li>
+<li>Al menos una bandera en el marcador y vuestras notas guardadas</li>
+<li><code>ra1/puesto.txt</code> subido a vuestro repositorio</li>
 </ul>
+</section>
+<footer><span>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</span><span>Documento del curso: claude.ai/artifact/GTir8V9nzzGtb8NmVSgSYQ</span></footer>
+</div>
 
-<footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
-</main>
-</body>
-</html>
+</body></html>
