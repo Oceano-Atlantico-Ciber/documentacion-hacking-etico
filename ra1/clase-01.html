@@ -37,6 +37,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 <nav class="top"><a href="../">Hacking ético</a> / <a href="./">RA1</a></nav>
 
 <h1>Clase 1 · Presentación y puesto de trabajo</h1>
+<p><b>Miércoles 21 de octubre</b></p>
 <p class="lead">Clase práctica. Ver que con curiosidad y práctica se hacen cosas reales sin saberlo todo, y salir con el equipo listo para el resto del curso.</p>
 
 <h2>1. Presentación</h2>
@@ -81,10 +82,21 @@ ollama run llama3.2 "Explica en una frase qué es un escaneo de puertos"</code><
 <p>El asistente que prefieras (por ejemplo Claude o ChatGPT) desde el navegador o su aplicación.</p>
 <p class="note"><b>Regla para las dos:</b> nunca pegues en una IA en la nube contraseñas, claves ni datos reales de terceros.</p>
 
-<h2>5. Primer escaneo (si da tiempo)</h2>
-<p>Solo contra objetivos autorizados. <code>scanme.nmap.org</code> lo publica el proyecto Nmap para practicar:</p>
-<pre><code>docker run --rm instrumentisto/nmap -sV scanme.nmap.org</code></pre>
-<p>Apunta qué puertos aparecen abiertos y pregúntale a tu IA qué es cada servicio.</p>
+<h2>5. Minijuego «Hackea el ranking»</h2>
+<p>El docente levanta un juego en su portátil y os da la dirección en la red del aula. El objetivo es subir al primer puesto del ranking… sin jugar limpio. Cada truco que funcione os da una <b>flag</b> que aparece en el marcador del proyector.</p>
+<h3>Alcance (léelo antes de empezar)</h3>
+<p class="note">Autorizado: <b>solo</b> la dirección del juego que da el docente, <b>solo</b> durante esta clase. Nada de atacar la red del aula, los equipos de compañeros ni ningún otro servicio. Fuera de esto, lo mismo sería delito.</p>
+<h3>Con qué contáis</h3>
+<ul>
+<li>El navegador y sus herramientas de desarrollo (F12).</li>
+<li>La terminal y <code>curl</code>.</li>
+<li>Vuestra IA, para que os explique lo que vayáis encontrando.</li>
+</ul>
+<h3>Mientras jugáis, apuntad</h3>
+<ul>
+<li>Qué habéis probado y en qué orden: es el principio de las fases de un ataque.</li>
+<li>Qué funcionó, por qué creéis que funcionó y cómo lo arreglaríais. Lo usaremos en la siguiente clase.</li>
+</ul>
 
 <h2>Comprobación final</h2>
 <ul>
@@ -92,7 +104,7 @@ ollama run llama3.2 "Explica en una frase qué es un escaneo de puertos"</code><
 <li>☐ Usuario de GitHub enviado al docente</li>
 <li>☐ <code>docker run --rm hello-world</code> funciona</li>
 <li>☐ IA local o en la nube respondiendo</li>
-<li>☐ (Extra) Primer <code>nmap</code> ejecutado</li>
+<li>☐ Al menos una flag en el marcador y vuestras notas guardadas</li>
 </ul>
 
 <footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
