@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RA1 · Hacking ético</title>
+<title>Fundamentos, alcance y herramientas · Hacking ético</title>
 <style>
 :root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#5f5e58;--line:#e4e1d8;--card:#ffffff;--accent:#0b6e4f;--code:#f1efe8}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522}}
@@ -36,8 +36,8 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 <main>
 <nav class="top"><a href="../">Hacking ético</a></nav>
 
-<h1>RA1</h1>
-<p class="lead">Determina herramientas de monitorización para detectar vulnerabilidades aplicando técnicas de hacking ético.</p>
+<h1>Fundamentos, alcance y herramientas</h1>
+<p class="lead"><b>RA1</b> · Determina herramientas de monitorización para detectar vulnerabilidades aplicando técnicas de hacking ético.</p>
 <h2>Contenidos básicos</h2>
 <h3>Determinación de las herramientas de monitorización para detectar vulnerabilidades</h3>
 <ul><li>Elementos esenciales del hacking ético.</li><li>Diferencias entre hacking, hacking ético, tests de penetración y hacktivismo.</li><li>Recolección de permisos y autorizaciones previos a un test de intrusión.</li><li>Fases del hacking.</li><li>Auditorías de caja negra y de caja blanca.</li><li>Documentación de vulnerabilidades.</li><li>Clasificación de herramientas de seguridad y hacking.</li><li>ClearNet, Deep Web, Dark Web, Darknets. Conocimiento, diferencias y herramientas de acceso: Tor, ZeroNet, FreeNet.</li></ul>
@@ -55,24 +55,29 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 </ol>
 
 <h2>Itinerario</h2>
-<table><thead><tr><th>Semana</th><th>Qué hacemos</th><th>Criterios</th></tr></thead><tbody>
-<tr><td>1 · 21 y 22 oct</td><td><a href="clase-01.html">Clase 1</a>: presentación, puesto de trabajo y minijuego «Hackea el ranking» con alcance.</td><td>a, c, e</td></tr>
-<tr><td>2 · 28 y 29 oct</td><td><a href="clase-02.html">Clase 2</a>: cada truco como vulnerabilidad, ética y ley, alcance por escrito, la empresa en Floci con Terraform y Trivy.</td><td>b, c, d, f, h</td></tr>
-<tr><td>3 · 4 y 5 nov</td><td><a href="clase-03.html">Clase 3</a>: fases de un ataque, tipos de ataque, mini auditoría con nmap y la CLI de AWS vigilada por Suricata, herramientas según la organización, darknets. Etiqueta <code>entrega-ra1</code>.</td><td>a, e, g, h, i</td></tr>
+<table><thead><tr><th>Semana</th><th>Temas</th><th>Criterios</th></tr></thead><tbody>
+<tr><td>1 · 21 y 22 oct</td><td><a href="../00-presentacion/">Presentación</a> y <a href="01-hackea-el-ranking.html">Hackea el ranking</a>.</td><td>a, c, e</td></tr>
+<tr><td>2 · 28 y 29 oct</td><td><a href="01-hackea-el-ranking.html#documentar">De truco a vulnerabilidad</a>, <a href="02-etica-ley-y-alcance.html">Ética, ley y alcance</a>, <a href="03-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a> y <a href="04-la-empresa-en-floci.html">La empresa en Floci</a>.</td><td>b, c, d, f, h</td></tr>
+<tr><td>3 · 4 y 5 nov</td><td><a href="05-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a> y <a href="06-herramientas-y-darknets.html">Herramientas y darknets</a>. Entrega del bloque.</td><td>a, e, g, h, i</td></tr>
 </tbody></table>
+
+<h2>Temas</h2>
+<div class="cards">
+<a class="card" href="01-hackea-el-ranking.html"><b>Hackea el ranking</b> · criterios c, e, h<span>Minijuego con alcance, notas de cada prueba y de truco a vulnerabilidad documentada.</span></a>
+<a class="card" href="02-etica-ley-y-alcance.html"><b>Ética, ley y alcance</b> · criterios b, c<span>Hacking, hacking ético, test de intrusión, hacktivismo y delito; el alcance por escrito; caja negra y caja blanca.</span></a>
+<a class="card" href="03-seguridad-y-vulnerabilidades.html"><b>Seguridad, vulnerabilidades y ataques</b> · criterios d, f, g, h<span>Las cuatro propiedades, tipos de vulnerabilidad y tipos de ataque.</span></a>
+<a class="card" href="04-la-empresa-en-floci.html"><b>La empresa en Floci</b> · criterios c, h<span>Terraform con fallos corregido con Trivy y desplegado en la cuenta AWS emulada.</span></a>
+<a class="card" href="05-fases-y-auditoria.html"><b>Fases de un ataque y auditoría vigilada</b> · criterios e, h<span>nmap y CLI de AWS sobre el laboratorio, Suricata anotando cada fase y una regla propia.</span></a>
+<a class="card" href="06-herramientas-y-darknets.html"><b>Herramientas y darknets</b> · criterios a, i<span>Qué herramienta para qué organización; ClearNet, Deep Web y Dark Web.</span></a>
+</div>
 
 <h2>En Floci</h2>
 <p>La empresa ficticia del curso vive en una cuenta AWS emulada con Floci. En este bloque la desplegamos con Terraform corrigiendo sus fallos de configuración, hacemos su primer inventario y la vigilamos con Suricata.</p>
 
-<h2>Entrega</h2>
-<p>Una sola entrega para todo el bloque: la etiqueta <code>entrega-ra1</code> antes del jueves 5 de noviembre a las 23:59. Las instrucciones de cada práctica aparecen en su clase.</p>
-
-<h2>Clases</h2>
-<div class="cards">
-<a class="card" href="clase-01.html"><b>Clase 1</b> · 21 y 22 de octubre · Presentación y puesto de trabajo<span>Experiencia del docente con demostración en vivo; git, Docker e IA; minijuego «Hackea el ranking»; primer commit.</span></a>
-<a class="card" href="clase-02.html"><b>Clase 2</b> · 28 y 29 de octubre · La empresa en la nube emulada<span>Vulnerabilidades documentadas, ética y ley, alcance, Terraform con fallos corregido con Trivy y desplegado en Floci.</span></a>
-<a class="card" href="clase-03.html"><b>Clase 3</b> · 4 y 5 de noviembre · Fases de un ataque y mini auditoría vigilada<span>nmap y CLI de AWS sobre el laboratorio, Suricata anotando cada fase, herramientas según la organización, cierre del bloque.</span></a>
-</div>
+<h2 id="entrega">Entrega</h2>
+<p>Una sola entrega para todo el bloque: la etiqueta <code>entrega-fundamentos</code> antes del jueves 5 de noviembre a las 23:59. Todo el trabajo del bloque va en la carpeta <code>fundamentos/</code> de tu repositorio; lo que hay que dejar en ella aparece en la comprobación de cada tema.</p>
+<pre><code>git tag entrega-fundamentos
+git push origin entrega-fundamentos</code></pre>
 
 <footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
 </main>

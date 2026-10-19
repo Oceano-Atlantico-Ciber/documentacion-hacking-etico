@@ -37,21 +37,23 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 
 
 <h1>Hacking ético</h1>
-<p class="lead">Material de la asignatura organizado por los resultados de aprendizaje del módulo 5025 (Real Decreto 479/2020, 65 horas). Todo el curso se trabaja sobre una empresa ficticia desplegada en una cuenta AWS emulada con Floci, con la IA como copiloto. Cada apartado se irá completando a medida que avancemos.</p>
-<h2>Resultados de aprendizaje</h2>
-<div class="cards"><a class="card" href="ra1/"><b>RA1</b> · Determina herramientas de monitorización para detectar vulnerabilidades aplicando técnicas de hacking ético.<span>Determinación de las herramientas de monitorización para detectar vulnerabilidades</span></a><a class="card" href="ra2/"><b>RA2</b> · Ataca y defiende en entornos de prueba, comunicaciones inalámbricas consiguiendo acceso a redes para demostrar sus vulnerabilidades.<span>Ataque y defensa en entorno de pruebas de las comunicaciones inalámbricas</span></a><a class="card" href="ra3/"><b>RA3</b> · Ataca y defiende en entornos de prueba, redes y sistemas consiguiendo acceso a información y sistemas de terceros.<span>Ataque y defensa en entorno de pruebas de redes y sistemas para acceder a sistemas de terceros</span></a><a class="card" href="ra4/"><b>RA4</b> · Consolida y utiliza sistemas comprometidos garantizando accesos futuros.<span>Consolidación y utilización de sistemas comprometidos</span></a><a class="card" href="ra5/"><b>RA5</b> · Ataca y defiende en entornos de prueba, aplicaciones web consiguiendo acceso a datos o funcionalidades no autorizadas.<span>Ataque y defensa en entorno de pruebas de aplicaciones web</span></a></div>
+<p class="lead">Material de la asignatura organizado por los bloques del módulo profesional 5025: Hacking Ético (Real Decreto 479/2020, 65 horas). Todo el curso se trabaja sobre una empresa ficticia desplegada en una cuenta AWS emulada con Floci, con la IA como copiloto. Cada apartado se irá completando a medida que avancemos.</p>
+<h2>Empieza aquí</h2>
+<div class="cards"><a class="card" href="00-presentacion/"><b>Presentación</b> · semana 1<span>Quién soy, cómo funciona la asignatura y el puesto de trabajo: Git, GitHub, Docker e IA.</span></a></div>
+<h2>Bloques</h2>
+<div class="cards"><a class="card" href="01-fundamentos/"><b>Fundamentos, alcance y herramientas</b> · RA1<span>Determina herramientas de monitorización para detectar vulnerabilidades aplicando técnicas de hacking ético.</span></a><a class="card" href="02-redes-inalambricas/"><b>Redes inalámbricas</b> · RA2<span>Ataca y defiende en entornos de prueba, comunicaciones inalámbricas consiguiendo acceso a redes para demostrar sus vulnerabilidades.</span></a><a class="card" href="03-redes-y-sistemas/"><b>Redes y sistemas</b> · RA3<span>Ataca y defiende en entornos de prueba, redes y sistemas consiguiendo acceso a información y sistemas de terceros.</span></a><a class="card" href="04-sistemas-comprometidos/"><b>Sistemas comprometidos</b> · RA4<span>Consolida y utiliza sistemas comprometidos garantizando accesos futuros.</span></a><a class="card" href="05-aplicaciones-web/"><b>Aplicaciones web</b> · RA5<span>Ataca y defiende en entornos de prueba, aplicaciones web consiguiendo acceso a datos o funcionalidades no autorizadas.</span></a></div>
 <h2>Consulta</h2>
 <ul><li><a href="glosario.html">Glosario de herramientas</a></li></ul>
 <h2>Cómo trabajamos</h2>
 <p>Las clases y prácticas publicadas están en esta web. Cada alumno realiza y entrega su trabajo en un repositorio privado de la organización.</p>
-<h2>Normas de entrega</h2>
+<h2 id="entregas">Normas de entrega</h2>
 <ol>
-<li>Hay <b>una entrega por módulo</b> (resultado de aprendizaje): una etiqueta <code>entrega-raN</code> en vuestro repositorio (por ejemplo <code>entrega-ra1</code>), creada antes de la fecha límite del módulo. Incluye todas las prácticas de ese módulo.</li>
+<li>Hay <b>una entrega por bloque</b>: una etiqueta <code>entrega-</code> seguida del nombre del bloque sin número (por ejemplo <code>entrega-fundamentos</code>), creada antes de la fecha límite del bloque. Incluye todas las prácticas de ese bloque, cada bloque en su carpeta del repositorio.</li>
 <li><b>Se corrige lo que hay en la etiqueta.</b> Lo que subáis después a <code>main</code> no cuenta para esa entrega.</li>
 <li>Nada de secretos en el repositorio (claves, contraseñas, ficheros <code>.env</code>).</li>
 </ol>
-<pre><code>git tag entrega-ra1
-git push origin entrega-ra1</code></pre>
+<pre><code>git tag entrega-fundamentos
+git push origin entrega-fundamentos</code></pre>
 
 <footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
 </main>

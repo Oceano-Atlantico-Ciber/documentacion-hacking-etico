@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IA: local o en la nube · Hacking ético</title>
+<style>
+/* Layout: una página por tema. Cabecera con bloque y semana; después secciones en vertical y al final la comprobación y la navegación entre temas. */
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --ink: #1b2229;
+  --muted: #5d6771;
+  --line: #d6dad5;
+  --accent: #0f6b64;
+  --accent-soft: #dcefec;
+  --ia: #9a4d12;
+  --ia-soft: #f8e7d8;
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+    --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+  --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 40px 72px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 700; }
+h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+ul, ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+a { color: var(--accent); }
+code { font: 500 .88em var(--f-mono); background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+pre { margin: 0; background: var(--ink); color: var(--bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; font: 13.5px/1.5 var(--f-mono); }
+pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+.eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+header { display: grid; gap: 14px; }
+.lead { color: var(--muted); max-width: 62ch; font-size: 17px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 14px; }
+.meta b { color: var(--ink); font-weight: 600; }
+
+
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tabla { overflow-x: auto; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.ia { background: var(--ia-soft); border-left: 3px solid var(--ia); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+.ia .eyebrow { color: var(--ia); }
+.alcance { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; border-radius: 8px; display: grid; gap: 6px; }
+.check { display: grid; gap: 8px; list-style: none; padding: 0; }
+.check li { position: relative; padding-left: 30px; min-width: 0; }
+.check li::before { content: ""; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border: 1.5px solid var(--accent); border-radius: 3px; }
+.seccion { display: grid; gap: 14px; }
+.seccion > h2 { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+nav.top { font-size: 14px; color: var(--muted); }
+nav.temas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 18px; font-size: 15px; }
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+@media (prefers-reduced-motion: no-preference) { a { transition: color .15s; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../">Hacking ético</a> · <a href="./">Presentación</a></nav>
+<header>
+<p class="eyebrow">Presentación · Semana 1</p>
+<h1>IA: local o en la nube</h1>
+<p class="lead">La IA es vuestra compañera durante todo el curso. Elegís dónde corre; la regla para usarla es la misma.</p>
+</header>
+<section class="seccion">
+<div class="tabla"><table><thead><tr><th>Opción</th><th>Qué es</th><th>Cómo empezar</th></tr></thead><tbody>
+<tr><td>Local con Ollama</td><td>Los datos no salen de tu equipo. Unos 8 GB de RAM libres para modelos pequeños.</td><td><a href="https://ollama.com/download">ollama.com/download</a>, después <code>ollama pull llama3.2</code> y <code>ollama run llama3.2</code>.</td></tr>
+<tr><td>En la nube</td><td>El asistente que prefieras (Claude, ChatGPT u otro) desde el navegador o su aplicación.</td><td>Cuenta propia. Nunca pegues contraseñas, claves ni datos reales de terceros.</td></tr>
+</tbody></table></div>
+<div class="ia"><p class="eyebrow">Regla de la IA para todo el curso</p><p>Lo que diga la IA se comprueba contra la salida real de la herramienta antes de darlo por bueno. Si no coincide, gana la herramienta.</p></div>
+</section>
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>IA local o en la nube respondiendo</li>
+</ul>
+</section>
+<nav class="temas" aria-label="Temas de la presentación"><a href="04-docker.html">← Docker</a><a href="06-primer-commit.html">Primer commit →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+</body>
+</html>
