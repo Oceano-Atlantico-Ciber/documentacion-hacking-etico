@@ -38,3 +38,6 @@ credentials
 
 # Herramientas locales
 .claude/
+
+# Informes generados
+informe-trivy.html

@@ -1,6 +1,6 @@
 # Empresa con Terraform · Cuenta AWS emulada (Floci) + Terraform + Trivy. Solo hace falta Docker.
 #   docker compose up -d floci                                   # la nube
-#   docker compose run --rm trivy                                # buscar fallos de configuración
+#   docker compose run --rm trivy                                # buscar fallos (y genera informe-trivy.html)
 #   docker compose run --rm terraform init && docker compose run --rm terraform apply
 #   docker compose run --rm aws s3 ls                            # comprobar con la CLI de AWS
 name: fundamentos-empresa-terraform
@@ -17,6 +17,10 @@ services:
       FLOCI_STORAGE_PERSISTENT_PATH: /app/data
     volumes:
       - floci-data:/app/data
+      # La consola web arranca en otro contenedor: Floci necesita el socket de Docker/Podman.
+      - /var/run/docker.sock:/var/run/docker.sock
+    security_opt:
+      - label=disable   # Podman en macOS/Linux con SELinux bloquea el socket sin esto
     networks: [lab]
 
   terraform:
@@ -40,9 +44,17 @@ services:
 
   trivy:
     image: aquasec/trivy:0.58.0
-    command: config --severity HIGH,CRITICAL /work
+    # Muestra los fallos en pantalla y además deja informe-trivy.html en esta carpeta.
+    entrypoint: ["sh", "-c"]
+    command:
+      - >-
+        trivy config --severity HIGH,CRITICAL /work;
+        trivy config --quiet --severity HIGH,CRITICAL --format template
+        --template @/contrib/html.tpl -o /informe/informe-trivy.html /work
+        && echo "Informe HTML: informe-trivy.html"
     volumes:
       - ./terraform:/work:ro
+      - .:/informe
       - trivy-cache:/root/.cache
     profiles: [herramientas]
 

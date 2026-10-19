@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Lab Empresa con Terraform</title>
+<style>
+/* Una columna de lectura; cada paso es un bloque numerado con sus comandos copiables. */
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#5f5e58;--line:#e4e1d8;--card:#ffffff;--accent:#0b6e4f;--code:#f1efe8;--warn:#9a5b00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522;--warn:#e0a54a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522;--warn:#e0a54a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+nav.top{font-size:14px;color:var(--muted);margin-bottom:24px}
+nav.top a{color:var(--muted)}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;text-wrap:balance}
+h2{font-size:20px;margin:36px 0 10px;padding-top:12px;border-top:1px solid var(--line);text-wrap:balance}
+p.lead{color:var(--muted);font-size:18px;margin:0 0 20px;max-width:65ch}
+p,li{max-width:70ch}
+a{color:var(--accent)}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:14px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.cmd{position:relative;margin:10px 0}
+.cmd pre{background:var(--code);padding:12px 14px;padding-right:84px;border-radius:8px;overflow-x:auto;font-size:14px;margin:0}
+.cmd pre code{padding:0;background:none}
+.cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.cmd button:hover{border-color:var(--accent)}
+.cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.table{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.step{display:flex;align-items:baseline;gap:12px}
+.step .n{flex:none;font-size:13px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;width:26px;height:26px;display:inline-grid;place-items:center;font-variant-numeric:tabular-nums}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px;max-width:none}
+.note.warn{border-left-color:var(--warn)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;margin:12px 0}
+.flow span{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 10px}
+.flow i{color:var(--muted);font-style:normal}
+footer{margin-top:48px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos</a> · <a href="../#01-empresa-con-terraform">Ejercicio 01</a></nav>
+
+<h1>Lab Empresa con Terraform: puesta en marcha</h1>
+<p class="lead">Una cuenta AWS emulada en tu equipo (Floci), la infraestructura de una empresa ficticia desplegada con Terraform y Trivy para encontrar sus fallos de configuración. Solo necesitas un motor de contenedores.</p>
+
+<div class="flow" aria-label="Orden del laboratorio"><span>Floci</span><i>→</i><span>Trivy</span><i>→</i><span>corregir</span><i>→</i><span>Terraform apply</span><i>→</i><span>AWS CLI</span></div>
+
+<p>Todos los comandos se lanzan desde la carpeta del ejercicio:</p>
+<div class="cmd"><pre><code>cd documentacion-hacking-etico/01-fundamentos/ejercicios/01-empresa-con-terraform</code></pre></div>
+
+<h2>Requisitos</h2>
+<p>Basta con uno de los dos motores. Floci, Terraform, Trivy y la CLI de AWS llegan como contenedores.</p>
+<div class="table"><table><thead><tr><th>Motor</th><th>Qué instalar</th><th>Notas</th></tr></thead><tbody>
+<tr><td>Docker Desktop</td><td>Docker Desktop</td><td><code>docker compose</code> viene incluido.</td></tr>
+<tr><td>Podman</td><td><code>podman</code> y <code>podman-compose</code></td><td>En macOS y Windows necesita su máquina virtual arrancada.</td></tr>
+</tbody></table></div>
+<p>Además: el puerto 4566 libre y conexión a Internet la primera vez, para descargar las imágenes.</p>
+
+<h2 class="step"><span class="n">1</span>Preparar el motor de contenedores</h2>
+<p>Con Docker Desktop, ábrelo y espera a que diga que está en marcha. Con Podman, crea y arranca su máquina virtual (<code>init</code> solo la primera vez):</p>
+<div class="cmd"><pre><code>podman machine init
+podman machine start</code></pre></div>
+<p>Comprueba que responde:</p>
+<div class="cmd"><pre><code>docker ps</code></pre></div>
+<p class="note">Con Podman, en todos los comandos puedes escribir <code>podman compose</code> en lugar de <code>docker compose</code>.</p>
+
+<h2 class="step"><span class="n">2</span>Arrancar la nube (Floci)</h2>
+<p>Floci responde como AWS en <code>http://localhost:4566</code>, región <code>eu-west-1</code>, credenciales <code>test</code>/<code>test</code>. Lo que crees se guarda en un volumen y sobrevive a reinicios.</p>
+<div class="cmd"><pre><code>docker compose up -d floci</code></pre></div>
+<ol>
+<li>Abre <a href="http://localhost:4566">http://localhost:4566</a>: el panel de Floci con los servicios emulados.</li>
+<li>Pulsa <b>Open Floci UI</b>. La primera vez tarda unos segundos: Floci lanza la consola web en otro contenedor (<code>floci-aws-ui</code>) y la abre en <a href="http://localhost:4500">http://localhost:4500</a>.</li>
+</ol>
+
+<h2 class="step"><span class="n">3</span>Analizar con Trivy</h2>
+<p>Trivy revisa los ficheros de <code>terraform/</code> y avisa de los fallos de gravedad alta o crítica. El comando muestra los fallos en la terminal y deja <code>informe-trivy.html</code> en la carpeta del ejercicio.</p>
+<div class="cmd"><pre><code>docker compose --profile herramientas run --rm trivy</code></pre></div>
+<div class="cmd"><pre><code>open informe-trivy.html</code></pre></div>
+<p>En Windows o Linux, abre el HTML con doble clic. La primera ejecución descarga las reglas y tarda algo más.</p>
+<p class="note">Con Docker Desktop basta <code>docker compose run --rm trivy</code>. Con Podman hay que añadir <code>--profile herramientas</code>, porque Trivy, Terraform y la CLI de AWS están en ese perfil.</p>
+
+<h2 class="step"><span class="n">4</span>Desplegar con Terraform</h2>
+<p>Terraform crea en Floci un bucket S3 de copias, un usuario IAM de operaciones con su política y el cortafuegos (security group) del servidor web. El estado queda en <code>terraform/terraform.tfstate</code>.</p>
+<div class="cmd"><pre><code>docker compose --profile herramientas run --rm terraform init</code></pre></div>
+<div class="cmd"><pre><code>docker compose --profile herramientas run --rm terraform apply</code></pre></div>
+<p>Escribe <code>yes</code> cuando lo pida.</p>
+
+<h2 class="step"><span class="n">5</span>Comprobar con la CLI de AWS</h2>
+<p>La CLI ya apunta a Floci. Los mismos recursos se ven en la consola web, en S3, IAM y EC2.</p>
+<div class="cmd"><pre><code>docker compose --profile herramientas run --rm aws s3 ls</code></pre></div>
+<div class="cmd"><pre><code>docker compose --profile herramientas run --rm aws iam list-users</code></pre></div>
+<div class="cmd"><pre><code>docker compose --profile herramientas run --rm aws ec2 describe-security-groups</code></pre></div>
+
+<h2 class="step"><span class="n">6</span>Corregir y repetir</h2>
+<p>Este es el ciclo de la práctica. El enunciado completo está en <a href="../../docs/03-la-empresa-en-floci.html">La empresa en Floci</a>.</p>
+<ol>
+<li>Lee cada aviso de Trivy, pide a tu IA que lo explique y comprueba la propuesta en la documentación del recurso de Terraform.</li>
+<li>Corrige <code>terraform/empresa.tf</code>. Corregir no es borrar: la empresa necesita su bucket, su usuario y su cortafuegos.</li>
+<li>Vuelve al paso 3 hasta que no quede ningún aviso alto ni crítico.</li>
+<li>Vuelve al paso 4 y comprueba que el despliegue sigue terminando sin errores.</li>
+</ol>
+
+<h2>Problemas frecuentes</h2>
+<div class="table"><table><thead><tr><th>Lo que ves</th><th>Por qué pasa</th><th>Qué hacer</th></tr></thead><tbody>
+<tr><td><code>missing services [trivy]</code> (o terraform, aws)</td><td>Con Podman, los servicios de un perfil no se activan solos.</td><td>Añade <code>--profile herramientas</code> al comando.</td></tr>
+<tr><td>«Floci UI couldn't start… could not reach the container runtime»</td><td>Floci no ve el socket de Docker/Podman para lanzar la consola web.</td><td>Usa el <code>docker-compose.yml</code> del repositorio, que monta <code>/var/run/docker.sock</code> con <code>label=disable</code>, y recrea Floci: <code>docker compose up -d --force-recreate floci</code>.</td></tr>
+<tr><td><code>Cannot connect to the Docker daemon</code></td><td>El motor no está arrancado.</td><td>Abre Docker Desktop o lanza <code>podman machine start</code>.</td></tr>
+<tr><td>El puerto 4566 ya está en uso</td><td>Hay otro Floci o LocalStack levantado.</td><td>Para el otro contenedor con <code>docker ps</code> y <code>docker stop &lt;nombre&gt;</code>.</td></tr>
+<tr><td><code>ERROR [rego] … specify_ami_owners.rego</code> al pasar Trivy</td><td>Una regla descargada no encaja con esta versión de Trivy.</td><td>Nada. Solo afecta a esa regla y el análisis sigue.</td></tr>
+</tbody></table></div>
+
+<h2>Apagar y limpiar</h2>
+<p>Para el laboratorio y conserva la cuenta emulada:</p>
+<div class="cmd"><pre><code>docker compose down</code></pre></div>
+<p>Para empezar de cero, borrando también lo que había en Floci:</p>
+<div class="cmd"><pre><code>docker compose down -v</code></pre></div>
+<p class="note warn">Después de <code>down -v</code>, borra también <code>terraform/terraform.tfstate</code>. Si no, Terraform cree que los recursos siguen existiendo.</p>
+
+<footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
+</main>
+<script>
+document.querySelectorAll('.cmd').forEach(function (box) {
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Copiar';
+  btn.addEventListener('click', function () {
+    var code = box.querySelector('code');
+    var text = code.textContent;
+    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1500); };
+    var fallback = function () {
+      var r = document.createRange(); r.selectNodeContents(code);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Pulsa Ctrl/Cmd+C';
+    };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  });
+  box.appendChild(btn);
+});
+</script>
+</body>
+</html>
