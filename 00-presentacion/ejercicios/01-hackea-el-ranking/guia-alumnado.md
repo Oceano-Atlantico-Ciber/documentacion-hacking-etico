@@ -6,7 +6,7 @@ Trabaja únicamente contra la web del juego que ha indicado el docente y durante
 
 **La aplicación está en inglés y esta guía en español.** En la pantalla, **Start game** inicia una partida, **Click** suma pulsaciones, **Leaderboard** es el ranking y **Flags** son las banderas. `trusted` significa que el servidor se fía de los datos enviados por el navegador; `validated` significa que el servidor calcula la puntuación. La dirección con `?scoreboard` muestra el marcador para el proyector y oculta los controles para jugar.
 
-`localhost` siempre apunta a **tu propio equipo**. Si el juego está en el equipo del docente, usa la dirección que te dé, por ejemplo `http://IP-DEL-DOCENTE:8080`, tanto en el navegador como en todos los comandos. No escribas literalmente `IP-DEL-DOCENTE`.
+`localhost` siempre apunta a **tu propio equipo**. En clase el juego se publica con un túnel de Pinggy: usa el enlace que proyecta el docente, por ejemplo `https://abcd.a.free.pinggy.link` (sin `:8080`), tanto en el navegador como en todos los comandos. Si el túnel se reabre, el enlace cambia y hay que usar el nuevo. `http://localhost:8080` solo sirve si levantas el juego en tu equipo.
 
 La guía está escrita para el modo `trusted`. Abre la página en el navegador y comprueba el modo y el marcador antes de empezar:
 
@@ -84,7 +84,7 @@ Consulta el ranking. La puntuación de `dani` debería subir a `9999` y `ana` de
 
 ## 6. Encuentra y prueba la ruta de reinicio
 
-Busca pistas en el código que se entrega al navegador y localiza la ruta de administración. **Este reto borra todo el ranking y las partidas en curso**, así que hazlo solo en una instancia aislada o cuando el docente confirme que se puede reiniciar el marcador.
+Busca pistas en el código que se entrega al navegador y localiza la ruta de administración. **Este reto borra todo el ranking y las partidas en curso de toda la clase.** Está permitido: avisa en voz alta antes de lanzarlo para que nadie pierda una partida a medias.
 
 ```bash
 curl -i 'http://localhost:8080/api/admin/reset?name=ana'
@@ -98,7 +98,7 @@ Al final, el docente puede reiniciar el juego en modo `validated`. Compruébalo 
 
 ## Si algo no coincide
 
-- **No conecta o no abre la web:** comprueba que estás usando la dirección exacta del docente, incluido `:8080`. `localhost` solo sirve si el juego está en tu equipo.
+- **No conecta o no abre la web:** comprueba que estás usando el enlace de Pinggy que se proyecta ahora mismo; si responde `502` o no existe, el túnel se ha reabierto con otra URL. `localhost` solo sirve si el juego está en tu equipo.
 - **Recibes `404` en `/api/score`:** consulta `/api/leaderboard`; probablemente el servidor ya está en modo `validated`, o has escrito otra ruta.
 - **Recibes `400 Invalid name`:** usa un nombre de entre 1 y 24 caracteres. Se admiten letras, números, espacios, guiones, puntos y guiones bajos.
 - **El ranking parece tardar en actualizarse:** vuelve a consultar `/api/leaderboard` o espera unos segundos; la página lo refresca cada cinco segundos.

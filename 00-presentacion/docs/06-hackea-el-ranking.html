@@ -88,13 +88,25 @@ th{color:var(--muted);font-weight:600}
 <section class="section" aria-labelledby="objetivo">
 <p class="eyebrow">La misión</p>
 <h2 id="objetivo">Jugar, investigar y explicar</h2>
-<p class="intro">El docente os dará la dirección del juego. Escribid vuestro nombre, pulsad <strong>Start game</strong> y haced clic en <strong>Click</strong> durante diez segundos. <strong>Leaderboard</strong> muestra el ranking; las <strong>Flags</strong> indican que habéis encontrado un fallo de diseño. El reto consiste en conseguir banderas y explicar qué comprobación le faltaba al servidor.</p>
+<p class="intro">El docente os dará la dirección del juego. Escribid vuestro nombre, pulsad <strong>Start game</strong> y haced clic en <strong>Click</strong> durante diez segundos. <strong>Leaderboard</strong> muestra el ranking; las <strong>Flags</strong> indican que habéis encontrado un fallo de diseño. El reto son <a href="#objetivos">cuatro objetivos</a>, uno por cada propiedad de la seguridad, y explicar qué comprobación le faltaba al servidor en cada uno.</p>
 <div class="facts" aria-label="Datos esenciales de la práctica">
   <div class="fact"><strong>10 segundos</strong><p>Dura una partida normal. El marcador conserva la mejor puntuación de cada nombre.</p></div>
   <div class="fact"><strong>2 herramientas</strong><p>Usaréis el navegador con F12 y la terminal con <code>curl</code>.</p></div>
   <div class="fact"><strong>1 evidencia</strong><p>Por cada hallazgo, guardad petición, respuesta, cambio observado y explicación.</p></div>
 </div>
-<div class="callout"><h3>Alcance</h3><p>Autorizado: <strong>solo</strong> la dirección del juego que da el docente, <strong>solo</strong> durante la clase. Nada de atacar la red del aula, los equipos de compañeros ni ningún otro servicio. Fuera de esto, lo mismo sería delito.</p></div>
+<div class="callout"><h3>Alcance</h3><p>Autorizado: <strong>solo</strong> la dirección del juego que proyecta el docente, <strong>solo</strong> durante la clase. Es un enlace público <code>https://…pinggy.link</code> que apunta al equipo del docente; el resto de ese equipo y del dominio de Pinggy queda fuera. Nada de atacar la red del aula, los equipos de compañeros ni ningún otro servicio. Fuera de esto, lo mismo sería delito.</p><p>Dentro del alcance todo está permitido, también vaciar el ranking: basta con volver a jugar para llenarlo.</p></div>
+</section>
+
+<section class="section" id="objetivos" aria-labelledby="cuatro">
+<p class="eyebrow">Qué hay que conseguir</p>
+<h2 id="cuatro">Cuatro objetivos, uno por propiedad</h2>
+<p class="intro">La seguridad protege cuatro cosas. Cada objetivo rompe una de ellas en el juego; cuando lo consigáis, escribid cuál y por qué.</p>
+<div class="activity-grid">
+  <div class="activity"><span class="number">1</span><h3>Integridad: una puntuación imposible</h3><p>Aparecer en el ranking con más puntos de los que caben en diez segundos. Bandera: <strong>Impossible score</strong>, y <strong>No browser</strong> si lo hacéis sin la web.</p></div>
+  <div class="activity"><span class="number">2</span><h3>Confidencialidad: lo que no debíais ver</h3><p>Encontrar en el código que recibe vuestro navegador las rutas que el equipo de desarrollo olvidó quitar. Sin bandera: la evidencia es la línea del código.</p></div>
+  <div class="activity"><span class="number">3</span><h3>Autenticidad: hacerse pasar por otro</h3><p>Cambiar la puntuación de otra persona de la clase sin ser ella. Bandera: <strong>Changed another player's score</strong>.</p></div>
+  <div class="activity"><span class="number">4</span><h3>Disponibilidad: vaciar el ranking</h3><p>Dejar el marcador en blanco para toda la clase. Bandera: <strong>Hidden admin route</strong>. Avisad en voz alta cuando lo hagáis.</p></div>
+</div>
 </section>
 
 <section class="section" id="recorrido" aria-labelledby="flujo">
@@ -131,7 +143,7 @@ th{color:var(--muted);font-weight:600}
   <div class="activity"><span class="number">3</span><h3>Formula una hipótesis y pruébala</h3><p>Mira el método y los datos de cada petición. A partir de las pistas, prueba una variación con la consola del navegador o con <code>curl</code> y comprueba el efecto en el ranking.</p></div>
   <div class="activity"><span class="number">4</span><h3>Explica el resultado</h3><p>Describe qué aceptó el servidor, por qué era posible y qué validación faltaba. El jueves, repite la prueba cuando el docente cambie a <code>validated</code>.</p></div>
 </div>
-<div class="callout"><h3>Primera comprobación útil</h3><p>El endpoint <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Añádelo a la dirección exacta que te haya dado el docente. Un código HTTP <code>200</code> indica que la consulta ha funcionado.</p><pre><code>curl -i http://DIRECCION-DEL-JUEGO:8080/api/leaderboard</code></pre><p>Reemplaza <code>DIRECCION-DEL-JUEGO</code> por la IP o el nombre real. En PowerShell, usa <code>curl.exe</code> si <code>curl</code> ejecuta otro comando.</p></div>
+<div class="callout"><h3>Primera comprobación útil</h3><p>El endpoint <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Añádelo a la dirección exacta que te haya dado el docente. Un código HTTP <code>200</code> indica que la consulta ha funcionado.</p><pre><code>curl -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre><p>Reemplaza <code>https://DIRECCION-DEL-JUEGO</code> por el enlace de Pinggy que proyecta el docente, sin puerto. Si el enlace cambia durante la clase, usad el nuevo. En PowerShell, usa <code>curl.exe</code> si <code>curl</code> ejecuta otro comando.</p></div>
 </section>
 
 <section class="section" aria-labelledby="evidencia">

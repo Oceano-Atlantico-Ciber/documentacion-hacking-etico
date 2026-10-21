@@ -45,6 +45,11 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 <pre><code>MODE=trusted docker compose up -d --remove-orphans      # http://IP-DEL-DOCENTE:8080  (?scoreboard para el proyector)
 MODE=validated docker compose up -d --force-recreate --remove-orphans</code></pre>
 <p>En Windows PowerShell: <code>$env:MODE = "validated"; docker compose up -d --force-recreate --remove-orphans</code> (y <code>"trusted"</code> para volver).</p>
+<h3>Publicarlo para la clase con Pinggy</h3>
+<p>El docente abre un túnel desde su equipo; la URL <code>https://….pinggy.link</code> que imprime es la dirección del juego y el alcance de la práctica. Se proyecta con <code>?scoreboard</code> al final.</p>
+<pre><code>ssh -p 443 -R0:localhost:8080 free@a.pinggy.io</code></pre>
+<p class="note">En el plan gratuito el túnel se cierra a los 60 minutos y al reabrirlo cambia la URL: hay que volver a proyectarla. El juego tiene que estar levantado antes de abrir el túnel o la URL responde 502.</p>
+<p>Quien quiera repetirlo en casa puede clonar este repositorio y levantar el juego en su equipo: la dirección pasa a ser <code>http://localhost:8080</code>.</p>
 
 <footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
 </main>
