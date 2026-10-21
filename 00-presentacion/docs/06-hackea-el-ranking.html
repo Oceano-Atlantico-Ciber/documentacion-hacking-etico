@@ -88,7 +88,9 @@ th{color:var(--muted);font-weight:600}
 <section class="section" aria-labelledby="objetivo">
 <p class="eyebrow">La misión</p>
 <h2 id="objetivo">Jugar, investigar y explicar</h2>
-<p class="intro">El docente os dará la dirección del juego. Escribid vuestro nombre, pulsad <strong>Start game</strong> y haced clic en <strong>Click</strong> durante diez segundos. <strong>Leaderboard</strong> muestra el ranking; las <strong>Flags</strong> indican que habéis encontrado un fallo de diseño. El reto son <a href="#objetivos">cuatro objetivos</a>, uno por cada propiedad de la seguridad, y explicar qué comprobación le faltaba al servidor en cada uno.</p>
+<p class="intro">El docente os dará la dirección del juego. Escribid vuestro nombre, pulsad <strong>Start game</strong> y haced clic en <strong>Click</strong> durante diez segundos. <strong>Leaderboard</strong> muestra el ranking y, junto a cada nombre, sus <strong>flags</strong>.</p>
+<div class="callout"><h3>Qué es una flag</h3><p>Una <strong>flag</strong> es la prueba de que has encontrado un fallo. El servidor te la apunta junto a tu nombre en el ranking cuando consigues algo que no debería permitir. No se gana jugando bien: se gana atacando. En el curso usamos siempre la palabra en inglés, como en las competiciones de seguridad (CTF, <em>Capture The Flag</em>).</p></div>
+<p class="intro">El reto son <a href="#objetivos">cuatro objetivos</a>, uno por cada propiedad de la seguridad, y explicar qué comprobación le faltaba al servidor en cada uno.</p>
 <div class="facts" aria-label="Datos esenciales de la práctica">
   <div class="fact"><strong>10 segundos</strong><p>Dura una partida normal. El marcador conserva la mejor puntuación de cada nombre.</p></div>
   <div class="fact"><strong>2 herramientas</strong><p>Usaréis el navegador con F12 y la terminal con <code>curl</code>.</p></div>
@@ -102,11 +104,33 @@ th{color:var(--muted);font-weight:600}
 <h2 id="cuatro">Cuatro objetivos, uno por propiedad</h2>
 <p class="intro">La seguridad protege cuatro cosas. Cada objetivo rompe una de ellas en el juego; cuando lo consigáis, escribid cuál y por qué.</p>
 <div class="activity-grid">
-  <div class="activity"><span class="number">1</span><h3>Integridad: una puntuación imposible</h3><p>Aparecer en el ranking con más puntos de los que caben en diez segundos. Bandera: <strong>Impossible score</strong>, y <strong>No browser</strong> si lo hacéis sin la web.</p></div>
-  <div class="activity"><span class="number">2</span><h3>Confidencialidad: lo que no debíais ver</h3><p>Encontrar en el código que recibe vuestro navegador las rutas que el equipo de desarrollo olvidó quitar. Sin bandera: la evidencia es la línea del código.</p></div>
-  <div class="activity"><span class="number">3</span><h3>Autenticidad: hacerse pasar por otro</h3><p>Cambiar la puntuación de otra persona de la clase sin ser ella. Bandera: <strong>Changed another player's score</strong>.</p></div>
-  <div class="activity"><span class="number">4</span><h3>Disponibilidad: vaciar el ranking</h3><p>Dejar el marcador en blanco para toda la clase. Bandera: <strong>Hidden admin route</strong>. Avisad en voz alta cuando lo hagáis.</p></div>
+  <div class="activity"><span class="number">1</span><h3>Integridad: una puntuación imposible</h3><p>Aparecer en el ranking con más puntos de los que caben en diez segundos. Flags: <strong>Impossible score</strong>, y <strong>No browser</strong> si lo hacéis sin la web.</p></div>
+  <div class="activity"><span class="number">2</span><h3>Confidencialidad: lo que no debíais ver</h3><p>Encontrar en el código que recibe vuestro navegador las rutas que el equipo de desarrollo olvidó quitar. Sin flag: la evidencia es la línea del código.</p></div>
+  <div class="activity"><span class="number">3</span><h3>Autenticidad: hacerse pasar por otro</h3><p>Cambiar la puntuación de otra persona de la clase sin ser ella. Flag: <strong>Changed another player's score</strong>.</p></div>
+  <div class="activity"><span class="number">4</span><h3>Disponibilidad: vaciar el ranking</h3><p>Dejar el marcador en blanco para toda la clase. Flag: <strong>Hidden admin route</strong>. Avisad en voz alta cuando lo hagáis.</p></div>
 </div>
+</section>
+
+<section class="section" id="ataques" aria-labelledby="tipos">
+<p class="eyebrow">Qué buscar</p>
+<h2 id="tipos">Tipos de ataque que funcionan en el juego</h2>
+<p class="intro">Son ataques reales que se ven a diario en aplicaciones web. Antes de la lista, los dos catálogos con los que el mundo de la seguridad les pone nombre y número.</p>
+<div class="facts" aria-label="CWE y CVE">
+  <div class="fact"><strong>CWE · el tipo de fallo</strong><p><em>Common Weakness Enumeration</em>. Un catálogo de <b>tipos</b> de error de programación o de diseño, cada uno con un número. Ejemplo: <code>CWE-639</code> es «dejar que el usuario elija a qué datos accede». Describe una familia de fallos, no un programa concreto.</p></div>
+  <div class="fact"><strong>CVE · un fallo concreto</strong><p><em>Common Vulnerabilities and Exposures</em>. Un número para <b>cada fallo real</b> encontrado en un producto y una versión concretos. Ejemplo: <code>CVE-2021-44228</code> es Log4Shell, en la biblioteca Log4j. Cada CVE dice a qué CWE pertenece.</p></div>
+  <div class="fact"><strong>En el juego</strong><p>Los fallos del juego tienen CWE, porque son tipos de error conocidos. No tienen CVE: el juego no es un producto publicado. Si lo fuera y alguien lo reportase, cada fallo recibiría el suyo.</p></div>
+</div>
+<p class="intro">Entre paréntesis va el nombre con el que encontraréis cada ataque en internet y su CWE.</p>
+<ol class="note-list">
+  <li><strong>Leer el código del cliente</strong> (<em>source code review</em>, CWE-615). Todo lo que la web manda a vuestro navegador se puede leer: el JavaScript, los comentarios, las rutas a las que llama. Si el equipo de desarrollo dejó una nota, la veréis. <em>Objetivo 2.</em></li>
+  <li><strong>Cambiar los datos que envía el navegador</strong> (<em>parameter tampering</em>, CWE-602). El navegador es vuestro: podéis modificar lo que manda antes de que llegue al servidor. Si el servidor no lo comprueba, se lo cree. <em>Objetivo 1.</em></li>
+  <li><strong>Hablar con el servidor sin pasar por la web</strong> (<em>client-side bypass</em>, CWE-602). Los botones de la página solo son una forma de enviar peticiones. Con <code>curl</code> o desde la consola podéis enviar la misma petición, o una distinta, sin jugar. <em>Objetivo 1.</em></li>
+  <li><strong>Falsificar una cabecera</strong> (<em>header spoofing</em>, CWE-290). Las cabeceras de una petición las escribe quien la envía. Si el servidor decide algo por una cabecera, cualquiera puede escribir la que le convenga. <em>Objetivo 1.</em></li>
+  <li><strong>Tocar los datos de otra persona</strong> (<em>IDOR</em>, referencia directa insegura a objetos, CWE-639). Si para cambiar algo basta con saber su nombre, podéis cambiar lo de cualquiera. El servidor tendría que comprobar quién lo pide, no solo qué pide. <em>Objetivo 3.</em></li>
+  <li><strong>Usar una función de administración sin permiso</strong> (<em>broken access control</em>, CWE-306). Una ruta que «nadie conoce» no está protegida: si alguien la encuentra y el servidor no pide credenciales, cualquiera puede usarla. <em>Objetivo 4.</em></li>
+</ol>
+<p class="intro">Cada CWE se puede buscar en <a href="https://cwe.mitre.org/">cwe.mitre.org</a> y cada CVE en <a href="https://www.cve.org/">cve.org</a>.</p>
+<p class="intro">No busquéis inyección SQL ni XSS: este juego no tiene base de datos y escapa los nombres. Llegarán en Aplicaciones web.</p>
 </section>
 
 <section class="section" id="recorrido" aria-labelledby="flujo">
@@ -122,7 +146,7 @@ th{color:var(--muted);font-weight:600}
   <span class="arrow" aria-hidden="true">→</span>
   <div class="node" data-node="server"><span class="tag">Juego</span><b>Servidor</b><span id="server-caption">Recibe la puntuación enviada.</span></div>
   <span class="arrow" aria-hidden="true">→</span>
-  <div class="node" data-node="ranking"><span class="tag">Resultado</span><b>Ranking</b><span id="ranking-caption">Muestra puntos y banderas.</span></div>
+  <div class="node" data-node="ranking"><span class="tag">Resultado</span><b>Ranking</b><span id="ranking-caption">Muestra puntos y flags.</span></div>
 </div>
 <div class="step-picker" role="group" aria-label="Paso del recorrido">
   <button type="button" data-step="0" aria-pressed="true">1 · Empezar</button>
@@ -153,7 +177,7 @@ th{color:var(--muted);font-weight:600}
 <ol class="note-list">
   <li><strong>Hipótesis:</strong> qué querías comprobar.</li>
   <li><strong>Petición:</strong> método, ruta, cabeceras y datos enviados.</li>
-  <li><strong>Respuesta y efecto:</strong> código HTTP y cambio en el ranking o en las banderas.</li>
+  <li><strong>Respuesta y efecto:</strong> código HTTP y cambio en el ranking o en las flags.</li>
   <li><strong>Explicación:</strong> causa del fallo y una corrección concreta.</li>
 </ol>
 </section>
@@ -161,14 +185,14 @@ th{color:var(--muted);font-weight:600}
 <section class="section" id="documentar" aria-labelledby="vulnerabilidad">
 <p class="eyebrow">Semana 2</p>
 <h2 id="vulnerabilidad">De truco a vulnerabilidad</h2>
-<p class="intro">Repasamos el marcador. Para cada bandera respondemos a las cuatro preguntas con las que se documenta cualquier vulnerabilidad:</p>
+<p class="intro">Repasamos el marcador. Para cada flag respondemos a las cuatro preguntas con las que se documenta cualquier vulnerabilidad:</p>
 <div class="tabla"><table><thead><tr><th>Pregunta</th><th>Ejemplo con el juego</th></tr></thead><tbody>
 <tr><td>¿Dónde está?</td><td>En la ruta de la API que recibe la puntuación.</td></tr>
 <tr><td>¿Cuál es el fallo?</td><td>El servidor se fía de un dato que decide el cliente.</td></tr>
 <tr><td>¿Qué permite?</td><td>Alterar la integridad del ranking.</td></tr>
 <tr><td>¿Cómo se corrige?</td><td>El servidor calcula la puntuación y comprueba quién pide qué.</td></tr>
 </tbody></table></div>
-<p class="intro">Así nacen los catálogos: <strong>CWE</strong> clasifica los tipos de fallo (el del juego es «confiar en datos del cliente») y <strong>CVE</strong> numera cada fallo concreto encontrado en un producto real. Qué propiedad rompe cada truco se ve en <a href="../../01-fundamentos/docs/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a>.</p>
+<p class="intro">Así nacen los catálogos: con estas cuatro respuestas se asigna el <a href="#ataques">CWE</a> de cada flag y, en un producto real, se pide su CVE. Qué propiedad rompe cada truco se ve en <a href="../../01-fundamentos/docs/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a>.</p>
 </section>
 </main>
 
@@ -178,13 +202,13 @@ th{color:var(--muted);font-weight:600}
 (() => {
   const modes = {
     trusted: {
-      captions: ["Cuenta tus clics durante la partida.", "Recibe la puntuación enviada.", "Muestra puntos y banderas."],
+      captions: ["Cuenta tus clics durante la partida.", "Recibe la puntuación enviada.", "Muestra puntos y flags."],
       note: "En trusted, el navegador calcula la puntuación y la envía al terminar. Investiga qué riesgos tiene esa decisión.",
       steps: [
         ["Empieza una partida", "Al pulsar Start game, el navegador pide al servidor que inicie una partida de diez segundos.", "browser"],
         ["Pulsa durante diez segundos", "El navegador suma cada clic y muestra la cuenta en pantalla. Observa qué parte del cálculo ocurre en tu equipo.", "browser"],
         ["Termina y envía el resultado", "Al acabar el tiempo, el navegador envía el nombre y la puntuación calculada al servidor.", "server"],
-        ["Consulta el ranking", "El servidor guarda la mejor puntuación y la página consulta /api/leaderboard para mostrar puntos y banderas.", "ranking"]
+        ["Consulta el ranking", "El servidor guarda la mejor puntuación y la página consulta /api/leaderboard para mostrar puntos y flags.", "ranking"]
       ]
     },
     validated: {
