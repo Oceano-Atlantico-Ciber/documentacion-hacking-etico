@@ -1,0 +1,3 @@
+# Ficheros del repo que no se publican en GitHub Pages
+exclude:
+  - 00-presentacion/ejercicios/01-hackea-el-ranking/solucion-ranking.md
