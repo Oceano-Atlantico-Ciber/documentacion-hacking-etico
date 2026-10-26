@@ -73,14 +73,27 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 figure { margin: 0; display: grid; gap: 8px; overflow-x: auto; }
 figcaption { color: var(--muted); font-size: 14px; }
 .grafo { width: 100%; min-width: 560px; max-width: 680px; height: auto; }
-.grafo text { font: 500 12px var(--f-mono); fill: var(--ink); }
-.grafo .t { font: 700 13px var(--f-body); }
+.grafo text { font: 500 13px var(--f-mono); fill: var(--ink); }
+.grafo .t, .grafo .fila { font: 700 14px var(--f-body); }
+.grafo .tipo { font: 600 10.5px var(--f-mono); letter-spacing: .06em; fill: var(--muted); }
+.grafo .cmd { font-size: 12px; }
 .grafo .m { fill: var(--muted); }
 .grafo .r { fill: var(--accent); font-weight: 700; }
+.grafo .p { fill: var(--ia); font-weight: 700; }
 .grafo .c { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
-.grafo .x { fill: var(--accent); }
+.grafo .x { fill: var(--accent); stroke: var(--accent); stroke-width: 2; }
+.grafo circle.p { stroke: var(--ia); stroke-width: 2; }
+.grafo .g { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .grafo .l { stroke: var(--muted); stroke-width: 2; fill: none; }
+.grafo .la { stroke: var(--accent); stroke-width: 2; fill: none; }
+.grafo .lg { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; fill: none; }
 .grafo .k { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+.grafo .kp { fill: var(--ia-soft); stroke: var(--ia); stroke-width: 1.5; }
+.grafo .zona { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.grafo .rama rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.grafo .rama text { fill: var(--accent); font-weight: 700; font-size: 12px; }
+.grafo .head rect { fill: var(--ink); }
+.grafo .head text { fill: var(--bg); font-weight: 700; font-size: 12px; }
 </style>
 
 </head>
@@ -97,6 +110,10 @@ figcaption { color: var(--muted); font-size: 14px; }
 <section class="seccion">
 <h2>Una rama es un puntero</h2>
 <p>Una rama es un fichero de 41 bytes con el SHA de un commit. Al hacer commit en ella, el puntero avanza al commit nuevo. <code>HEAD</code> indica en qué rama estás. Crear una rama no copia nada, por eso es instantáneo.</p>
+<figure>
+<svg class="grafo" viewBox="0 0 640 330" role="img" aria-label="Una rama es un puntero a un commit y HEAD apunta a la rama actual; al hacer commit solo avanza la rama en la que estás"><defs><marker id="ptr-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="ptr-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="74">En main</text><text class="fila" x="0" y="174">git switch -c</text><text class="m cmd" x="0" y="192">git/prueba</text><text class="fila" x="0" y="284">git commit</text><text class="m cmd" x="0" y="302">en git/prueba</text><path class="l" d="M170 70L242 70"/><circle class="c" cx="170" cy="70" r="17"/><text x="170" y="74.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="70" r="17"/><text x="242" y="74.5" text-anchor="middle">B</text><g class="rama"><rect x="221.2" y="15" width="41.6" height="22" rx="6"/><text x="242.0" y="30" text-anchor="middle">main</text></g><path class="l" d="M242 37L242 51" marker-end="url(#ptr-f)"/><g class="head"><rect x="284.8" y="15" width="41.6" height="22" rx="6"/><text x="305.6" y="30" text-anchor="middle">HEAD</text></g><path class="l" d="M284.8 26L264.8 26" marker-end="url(#ptr-f)"/><path class="l" d="M170 180L242 180"/><circle class="c" cx="170" cy="180" r="17"/><text x="170" y="184.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="180" r="17"/><text x="242" y="184.5" text-anchor="middle">B</text><g class="rama"><rect x="221.2" y="125" width="41.6" height="22" rx="6"/><text x="242.0" y="140" text-anchor="middle">main</text></g><path class="l" d="M242 147L242 161" marker-end="url(#ptr-f)"/><g class="rama"><rect x="281.0" y="169" width="86.0" height="22" rx="6"/><text x="324.0" y="184" text-anchor="middle">git/prueba</text></g><path class="l" d="M281 180L261 180" marker-end="url(#ptr-f)"/><g class="head"><rect x="389.0" y="169" width="41.6" height="22" rx="6"/><text x="409.8" y="184" text-anchor="middle">HEAD</text></g><path class="l" d="M389.0 180L369.0 180" marker-end="url(#ptr-f)"/><path class="l" d="M170 290L314 290"/><circle class="c" cx="170" cy="290" r="17"/><text x="170" y="294.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="290" r="17"/><text x="242" y="294.5" text-anchor="middle">B</text><circle class="x" cx="314" cy="290" r="17"/><text x="314" y="294.5" text-anchor="middle" style="fill: var(--surface)">C</text><g class="rama"><rect x="221.2" y="235" width="41.6" height="22" rx="6"/><text x="242.0" y="250" text-anchor="middle">main</text></g><path class="l" d="M242 257L242 271" marker-end="url(#ptr-f)"/><g class="rama"><rect x="353.0" y="279" width="86.0" height="22" rx="6"/><text x="396.0" y="294" text-anchor="middle">git/prueba</text></g><path class="l" d="M353 290L333 290" marker-end="url(#ptr-f)"/><g class="head"><rect x="461.0" y="279" width="41.6" height="22" rx="6"/><text x="481.8" y="294" text-anchor="middle">HEAD</text></g><path class="l" d="M461.0 290L441.0 290" marker-end="url(#ptr-f)"/></svg>
+<figcaption>Al hacer commit solo avanza la rama a la que apunta <code>HEAD</code>; <code>main</code> se queda donde estaba.</figcaption>
+</figure>
 <pre><code>git switch -c git/prueba      # crear una rama y pasar a ella
 git switch main               # volver
 git branch -v                 # ramas locales y su último commit
@@ -106,19 +123,12 @@ cat .git/refs/heads/main      # el puntero, tal cual</code></pre>
 <section class="seccion">
 <h2>Dos formas de fusionar</h2>
 <figure>
-<svg class="grafo" viewBox="0 0 680 150" role="img" aria-label="A la izquierda, fast-forward: main avanza hasta la punta de la rama sin commits nuevos. A la derecha, merge de tres vías: un commit M con dos padres une main y la rama">
-<text class="t" x="20" y="20">Fast-forward</text>
-<path class="l" d="M40 80H220"/>
-<circle class="c" cx="40" cy="80" r="13"/><circle class="c" cx="100" cy="80" r="13"/><circle class="c" cx="160" cy="80" r="13"/><circle class="c" cx="220" cy="80" r="13"/>
-<text x="40" y="84" text-anchor="middle">A</text><text x="100" y="84" text-anchor="middle">B</text><text x="160" y="84" text-anchor="middle">C</text><text x="220" y="84" text-anchor="middle">D</text>
-<text class="m" x="100" y="114" text-anchor="middle">main antes</text><text class="r" x="220" y="114" text-anchor="middle">main, rama</text>
-<text class="t" x="320" y="20">Merge de tres vías</text>
-<path class="l" d="M340 100H580M400 100L460 50H520L580 100"/>
-<circle class="c" cx="340" cy="100" r="13"/><circle class="c" cx="400" cy="100" r="13"/><circle class="c" cx="490" cy="100" r="13"/><circle class="c" cx="460" cy="50" r="13"/><circle class="c" cx="520" cy="50" r="13"/><circle class="x" cx="580" cy="100" r="13"/>
-<text x="340" y="104" text-anchor="middle">A</text><text x="400" y="104" text-anchor="middle">B</text><text x="490" y="104" text-anchor="middle">E</text><text x="460" y="54" text-anchor="middle">C</text><text x="520" y="54" text-anchor="middle">D</text><text x="580" y="104" text-anchor="middle" style="fill: var(--surface)">M</text>
-<text class="r" x="580" y="134" text-anchor="middle">main</text><text class="m" x="520" y="26" text-anchor="middle">rama</text>
-</svg>
-<figcaption>Si <code>main</code> no se ha movido desde que salió la rama, basta con adelantar el puntero. Si los dos lados avanzaron, git crea un commit de merge con dos padres.</figcaption>
+<svg class="grafo" viewBox="0 0 640 230" role="img" aria-label="Fast-forward: main estaba en B y la rama en D; git merge solo adelanta main hasta D, sin commits nuevos"><defs><marker id="ff-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="ff-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="74">Antes</text><path class="l" d="M170 70L386 70"/><circle class="c" cx="170" cy="70" r="17"/><text x="170" y="74.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="70" r="17"/><text x="242" y="74.5" text-anchor="middle">B</text><circle class="c" cx="314" cy="70" r="17"/><text x="314" y="74.5" text-anchor="middle">C</text><circle class="c" cx="386" cy="70" r="17"/><text x="386" y="74.5" text-anchor="middle">D</text><text class="fila" x="0" y="174">git merge</text><text class="m cmd" x="0" y="192">git/e3-ff</text><path class="l" d="M170 180L386 180"/><circle class="c" cx="170" cy="180" r="17"/><text x="170" y="184.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="180" r="17"/><text x="242" y="184.5" text-anchor="middle">B</text><circle class="c" cx="314" cy="180" r="17"/><text x="314" y="184.5" text-anchor="middle">C</text><circle class="c" cx="386" cy="180" r="17"/><text x="386" y="184.5" text-anchor="middle">D</text><g class="rama"><rect x="221.2" y="15" width="41.6" height="22" rx="6"/><text x="242.0" y="30" text-anchor="middle">main</text></g><path class="l" d="M242 37L242 51" marker-end="url(#ff-f)"/><g class="rama"><rect x="425.0" y="59" width="78.6" height="22" rx="6"/><text x="464.3" y="74" text-anchor="middle">git/e3-ff</text></g><path class="l" d="M425 70L405 70" marker-end="url(#ff-f)"/><g class="rama"><rect x="365.2" y="125" width="41.6" height="22" rx="6"/><text x="386.0" y="140" text-anchor="middle">main</text></g><path class="l" d="M386 147L386 161" marker-end="url(#ff-f)"/><g class="rama"><rect x="425.0" y="169" width="78.6" height="22" rx="6"/><text x="464.3" y="184" text-anchor="middle">git/e3-ff</text></g><path class="l" d="M425 180L405 180" marker-end="url(#ff-f)"/><text class="r" x="386" y="222" text-anchor="middle">main avanza; ningún commit nuevo</text></svg>
+<figcaption>Fast-forward: <code>main</code> no se había movido desde que salió la rama, así que basta con adelantar el puntero.</figcaption>
+</figure>
+<figure>
+<svg class="grafo" viewBox="0 0 640 280" role="img" aria-label="Merge de tres vías: main y la rama han avanzado desde B; git merge crea el commit M con dos padres, E y D"><defs><marker id="tv-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="tv-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="94">Antes</text><path class="l" d="M170 90L314 90"/><path class="l" d="M242 90L314 40L386 40"/><circle class="c" cx="170" cy="90" r="17"/><text x="170" y="94.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="90" r="17"/><text x="242" y="94.5" text-anchor="middle">B</text><circle class="c" cx="314" cy="90" r="17"/><text x="314" y="94.5" text-anchor="middle">E</text><circle class="c" cx="314" cy="40" r="17"/><text x="314" y="44.5" text-anchor="middle">C</text><circle class="c" cx="386" cy="40" r="17"/><text x="386" y="44.5" text-anchor="middle">D</text><g class="rama"><rect x="293.2" y="123" width="41.6" height="22" rx="6"/><text x="314.0" y="138" text-anchor="middle">main</text></g><path class="l" d="M314 123L314 109" marker-end="url(#tv-f)"/><g class="rama"><rect x="425.0" y="29" width="93.4" height="22" rx="6"/><text x="471.7" y="44" text-anchor="middle">git/e3-noff</text></g><path class="l" d="M425 40L405 40" marker-end="url(#tv-f)"/><text class="fila" x="0" y="224">git merge --no-ff</text><text class="m cmd" x="0" y="242">git/e3-noff</text><path class="l" d="M314 230L458 230"/><path class="l" d="M386 180L458 230"/><path class="l" d="M170 230L314 230"/><path class="l" d="M242 230L314 180L386 180"/><circle class="c" cx="170" cy="230" r="17"/><text x="170" y="234.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="230" r="17"/><text x="242" y="234.5" text-anchor="middle">B</text><circle class="c" cx="314" cy="230" r="17"/><text x="314" y="234.5" text-anchor="middle">E</text><circle class="c" cx="314" cy="180" r="17"/><text x="314" y="184.5" text-anchor="middle">C</text><circle class="c" cx="386" cy="180" r="17"/><text x="386" y="184.5" text-anchor="middle">D</text><circle class="x" cx="458" cy="230" r="17"/><text x="458" y="234.5" text-anchor="middle" style="fill: var(--surface)">M</text><g class="rama"><rect x="497.0" y="219" width="41.6" height="22" rx="6"/><text x="517.8" y="234" text-anchor="middle">main</text></g><path class="l" d="M497 230L477 230" marker-end="url(#tv-f)"/><text class="r" x="458" y="272" text-anchor="middle">dos padres: E y D</text></svg>
+<figcaption>Merge de tres vías: los dos lados avanzaron, así que git crea un commit de merge con dos padres.</figcaption>
 </figure>
 <div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
 <tr><td><code>git merge rama</code></td><td>Fast-forward si se puede; si no, commit de merge.</td></tr>
@@ -130,14 +140,12 @@ cat .git/refs/heads/main      # el puntero, tal cual</code></pre>
 
 <section class="seccion">
 <h2>Conflictos</h2>
-<p>En un merge de tres vías git compara cada lado con el <b>ancestro común</b> (<code>B</code> en el esquema). Si solo un lado tocó unas líneas, se queda con ese cambio. Si los dos tocaron las mismas líneas de forma distinta, no puede decidir y para: es un conflicto. Git marca el fichero así:</p>
-<pre><code>22 ssh
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-3306 mysql
-=======
-5432 postgresql
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; git/e4-b</code></pre>
-<p>Arriba está tu lado (<code>HEAD</code>) y abajo el de la rama que entra. Resolver es dejar el fichero como debe quedar, sin marcadores, y decírselo a git:</p>
+<p>En un merge de tres vías git compara cada lado con el <b>ancestro común</b> (<code>B</code> en el esquema). Si solo un lado tocó unas líneas, se queda con ese cambio. Si los dos tocaron las mismas líneas de forma distinta, no puede decidir y para: es un conflicto.</p>
+<figure>
+<svg class="grafo" viewBox="0 0 680 250" role="img" aria-label="Desde el ancestro común B, main añade 3306 mysql y la rama añade 5432 postgresql en el mismo sitio; git no puede elegir y marca el conflicto"><defs><marker id="cf-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="cf-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><rect class="k" x="0" y="85" width="150" height="81" rx="8"/><text class="tipo" x="10" y="102">BASE · B</text><text x="10" y="121">22 ssh</text><text x="10" y="138">80 http</text><rect class="k" x="230" y="0" width="170" height="98" rx="8"/><text class="tipo" x="240" y="17">TU LADO · main</text><text x="240" y="36">22 ssh</text><text x="240" y="53">80 http</text><text x="240" y="70">+ 3306 mysql</text><rect class="k" x="230" y="150" width="170" height="98" rx="8"/><text class="tipo" x="240" y="167">LA RAMA · git/e4-b</text><text x="240" y="186">22 ssh</text><text x="240" y="203">80 http</text><text x="240" y="220">+ 5432 postgresql</text><rect class="kp" x="480" y="35" width="200" height="183" rx="8"/><text class="tipo" x="490" y="52">RESULTADO</text><text x="490" y="71">22 ssh</text><text x="490" y="88">80 http</text><text x="490" y="105">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</text><text x="490" y="122">3306 mysql</text><text x="490" y="139">=======</text><text x="490" y="156">5432 postgresql</text><text x="490" y="173">&gt;&gt;&gt;&gt;&gt;&gt;&gt; git/e4-b</text><path class="l" d="M150 110L228 55" marker-end="url(#cf-f)"/><text class="m cmd" x="189.0" y="78.5" text-anchor="middle">cambia</text><path class="l" d="M150 140L228 195" marker-end="url(#cf-f)"/><text class="m cmd" x="189.0" y="181.5" text-anchor="middle">cambia</text><path class="l" d="M400 50L478 90" marker-end="url(#cf-f)"/><path class="l" d="M400 200L478 165" marker-end="url(#cf-f)"/><text class="p" x="580" y="240" text-anchor="middle">mismas líneas, dos cambios</text></svg>
+<figcaption>Git deja en el fichero los dos lados entre marcadores: arriba el tuyo (<code>HEAD</code>), abajo el de la rama que entra.</figcaption>
+</figure>
+<p>Resolver es dejar el fichero como debe quedar, sin marcadores, y decírselo a git:</p>
 <ol>
 <li><code>git status</code> lista los ficheros en conflicto.</li>
 <li>Edita cada uno. Puede quedar un lado, el otro, los dos o algo nuevo.</li>

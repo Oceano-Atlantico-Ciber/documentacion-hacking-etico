@@ -73,14 +73,27 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 figure { margin: 0; display: grid; gap: 8px; overflow-x: auto; }
 figcaption { color: var(--muted); font-size: 14px; }
 .grafo { width: 100%; min-width: 560px; max-width: 680px; height: auto; }
-.grafo text { font: 500 12px var(--f-mono); fill: var(--ink); }
-.grafo .t { font: 700 13px var(--f-body); }
+.grafo text { font: 500 13px var(--f-mono); fill: var(--ink); }
+.grafo .t, .grafo .fila { font: 700 14px var(--f-body); }
+.grafo .tipo { font: 600 10.5px var(--f-mono); letter-spacing: .06em; fill: var(--muted); }
+.grafo .cmd { font-size: 12px; }
 .grafo .m { fill: var(--muted); }
 .grafo .r { fill: var(--accent); font-weight: 700; }
+.grafo .p { fill: var(--ia); font-weight: 700; }
 .grafo .c { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
-.grafo .x { fill: var(--accent); }
+.grafo .x { fill: var(--accent); stroke: var(--accent); stroke-width: 2; }
+.grafo circle.p { stroke: var(--ia); stroke-width: 2; }
+.grafo .g { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .grafo .l { stroke: var(--muted); stroke-width: 2; fill: none; }
+.grafo .la { stroke: var(--accent); stroke-width: 2; fill: none; }
+.grafo .lg { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; fill: none; }
 .grafo .k { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+.grafo .kp { fill: var(--ia-soft); stroke: var(--ia); stroke-width: 1.5; }
+.grafo .zona { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.grafo .rama rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.grafo .rama text { fill: var(--accent); font-weight: 700; font-size: 12px; }
+.grafo .head rect { fill: var(--ink); }
+.grafo .head text { fill: var(--bg); font-weight: 700; font-size: 12px; }
 </style>
 
 </head>
@@ -110,6 +123,10 @@ figcaption { color: var(--muted); font-size: 14px; }
 <tr><td><code>--hard</code></td><td>Se mueve</td><td>Se vacía</td><td><b>Se pierde</b> lo no commiteado</td></tr>
 </tbody></table></div>
 <p><code>git revert</code> no borra nada: crea un commit nuevo que aplica el cambio inverso. Es la única forma correcta de deshacer en una rama compartida, por la regla de oro de <a href="03-remotos-y-reescribir-historia.html">Git 3</a>.</p>
+<figure>
+<svg class="grafo" viewBox="0 0 680 290" role="img" aria-label="Partiendo de A B X C con X erróneo: reset quita X y C de la rama y reescribe la historia; revert añade un commit nuevo que deshace X y no reescribe nada"><defs><marker id="rr-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="rr-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="49">Publicado</text><path class="l" d="M170 45L386 45"/><circle class="c" cx="170" cy="45" r="17"/><text x="170" y="49.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="45" r="17"/><text x="242" y="49.5" text-anchor="middle">B</text><circle class="p" cx="314" cy="45" r="17"/><text x="314" y="49.5" text-anchor="middle" style="fill: var(--surface)">X</text><circle class="c" cx="386" cy="45" r="17"/><text x="386" y="49.5" text-anchor="middle">C</text><text class="p" x="314" y="19" text-anchor="middle">erróneo</text><text class="fila" x="0" y="139">git reset --hard B</text><text class="m cmd" x="0" y="157">reescribe</text><path class="l" d="M170 145L242 145"/><path class="lg" d="M242 145L386 145"/><circle class="c" cx="170" cy="145" r="17"/><text x="170" y="149.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="145" r="17"/><text x="242" y="149.5" text-anchor="middle">B</text><circle class="g" cx="314" cy="145" r="17"/><text x="314" y="149.5" text-anchor="middle" class="m">X</text><circle class="g" cx="386" cy="145" r="17"/><text x="386" y="149.5" text-anchor="middle" class="m">C</text><text class="p" x="416" y="150" text-anchor="start">C también se pierde, y quien</text><text class="p" x="416" y="167" text-anchor="start">ya los tenía se descuadra</text><text class="fila" x="0" y="239">git revert X</text><text class="m cmd" x="0" y="257">añade</text><path class="l" d="M170 245L458 245"/><circle class="c" cx="170" cy="245" r="17"/><text x="170" y="249.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="245" r="17"/><text x="242" y="249.5" text-anchor="middle">B</text><circle class="p" cx="314" cy="245" r="17"/><text x="314" y="249.5" text-anchor="middle" style="fill: var(--surface)">X</text><circle class="c" cx="386" cy="245" r="17"/><text x="386" y="249.5" text-anchor="middle">C</text><circle class="x" cx="458" cy="245" r="17"/><text x="458" y="249.5" text-anchor="middle" style="fill: var(--surface)">X⁻¹</text><text class="r" x="488" y="250" text-anchor="start">deshace X; la historia</text><text class="r" x="488" y="267" text-anchor="start">queda intacta</text></svg>
+<figcaption>Mismo error, dos formas de deshacerlo. <code>reset</code> quita commits de la rama; <code>revert</code> añade uno que los compensa.</figcaption>
+</figure>
 </section>
 
 <section class="seccion">
@@ -125,6 +142,10 @@ git reset --hard 'HEAD@{2}'      # volver a donde estabas dos pasos atrás</code
 <p>Borrar un <code>.env</code> en un commit nuevo lo quita de la versión actual, pero sigue en el commit donde entró. Cualquiera con acceso al repositorio lo encuentra en segundos:</p>
 <pre><code>git log -p -S 'API_KEY'          # commits que añaden o quitan ese texto
 git log --all --diff-filter=D --name-only    # ficheros que se borraron alguna vez</code></pre>
+<figure>
+<svg class="grafo" viewBox="0 0 680 300" role="img" aria-label="La clave entra en A2 y se borra en A3, pero sigue en A2; filter-repo crea A2' A3' A4' sin el fichero; GitHub sigue sirviendo A2 por su SHA"><defs><marker id="sec-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="sec-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="59">Subida</text><path class="l" d="M170 55L386 55"/><circle class="c" cx="170" cy="55" r="17"/><text x="170" y="59.5" text-anchor="middle">A1</text><circle class="p" cx="242" cy="55" r="17"/><text x="242" y="59.5" text-anchor="middle" style="fill: var(--surface)">A2</text><circle class="c" cx="314" cy="55" r="17"/><text x="314" y="59.5" text-anchor="middle">A3</text><circle class="c" cx="386" cy="55" r="17"/><text x="386" y="59.5" text-anchor="middle">A4</text><text class="p" x="242" y="29" text-anchor="middle">añade .env</text><text class="m" x="314" y="93" text-anchor="middle">borra .env</text><text class="p" x="416" y="60" text-anchor="start">la clave sigue dentro de A2</text><text class="fila" x="0" y="159">git filter-repo</text><text class="m cmd" x="0" y="177">--invert-paths</text><path class="l" d="M170 165L458 165"/><circle class="c" cx="170" cy="165" r="17"/><text x="170" y="169.5" text-anchor="middle">A1</text><circle class="x" cx="242" cy="165" r="17"/><text x="242" y="169.5" text-anchor="middle" style="fill: var(--surface)">A2'</text><circle class="x" cx="314" cy="165" r="17"/><text x="314" y="169.5" text-anchor="middle" style="fill: var(--surface)">A3'</text><circle class="x" cx="386" cy="165" r="17"/><text x="386" y="169.5" text-anchor="middle" style="fill: var(--surface)">A4'</text><circle class="x" cx="458" cy="165" r="17"/><text x="458" y="169.5" text-anchor="middle" style="fill: var(--surface)">H</text><text class="r" x="242" y="203" text-anchor="start">sin .env: SHA nuevos desde aquí</text><text class="fila" x="0" y="259">GitHub</text><text class="m cmd" x="0" y="277">…/commit/&lt;SHA de A2&gt;</text><circle class="g" cx="242" cy="265" r="23"/><circle class="p" cx="242" cy="265" r="17"/><text x="242" y="269.5" text-anchor="middle" style="fill: var(--surface)">A2</text><text class="p" x="282" y="270" text-anchor="start">sigue accesible por su SHA: hay que rotar la clave</text></svg>
+<figcaption>Purgar la historia crea commits nuevos sin el fichero, pero no borra el antiguo de GitHub ni de ningún clon.</figcaption>
+</figure>
 <p>Para sacarlo de la historia hay que reescribirla con <code>git filter-repo</code>, que rehace cada commit sin ese fichero. Aun así, la clave <b>ya no es secreta</b>: GitHub sigue sirviendo el commit antiguo por su SHA, y cualquier clon, fork o caché anterior la conserva. Lo primero, siempre, es <b>revocar y rotar la clave</b>. Purgar la historia viene después. Herramientas como <code>gitleaks</code> o <code>trufflehog</code> automatizan la búsqueda en auditorías, y también la hacen los atacantes.</p>
 </section>
 

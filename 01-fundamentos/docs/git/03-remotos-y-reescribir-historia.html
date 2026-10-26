@@ -73,14 +73,27 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 figure { margin: 0; display: grid; gap: 8px; overflow-x: auto; }
 figcaption { color: var(--muted); font-size: 14px; }
 .grafo { width: 100%; min-width: 560px; max-width: 680px; height: auto; }
-.grafo text { font: 500 12px var(--f-mono); fill: var(--ink); }
-.grafo .t { font: 700 13px var(--f-body); }
+.grafo text { font: 500 13px var(--f-mono); fill: var(--ink); }
+.grafo .t, .grafo .fila { font: 700 14px var(--f-body); }
+.grafo .tipo { font: 600 10.5px var(--f-mono); letter-spacing: .06em; fill: var(--muted); }
+.grafo .cmd { font-size: 12px; }
 .grafo .m { fill: var(--muted); }
 .grafo .r { fill: var(--accent); font-weight: 700; }
+.grafo .p { fill: var(--ia); font-weight: 700; }
 .grafo .c { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
-.grafo .x { fill: var(--accent); }
+.grafo .x { fill: var(--accent); stroke: var(--accent); stroke-width: 2; }
+.grafo circle.p { stroke: var(--ia); stroke-width: 2; }
+.grafo .g { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .grafo .l { stroke: var(--muted); stroke-width: 2; fill: none; }
+.grafo .la { stroke: var(--accent); stroke-width: 2; fill: none; }
+.grafo .lg { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; fill: none; }
 .grafo .k { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+.grafo .kp { fill: var(--ia-soft); stroke: var(--ia); stroke-width: 1.5; }
+.grafo .zona { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.grafo .rama rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.grafo .rama text { fill: var(--accent); font-weight: 700; font-size: 12px; }
+.grafo .head rect { fill: var(--ink); }
+.grafo .head text { fill: var(--bg); font-weight: 700; font-size: 12px; }
 </style>
 
 </head>
@@ -97,6 +110,10 @@ figcaption { color: var(--muted); font-size: 14px; }
 <section class="seccion">
 <h2>Tu repositorio y el remoto</h2>
 <p>Tu clon es un repositorio completo. <code>origin</code> es solo el nombre del remoto del que clonaste, y <code>origin/main</code> es tu copia local de dónde estaba su <code>main</code> la última vez que preguntaste.</p>
+<figure>
+<svg class="grafo" viewBox="0 0 680 230" role="img" aria-label="fetch copia main de GitHub en origin/main; merge lo integra en tu main; pull hace las dos cosas; push sube tu main a GitHub"><defs><marker id="rem-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="rem-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><rect class="zona" x="0" y="0" width="420" height="230" rx="10"/><text class="fila" x="14" y="24">Tu portátil</text><rect class="zona" x="500" y="0" width="180" height="230" rx="10"/><text class="fila" x="514" y="24">GitHub</text><rect class="k" x="30" y="140" width="140" height="64" rx="8"/><text class="tipo" x="40" y="157">RAMA</text><text x="40" y="176">main</text><rect class="k" x="250" y="140" width="140" height="64" rx="8"/><text class="tipo" x="260" y="157">COPIA DEL REMOTO</text><text x="260" y="176">origin/main</text><rect class="k" x="520" y="140" width="140" height="64" rx="8"/><text class="tipo" x="530" y="157">RAMA</text><text x="530" y="176">main</text><path class="l" d="M518 182L392 182" marker-end="url(#rem-f)"/><text class="m cmd" x="455.0" y="174.0" text-anchor="middle">git fetch</text><path class="l" d="M248 182L172 182" marker-end="url(#rem-f)"/><text class="m cmd" x="210.0" y="174.0" text-anchor="middle">git merge</text><path class="la" d="M100 138Q345.0 -12.0 590 138" marker-end="url(#rem-fa)"/><text class="r cmd" x="345.0" y="57.0" text-anchor="middle">git push</text><text class="m cmd" x="210" y="222" text-anchor="middle">git pull = fetch + merge</text></svg>
+<figcaption><code>origin/main</code> es una copia local: solo cambia con <code>fetch</code> (o <code>pull</code>). Tu <code>main</code> solo cambia cuando integras.</figcaption>
+</figure>
 <div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
 <tr><td><code>git fetch</code></td><td>Trae lo nuevo del remoto y actualiza <code>origin/*</code>. No toca tus ramas ni tus ficheros.</td></tr>
 <tr><td><code>git pull</code></td><td><code>fetch</code> y después integra <code>origin/main</code> en tu rama (merge, o rebase con <code>--rebase</code>).</td></tr>
@@ -109,18 +126,7 @@ figcaption { color: var(--muted); font-size: 14px; }
 <section class="seccion">
 <h2>Rebase</h2>
 <figure>
-<svg class="grafo" viewBox="0 0 680 140" role="img" aria-label="Antes del rebase la rama sale de B y main ha avanzado a M. Después, los commits de la rama se han copiado como F1 prima y F2 prima encima de M">
-<text class="t" x="20" y="20">Antes</text>
-<path class="l" d="M40 100H160M100 100L160 50H220"/>
-<circle class="c" cx="40" cy="100" r="13"/><circle class="c" cx="100" cy="100" r="13"/><circle class="c" cx="160" cy="100" r="13"/><circle class="c" cx="160" cy="50" r="13"/><circle class="c" cx="220" cy="50" r="13"/>
-<text x="40" y="104" text-anchor="middle">A</text><text x="100" y="104" text-anchor="middle">B</text><text x="160" y="104" text-anchor="middle">M</text><text x="160" y="54" text-anchor="middle">F1</text><text x="220" y="54" text-anchor="middle">F2</text>
-<text class="m" x="160" y="132" text-anchor="middle">main</text><text class="m" x="220" y="26" text-anchor="middle">rama</text>
-<text class="t" x="320" y="20">Después de git rebase main</text>
-<path class="l" d="M340 100H580"/>
-<circle class="c" cx="340" cy="100" r="13"/><circle class="c" cx="400" cy="100" r="13"/><circle class="c" cx="460" cy="100" r="13"/><circle class="x" cx="520" cy="100" r="13"/><circle class="x" cx="580" cy="100" r="13"/>
-<text x="340" y="104" text-anchor="middle">A</text><text x="400" y="104" text-anchor="middle">B</text><text x="460" y="104" text-anchor="middle">M</text><text x="520" y="104" text-anchor="middle" style="fill: var(--surface)">F1'</text><text x="580" y="104" text-anchor="middle" style="fill: var(--surface)">F2'</text>
-<text class="m" x="460" y="132" text-anchor="middle">main</text><text class="r" x="580" y="132" text-anchor="middle">rama</text>
-</svg>
+<svg class="grafo" viewBox="0 0 680 300" role="img" aria-label="Antes, la rama sale de B y main avanzó a M; git rebase main copia F1 y F2 encima de M como F1' y F2' y los originales dejan de estar en la rama"><defs><marker id="rb-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="rb-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="99">Antes</text><path class="l" d="M170 95L314 95"/><path class="l" d="M242 95L314 45L386 45"/><circle class="c" cx="170" cy="95" r="17"/><text x="170" y="99.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="95" r="17"/><text x="242" y="99.5" text-anchor="middle">B</text><circle class="c" cx="314" cy="95" r="17"/><text x="314" y="99.5" text-anchor="middle">M</text><circle class="c" cx="314" cy="45" r="17"/><text x="314" y="49.5" text-anchor="middle">F1</text><circle class="c" cx="386" cy="45" r="17"/><text x="386" y="49.5" text-anchor="middle">F2</text><g class="rama"><rect x="293.2" y="128" width="41.6" height="22" rx="6"/><text x="314.0" y="143" text-anchor="middle">main</text></g><path class="l" d="M314 128L314 114" marker-end="url(#rb-f)"/><g class="rama"><rect x="425.0" y="34" width="115.6" height="22" rx="6"/><text x="482.8" y="49" text-anchor="middle">git/e5-feature</text></g><path class="l" d="M425 45L405 45" marker-end="url(#rb-f)"/><text class="fila" x="0" y="239">git rebase main</text><path class="lg" d="M242 235L314 185L386 185"/><circle class="g" cx="314" cy="185" r="17"/><text x="314" y="189.5" text-anchor="middle" class="m">F1</text><circle class="g" cx="386" cy="185" r="17"/><text x="386" y="189.5" text-anchor="middle" class="m">F2</text><text class="m" x="416" y="189" text-anchor="start">originales, fuera de la rama</text><path class="l" d="M170 235L458 235"/><circle class="c" cx="170" cy="235" r="17"/><text x="170" y="239.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="235" r="17"/><text x="242" y="239.5" text-anchor="middle">B</text><circle class="c" cx="314" cy="235" r="17"/><text x="314" y="239.5" text-anchor="middle">M</text><circle class="x" cx="386" cy="235" r="17"/><text x="386" y="239.5" text-anchor="middle" style="fill: var(--surface)">F1'</text><circle class="x" cx="458" cy="235" r="17"/><text x="458" y="239.5" text-anchor="middle" style="fill: var(--surface)">F2'</text><g class="rama"><rect x="293.2" y="268" width="41.6" height="22" rx="6"/><text x="314.0" y="283" text-anchor="middle">main</text></g><path class="l" d="M314 268L314 254" marker-end="url(#rb-f)"/><g class="rama"><rect x="497.0" y="224" width="115.6" height="22" rx="6"/><text x="554.8" y="239" text-anchor="middle">git/e5-feature</text></g><path class="l" d="M497 235L477 235" marker-end="url(#rb-f)"/></svg>
 <figcaption>El rebase vuelve a aplicar tus cambios encima de la nueva base. Son commits nuevos, con otro SHA, aunque los cambios sean los mismos.</figcaption>
 </figure>
 <pre><code>git switch rama
@@ -139,6 +145,10 @@ git rebase --abort       # o vuelve a como estaba</code></pre>
 <tr><td><code>fixup</code></td><td>Lo funde con el anterior y descarta su mensaje.</td></tr>
 <tr><td><code>drop</code></td><td>Lo elimina.</td></tr>
 </tbody></table></div>
+<figure>
+<svg class="grafo" viewBox="0 0 640 180" role="img" aria-label="Con rebase interactivo, cuatro commits wip se funden en un solo commit S con el mismo contenido final"><defs><marker id="sq-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="sq-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="54">Antes</text><path class="l" d="M170 50L458 50"/><circle class="c" cx="170" cy="50" r="17"/><text x="170" y="54.5" text-anchor="middle">B</text><circle class="c" cx="242" cy="50" r="17"/><text x="242" y="54.5" text-anchor="middle">w1</text><circle class="c" cx="314" cy="50" r="17"/><text x="314" y="54.5" text-anchor="middle">w2</text><circle class="c" cx="386" cy="50" r="17"/><text x="386" y="54.5" text-anchor="middle">w3</text><circle class="c" cx="458" cy="50" r="17"/><text x="458" y="54.5" text-anchor="middle">w4</text><text class="m cmd" x="350.0" y="88" text-anchor="middle">wip(e6): paso 1 … paso 4</text><text class="fila" x="0" y="134">git rebase -i</text><text class="m cmd" x="0" y="152">squash</text><path class="l" d="M170 140L242 140"/><circle class="c" cx="170" cy="140" r="17"/><text x="170" y="144.5" text-anchor="middle">B</text><circle class="x" cx="242" cy="140" r="17"/><text x="242" y="144.5" text-anchor="middle" style="fill: var(--surface)">S</text><text class="r" x="272" y="145" text-anchor="start">docs(e6): informe de alcance</text></svg>
+<figcaption>Con <code>squash</code> o <code>fixup</code>, cuatro commits a medias se convierten en uno: el contenido final es el mismo y la historia se lee de un vistazo.</figcaption>
+</figure>
 <p>Para retocar solo el último commit no hace falta todo esto: <code>git commit --amend</code>. Y para copiar un commit concreto de otra rama a la tuya, <code>git cherry-pick &lt;sha&gt;</code>.</p>
 </section>
 
