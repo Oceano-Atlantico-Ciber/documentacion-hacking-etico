@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git 4 · Deshacer y seguridad · Hacking ético</title>
+<style>
+/* Layout: una página por tema del bloque. Cabecera con bloque, semana y criterios; después secciones en vertical y al final la comprobación y la navegación entre temas. */
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --ink: #1b2229;
+  --muted: #5d6771;
+  --line: #d6dad5;
+  --accent: #0f6b64;
+  --accent-soft: #dcefec;
+  --ia: #9a4d12;
+  --ia-soft: #f8e7d8;
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+    --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+  --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 40px 72px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 700; }
+h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+ul, ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+a { color: var(--accent); }
+code { font: 500 .88em var(--f-mono); background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+pre { margin: 0; background: var(--ink); color: var(--bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; font: 13.5px/1.5 var(--f-mono); }
+pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+.eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+header { display: grid; gap: 14px; }
+.lead { color: var(--muted); max-width: 62ch; font-size: 17px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 14px; }
+.meta b { color: var(--ink); font-weight: 600; }
+
+
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tabla { overflow-x: auto; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.ia { background: var(--ia-soft); border-left: 3px solid var(--ia); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+.ia .eyebrow { color: var(--ia); }
+.alcance { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; border-radius: 8px; display: grid; gap: 6px; }
+.check { display: grid; gap: 8px; list-style: none; padding: 0; }
+.check li { position: relative; padding-left: 30px; min-width: 0; }
+.check li::before { content: ""; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border: 1.5px solid var(--accent); border-radius: 3px; }
+.seccion { display: grid; gap: 14px; }
+.seccion > h2 { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+nav.top { font-size: 14px; color: var(--muted); }
+nav.temas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 18px; font-size: 15px; }
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+@media (prefers-reduced-motion: no-preference) { a { transition: color .15s; } }
+figure { margin: 0; display: grid; gap: 8px; overflow-x: auto; }
+figcaption { color: var(--muted); font-size: 14px; }
+.grafo { width: 100%; min-width: 560px; max-width: 680px; height: auto; }
+.grafo text { font: 500 12px var(--f-mono); fill: var(--ink); }
+.grafo .t { font: 700 13px var(--f-body); }
+.grafo .m { fill: var(--muted); }
+.grafo .r { fill: var(--accent); font-weight: 700; }
+.grafo .c { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.grafo .x { fill: var(--accent); }
+.grafo .l { stroke: var(--muted); stroke-width: 2; fill: none; }
+.grafo .k { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semana 2 · Git 4 de 4</p>
+<h1>Deshacer y seguridad</h1>
+<p class="lead">Casi todo en git se puede deshacer, y casi nada se borra del todo. Eso salva trabajo y, a la vez, convierte un repositorio en una fuente de información para un atacante.</p>
+<div class="meta"><span>Jueves</span><span>Ejercicios: <a href="../../ejercicios/#03-git">E7 y E8</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Qué orden para qué situación</h2>
+<div class="tabla"><table><thead><tr><th>Situación</th><th>Orden</th></tr></thead><tbody>
+<tr><td>Descartar los cambios de un fichero que no has añadido.</td><td><code>git restore fichero</code></td></tr>
+<tr><td>Sacar un fichero del índice sin perder tus cambios.</td><td><code>git restore --staged fichero</code></td></tr>
+<tr><td>Corregir el último commit, aún sin subir.</td><td><code>git commit --amend</code></td></tr>
+<tr><td>Mover tu rama a un commit anterior, aún sin subir.</td><td><code>git reset &lt;commit&gt;</code></td></tr>
+<tr><td>Deshacer un commit que ya está en el remoto.</td><td><code>git revert &lt;commit&gt;</code></td></tr>
+</tbody></table></div>
+<p><code>git reset</code> mueve la rama hacia atrás, y los commits que quedan delante dejan de estar en ella. Su opción decide qué pasa con tus ficheros:</p>
+<div class="tabla"><table><thead><tr><th></th><th>Rama</th><th>Índice</th><th>Directorio de trabajo</th></tr></thead><tbody>
+<tr><td><code>--soft</code></td><td>Se mueve</td><td>Intacto: los cambios quedan listos para commit</td><td>Intacto</td></tr>
+<tr><td><code>--mixed</code> (por defecto)</td><td>Se mueve</td><td>Se vacía</td><td>Intacto: los cambios siguen en tus ficheros</td></tr>
+<tr><td><code>--hard</code></td><td>Se mueve</td><td>Se vacía</td><td><b>Se pierde</b> lo no commiteado</td></tr>
+</tbody></table></div>
+<p><code>git revert</code> no borra nada: crea un commit nuevo que aplica el cambio inverso. Es la única forma correcta de deshacer en una rama compartida, por la regla de oro de <a href="03-remotos-y-reescribir-historia.html">Git 3</a>.</p>
+</section>
+
+<section class="seccion">
+<h2>La red de seguridad: <code>reflog</code></h2>
+<p>Git anota en el <b>reflog</b> cada posición por la que ha pasado <code>HEAD</code> durante meses (90 días por defecto). Un <code>reset --hard</code> o un rebase desafortunado se recuperan volviendo a una entrada anterior:</p>
+<pre><code>git reflog                       # HEAD@{0}, HEAD@{1}… con lo que hiciste
+git reset --hard 'HEAD@{2}'      # volver a donde estabas dos pasos atrás</code></pre>
+<p>El reflog es local: no se sube a GitHub ni viene al clonar. Por eso «lo borré y ya no está» casi nunca es verdad en tu máquina.</p>
+</section>
+
+<section class="seccion">
+<h2>Secretos en la historia</h2>
+<p>Borrar un <code>.env</code> en un commit nuevo lo quita de la versión actual, pero sigue en el commit donde entró. Cualquiera con acceso al repositorio lo encuentra en segundos:</p>
+<pre><code>git log -p -S 'API_KEY'          # commits que añaden o quitan ese texto
+git log --all --diff-filter=D --name-only    # ficheros que se borraron alguna vez</code></pre>
+<p>Para sacarlo de la historia hay que reescribirla con <code>git filter-repo</code>, que rehace cada commit sin ese fichero. Aun así, la clave <b>ya no es secreta</b>: GitHub sigue sirviendo el commit antiguo por su SHA, y cualquier clon, fork o caché anterior la conserva. Lo primero, siempre, es <b>revocar y rotar la clave</b>. Purgar la historia viene después. Herramientas como <code>gitleaks</code> o <code>trufflehog</code> automatizan la búsqueda en auditorías, y también la hacen los atacantes.</p>
+</section>
+
+<section class="seccion">
+<h2>Git como fuente de reconocimiento</h2>
+<p>Algunos servidores publican la web copiando el repositorio entero, carpeta <code>.git</code> incluida. Si <code>https://objetivo/.git/HEAD</code> responde, se pueden descargar los objetos y reconstruir todo el código fuente con su historia: credenciales antiguas, rutas internas, nombres y correos de los desarrolladores. Es reconocimiento pasivo, y como todo en el curso, solo se hace dentro de un alcance autorizado.</p>
+<p>Defensa: no desplegar la carpeta <code>.git</code>, o bloquear en el servidor web cualquier ruta que empiece por <code>/.git</code>.</p>
+</section>
+
+<section class="seccion">
+<h2>El autor de un commit se falsifica</h2>
+<p>El autor es solo lo que dice tu configuración. Nada impide esto:</p>
+<pre><code>git -c user.name="Otra Persona" -c user.email="su-correo@ejemplo.com" commit -m "fix: cambio inocente"</code></pre>
+<p>GitHub mostrará el commit con el nombre y la foto de esa persona. La defensa es <b>firmar los commits</b>: GitHub marca como <b>Verified</b> los firmados con una clave registrada en la cuenta, y con el modo vigilante marca como <b>Unverified</b> los que no lo están.</p>
+<pre><code>git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519.pub
+git config --global commit.gpgsign true
+# y en GitHub: Settings → SSH and GPG keys → New SSH key, tipo «Signing key»</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../../ejercicios/#03-git">E7 · Revert</a> y <a href="../../ejercicios/#03-git">E8 · Secreto filtrado</a>. En E8 subes la clave a propósito y luego la purgas: al final mira en GitHub si el commit antiguo sigue accesible.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Nunca pegues a una IA en la nube un fichero con secretos reales: en ese momento la clave ha salido de tu control. Para pedir ayuda con un <code>.env</code>, sustituye antes los valores.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Sabes elegir entre <code>restore</code>, <code>reset</code> y <code>revert</code> según si el commit está publicado</li>
+<li>Sabes recuperar un commit perdido con <code>git reflog</code></li>
+<li>Sabes por qué una clave filtrada se rota aunque se purgue de la historia</li>
+<li>E7 y E8 superados en el check <b>Corrector git</b> y con su etiqueta</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de git"><a href="03-remotos-y-reescribir-historia.html">← Git 3 · Remotos y reescribir historia</a><a href="../../">Fundamentos →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+</body>
+</html>
