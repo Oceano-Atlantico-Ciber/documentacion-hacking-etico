@@ -57,8 +57,9 @@
         ]],
         ["Mini auditoría", "01-fundamentos/ejercicios/index.html#mini-auditoria"],
       ]],
-      ["CVE analizados", "01-fundamentos/cve/index.html", [
-        ["PHP2Shell", "01-fundamentos/cve/cve-2026-109618-php2shell.html"],
+      ["Casos analizados", "01-fundamentos/casos-analizados/index.html", [
+        ["Hackea el ranking", "00-presentacion/docs/06-hackea-el-ranking.html#documentar"],
+        ["PHP2Shell", "01-fundamentos/casos-analizados/cve-2026-109618-php2shell.html"],
       ]],
     ]],
     ["Redes inalámbricas", "02-redes-inalambricas/index.html"],

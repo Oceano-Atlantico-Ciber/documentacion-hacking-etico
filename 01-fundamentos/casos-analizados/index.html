@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CVE analizados · Hacking ético</title>
+<title>Casos analizados · Hacking ético</title>
 <link rel="stylesheet" href="../../assets/estilo.css">
 <style>
 /* Layout: índice de casos reales. Misma base que los temas del bloque. Cabecera con bloque, semana y criterios; después secciones en vertical y al final la comprobación y la navegación entre temas. */
@@ -20,21 +20,22 @@
 <nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Fundamentos, alcance y herramientas</a></nav>
 <header>
 <p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Casos reales</p>
-<h1>CVE analizados</h1>
-<p class="lead">Vulnerabilidades reales y recientes que analizamos en clase para practicar cómo se identifica, se mide y se documenta un fallo de seguridad.</p>
+<h1>Casos analizados</h1>
+<p class="lead">Fallos que analizamos en clase, del juego del primer día a vulnerabilidades reales y recientes, para practicar cómo se identifica, se mide y se documenta un fallo de seguridad.</p>
 <div class="meta"><span>Criterios <b>b, d, e, f, g, h</b></span></div>
 </header>
 
 <section class="seccion">
 <h2>Casos</h2>
 <div class="casos">
+<a class="caso" href="../../00-presentacion/docs/06-hackea-el-ranking.html#documentar"><b>Hackea el ranking</b><span class="ids">Sin CVE · CWE-602, CWE-290, CWE-639, CWE-306, CWE-615 · semana 1</span><span>Los fallos del juego del primer día, de truco a vulnerabilidad: dónde está cada uno, qué permite y cómo se corrige.</span></a>
 <a class="caso" href="cve-2026-109618-php2shell.html"><b>PHP2Shell</b><span class="ids">CVE-2026-109618 · CVE-2026-109619 · CVSS 9.2 · octubre de 2026</span><span>Dos RCE en el núcleo de PHP que se disparan antes de que se ejecute la aplicación. Analogía, fases del ataque, medidas de defensa y ficha de vulnerabilidad para rellenar.</span></a>
 </div>
 </section>
 
 <section class="seccion">
-<h2>Cómo analizamos cada CVE</h2>
-<p>Todos los casos siguen la misma ficha. Es la forma de documentar una vulnerabilidad que usaréis en las entregas.</p>
+<h2>Cómo analizamos cada caso</h2>
+<p>Todos los casos siguen la misma ficha. Es la forma de documentar una vulnerabilidad que usaréis en las entregas. Un fallo sin CVE, como los del juego, se identifica por su CWE, y se dejan fuera los apartados que no aplican, como las versiones.</p>
 <ul class="check">
 <li><b>Identificación:</b> número CVE, software y componente afectado.</li>
 <li><b>Tipo:</b> de diseño, de configuración, de software o humana; y qué ataque permite.</li>
@@ -45,6 +46,11 @@
 <li><b>Defensa:</b> separar lo que corrige el fallo de lo que solo reduce el riesgo.</li>
 <li><b>Fuentes:</b> oficiales primero, distinguiendo lo confirmado de lo que no.</li>
 </ul>
+</section>
+
+<section class="seccion" id="entrega">
+<h2>Qué se entrega</h2>
+<p>Cada caso es un fichero Markdown en <code>fundamentos/casos-analizados/</code> de tu repositorio, con el mismo nombre que su página: <code>hackea-el-ranking.md</code> y <code>cve-2026-109618-php2shell.md</code>. Entran en la entrega del bloque, <code>entrega-fundamentos</code>.</p>
 </section>
 
 <nav class="temas" aria-label="Navegación"><a href="../index.html">← Fundamentos, alcance y herramientas</a><a href="../docs/etica-y-seguridad/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques →</a></nav>
