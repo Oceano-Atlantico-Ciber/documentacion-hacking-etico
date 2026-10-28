@@ -51,7 +51,10 @@ git commit -m "chore(e2): ignorar lo que genera la app"</code></pre></div><p>No 
 <p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E2 salga sin fallos, etiqueta:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e2 -m "E2 resuelto"
 git push origin entrega-fundamentos-git-e2</code></pre></div>
-<p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
+<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y mueve la etiqueta a tu nuevo commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e2 -m "E2 resuelto"
+git push --force origin entrega-fundamentos-git-e2</code></pre></div>
+<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e1.html">← E1 · Identidad y commits atómicos</a><a href="e3.html">E3 · Fusiones →</a></nav>
 </main>

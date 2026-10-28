@@ -53,7 +53,10 @@ git show HEAD:fundamentos/git/e4/puertos.txt</code></pre></div>
 <p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E4 salga sin fallos, etiqueta:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e4 -m "E4 resuelto"
 git push origin entrega-fundamentos-git-e4</code></pre></div>
-<p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
+<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y mueve la etiqueta a tu nuevo commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e4 -m "E4 resuelto"
+git push --force origin entrega-fundamentos-git-e4</code></pre></div>
+<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e3.html">← E3 · Fusiones</a><a href="e5.html">E5 · Rebase →</a></nav>
 </main>

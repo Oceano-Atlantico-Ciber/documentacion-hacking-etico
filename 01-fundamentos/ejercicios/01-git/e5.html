@@ -43,7 +43,10 @@ git push -u origin git/e5-feature</code></pre></div>
 <p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E5 salga sin fallos, etiqueta la punta de <code>git/e5-feature</code>:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e5 git/e5-feature -m "E5 resuelto"
 git push origin entrega-fundamentos-git-e5</code></pre></div>
-<p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
+<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y mueve la etiqueta a tu nuevo commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e5 git/e5-feature -m "E5 resuelto"
+git push --force origin entrega-fundamentos-git-e5</code></pre></div>
+<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e4.html">← E4 · Conflicto</a><a href="e6.html">E6 · Rebase interactivo →</a></nav>
 </main>
