@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git 1 · Modelo y commits · Hacking ético</title>
+<style>
+/* Layout: una página por tema del bloque. Cabecera con bloque, semana y criterios; después secciones en vertical y al final la comprobación y la navegación entre temas. */
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --ink: #1b2229;
+  --muted: #5d6771;
+  --line: #d6dad5;
+  --accent: #0f6b64;
+  --accent-soft: #dcefec;
+  --ia: #9a4d12;
+  --ia-soft: #f8e7d8;
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+    --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+  --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 40px 72px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 700; }
+h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+ul, ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+a { color: var(--accent); }
+code { font: 500 .88em var(--f-mono); background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+pre { margin: 0; background: var(--ink); color: var(--bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; font: 13.5px/1.5 var(--f-mono); }
+pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+.eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+header { display: grid; gap: 14px; }
+.lead { color: var(--muted); max-width: 62ch; font-size: 17px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 14px; }
+.meta b { color: var(--ink); font-weight: 600; }
+
+
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tabla { overflow-x: auto; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.ia { background: var(--ia-soft); border-left: 3px solid var(--ia); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+.ia .eyebrow { color: var(--ia); }
+.alcance { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; border-radius: 8px; display: grid; gap: 6px; }
+.check { display: grid; gap: 8px; list-style: none; padding: 0; }
+.check li { position: relative; padding-left: 30px; min-width: 0; }
+.check li::before { content: ""; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border: 1.5px solid var(--accent); border-radius: 3px; }
+.seccion { display: grid; gap: 14px; }
+.seccion > h2 { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+nav.top { font-size: 14px; color: var(--muted); }
+nav.temas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 18px; font-size: 15px; }
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+@media (prefers-reduced-motion: no-preference) { a { transition: color .15s; } }
+figure { margin: 0; display: grid; gap: 8px; overflow-x: auto; }
+figcaption { color: var(--muted); font-size: 14px; }
+.grafo { width: 100%; min-width: 560px; max-width: 680px; height: auto; }
+.grafo text { font: 500 13px var(--f-mono); fill: var(--ink); }
+.grafo .t, .grafo .fila { font: 700 14px var(--f-body); }
+.grafo .tipo { font: 600 10.5px var(--f-mono); letter-spacing: .06em; fill: var(--muted); }
+.grafo .cmd { font-size: 12px; }
+.grafo .m { fill: var(--muted); }
+.grafo .r { fill: var(--accent); font-weight: 700; }
+.grafo .p { fill: var(--ia); font-weight: 700; }
+.grafo .c { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.grafo .x { fill: var(--accent); stroke: var(--accent); stroke-width: 2; }
+.grafo circle.p { stroke: var(--ia); stroke-width: 2; }
+.grafo .g { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.grafo .l { stroke: var(--muted); stroke-width: 2; fill: none; }
+.grafo .la { stroke: var(--accent); stroke-width: 2; fill: none; }
+.grafo .lg { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; fill: none; }
+.grafo .k { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+.grafo .kp { fill: var(--ia-soft); stroke: var(--ia); stroke-width: 1.5; }
+.grafo .zona { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.grafo .rama rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.grafo .rama text { fill: var(--accent); font-weight: 700; font-size: 12px; }
+.grafo .head rect { fill: var(--ink); }
+.grafo .head text { fill: var(--bg); font-weight: 700; font-size: 12px; }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semana 2 · Git 1 de 4</p>
+<h1>Modelo y commits</h1>
+<p class="lead">Qué guarda git de verdad, por qué cada cambio queda sellado y cómo hacer commits que otra persona pueda leer, revisar y deshacer.</p>
+<div class="meta"><span>Miércoles, 1.ª hora</span><span>Ejercicios: <a href="../../ejercicios/#03-git">E1 y E2</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Git guarda fotos, no diferencias</h2>
+<p>Cada commit es una foto completa de la carpeta del proyecto, más quién la hizo, cuándo, por qué y cuál es la foto anterior (su <b>padre</b>). Git la guarda como cuatro tipos de objeto, y cada uno se nombra por el SHA-1 de su contenido:</p>
+<div class="tabla"><table><thead><tr><th>Objeto</th><th>Qué contiene</th></tr></thead><tbody>
+<tr><td><b>blob</b></td><td>El contenido de un fichero, sin nombre.</td></tr>
+<tr><td><b>tree</b></td><td>Una carpeta: nombres de ficheros y subcarpetas, cada uno con el SHA de su blob o tree.</td></tr>
+<tr><td><b>commit</b></td><td>El tree raíz, el padre o padres, autor, fecha y mensaje.</td></tr>
+<tr><td><b>tag</b></td><td>Una etiqueta anotada: apunta a un commit con nombre, autor y mensaje propios.</td></tr>
+</tbody></table></div>
+<figure>
+<svg class="grafo" viewBox="0 0 780 300" role="img" aria-label="Una etiqueta apunta a un commit; el commit apunta a su tree raíz y a su commit padre; cada tree apunta a blobs y a otros trees"><defs><marker id="obj-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="obj-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><rect class="k" x="0" y="20" width="110" height="64" rx="8"/><text class="tipo" x="10" y="37">TAG</text><text x="10" y="56">v1.0</text><rect class="k" x="200" y="20" width="150" height="81" rx="8"/><text class="tipo" x="210" y="37">COMMIT 3f2a9c1</text><text x="210" y="56">autor, fecha</text><text x="210" y="73">«feat: escaneo»</text><rect class="k" x="440" y="20" width="120" height="64" rx="8"/><text class="tipo" x="450" y="37">TREE /</text><text x="450" y="56">README.md</text><rect class="k" x="660" y="20" width="120" height="64" rx="8"/><text class="tipo" x="670" y="37">BLOB</text><text x="670" y="56"># Auditoría</text><rect class="k" x="440" y="140" width="120" height="64" rx="8"/><text class="tipo" x="450" y="157">TREE src/</text><text x="450" y="176">escaneo.py</text><rect class="k" x="660" y="140" width="120" height="64" rx="8"/><text class="tipo" x="670" y="157">BLOB</text><text x="670" y="176">import nmap</text><rect class="k" x="200" y="200" width="150" height="81" rx="8"/><text class="tipo" x="210" y="217">COMMIT 9c1e47b</text><text x="210" y="236">autor, fecha</text><text x="210" y="253">«docs: alcance»</text><path class="l" d="M110 52L198 52" marker-end="url(#obj-f)"/><text class="m cmd" x="154.0" y="46.0" text-anchor="middle">apunta a</text><path class="l" d="M350 52L438 52" marker-end="url(#obj-f)"/><text class="m cmd" x="394.0" y="46.0" text-anchor="middle">tree</text><path class="l" d="M560 52L658 52" marker-end="url(#obj-f)"/><text class="m cmd" x="609.0" y="46.0" text-anchor="middle">README.md</text><path class="l" d="M500 84L500 138" marker-end="url(#obj-f)"/><text class="m cmd" x="524.0" y="115.0" text-anchor="middle">src/</text><path class="l" d="M560 172L658 172" marker-end="url(#obj-f)"/><text class="m cmd" x="609.0" y="166.0" text-anchor="middle">escaneo.py</text><path class="l" d="M275 101L275 198" marker-end="url(#obj-f)"/><text class="m cmd" x="307.0" y="153.5" text-anchor="middle">parent</text><text class="m" x="275" y="298" text-anchor="middle">el commit anterior, con su propio tree</text></svg>
+<figcaption>Lo que hay dentro de <code>.git</code>: cada flecha es un SHA guardado dentro del objeto. Un commit no contiene ficheros, apunta a una carpeta.</figcaption>
+</figure>
+<p>Como el nombre sale del contenido, cambiar un solo byte de un commit antiguo cambia su SHA y el de todos los que vienen detrás. Es la <b>integridad</b> de la que hablamos en el tema de seguridad: la historia no se puede alterar sin que se note.</p>
+<figure>
+<svg class="grafo" viewBox="0 0 640 170" role="img" aria-label="Si se cambia el commit A, cambian su SHA y el de B y C, porque cada commit incluye el SHA de su padre"><defs><marker id="int-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="int-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="49">Historia</text><path class="l" d="M170 45L314 45"/><circle class="c" cx="170" cy="45" r="17"/><text x="170" y="49.5" text-anchor="middle">A</text><text class="m cmd" x="170" y="20" text-anchor="middle">a1f3</text><circle class="c" cx="242" cy="45" r="17"/><text x="242" y="49.5" text-anchor="middle">B</text><text class="m cmd" x="242" y="20" text-anchor="middle">7c20</text><circle class="c" cx="314" cy="45" r="17"/><text x="314" y="49.5" text-anchor="middle">C</text><text class="m cmd" x="314" y="20" text-anchor="middle">e94b</text><text class="fila" x="0" y="119">Cambias A</text><text class="m cmd" x="0" y="137">un solo byte</text><path class="l" d="M170 125L314 125"/><circle class="p" cx="170" cy="125" r="17"/><text x="170" y="129.5" text-anchor="middle" style="fill: var(--surface)">A'</text><text class="m cmd" x="170" y="159" text-anchor="middle">0d8e</text><circle class="p" cx="242" cy="125" r="17"/><text x="242" y="129.5" text-anchor="middle" style="fill: var(--surface)">B'</text><text class="m cmd" x="242" y="159" text-anchor="middle">b51a</text><circle class="p" cx="314" cy="125" r="17"/><text x="314" y="129.5" text-anchor="middle" style="fill: var(--surface)">C'</text><text class="m cmd" x="314" y="159" text-anchor="middle">47fc</text><text class="r" x="354" y="130" text-anchor="start">todos los SHA cambian: se nota</text></svg>
+<figcaption>Cada commit guarda el SHA de su padre, así que tocar uno antiguo obliga a rehacer todos los posteriores.</figcaption>
+</figure>
+<pre><code>git cat-file -p HEAD            # el commit actual: tree, parent, author, mensaje
+git cat-file -p 'HEAD^{tree}'   # su carpeta raíz
+git cat-file -t &lt;sha&gt;           # qué tipo de objeto es</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Las tres zonas</h2>
+<figure>
+<svg class="grafo" viewBox="0 0 680 170" role="img" aria-label="git add lleva cambios del directorio de trabajo al índice y git commit del índice al repositorio; git restore --staged y git restore deshacen esos pasos">
+<defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker><marker id="fm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker></defs>
+<rect class="k" x="10" y="55" width="180" height="60" rx="8"/><text class="t" x="100" y="82" text-anchor="middle">Directorio de trabajo</text><text class="m" x="100" y="100" text-anchor="middle">tus ficheros</text>
+<rect class="k" x="250" y="55" width="180" height="60" rx="8"/><text class="t" x="340" y="82" text-anchor="middle">Índice</text><text class="m" x="340" y="100" text-anchor="middle">la próxima foto</text>
+<rect class="k" x="490" y="55" width="180" height="60" rx="8"/><text class="t" x="580" y="82" text-anchor="middle">Repositorio</text><text class="m" x="580" y="100" text-anchor="middle">las fotos (.git)</text>
+<g><path class="l" style="stroke: var(--accent)" d="M120 50 C160 18 270 18 320 50" marker-end="url(#fa)"/><text class="r" x="220" y="22" text-anchor="middle">git add</text>
+<path class="l" style="stroke: var(--accent)" d="M360 50 C400 18 510 18 560 50" marker-end="url(#fa)"/><text class="r" x="460" y="22" text-anchor="middle">git commit</text></g>
+<g><path class="l" d="M560 120 C510 152 400 152 360 120" marker-end="url(#fm)"/><text class="m" x="460" y="164" text-anchor="middle">git restore --staged</text>
+<path class="l" d="M320 120 C270 152 160 152 120 120" marker-end="url(#fm)"/><text class="m" x="220" y="164" text-anchor="middle">git restore</text></g>
+</svg>
+<figcaption>Un commit guarda lo que hay en el índice, no lo que hay en tu carpeta. Por eso puedes elegir qué entra en cada foto.</figcaption>
+</figure>
+<pre><code>git status                 # qué ha cambiado y en qué zona está
+git diff                   # trabajo frente a índice
+git diff --staged          # índice frente al último commit
+git add -p                 # elegir trozo a trozo qué entra
+git log --oneline --graph --all</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Commits que se entienden</h2>
+<p>Un commit <b>atómico</b> contiene un solo cambio lógico: se puede explicar en una línea, revisar de una vez y deshacer sin arrastrar otra cosa. El mensaje sigue <b>Conventional Commits</b>: <code>tipo(ámbito): qué hace</code>, en imperativo o descriptivo y sin punto final.</p>
+<div class="tabla"><table><thead><tr><th>Tipo</th><th>Cuándo</th><th>Ejemplo</th></tr></thead><tbody>
+<tr><td><code>feat</code></td><td>Algo nuevo.</td><td><code>feat(auditoria): inventario de la red</code></td></tr>
+<tr><td><code>fix</code></td><td>Corrige un fallo.</td><td><code>fix(terraform): bucket sin acceso público</code></td></tr>
+<tr><td><code>docs</code></td><td>Solo documentación.</td><td><code>docs(alcance): fechas de la prueba</code></td></tr>
+<tr><td><code>chore</code></td><td>Mantenimiento que no cambia el resultado.</td><td><code>chore: ignorar capturas .pcap</code></td></tr>
+</tbody></table></div>
+<p>También existen <code>refactor</code>, <code>test</code> y <code>style</code>. Un historial así es un informe de lo que se hizo y en qué orden, y en una auditoría eso importa.</p>
+</section>
+
+<section class="seccion">
+<h2>Lo que no se sube: <code>.gitignore</code></h2>
+<p>Cada línea es un patrón de rutas que git no propondrá añadir. Se aplica en su carpeta y en las de debajo.</p>
+<div class="tabla"><table><thead><tr><th>Patrón</th><th>Ignora</th></tr></thead><tbody>
+<tr><td><code>*.log</code></td><td>Cualquier fichero que acabe en <code>.log</code>.</td></tr>
+<tr><td><code>build/</code></td><td>La carpeta <code>build</code> entera, esté donde esté.</td></tr>
+<tr><td><code>/salidas</code></td><td>Solo <code>salidas</code> en la carpeta del <code>.gitignore</code>.</td></tr>
+<tr><td><code>!importante.log</code></td><td>Excepción: este sí se versiona.</td></tr>
+</tbody></table></div>
+<pre><code>git check-ignore -v ruta/al/fichero   # qué regla lo ignora, y de qué fichero
+git rm --cached fichero               # dejar de versionar algo que ya estaba</code></pre>
+<p>Un fichero que ya está versionado no se ignora aunque añadas su patrón: primero hay que sacarlo con <code>git rm --cached</code>. Y si contenía un secreto, sacarlo no basta: sigue en la historia. Lo veremos en <a href="04-deshacer-y-seguridad.html">Git 4</a>.</p>
+</section>
+
+<section class="seccion">
+<h2>Identidad y etiquetas</h2>
+<p>El autor de cada commit sale de tu configuración. GitHub asocia el commit a tu cuenta solo si ese correo es uno de los verificados en <b>Settings → Emails</b>. Si prefieres no publicar tu correo, usa la dirección <code>…@users.noreply.github.com</code> que aparece en esa misma página.</p>
+<pre><code>git config --global user.name "Tu Nombre"
+git config --global user.email "un-correo-verificado@ejemplo.com"</code></pre>
+<p>Cada ejercicio se entrega con una <b>etiqueta anotada</b>. A diferencia de una ligera (<code>git tag nombre</code>, que es solo un puntero), una anotada es un objeto con autor, fecha y mensaje:</p>
+<pre><code>git tag -a entrega-fundamentos-git-e1 -m "E1 resuelto"
+git push origin entrega-fundamentos-git-e1
+git cat-file -t entrega-fundamentos-git-e1    # tag, no commit</code></pre>
+<p>Cuenta la primera etiqueta que subas. Antes de etiquetar, mira el check <b>Corrector git</b> de tu último commit en GitHub.</p>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../../ejercicios/#03-git">E1 · Identidad y commits atómicos</a> y <a href="../../ejercicios/#03-git">E2 · <code>.gitignore</code></a>. Empieza cada uno con <code>preparar.py</code>.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pide a la IA que te proponga los mensajes de tus commits a partir de <code>git diff --staged</code>. Compara su propuesta con el diff antes de usarla: si menciona algo que no está en el diff, es inventado.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li><code>git cat-file -p HEAD</code> y sabes explicar cada línea</li>
+<li>Tu <code>user.email</code> está verificado en GitHub</li>
+<li>E1 y E2 aparecen como superados en el check <b>Corrector git</b> y tienen su etiqueta</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de git"><a href="../../">← Fundamentos</a><a href="02-ramas-y-fusiones.html">Git 2 · Ramas y fusiones →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+</body>
+</html>

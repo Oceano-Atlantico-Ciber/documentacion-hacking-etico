@@ -37,7 +37,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 <nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Fundamentos, alcance y herramientas</a></nav>
 
 <h1>Ejercicios de Fundamentos</h1>
-<p class="lead">Ficheros de partida y laboratorios del bloque. Cada carpeta de <code>01-fundamentos/ejercicios/</code> es un ejercicio que se levanta con Docker; el enunciado está en su tema.</p>
+<p class="lead">Ficheros de partida y laboratorios del bloque. Cada carpeta de <code>01-fundamentos/ejercicios/</code> es un ejercicio; el enunciado está en su tema.</p>
 
 <h2>Cómo conseguir los ficheros</h2>
 <pre><code>git clone https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico.git
@@ -51,6 +51,7 @@ cd documentacion-hacking-etico/01-fundamentos/ejercicios</code></pre>
 <tr><td><code>fundamentos/terraform/</code></td><td>El Terraform corregido (sin <code>.terraform/</code> ni <code>tfstate</code>).</td><td><a href="../docs/03-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/trivy-antes.txt</code>, <code>fundamentos/trivy-despues.txt</code></td><td>Salida de Trivy antes y después de corregir. La segunda sin avisos altos ni críticos.</td><td><a href="../docs/03-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/inventario/red.txt</code>, <code>fundamentos/inventario/nube.txt</code></td><td>Salida de nmap sobre la red del laboratorio y de la CLI de AWS sobre la cuenta emulada.</td><td><a href="../docs/04-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
+<tr><td><code>fundamentos/git/</code></td><td>Los ejercicios de git. No van en esta etiqueta: cada uno tiene la suya.</td><td><a href="#03-git">03 · Git</a></td></tr>
 <tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/alertas/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="../docs/04-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
 </tbody></table>
 <p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>
@@ -92,6 +93,96 @@ docker compose run --rm aws iam list-users</code></pre></li>
 <li>Escribe al menos una regla propia en <code>suricata/local.rules</code> (sid a partir de 1000100) que detecte algo que hayas hecho y que no saltara, reinicia Suricata y comprueba que salta. Entrega el fichero en <code>fundamentos/alertas/local.rules</code>.</li>
 </ol>
 <p><b>Opcional:</b> en <code>02-mini-auditoria/floci-ec2/</code> hay un Terraform que pide a Floci una instancia EC2 de verdad (un contenedor). Si arranca y aparece en <code>docker ps</code>, es la base de lo que haremos en Redes y sistemas.</p>
+
+<h2 id="03-git">03 · Git</h2>
+<p>Carpeta <code>03-git/</code>. Teoría: <a href="../docs/git/01-modelo-y-commits.html">Git 1 · Modelo y commits</a>, <a href="../docs/git/02-ramas-y-fusiones.html">Git 2 · Ramas y fusiones</a>, <a href="../docs/git/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a> y <a href="../docs/git/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a>.</p>
+<p>Ocho ejercicios en <code>fundamentos/git/</code> de tu repositorio de entregas. Cada uno empieza con <code>preparar.py</code>, que crea los ficheros, ramas y commits de partida a partir de tu usuario de GitHub: tu escenario es distinto del de tus compañeros. Ejecútalo desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<pre><code>cd entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-fundamentos/ejercicios/03-git/preparar.py e1</code></pre>
+<p>Cada ejercicio se entrega con su propia <b>etiqueta anotada</b>, <code>entrega-fundamentos-git-eN</code>, sobre el commit donde está resuelto:</p>
+<pre><code>git tag -a entrega-fundamentos-git-e1 -m "E1 resuelto"
+git push origin entrega-fundamentos-git-e1</code></pre>
+<p class="note"><b>Cuenta la primera etiqueta que subas.</b> Moverla o borrarla después no cambia la entrega. Antes de etiquetar, sube tu trabajo y mira el resultado provisional: en GitHub, junto al último commit de <code>main</code>, aparece el check <b>Corrector git</b> con una fila por ejercicio. Se actualiza cada 15 minutos en horario de clase. Cuando tu ejercicio salga sin fallos, etiqueta.</p>
+<table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Etiqueta sobre</th></tr></thead><tbody>
+<tr><td>E1</td><td>Tres commits, uno por fichero, con mensajes Conventional Commits y tu identidad.</td><td><code>main</code></td></tr>
+<tr><td>E2</td><td>Un <code>.gitignore</code> que deja fuera lo que no debe subirse.</td><td><code>main</code></td></tr>
+<tr><td>E3</td><td>Un merge fast-forward y otro con commit de merge.</td><td><code>main</code></td></tr>
+<tr><td>E4</td><td>Un conflicto resuelto según una regla.</td><td><code>main</code></td></tr>
+<tr><td>E5</td><td>Un rebase de una rama sobre <code>main</code>.</td><td><code>git/e5-feature</code></td></tr>
+<tr><td>E6</td><td>Cuatro commits a medias fundidos en uno con rebase interactivo.</td><td><code>git/e6-wip</code></td></tr>
+<tr><td>E7</td><td>Deshacer un commit ya publicado sin reescribir la historia.</td><td><code>main</code></td></tr>
+<tr><td>E8</td><td>Encontrar una clave filtrada en la historia y purgarla.</td><td><code>git/e8-app</code></td></tr>
+</tbody></table>
+
+<h3>E1 · Identidad y commits atómicos</h3>
+<ol>
+<li>Comprueba que <code>git config user.email</code> es uno de los correos verificados de tu cuenta de GitHub (Settings → Emails). Si no, GitHub no asocia tus commits a tu cuenta y el ejercicio no cuenta.</li>
+<li><code>preparar.py e1</code> deja tres ficheros sin versionar en <code>fundamentos/git/e1/</code>.</li>
+<li>Haz tres commits, cada uno con un solo fichero, con mensajes Conventional Commits: <code>docs(e1): objetivo de la auditoría</code>.</li>
+<li>Sube <code>main</code> y etiqueta.</li>
+</ol>
+
+<h3>E2 · <code>.gitignore</code></h3>
+<ol>
+<li><code>preparar.py e2</code> deja en <code>fundamentos/git/e2/</code> el programa <code>app.py</code> y lo que genera al ejecutarse: <code>build/</code>, <code>depuracion.log</code> y <code>.env</code>.</li>
+<li>Crea <code>fundamentos/git/e2/.gitignore</code> para que <code>git status</code> solo proponga <code>app.py</code> y el propio <code>.gitignore</code>. Compruébalo con <code>git check-ignore -v</code>.</li>
+<li>Commit, push y etiqueta. Si alguno de los ignorados llega a un commit, aunque lo borres después, el ejercicio falla.</li>
+</ol>
+
+<h3>E3 · Fusiones</h3>
+<ol>
+<li><code>preparar.py e3</code> crea las ramas <code>git/e3-ff</code> y <code>git/e3-noff</code>, con un commit cada una.</li>
+<li>Integra <code>git/e3-ff</code> en <code>main</code> con fast-forward, sin commit de merge.</li>
+<li>Integra <code>git/e3-noff</code> con un commit de merge (<code>--no-ff</code>).</li>
+<li>Sube <code>main</code> y etiqueta.</li>
+</ol>
+
+<h3>E4 · Conflicto</h3>
+<ol>
+<li><code>preparar.py e4</code> añade a <code>main</code> el inventario <code>fundamentos/git/e4/puertos.txt</code> y crea <code>git/e4-a</code> y <code>git/e4-b</code>: dos auditores que han encontrado un puerto más cada uno.</li>
+<li>Integra las dos ramas en <code>main</code>. La segunda dará conflicto.</li>
+<li><b>Regla:</b> el inventario final tiene todas las líneas de las dos ramas, una por puerto, ordenadas por número de puerto y sin marcadores de conflicto.</li>
+<li>Termina el merge, sube <code>main</code> y etiqueta.</li>
+</ol>
+
+<h3>E5 · Rebase</h3>
+<ol>
+<li><code>preparar.py e5</code> crea <code>git/e5-feature</code> con dos commits y, después, añade un commit a <code>main</code>, como si lo hubiera subido un compañero.</li>
+<li>Rebasa <code>git/e5-feature</code> sobre <code>main</code>. Sin merges: la rama debe quedar lineal encima de <code>main</code>.</li>
+<li>Sube <code>main</code> y la rama (<code>git push -u origin git/e5-feature</code>, o <code>--force-with-lease</code> si ya la habías subido) y etiqueta la punta de la rama.</li>
+</ol>
+
+<h3>E6 · Rebase interactivo</h3>
+<ol>
+<li><code>preparar.py e6</code> crea <code>git/e6-wip</code> con cuatro commits <code>wip(e6): paso N</code> que van escribiendo un informe.</li>
+<li>Con <code>git rebase -i</code>, fúndelos en un único commit con el mensaje exacto <code>docs(e6): informe de alcance</code>.</li>
+<li>Sube la rama y etiqueta su punta.</li>
+</ol>
+
+<h3>E7 · Revert</h3>
+<ol>
+<li><code>preparar.py e7</code> añade tres commits a <code>main</code>. El segundo activa el modo depuración del servidor por error. Sube <code>main</code>: a partir de ahí ese commit es público.</li>
+<li>Deshaz ese commit sin reescribir la historia: el commit erróneo debe seguir en ella y el tercero también.</li>
+<li>Sube <code>main</code> y etiqueta.</li>
+</ol>
+
+<h3>E8 · Secreto filtrado</h3>
+<ol>
+<li><code>preparar.py e8</code> crea <code>git/e8-app</code>. En algún commit alguien subió un <code>.env</code> con una clave de API, y después lo borró.</li>
+<li>Sube la rama tal cual: <code>git push -u origin git/e8-app</code>. Simula la filtración real.</li>
+<li>Encuentra el commit que introdujo la clave (<code>git log -p -S</code>) y apunta su SHA completo.</li>
+<li>Purga el <code>.env</code> de toda la historia de la rama:
+<pre><code>pip install git-filter-repo
+git filter-repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></li>
+<li>En la rama, guarda el SHA del paso 3 en <code>fundamentos/git/e8/hallazgo.txt</code> y haz commit. Sube con <code>--force-with-lease</code> y etiqueta.</li>
+<li>Comprueba en GitHub la dirección <code>…/commit/&lt;SHA&gt;</code>. ¿Sigue ahí la clave? ¿Qué habría que hacer con ella en un caso real?</li>
+</ol>
+
+<h3>Cómo se valora</h3>
+<ul>
+<li>Cada ejercicio vale lo mismo y se corrige de forma automática desde su etiqueta: estructura del historial (padres de los merges, commits por rama, conflicto real) y contenido de los ficheros.</li>
+<li>Las fechas de los commits no cuentan. Cuenta la hora a la que subiste la etiqueta, antes del cierre del bloque.</li>
+</ul>
 
 <footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
 </main>

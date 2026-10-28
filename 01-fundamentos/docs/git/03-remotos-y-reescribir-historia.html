@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git 3 · Remotos y reescribir historia · Hacking ético</title>
+<style>
+/* Layout: una página por tema del bloque. Cabecera con bloque, semana y criterios; después secciones en vertical y al final la comprobación y la navegación entre temas. */
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --ink: #1b2229;
+  --muted: #5d6771;
+  --line: #d6dad5;
+  --accent: #0f6b64;
+  --accent-soft: #dcefec;
+  --ia: #9a4d12;
+  --ia-soft: #f8e7d8;
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+    --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
+  --accent: #6fcfc3; --accent-soft: #163a37; --ia: #f0a868; --ia-soft: #3b2614; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 40px 72px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 700; }
+h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+ul, ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+a { color: var(--accent); }
+code { font: 500 .88em var(--f-mono); background: var(--accent-soft); color: var(--ink); padding: 1px 5px; border-radius: 4px; }
+pre { margin: 0; background: var(--ink); color: var(--bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; font: 13.5px/1.5 var(--f-mono); }
+pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+.eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+header { display: grid; gap: 14px; }
+.lead { color: var(--muted); max-width: 62ch; font-size: 17px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 14px; }
+.meta b { color: var(--ink); font-weight: 600; }
+
+
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tabla { overflow-x: auto; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.ia { background: var(--ia-soft); border-left: 3px solid var(--ia); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+.ia .eyebrow { color: var(--ia); }
+.alcance { background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; border-radius: 8px; display: grid; gap: 6px; }
+.check { display: grid; gap: 8px; list-style: none; padding: 0; }
+.check li { position: relative; padding-left: 30px; min-width: 0; }
+.check li::before { content: ""; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border: 1.5px solid var(--accent); border-radius: 3px; }
+.seccion { display: grid; gap: 14px; }
+.seccion > h2 { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+nav.top { font-size: 14px; color: var(--muted); }
+nav.temas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 18px; font-size: 15px; }
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+@media (prefers-reduced-motion: no-preference) { a { transition: color .15s; } }
+figure { margin: 0; display: grid; gap: 8px; overflow-x: auto; }
+figcaption { color: var(--muted); font-size: 14px; }
+.grafo { width: 100%; min-width: 560px; max-width: 680px; height: auto; }
+.grafo text { font: 500 13px var(--f-mono); fill: var(--ink); }
+.grafo .t, .grafo .fila { font: 700 14px var(--f-body); }
+.grafo .tipo { font: 600 10.5px var(--f-mono); letter-spacing: .06em; fill: var(--muted); }
+.grafo .cmd { font-size: 12px; }
+.grafo .m { fill: var(--muted); }
+.grafo .r { fill: var(--accent); font-weight: 700; }
+.grafo .p { fill: var(--ia); font-weight: 700; }
+.grafo .c { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.grafo .x { fill: var(--accent); stroke: var(--accent); stroke-width: 2; }
+.grafo circle.p { stroke: var(--ia); stroke-width: 2; }
+.grafo .g { fill: var(--bg); stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.grafo .l { stroke: var(--muted); stroke-width: 2; fill: none; }
+.grafo .la { stroke: var(--accent); stroke-width: 2; fill: none; }
+.grafo .lg { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; fill: none; }
+.grafo .k { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+.grafo .kp { fill: var(--ia-soft); stroke: var(--ia); stroke-width: 1.5; }
+.grafo .zona { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.grafo .rama rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.grafo .rama text { fill: var(--accent); font-weight: 700; font-size: 12px; }
+.grafo .head rect { fill: var(--ink); }
+.grafo .head text { fill: var(--bg); font-weight: 700; font-size: 12px; }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semana 2 · Git 3 de 4</p>
+<h1>Remotos y reescribir historia</h1>
+<p class="lead">Cómo se sincroniza tu repositorio con GitHub y cómo dejar una rama limpia antes de compartirla, sin romper el trabajo de nadie.</p>
+<div class="meta"><span>Miércoles, 3.ª hora</span><span>Ejercicios: <a href="../../ejercicios/#03-git">E5 y E6</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Tu repositorio y el remoto</h2>
+<p>Tu clon es un repositorio completo. <code>origin</code> es solo el nombre del remoto del que clonaste, y <code>origin/main</code> es tu copia local de dónde estaba su <code>main</code> la última vez que preguntaste.</p>
+<figure>
+<svg class="grafo" viewBox="0 0 680 230" role="img" aria-label="fetch copia main de GitHub en origin/main; merge lo integra en tu main; pull hace las dos cosas; push sube tu main a GitHub"><defs><marker id="rem-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="rem-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><rect class="zona" x="0" y="0" width="420" height="230" rx="10"/><text class="fila" x="14" y="24">Tu portátil</text><rect class="zona" x="500" y="0" width="180" height="230" rx="10"/><text class="fila" x="514" y="24">GitHub</text><rect class="k" x="30" y="140" width="140" height="64" rx="8"/><text class="tipo" x="40" y="157">RAMA</text><text x="40" y="176">main</text><rect class="k" x="250" y="140" width="140" height="64" rx="8"/><text class="tipo" x="260" y="157">COPIA DEL REMOTO</text><text x="260" y="176">origin/main</text><rect class="k" x="520" y="140" width="140" height="64" rx="8"/><text class="tipo" x="530" y="157">RAMA</text><text x="530" y="176">main</text><path class="l" d="M518 182L392 182" marker-end="url(#rem-f)"/><text class="m cmd" x="455.0" y="174.0" text-anchor="middle">git fetch</text><path class="l" d="M248 182L172 182" marker-end="url(#rem-f)"/><text class="m cmd" x="210.0" y="174.0" text-anchor="middle">git merge</text><path class="la" d="M100 138Q345.0 -12.0 590 138" marker-end="url(#rem-fa)"/><text class="r cmd" x="345.0" y="57.0" text-anchor="middle">git push</text><text class="m cmd" x="210" y="222" text-anchor="middle">git pull = fetch + merge</text></svg>
+<figcaption><code>origin/main</code> es una copia local: solo cambia con <code>fetch</code> (o <code>pull</code>). Tu <code>main</code> solo cambia cuando integras.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
+<tr><td><code>git fetch</code></td><td>Trae lo nuevo del remoto y actualiza <code>origin/*</code>. No toca tus ramas ni tus ficheros.</td></tr>
+<tr><td><code>git pull</code></td><td><code>fetch</code> y después integra <code>origin/main</code> en tu rama (merge, o rebase con <code>--rebase</code>).</td></tr>
+<tr><td><code>git push -u origin rama</code></td><td>Sube la rama y la deja enlazada a su remota para los siguientes <code>push</code> y <code>pull</code>.</td></tr>
+<tr><td><code>git branch -vv</code></td><td>Cada rama con su remota y cuántos commits va por delante o por detrás.</td></tr>
+</tbody></table></div>
+<p>Un <code>push</code> solo se acepta si es fast-forward para el remoto. Si alguien subió antes, primero <code>fetch</code> e integra.</p>
+</section>
+
+<section class="seccion">
+<h2>Rebase</h2>
+<figure>
+<svg class="grafo" viewBox="0 0 680 300" role="img" aria-label="Antes, la rama sale de B y main avanzó a M; git rebase main copia F1 y F2 encima de M como F1' y F2' y los originales dejan de estar en la rama"><defs><marker id="rb-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="rb-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="99">Antes</text><path class="l" d="M170 95L314 95"/><path class="l" d="M242 95L314 45L386 45"/><circle class="c" cx="170" cy="95" r="17"/><text x="170" y="99.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="95" r="17"/><text x="242" y="99.5" text-anchor="middle">B</text><circle class="c" cx="314" cy="95" r="17"/><text x="314" y="99.5" text-anchor="middle">M</text><circle class="c" cx="314" cy="45" r="17"/><text x="314" y="49.5" text-anchor="middle">F1</text><circle class="c" cx="386" cy="45" r="17"/><text x="386" y="49.5" text-anchor="middle">F2</text><g class="rama"><rect x="293.2" y="128" width="41.6" height="22" rx="6"/><text x="314.0" y="143" text-anchor="middle">main</text></g><path class="l" d="M314 128L314 114" marker-end="url(#rb-f)"/><g class="rama"><rect x="425.0" y="34" width="115.6" height="22" rx="6"/><text x="482.8" y="49" text-anchor="middle">git/e5-feature</text></g><path class="l" d="M425 45L405 45" marker-end="url(#rb-f)"/><text class="fila" x="0" y="239">git rebase main</text><path class="lg" d="M242 235L314 185L386 185"/><circle class="g" cx="314" cy="185" r="17"/><text x="314" y="189.5" text-anchor="middle" class="m">F1</text><circle class="g" cx="386" cy="185" r="17"/><text x="386" y="189.5" text-anchor="middle" class="m">F2</text><text class="m" x="416" y="189" text-anchor="start">originales, fuera de la rama</text><path class="l" d="M170 235L458 235"/><circle class="c" cx="170" cy="235" r="17"/><text x="170" y="239.5" text-anchor="middle">A</text><circle class="c" cx="242" cy="235" r="17"/><text x="242" y="239.5" text-anchor="middle">B</text><circle class="c" cx="314" cy="235" r="17"/><text x="314" y="239.5" text-anchor="middle">M</text><circle class="x" cx="386" cy="235" r="17"/><text x="386" y="239.5" text-anchor="middle" style="fill: var(--surface)">F1'</text><circle class="x" cx="458" cy="235" r="17"/><text x="458" y="239.5" text-anchor="middle" style="fill: var(--surface)">F2'</text><g class="rama"><rect x="293.2" y="268" width="41.6" height="22" rx="6"/><text x="314.0" y="283" text-anchor="middle">main</text></g><path class="l" d="M314 268L314 254" marker-end="url(#rb-f)"/><g class="rama"><rect x="497.0" y="224" width="115.6" height="22" rx="6"/><text x="554.8" y="239" text-anchor="middle">git/e5-feature</text></g><path class="l" d="M497 235L477 235" marker-end="url(#rb-f)"/></svg>
+<figcaption>El rebase vuelve a aplicar tus cambios encima de la nueva base. Son commits nuevos, con otro SHA, aunque los cambios sean los mismos.</figcaption>
+</figure>
+<pre><code>git switch rama
+git rebase main          # si hay conflicto: resuélvelo, git add, git rebase --continue
+git rebase --abort       # o vuelve a como estaba</code></pre>
+<p>El resultado es una historia lineal, como si hubieras empezado la rama hoy. El precio es que los commits originales dejan de existir en la rama.</p>
+</section>
+
+<section class="seccion">
+<h2>Rebase interactivo</h2>
+<p><code>git rebase -i HEAD~4</code> abre un editor con los cuatro últimos commits, del más antiguo al más reciente. Cambias la palabra de cada línea, guardas y git rehace la historia:</p>
+<div class="tabla"><table><thead><tr><th>Palabra</th><th>Qué hace con el commit</th></tr></thead><tbody>
+<tr><td><code>pick</code></td><td>Lo deja como está.</td></tr>
+<tr><td><code>reword</code></td><td>Lo deja, pero te deja cambiar el mensaje.</td></tr>
+<tr><td><code>squash</code></td><td>Lo funde con el anterior y te deja escribir el mensaje del conjunto.</td></tr>
+<tr><td><code>fixup</code></td><td>Lo funde con el anterior y descarta su mensaje.</td></tr>
+<tr><td><code>drop</code></td><td>Lo elimina.</td></tr>
+</tbody></table></div>
+<figure>
+<svg class="grafo" viewBox="0 0 640 180" role="img" aria-label="Con rebase interactivo, cuatro commits wip se funden en un solo commit S con el mismo contenido final"><defs><marker id="sq-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker><marker id="sq-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill: var(--accent)"/></marker></defs><text class="fila" x="0" y="54">Antes</text><path class="l" d="M170 50L458 50"/><circle class="c" cx="170" cy="50" r="17"/><text x="170" y="54.5" text-anchor="middle">B</text><circle class="c" cx="242" cy="50" r="17"/><text x="242" y="54.5" text-anchor="middle">w1</text><circle class="c" cx="314" cy="50" r="17"/><text x="314" y="54.5" text-anchor="middle">w2</text><circle class="c" cx="386" cy="50" r="17"/><text x="386" y="54.5" text-anchor="middle">w3</text><circle class="c" cx="458" cy="50" r="17"/><text x="458" y="54.5" text-anchor="middle">w4</text><text class="m cmd" x="350.0" y="88" text-anchor="middle">wip(e6): paso 1 … paso 4</text><text class="fila" x="0" y="134">git rebase -i</text><text class="m cmd" x="0" y="152">squash</text><path class="l" d="M170 140L242 140"/><circle class="c" cx="170" cy="140" r="17"/><text x="170" y="144.5" text-anchor="middle">B</text><circle class="x" cx="242" cy="140" r="17"/><text x="242" y="144.5" text-anchor="middle" style="fill: var(--surface)">S</text><text class="r" x="272" y="145" text-anchor="start">docs(e6): informe de alcance</text></svg>
+<figcaption>Con <code>squash</code> o <code>fixup</code>, cuatro commits a medias se convierten en uno: el contenido final es el mismo y la historia se lee de un vistazo.</figcaption>
+</figure>
+<p>Para retocar solo el último commit no hace falta todo esto: <code>git commit --amend</code>. Y para copiar un commit concreto de otra rama a la tuya, <code>git cherry-pick &lt;sha&gt;</code>.</p>
+</section>
+
+<section class="seccion">
+<h2>La regla de oro</h2>
+<p><b>No reescribas commits que otra persona ya tiene.</b> Si los cambias y ella los tenía, su historia y la tuya dejan de encajar. En una rama tuya que solo usas tú, reescribir está bien, pero el remoto rechazará el <code>push</code> porque ya no es fast-forward. Fuerza con cuidado:</p>
+<pre><code>git push --force-with-lease</code></pre>
+<p><code>--force-with-lease</code> solo sobrescribe si el remoto sigue donde tú creías. Si alguien subió algo entretanto, se niega en lugar de borrarlo, que es lo que haría <code>--force</code>. Sobre <code>main</code> no se fuerza nunca.</p>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../../ejercicios/#03-git">E5 · Rebase</a> y <a href="../../ejercicios/#03-git">E6 · Rebase interactivo</a>. Las dos etiquetas van sobre la punta de su rama, no sobre <code>main</code>.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Antes de un rebase, pide a la IA que te dibuje cómo quedará <code>git log --graph</code>. Después, compáralo con el real. Si no coinciden, el dibujo de la IA estaba mal, no git.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Sabes la diferencia entre <code>fetch</code> y <code>pull</code></li>
+<li>Sabes por qué un rebase cambia los SHA y cuándo no se debe hacer</li>
+<li>E5 y E6 superados en el check <b>Corrector git</b> y con su etiqueta</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de git"><a href="02-ramas-y-fusiones.html">← Git 2 · Ramas y fusiones</a><a href="04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+</body>
+</html>
