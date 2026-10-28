@@ -74,31 +74,63 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 </head>
 <body>
 <div class="wrap">
-<nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Presentación</a></nav>
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Presentación</a></nav>
 <header>
 <p class="eyebrow">Presentación · Semana 1</p>
 <h1>Git y GitHub</h1>
-<p class="lead">Git guarda la historia de tu trabajo; GitHub aloja el repositorio privado donde lo entregas.</p>
+<p class="lead">Deja tu portátil Windows listo para todo el curso: las herramientas, tu identidad en git y la sesión con GitHub. Se hace una vez y tarda unos quince minutos.</p>
 </header>
 <section class="seccion">
-<ol>
-<li>Instala Git (<a href="https://git-scm.com/downloads">git-scm.com/downloads</a>; en Linux, <code>sudo apt install git</code>) y configura tu identidad:
+<h2>1 · Instala las herramientas</h2>
+<p>Abre <b>PowerShell</b> e instala con <code>winget</code>, el gestor de paquetes de Windows:</p>
+<pre><code>winget install -e --id Git.Git
+winget install -e --id Python.Python.3.13
+winget install -e --id GitHub.cli
+winget install -e --id Microsoft.VisualStudioCode</code></pre>
+<p>Cierra PowerShell cuando acaben: los programas nuevos solo se ven en una terminal abierta después.</p>
+</section>
+<section class="seccion">
+<h2>2 · Tu terminal: Git Bash</h2>
+<p>Desde aquí, todas las órdenes del curso se escriben en <b>Git Bash</b>, que se instala con Git (menú Inicio → Git Bash, o en VS Code: Terminal → New Terminal → Git Bash). Es la misma terminal que en Linux y en los servidores que auditaremos: <code>cd</code>, <code>ls</code>, <code>cp</code>, <code>cat</code>, rutas con <code>/</code>.</p>
+<p>Python se ejecuta con <code>py</code>, no con <code>python3</code>: en Windows, <code>python3</code> abre la Microsoft Store. Instala ya la herramienta que usaremos en Git 4:</p>
+<pre><code>py -m pip install git-filter-repo</code></pre>
+</section>
+<section class="seccion">
+<h2>3 · Configura git</h2>
 <pre><code>git config --global user.name "Tu Nombre"
 git config --global user.email "un-correo-verificado-en-github"
-git config --global init.defaultBranch main</code></pre></li>
-<li>Cuenta en <a href="https://github.com">github.com</a> si no la tienes. Pásale tu usuario al docente: con él se crea tu repositorio privado en la organización de la asignatura.</li>
+git config --global init.defaultBranch main
+git config --global core.editor "code --wait"
+git config --global core.autocrlf true</code></pre>
+<p>El correo tiene que ser uno de los verificados en GitHub (Settings → Emails), o tus commits no se asociarán a tu cuenta. Con <code>core.editor</code>, cuando git necesite un mensaje (un merge, un rebase) abrirá una pestaña de VS Code: escribe, guarda y cierra la pestaña para continuar. <code>core.autocrlf</code> convierte los finales de línea de Windows al subir, para que el repositorio quede igual que en Linux.</p>
+</section>
+<section class="seccion">
+<h2>4 · Conéctate a GitHub</h2>
+<ol>
+<li>Cuenta en <a href="https://github.com">github.com</a> si no la tienes. Pásale tu usuario al docente: con él se crea tu repositorio privado <code>entregas-&lt;tu-usuario&gt;</code> en la organización de la asignatura.</li>
+<li>Inicia sesión desde la terminal. Elige <b>GitHub.com</b>, <b>HTTPS</b>, autenticar git con tus credenciales y <b>login with a web browser</b>:
+<pre><code>gh auth login</code></pre>
+Así <code>git clone</code> y <code>git push</code> de tus repositorios privados funcionan sin pedir contraseña. GitHub ya no acepta la contraseña de la cuenta desde git.</li>
 </ol>
-<p>Los fundamentos de git (commits, ramas, conflictos, rebase y cómo deshacer) se trabajan en la semana 2, en los <a href="../../01-fundamentos/docs/01-git/01-modelo-y-commits.html">temas de git de Fundamentos</a>.</p>
+<p>Los fundamentos de git (commits, ramas, conflictos, rebase y cómo deshacer) se trabajan en la semana 2, en los <a href="../../01-fundamentos/docs/01-git/01-modelo-y-commits.html">temas de git de Fundamentos</a>. El siguiente paso práctico es el <a href="07-primer-commit.html">primer commit</a>.</p>
 </section>
 <section class="seccion">
 <h2>Comprobación</h2>
+<p>En Git Bash, cada orden responde sin error:</p>
+<pre><code>git --version
+py --version
+py -m git_filter_repo --version
+gh auth status
+git config --global --list</code></pre>
 <ul class="check">
-<li><code>git --version</code> responde y tu identidad está configurada</li>
+<li><code>gh auth status</code> dice que has iniciado sesión con tu usuario</li>
+<li><code>git config --global --list</code> muestra tu nombre, tu correo verificado y <code>core.editor=code --wait</code></li>
 <li>Usuario de GitHub enviado al docente</li>
 </ul>
 </section>
 <nav class="temas" aria-label="Temas de la presentación"><a href="02-como-funciona-la-asignatura.html">← Cómo funciona la asignatura</a><a href="04-docker.html">Docker →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
+<script src="../../assets/nav.js" defer></script>
 </body>
 </html>
