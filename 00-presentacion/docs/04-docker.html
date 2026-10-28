@@ -16,7 +16,9 @@
 </header>
 <section class="seccion">
 <ol>
-<li>Docker. <b>Windows:</b> Docker Desktop con el motor WSL 2. <b>macOS:</b> Docker Desktop. <b>Linux:</b> Docker Engine y tu usuario en el grupo <code>docker</code>.
+<li>Instala Docker Desktop desde PowerShell y ábrelo. Usa el motor WSL 2, que propone al arrancar la primera vez; si te pide reiniciar, reinicia:
+<pre><code>winget install -e --id Docker.DockerDesktop</code></pre>
+Cuando diga que está en marcha, comprueba en Git Bash que responde:
 <pre><code>docker run --rm hello-world
 docker compose version</code></pre></li>
 <li>Con Docker funcionando podréis levantar Floci, la cuenta AWS emulada en la que trabajaremos todo el curso. Si hay tiempo, dejadla descargando: <code>docker pull floci/floci:latest</code>.</li>

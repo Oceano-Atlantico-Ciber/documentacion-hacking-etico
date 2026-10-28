@@ -11,10 +11,18 @@
 <nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Presentación</a></nav>
 
 <h1>Ejercicios de la presentación</h1>
-<p class="lead">Ficheros del juego del primer día. El enunciado está en su tema.</p>
+<p class="lead">El juego del primer día: qué hay que hacer, sus ficheros y la solución.</p>
 
 <h2 id="01-hackea-el-ranking">01 · Hackea el ranking</h2>
-<p>Carpeta <code>00-presentacion/ejercicios/01-hackea-el-ranking/</code>. Enunciado: <a href="../../00-presentacion/docs/06-hackea-el-ranking.html">Hackea el ranking</a>. El juego lo despliega el docente en su equipo y se juega desde el navegador, F12, <code>curl</code> y la IA. Alcance: solo la dirección del juego, solo durante la clase.</p>
+<dl class="ficha">
+<dt>Enunciado</dt><dd><a href="../docs/06-hackea-el-ranking.html">Hackea el ranking</a>: los cuatro objetivos y qué entregar</dd>
+<dt>Solución</dt><dd><a href="01-hackea-el-ranking/solucion.html">Solución de «Hackea el ranking»</a>, reto a reto</dd>
+<dt>Ficheros</dt><dd><a href="01-hackea-el-ranking/docker-compose.yml"><code>docker-compose.yml</code></a>, <a href="01-hackea-el-ranking/server/server.py"><code>server/server.py</code></a> y <a href="01-hackea-el-ranking/web/index.html"><code>web/index.html</code></a></dd>
+<dt>Alcance</dt><dd>Solo la dirección del juego que proyecta el docente, solo durante la clase</dd>
+</dl>
+<p>Se juega desde el navegador, F12, <code>curl</code> y la IA.</p>
+
+<h3>Levantar el juego (docente)</h3>
 <p>El servidor tiene dos modos: <code>trusted</code>, que acepta la puntuación que manda el navegador, y <code>validated</code>, que lleva la partida en el servidor. Se juega con el primero y se termina desplegando el segundo para ver que los mismos trucos ya no funcionan.</p>
 <pre><code>MODE=trusted docker compose up -d --remove-orphans      # http://IP-DEL-DOCENTE:8080  (?scoreboard para el proyector)
 MODE=validated docker compose up -d --force-recreate --remove-orphans</code></pre>
