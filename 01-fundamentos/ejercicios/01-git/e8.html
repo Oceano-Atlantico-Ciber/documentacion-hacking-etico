@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E8 · Secreto filtrado · Hacking ético</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#5f5e58;--line:#e4e1d8;--card:#ffffff;--accent:#0b6e4f;--code:#f1efe8;--warn:#9a5b00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522;--warn:#e0a54a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522;--warn:#e0a54a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+nav.top{font-size:14px;color:var(--muted);margin-bottom:24px}
+nav.top a{color:var(--muted)}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;text-wrap:balance}
+h2{font-size:20px;margin:36px 0 10px;padding-top:12px;border-top:1px solid var(--line);text-wrap:balance}
+p.lead{color:var(--muted);font-size:18px;margin:0 0 20px;max-width:65ch}
+p,li{max-width:70ch}
+a{color:var(--accent)}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:14px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+h1 code,h2 code{font-size:.9em}
+.cmd{position:relative;margin:10px 0}
+.cmd pre{background:var(--code);padding:12px 14px;padding-right:84px;border-radius:8px;overflow-x:auto;font-size:14px;margin:0}
+.cmd pre code{padding:0;background:none}
+.cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.cmd button:hover{border-color:var(--accent)}
+.cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
+.ficha dt{color:var(--muted)}
+.ficha dd{margin:0}
+.step{display:flex;align-items:baseline;gap:12px}
+.step .n{flex:none;font-size:13px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;width:26px;height:26px;display:inline-grid;place-items:center;font-variant-numeric:tabular-nums}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px;max-width:none}
+ul.falla li::marker{color:var(--warn)}
+nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:15px}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#01-git">Ejercicios de git</a></nav>
+
+<h1>E8 · Secreto filtrado</h1>
+<p class="lead">Alguien subió una clave de API y luego la borró. Encuéntrala en la historia, púrgala y comprueba qué queda en GitHub.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/01-git/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/git/e8/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e8</code> sobre <code>git/e8-app</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e8</code></pre></div>
+<p>Crea <code>git/e8-app</code>. En uno de sus commits alguien subió un <code>.env</code> con una clave de API, y en otro lo borró.</p>
+
+<h2 class="step"><span class="n">2</span>Sube la rama tal cual</h2>
+<div class="cmd"><pre><code>git push -u origin git/e8-app</code></pre></div><p>Así simulas la filtración real: la clave ya está en GitHub. Sin este paso el ejercicio no se puede superar.</p>
+
+<h2 class="step"><span class="n">3</span>Encuentra el commit que la introdujo</h2>
+<div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app</code></pre></div><p>Salen dos commits: el que añade la clave (líneas con <code>+</code>) y el que la borra (<code>−</code>). Apunta el SHA <b>completo</b>, de 40 caracteres, del que la añade.</p>
+
+<h2 class="step"><span class="n">4</span>Purga el <code>.env</code> de toda la rama</h2>
+<p><code>git-filter-repo</code> ya lo tienes instalado desde <a href="../../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a>. Se lanza como módulo de Python, que funciona aunque su carpeta no esté en el PATH; es la misma herramienta que <code>git filter-repo</code>:</p><div class="cmd"><pre><code>py -m git_filter_repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div><p>Reescribe todos los commits de la rama sin ese fichero. Los SHA cambian.</p>
+
+<h2 class="step"><span class="n">5</span>Guarda tu hallazgo</h2>
+<div class="cmd"><pre><code>git switch git/e8-app</code></pre></div><p>Crea con tu editor <code>fundamentos/git/e8/hallazgo.txt</code> con el SHA del paso 3 en una línea y haz commit:</p><div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt
+git commit -m "docs(e8): commit que filtró la clave"</code></pre></div>
+
+<h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app
+git ls-tree -r --name-only git/e8-app fundamentos/git/e8</code></pre></div>
+<p>La primera orden no debe mostrar nada, y en la carpeta no debe haber <code>.env</code>.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Falta alguno de los commits originales de la rama: purga el fichero, no los commits.</li>
+<li>La clave sigue en la historia de la rama.</li>
+<li><code>hallazgo.txt</code> no contiene el SHA completo, o ese commit sigue en la rama.</li>
+<li>Ese SHA no es el commit que subió la clave a GitHub, por ejemplo porque purgaste antes de subir.</li>
+</ul>
+
+<h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git push --force-with-lease origin git/e8-app</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E8 salga sin fallos, etiqueta la punta de <code>git/e8-app</code>:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e8 git/e8-app -m "E8 resuelto"
+git push origin entrega-fundamentos-git-e8</code></pre></div>
+<p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
+
+<h2 class="step"><span class="n">8</span>Mira qué queda en GitHub</h2>
+<p>Abre <code>https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;/commit/&lt;SHA&gt;</code>. ¿Sigue ahí la clave? ¿Qué habría que hacer con ella en un caso real?</p><p>Esta pregunta no se entrega: la comentamos en clase.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de git"><a href="e7.html">← E7 · Revert</a><span></span></nav>
+</main>
+<script>
+document.querySelectorAll('.cmd').forEach(function (box) {
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Copiar';
+  btn.addEventListener('click', function () {
+    var code = box.querySelector('code');
+    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1500); };
+    var fallback = function () {
+      var r = document.createRange(); r.selectNodeContents(code);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Pulsa Ctrl/Cmd+C';
+    };
+    try { navigator.clipboard.writeText(code.textContent).then(done, fallback); } catch (e) { fallback(); }
+  });
+  box.appendChild(btn);
+});
+</script>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

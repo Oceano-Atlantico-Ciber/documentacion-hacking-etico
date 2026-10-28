@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E1 · Identidad y commits atómicos · Hacking ético</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#5f5e58;--line:#e4e1d8;--card:#ffffff;--accent:#0b6e4f;--code:#f1efe8;--warn:#9a5b00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522;--warn:#e0a54a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522;--warn:#e0a54a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+nav.top{font-size:14px;color:var(--muted);margin-bottom:24px}
+nav.top a{color:var(--muted)}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;text-wrap:balance}
+h2{font-size:20px;margin:36px 0 10px;padding-top:12px;border-top:1px solid var(--line);text-wrap:balance}
+p.lead{color:var(--muted);font-size:18px;margin:0 0 20px;max-width:65ch}
+p,li{max-width:70ch}
+a{color:var(--accent)}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:14px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+h1 code,h2 code{font-size:.9em}
+.cmd{position:relative;margin:10px 0}
+.cmd pre{background:var(--code);padding:12px 14px;padding-right:84px;border-radius:8px;overflow-x:auto;font-size:14px;margin:0}
+.cmd pre code{padding:0;background:none}
+.cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.cmd button:hover{border-color:var(--accent)}
+.cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
+.ficha dt{color:var(--muted)}
+.ficha dd{margin:0}
+.step{display:flex;align-items:baseline;gap:12px}
+.step .n{flex:none;font-size:13px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;width:26px;height:26px;display:inline-grid;place-items:center;font-variant-numeric:tabular-nums}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px;max-width:none}
+ul.falla li::marker{color:var(--warn)}
+nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:15px}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#01-git">Ejercicios de git</a></nav>
+
+<h1>E1 · Identidad y commits atómicos</h1>
+<p class="lead">Configura tu identidad para que GitHub reconozca tus commits y versiona tres ficheros con un commit cada uno.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/01-git/01-modelo-y-commits.html">Git 1 · Modelo y commits</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/git/e1/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e1</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Comprueba tu identidad</h2>
+<div class="cmd"><pre><code>git config user.name
+git config user.email</code></pre></div>
+<p>El correo tiene que ser uno de los verificados en GitHub (<b>Settings → Emails</b>); el privado <code>…@users.noreply.github.com</code> también vale. Si no lo es, cámbialo <b>antes</b> de hacer commits, porque cada commit guarda el correo con el que se creó:</p>
+<div class="cmd"><pre><code>git config --global user.email "tu-correo-verificado"</code></pre></div>
+
+<h2 class="step"><span class="n">2</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e1</code></pre></div>
+<p>Deja tres ficheros sin versionar en <code>fundamentos/git/e1/</code>: <code>objetivo.md</code>, <code>herramientas.md</code> y <code>notas.md</code>. No cambies su contenido.</p>
+
+<h2 class="step"><span class="n">3</span>Haz un commit por fichero</h2>
+<p>Cada commit lleva un solo fichero y un mensaje <a href="https://www.conventionalcommits.org/es/v1.0.0/">Conventional Commits</a>: <code>tipo(ámbito): descripción</code>, con tipo <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code> o <code>chore</code>.</p>
+<div class="cmd"><pre><code>git add fundamentos/git/e1/objetivo.md
+git commit -m "docs(e1): objetivo de la auditoría"</code></pre></div>
+<p>Repite con los otros dos ficheros, cada uno con su propio mensaje.</p>
+
+<h2 class="step"><span class="n">4</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>git log --oneline --stat -- fundamentos/git/e1</code></pre></div>
+<p>Tres commits y un fichero en cada uno.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>No hay exactamente tres commits en <code>e1/</code>, o alguno cambia más de un fichero.</li>
+<li>Algún mensaje no sigue Conventional Commits.</li>
+<li>GitHub no asocia el correo del autor a tu cuenta.</li>
+<li>Has cambiado el contenido de los ficheros.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, cada uno de tus tres commits debe mostrar tu avatar y tu usuario. Si sale solo un nombre en gris, GitHub no ha asociado el correo a tu cuenta.</p>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E1 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e1 -m "E1 resuelto"
+git push origin entrega-fundamentos-git-e1</code></pre></div>
+<p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de git"><span></span><a href="e2.html">E2 · <code>.gitignore</code> →</a></nav>
+</main>
+<script>
+document.querySelectorAll('.cmd').forEach(function (box) {
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Copiar';
+  btn.addEventListener('click', function () {
+    var code = box.querySelector('code');
+    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1500); };
+    var fallback = function () {
+      var r = document.createRange(); r.selectNodeContents(code);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Pulsa Ctrl/Cmd+C';
+    };
+    try { navigator.clipboard.writeText(code.textContent).then(done, fallback); } catch (e) { fallback(); }
+  });
+  box.appendChild(btn);
+});
+</script>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

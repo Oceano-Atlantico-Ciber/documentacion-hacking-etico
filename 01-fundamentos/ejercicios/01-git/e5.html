@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E5 · Rebase · Hacking ético</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#5f5e58;--line:#e4e1d8;--card:#ffffff;--accent:#0b6e4f;--code:#f1efe8;--warn:#9a5b00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522;--warn:#e0a54a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ecebe6;--muted:#a3a198;--line:#2e2d2a;--card:#1c1c1a;--accent:#5cc8a1;--code:#262522;--warn:#e0a54a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+nav.top{font-size:14px;color:var(--muted);margin-bottom:24px}
+nav.top a{color:var(--muted)}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;text-wrap:balance}
+h2{font-size:20px;margin:36px 0 10px;padding-top:12px;border-top:1px solid var(--line);text-wrap:balance}
+p.lead{color:var(--muted);font-size:18px;margin:0 0 20px;max-width:65ch}
+p,li{max-width:70ch}
+a{color:var(--accent)}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:14px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+h1 code,h2 code{font-size:.9em}
+.cmd{position:relative;margin:10px 0}
+.cmd pre{background:var(--code);padding:12px 14px;padding-right:84px;border-radius:8px;overflow-x:auto;font-size:14px;margin:0}
+.cmd pre code{padding:0;background:none}
+.cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.cmd button:hover{border-color:var(--accent)}
+.cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
+.ficha dt{color:var(--muted)}
+.ficha dd{margin:0}
+.step{display:flex;align-items:baseline;gap:12px}
+.step .n{flex:none;font-size:13px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;width:26px;height:26px;display:inline-grid;place-items:center;font-variant-numeric:tabular-nums}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px;max-width:none}
+ul.falla li::marker{color:var(--warn)}
+nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:15px}
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#01-git">Ejercicios de git</a></nav>
+
+<h1>E5 · Rebase</h1>
+<p class="lead">Un compañero ha subido un cambio a <code>main</code> mientras trabajabas en tu rama. Pon tu rama al día sin merges.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/01-git/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/git/e5/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e5</code> sobre <code>git/e5-feature</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e5</code></pre></div>
+<p>Crea <code>git/e5-feature</code> con dos commits y, después, añade un commit a <code>main</code>, como si lo hubiera subido un compañero. Míralo con <code>git log --oneline --graph --all</code>: las dos líneas se han separado.</p>
+
+<h2 class="step"><span class="n">2</span>Rebasa la rama sobre <code>main</code></h2>
+<div class="cmd"><pre><code>git switch git/e5-feature
+git rebase main</code></pre></div><p>Si hubiera conflicto: resuélvelo, <code>git add</code> y <code>git rebase --continue</code>. Con <code>git rebase --abort</code> vuelves a como estaba.</p>
+
+<h2 class="step"><span class="n">3</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>git log --oneline --graph main git/e5-feature</code></pre></div>
+<p>Una sola línea: el commit del compañero y, encima, tus dos commits con SHA nuevos. Si ya habías subido la rama antes del rebase, el push se rechaza: súbela con <code>git push --force-with-lease</code>.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>La rama no termina en sus dos commits, en el orden original.</li>
+<li>Hay un merge en lugar de un rebase.</li>
+<li>La rama no está encima del commit nuevo de <code>main</code>.</li>
+</ul>
+
+<h2 class="step"><span class="n">4</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git push origin main
+git push -u origin git/e5-feature</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E5 salga sin fallos, etiqueta la punta de <code>git/e5-feature</code>:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e5 git/e5-feature -m "E5 resuelto"
+git push origin entrega-fundamentos-git-e5</code></pre></div>
+<p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de git"><a href="e4.html">← E4 · Conflicto</a><a href="e6.html">E6 · Rebase interactivo →</a></nav>
+</main>
+<script>
+document.querySelectorAll('.cmd').forEach(function (box) {
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Copiar';
+  btn.addEventListener('click', function () {
+    var code = box.querySelector('code');
+    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1500); };
+    var fallback = function () {
+      var r = document.createRange(); r.selectNodeContents(code);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Pulsa Ctrl/Cmd+C';
+    };
+    try { navigator.clipboard.writeText(code.textContent).then(done, fallback); } catch (e) { fallback(); }
+  });
+  box.appendChild(btn);
+});
+</script>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>
