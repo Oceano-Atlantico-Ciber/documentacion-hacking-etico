@@ -43,7 +43,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 </head>
 <body>
 <main>
-<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos</a> · <a href="../#01-empresa-con-terraform">Ejercicio 01</a></nav>
+<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos</a> · <a href="../#empresa-con-terraform">Empresa con Terraform</a></nav>
 
 <h1>Lab Empresa con Terraform: puesta en marcha</h1>
 <p class="lead">Una cuenta AWS emulada en tu equipo (Floci), la infraestructura de una empresa ficticia desplegada con Terraform y Trivy para encontrar sus fallos de configuración. Solo necesitas un motor de contenedores.</p>
@@ -51,7 +51,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 <div class="flow" aria-label="Orden del laboratorio"><span>Floci</span><i>→</i><span>Trivy</span><i>→</i><span>corregir</span><i>→</i><span>Terraform apply</span><i>→</i><span>AWS CLI</span></div>
 
 <p>Todos los comandos se lanzan desde la carpeta del ejercicio:</p>
-<div class="cmd"><pre><code>cd documentacion-hacking-etico/01-fundamentos/ejercicios/01-empresa-con-terraform</code></pre></div>
+<div class="cmd"><pre><code>cd documentacion-hacking-etico/01-fundamentos/ejercicios/empresa-con-terraform</code></pre></div>
 
 <h2>Requisitos</h2>
 <p>Basta con uno de los dos motores. Floci, Terraform, Trivy y la CLI de AWS llegan como contenedores.</p>
@@ -97,7 +97,7 @@ podman machine start</code></pre></div>
 <div class="cmd"><pre><code>docker compose --profile herramientas run --rm aws ec2 describe-security-groups</code></pre></div>
 
 <h2 class="step"><span class="n">6</span>Corregir y repetir</h2>
-<p>Este es el ciclo de la práctica. El enunciado completo está en <a href="../../docs/03-la-empresa-en-floci.html">La empresa en Floci</a>.</p>
+<p>Este es el ciclo de la práctica. El enunciado completo está en <a href="../../docs/la-empresa-en-floci.html">La empresa en Floci</a>.</p>
 <ol>
 <li>Lee cada aviso de Trivy, pide a tu IA que lo explique y comprueba la propuesta en la documentación del recurso de Terraform.</li>
 <li>Corrige <code>terraform/empresa.tf</code>. Corregir no es borrar: la empresa necesita su bucket, su usuario y su cortafuegos.</li>
