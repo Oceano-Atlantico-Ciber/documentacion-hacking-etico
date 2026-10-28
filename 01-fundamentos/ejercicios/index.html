@@ -26,7 +26,7 @@
 <tr><td><code>fundamentos/trivy-antes.txt</code>, <code>fundamentos/trivy-despues.txt</code></td><td>Salida de Trivy antes y después de corregir. La segunda sin avisos altos ni críticos.</td><td><a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/inventario/red.txt</code>, <code>fundamentos/inventario/nube.txt</code></td><td>Salida de nmap sobre la red del laboratorio y de la CLI de AWS sobre la cuenta emulada.</td><td><a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
 <tr><td><code>fundamentos/git/</code></td><td>Los ejercicios de git. Se corrigen con sus propias etiquetas, no con <code>entrega-fundamentos</code>.</td><td><a href="#01-git">01 · Git</a></td></tr>
-<tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/alertas/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
+<tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/mini-auditoria/suricata/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
 </tbody></table>
 <p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>
 
@@ -76,7 +76,7 @@ docker compose run --rm aws iam list-users</code></pre></li>
 </ul>
 
 <h2 id="mini-auditoria">Mini auditoría</h2>
-<p>Carpeta <code>mini-auditoria/</code>. Enunciado: <a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a>.</p>
+<p>Carpeta <code>mini-auditoria/</code>. Como en Empresa con Terraform, se copia a tu repositorio y se trabaja desde ahí: el laboratorio despliega el Terraform que corregiste y la regla que escribas se entrega en su sitio. Enunciado: <a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a>.</p>
 <table><thead><tr><th>Contenedor</th><th>Dirección</th><th>Qué es</th></tr></thead><tbody>
 <tr><td><code>floci</code></td><td>172.28.0.10</td><td>La cuenta AWS emulada de la empresa (puerto 4566).</td></tr>
 <tr><td><code>web</code></td><td>172.28.0.20</td><td>Servidor web de la empresa. Suricata escucha pegado a él.</td></tr>
@@ -84,16 +84,32 @@ docker compose run --rm aws iam list-users</code></pre></li>
 <tr><td><code>auditor</code></td><td>dinámica</td><td>Tu puesto: nmap dentro de la misma red.</td></tr>
 </tbody></table>
 <ol>
-<li>Para antes el laboratorio de Empresa con Terraform (<code>docker compose down</code> en su carpeta): los dos usan el contenedor <code>floci</code> y el puerto 4566. Levanta el laboratorio (<code>docker compose up -d</code>) y vuelve a desplegar el Terraform corregido de <a href="#empresa-con-terraform">Empresa con Terraform</a> contra este Floci, para que la cuenta tenga contenido.</li>
-<li><b>Reconocimiento:</b> qué equipos hay en la red. <code>docker compose run --rm auditor -sn 172.28.0.0/24</code>.</li>
-<li><b>Enumeración:</b> qué servicio y versión hay en cada uno (<code>-sV</code> sobre las tres direcciones) y qué recursos tiene la cuenta (<code>aws s3 ls</code>, <code>aws iam list-users</code>, <code>aws ec2 describe-security-groups</code>). Todo a <code>fundamentos/inventario/red.txt</code> y <code>fundamentos/inventario/nube.txt</code>.</li>
+<li>Copia el laboratorio y para el de Empresa con Terraform, que usa el mismo contenedor <code>floci</code> y el puerto 4566:
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+cp -r ../documentacion-hacking-etico/01-fundamentos/ejercicios/mini-auditoria fundamentos/
+cd fundamentos/mini-auditoria
+docker compose -f ../docker-compose.yml down</code></pre>
+Desde aquí, todos los comandos se lanzan en <code>fundamentos/mini-auditoria/</code>.</li>
+<li>Levanta el laboratorio y despliega en este Floci el Terraform que corregiste en <a href="#empresa-con-terraform">Empresa con Terraform</a>, para que la cuenta tenga contenido. Terraform verá que los recursos no existen en este Floci y los volverá a crear:
+<pre><code>docker compose up -d
+docker compose run --rm terraform init
+docker compose run --rm terraform apply</code></pre></li>
+<li><b>Reconocimiento:</b> qué equipos hay en la red.
+<pre><code>mkdir -p ../inventario ../alertas
+docker compose run --rm auditor -sn 172.28.0.0/24 | tee ../inventario/red.txt</code></pre></li>
+<li><b>Enumeración:</b> qué servicio y versión hay en cada equipo y qué recursos tiene la cuenta.
+<pre><code>docker compose run --rm auditor -sV 172.28.0.10 172.28.0.20 172.28.0.30 | tee -a ../inventario/red.txt
+docker compose run --rm aws s3 ls | tee ../inventario/nube.txt
+docker compose run --rm aws iam list-users | tee -a ../inventario/nube.txt
+docker compose run --rm aws ec2 describe-security-groups | tee -a ../inventario/nube.txt</code></pre></li>
 <li>Mira la web con <code>curl</code> desde dentro de la red del laboratorio y anota qué descubres:
 <pre><code>docker compose run --rm curl -i http://172.28.0.20/
 docker compose run --rm curl -i http://172.28.0.20/robots.txt</code></pre></li>
-<li><b>Detección:</b> <code>py etiquetar.py</code> resume las alertas de Suricata por fase y por origen. Guarda la salida en <code>fundamentos/alertas/resumen.txt</code>.</li>
-<li>Escribe al menos una regla propia en <code>suricata/local.rules</code> (sid a partir de 1000100) que detecte algo que hayas hecho y que no saltara, reinicia Suricata y comprueba que salta. Entrega el fichero en <code>fundamentos/alertas/local.rules</code>.</li>
+<li><b>Detección:</b> <code>etiquetar.py</code> resume las alertas de Suricata por fase y por origen.
+<pre><code>py etiquetar.py | tee ../alertas/resumen.txt</code></pre></li>
+<li>Escribe al menos una regla propia en <code>suricata/local.rules</code> (sid a partir de 1000100) que detecte algo que hayas hecho y que no saltara. Reinicia Suricata con <code>docker compose restart suricata</code>, repite lo que hiciste y comprueba con <code>py etiquetar.py</code> que salta. Se entrega ese mismo fichero. Lo que escribe Suricata en <code>salidas/</code> no se sube.</li>
 </ol>
-<p><b>Opcional:</b> en <code>mini-auditoria/floci-ec2/</code> hay un Terraform que pide a Floci una instancia EC2 de verdad (un contenedor). Si arranca y aparece en <code>docker ps</code>, es la base de lo que haremos en Redes y sistemas.</p>
+<p><b>Opcional:</b> en <code>floci-ec2/</code> hay un Terraform que pide a Floci una instancia EC2 de verdad (un contenedor). Si arranca y aparece en <code>docker ps</code>, es la base de lo que haremos en Redes y sistemas.</p>
 
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
