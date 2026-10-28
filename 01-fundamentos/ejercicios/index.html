@@ -27,6 +27,7 @@
 <tr><td><code>fundamentos/inventario/red.txt</code>, <code>fundamentos/inventario/nube.txt</code></td><td>Salida de nmap sobre la red del laboratorio y de la CLI de AWS sobre la cuenta emulada.</td><td><a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
 <tr><td><code>fundamentos/casos-analizados/</code></td><td>Un Markdown por caso: <code>hackea-el-ranking.md</code> y <code>cve-2026-109618-php2shell.md</code>.</td><td><a href="../casos-analizados/index.html#entrega">Casos analizados</a></td></tr>
 <tr><td><code>fundamentos/git/</code></td><td>Los ejercicios de git. Se corrigen con sus propias etiquetas, no con <code>entrega-fundamentos</code>.</td><td><a href="#01-git">01 · Git</a></td></tr>
+<tr><td><code>fundamentos/docker/</code></td><td>Los ejercicios de Docker. También con sus propias etiquetas.</td><td><a href="#02-docker">02 · Docker</a></td></tr>
 <tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/mini-auditoria/suricata/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
 </tbody></table>
 <p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>
@@ -55,6 +56,24 @@ py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e
 <li>Cada ejercicio vale lo mismo y se corrige de forma automática desde su etiqueta: estructura del historial (padres de los merges, commits por rama, conflicto real) y contenido de los ficheros.</li>
 <li>Las fechas de los commits no cuentan: se corrige cada etiqueta tal como esté al cierre del bloque.</li>
 </ul>
+
+<h2 id="02-docker">02 · Docker</h2>
+<p class="note"><b>Antes de empezar:</b> Docker Desktop instalado (<a href="../../00-presentacion/docs/04-docker.html">Presentación · Docker</a>) y los pasos de instalación de <a href="../docs/02-docker/01-imagenes-y-contenedores.html#instalacion">Docker 1</a>: <code>docker login</code> y la función <code>docker()</code> en <code>~/.bashrc</code>.</p>
+<p>Carpeta <code>02-docker/</code>. Teoría: <a href="../docs/02-docker/01-imagenes-y-contenedores.html">Docker 1 · Imágenes y contenedores</a>, <a href="../docs/02-docker/02-construir-imagenes.html">Docker 2 · Construir imágenes</a>, <a href="../docs/02-docker/03-datos-y-redes.html">Docker 3 · Datos y redes</a> y <a href="../docs/02-docker/04-compose-y-seguridad.html">Docker 4 · Compose y seguridad</a>.</p>
+<p>Ocho ejercicios en <code>fundamentos/docker/</code> de tu repositorio de entregas, todos en <code>main</code>. Los que tienen ficheros de partida empiezan con <code>preparar.py</code>, que los escribe a partir de tu usuario de GitHub; en E4 además construye la imagen que vas a auditar. Ejecútalo desde tu repositorio, con Docker Desktop en marcha:</p>
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/02-docker/preparar.py e1</code></pre>
+<p>Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-docker-eN</code>, sobre <code>main</code>, igual que los de git. Antes de etiquetar, mira tu fila en el check <b>Corrector docker</b> junto al último commit de <code>main</code>; se actualiza cuando el docente lanza la corrección. El corrector construye tus imágenes y levanta tus contenedores de verdad. Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores, y E6 y E7 reutilizan lo de E2 y E5.</p>
+<table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Tema</th></tr></thead><tbody>
+<tr><td><a href="02-docker/e1.html">E1</a></td><td>Arrancar, cambiar, parar, rearrancar y borrar un nginx, y entregar lo que Docker sabe de él.</td><td>Docker 1</td></tr>
+<tr><td><a href="02-docker/e2.html">E2</a></td><td>Empaquetar un sondeo de puertos en una imagen y usarlo contra otro contenedor.</td><td>Docker 2</td></tr>
+<tr><td><a href="02-docker/e3.html">E3</a></td><td>Ordenar las capas para la caché y dejar fuera de la imagen el <code>.env</code> y las notas.</td><td>Docker 2</td></tr>
+<tr><td><a href="02-docker/e4.html">E4</a></td><td>Recuperar una clave «borrada» de las capas de una imagen y reconstruirla sin ella.</td><td>Docker 2</td></tr>
+<tr><td><a href="02-docker/e5.html">E5</a></td><td>Una base de datos con volumen y una web con bind mount en solo lectura.</td><td>Docker 3</td></tr>
+<tr><td><a href="02-docker/e6.html">E6</a></td><td>Una red propia con nombres y puertos publicados solo donde hacen falta.</td><td>Docker 3</td></tr>
+<tr><td><a href="02-docker/e7.html">E7</a></td><td>E5 y E6 en un <code>docker-compose.yml</code>, con perfiles y la contraseña en <code>.env</code>.</td><td>Docker 4</td></tr>
+<tr><td><a href="02-docker/e8.html">E8</a></td><td>Auditar y cerrar un compose con todas las puertas abiertas.</td><td>Docker 4</td></tr>
+</tbody></table>
 
 <h2 id="api-rest">API REST</h2>
 <p>Carpeta <code>api-rest/</code>. Teoría: <a href="../docs/api-rest/01-cliente-servidor-y-http.html">API REST 1</a>, <a href="../docs/api-rest/02-metodos-codigos-y-cabeceras.html">API REST 2</a> y <a href="../docs/api-rest/03-f12-curl-y-seguridad.html">API REST 3</a>. La práctica es el minijuego.</p>

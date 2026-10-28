@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E1 · Ciclo de vida · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#02-docker">Ejercicios de Docker</a></nav>
+
+<h1>E1 · Ciclo de vida</h1>
+<p class="lead">Arranca un servidor web, cámbiale la página, páralo, vuelve a arrancarlo y entrega lo que Docker sabe de él.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/02-docker/01-imagenes-y-contenedores.html">Docker 1 · Imágenes y contenedores</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/docker/e1/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-docker-e1</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, con Docker Desktop en marcha:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/02-docker/preparar.py e1
+cd fundamentos/docker/e1</code></pre></div>
+<p>Deja en la carpeta <code>index.html</code>, una página con tu usuario. No cambies su contenido.</p>
+
+<h2 class="step"><span class="n">2</span>Descarga la imagen y arranca el contenedor</h2>
+<div class="cmd"><pre><code>docker pull nginx:1.27-alpine
+docker run -d --name e1-web -p 127.0.0.1:8080:80 nginx:1.27-alpine
+docker ps</code></pre></div><p>El nombre tiene que ser exactamente <code>e1-web</code> y el puerto, <code>127.0.0.1:8080</code>.</p>
+
+<h2 class="step"><span class="n">3</span>Pídele la página</h2>
+<div class="cmd"><pre><code>curl -i http://localhost:8080/</code></pre></div><p>La primera línea es <code>HTTP/1.1 200 OK</code> y el cuerpo es la página de bienvenida de nginx.</p>
+
+<h2 class="step"><span class="n">4</span>Cambia la página por la tuya</h2>
+<div class="cmd"><pre><code>docker cp index.html e1-web:/usr/share/nginx/html/index.html
+curl http://localhost:8080/</code></pre></div><p>Ahora responde con tu página. Has cambiado la capa escribible del contenedor, no la imagen.</p>
+
+<h2 class="step"><span class="n">5</span>Páralo y vuelve a arrancarlo</h2>
+<div class="cmd"><pre><code>docker stop e1-web
+docker ps -a
+docker start e1-web
+curl http://localhost:8080/</code></pre></div><p>Parado, <code>docker ps -a</code> lo muestra como <code>Exited</code>. Al arrancarlo sigue sirviendo tu página: parar no borra la capa.</p>
+
+<h2 class="step"><span class="n">6</span>Guarda las pruebas</h2>
+<div class="cmd"><pre><code>docker container inspect e1-web &gt; inspect.json
+docker logs e1-web &gt; logs.txt 2&gt;&amp;1</code></pre></div><p><code>inspect.json</code> es todo lo que Docker sabe del contenedor; <code>logs.txt</code>, cada petición que recibió nginx.</p>
+
+<h2 class="step"><span class="n">7</span>Bórralo y comprueba</h2>
+<div class="cmd"><pre><code>docker rm -f e1-web
+curl http://localhost:8080/</code></pre></div><p>El último <code>curl</code> falla: el contenedor y tu cambio ya no existen. Si lanzaras otro desde la imagen, volvería la página de bienvenida.</p><p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Faltan <code>inspect.json</code> o <code>logs.txt</code>, o <code>index.html</code> ha cambiado.</li>
+<li>El contenedor no se llamaba <code>e1-web</code>, no salía de <code>nginx:1.27-alpine</code> o no publicaba <code>127.0.0.1:8080</code>.</li>
+<li>El contenedor no llegó a pararse y volver a arrancar.</li>
+<li>En <code>logs.txt</code> no hay ninguna petición servida con tu página.</li>
+</ul>
+
+
+<h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "feat(docker-e1): ciclo de vida de e1-web"
+git push</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E1 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e1 -m "E1 resuelto"
+git push origin entrega-fundamentos-docker-e1</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>. Cuenta tal como esté al cerrar el plazo; si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de Docker"><span></span><a href="e2.html">E2 · Tu primera imagen →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

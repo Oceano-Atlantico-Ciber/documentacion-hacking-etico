@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docker 2 · Construir imágenes · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Docker 2 de 4</p>
+<h1>Construir imágenes</h1>
+<p class="lead">Una imagen se construye con una receta, el <code>Dockerfile</code>, y cada paso de la receta queda guardado como una capa. Entender las capas explica por qué una construcción tarda un segundo o cinco minutos, y por qué borrar un secreto no lo borra.</p>
+<div class="meta"><span>Ejercicios: <a href="../../ejercicios/02-docker/e2.html">E2</a>, <a href="../../ejercicios/02-docker/e3.html">E3</a> y <a href="../../ejercicios/02-docker/e4.html">E4</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>El Dockerfile</h2>
+<p>Un <code>Dockerfile</code> es un fichero de texto con una instrucción por línea. Docker las ejecuta en orden, de arriba abajo, partiendo de una imagen que ya existe.</p>
+<div class="tabla"><table><thead><tr><th>Instrucción</th><th>Qué hace</th></tr></thead><tbody>
+<tr><td><code>FROM python:3.12-alpine</code></td><td>Imagen de partida. Siempre la primera.</td></tr>
+<tr><td><code>WORKDIR /app</code></td><td>Carpeta de trabajo dentro de la imagen; las demás instrucciones se ejecutan ahí.</td></tr>
+<tr><td><code>COPY sondeo.py .</code></td><td>Copia ficheros de tu carpeta a la imagen.</td></tr>
+<tr><td><code>RUN pip install requests</code></td><td>Ejecuta una orden durante la construcción y guarda lo que cambie.</td></tr>
+<tr><td><code>ENV MODO=seguro</code></td><td>Variable de entorno para el contenedor.</td></tr>
+<tr><td><code>USER nobody</code></td><td>Usuario con el que se ejecuta el programa. Sin ella, root (<a href="04-compose-y-seguridad.html">Docker 4</a>).</td></tr>
+<tr><td><code>ENTRYPOINT ["python", "sondeo.py"]</code></td><td>El programa que arranca el contenedor.</td></tr>
+<tr><td><code>CMD ["--ayuda"]</code></td><td>Argumentos por defecto, si al lanzarlo no das otros.</td></tr>
+</tbody></table></div>
+<pre><code>docker build -t sondeo:1.0 .     # construye con el Dockerfile de esta carpeta y lo llama sondeo:1.0
+docker image ls sondeo           # ya está entre tus imágenes
+docker run --rm sondeo:1.0 …     # y se usa como cualquier otra</code></pre>
+<p>El punto final de <code>docker build</code> no es decorativo: es la carpeta que se envía al motor, el <b>contexto</b>. Lo verás más abajo.</p>
+</section>
+
+<section class="seccion">
+<h2>ENTRYPOINT y CMD</h2>
+<p>Cuando lanzas un contenedor, Docker junta dos piezas para formar la orden que ejecuta: el <code>ENTRYPOINT</code>, fijo, y los argumentos. Si escribes argumentos después del nombre de la imagen, sustituyen al <code>CMD</code>.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 200" role="img" aria-label="docker run sondeo:1.0 web 80 ejecuta python sondeo.py web 80: el ENTRYPOINT pone el programa y los argumentos de docker run sustituyen al CMD">
+<defs><marker id="ep-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="mono" x="0" y="24">docker run --rm sondeo:1.0</text><text class="mono acento fuerte" x="200" y="24">web 80</text>
+<rect class="caja" x="0" y="48" width="300" height="56" rx="8"/><text class="tenue peq" x="16" y="68">ENTRYPOINT, del Dockerfile</text><text class="mono tit" x="16" y="90">python sondeo.py</text>
+<rect class="caja-acento" x="420" y="48" width="300" height="56" rx="8"/><text class="tenue peq" x="436" y="68">argumentos de docker run</text><text class="mono tit" x="436" y="90">web 80</text>
+<text class="tenue peq" x="720" y="130" text-anchor="end">el CMD solo se usa si no das ninguno</text>
+<path class="linea" d="M150 104V150" marker-end="url(#ep-f)"/><path class="linea" d="M460 104V150" marker-end="url(#ep-f)"/>
+<rect class="caja-ok" x="100" y="152" width="520" height="44" rx="8"/><text class="tenue peq" x="116" y="179">se ejecuta</text><text class="mono tit" x="200" y="179">python sondeo.py web 80</text>
+</svg>
+<figcaption>Por eso en los laboratorios <code>docker compose run --rm aws s3 ls</code> funciona: el <code>ENTRYPOINT</code> de la imagen es <code>aws</code> y tú solo pones <code>s3 ls</code>.</figcaption>
+</figure>
+</section>
+
+<section class="seccion">
+<h2>Cada instrucción, una capa</h2>
+<p>Las instrucciones que cambian ficheros (<code>COPY</code>, <code>RUN</code>) guardan el resultado como una <b>capa</b>: solo las diferencias respecto a la anterior. Una imagen es la pila de capas de su imagen de partida más las suyas. Las que solo configuran (<code>ENV</code>, <code>ENTRYPOINT</code>, <code>CMD</code>) no añaden ficheros.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 250" role="img" aria-label="Cada línea del Dockerfile que copia o ejecuta algo añade una capa encima de las de la imagen de partida">
+<defs><marker id="ca-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="tit" x="0" y="18">Dockerfile</text><text class="tit" x="440" y="18">Capas de la imagen</text>
+<text class="mono" x="0" y="214">FROM python:3.12-alpine</text>
+<text class="mono" x="0" y="168">COPY requirements.txt .</text>
+<text class="mono" x="0" y="122">RUN pip install -r requirements.txt</text>
+<text class="mono" x="0" y="76">COPY app.py .</text>
+<text class="mono tenue peq" x="0" y="44">CMD ["python", "app.py"]</text>
+<path class="linea" d="M200 210H436" marker-end="url(#ca-f)"/><path class="linea" d="M200 164H436" marker-end="url(#ca-f)"/><path class="linea" d="M290 118H436" marker-end="url(#ca-f)"/><path class="linea" d="M110 72H436" marker-end="url(#ca-f)"/>
+<rect class="caja" x="440" y="190" width="280" height="40" rx="6"/><text x="580" y="215" text-anchor="middle">capas de python:3.12-alpine</text>
+<rect class="caja" x="440" y="146" width="280" height="36" rx="6"/><text x="580" y="169" text-anchor="middle">requirements.txt · 1 KB</text>
+<rect class="caja-acento" x="440" y="98" width="280" height="40" rx="6"/><text x="580" y="123" text-anchor="middle">librerías instaladas · varios MB</text>
+<rect class="caja" x="440" y="54" width="280" height="36" rx="6"/><text x="580" y="77" text-anchor="middle">app.py · 2 KB</text>
+<text class="tenue peq" x="580" y="44" text-anchor="middle">CMD: sin capa, solo configuración</text>
+</svg>
+<figcaption>La pila se lee de abajo arriba, en el orden en que se construyó.</figcaption>
+</figure>
+<pre><code>docker history sondeo:1.0        # las capas de una imagen, la más reciente arriba, con su tamaño
+docker image inspect sondeo:1.0  # su configuración: ENTRYPOINT, CMD, ENV, USER…</code></pre>
+</section>
+
+<section class="seccion">
+<h2>La caché</h2>
+<p>Al reconstruir, Docker reutiliza cada capa cuya instrucción y ficheros no han cambiado. En cuanto una capa cambia, todas las de encima se rehacen. Por eso el orden importa: lo que cambia poco va abajo y lo que cambias a menudo, arriba.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 248" role="img" aria-label="Si cambias app.py: con COPY requirements antes de pip solo se rehace la última capa; con COPY . . al principio se rehacen todas, también la instalación">
+<text class="tit" x="0" y="18">Buen orden</text><text class="tit" x="380" y="18">Mal orden</text>
+<text class="tenue peq" x="0" y="38">has cambiado app.py y reconstruyes</text><text class="tenue peq" x="380" y="38">has cambiado app.py y reconstruyes</text>
+<rect class="caja-peligro" x="0" y="52" width="340" height="36" rx="6"/><text class="mono" x="16" y="75">COPY app.py .</text><text class="peligro fuerte" x="324" y="75" text-anchor="end">se rehace</text>
+<rect class="caja-ok" x="0" y="96" width="340" height="36" rx="6"/><text class="mono" x="16" y="119">RUN pip install …</text><text x="324" y="119" text-anchor="end">CACHED</text>
+<rect class="caja-ok" x="0" y="140" width="340" height="36" rx="6"/><text class="mono" x="16" y="163">COPY requirements.txt .</text><text x="324" y="163" text-anchor="end">CACHED</text>
+<rect class="caja-ok" x="0" y="184" width="340" height="36" rx="6"/><text class="mono" x="16" y="207">FROM python:3.12-alpine</text><text x="324" y="207" text-anchor="end">CACHED</text>
+<rect class="caja-peligro" x="380" y="96" width="340" height="36" rx="6"/><text class="mono" x="396" y="119">RUN pip install …</text><text class="peligro fuerte" x="704" y="119" text-anchor="end">se rehace: descarga todo</text>
+<rect class="caja-peligro" x="380" y="140" width="340" height="36" rx="6"/><text class="mono" x="396" y="163">COPY . .</text><text class="peligro fuerte" x="704" y="163" text-anchor="end">cambió app.py</text>
+<rect class="caja-ok" x="380" y="184" width="340" height="36" rx="6"/><text class="mono" x="396" y="207">FROM python:3.12-alpine</text><text x="704" y="207" text-anchor="end">CACHED</text>
+<text class="acento fuerte" x="170" y="240" text-anchor="middle">un segundo</text><text class="peligro fuerte" x="550" y="240" text-anchor="middle">lo que tarde la descarga, cada vez</text>
+</svg>
+<figcaption>Copiar primero solo la lista de dependencias permite que la instalación salga de la caché mientras esa lista no cambie.</figcaption>
+</figure>
+<pre><code>docker build --progress=plain -t app:1.0 .   # muestra cada paso; los reutilizados dicen CACHED</code></pre>
+</section>
+
+<section class="seccion">
+<h2>El contexto y .dockerignore</h2>
+<p><code>docker build .</code> envía al motor toda la carpeta, y <code>COPY . .</code> mete en la imagen todo lo que llegó. Si en la carpeta hay un <code>.env</code> o tus notas, acaban dentro de la imagen y viajan con ella. <code>.dockerignore</code> es a Docker lo que <code>.gitignore</code> a git: lo que aparece ahí no se envía.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 216" role="img" aria-label="La carpeta tiene Dockerfile, app.py, requirements.txt, .env y notas; .dockerignore deja fuera .env y notas y al motor solo llegan los demás">
+<defs><marker id="ctx-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="24" width="200" height="184" rx="8"/><text class="tit" x="16" y="48">Tu carpeta</text>
+<text class="mono" x="16" y="76">Dockerfile</text><text class="mono" x="16" y="100">app.py</text><text class="mono" x="16" y="124">requirements.txt</text><text class="mono peligro fuerte" x="16" y="148">.env</text><text class="mono peligro fuerte" x="16" y="172">notas/</text>
+<rect class="caja-peligro" x="260" y="68" width="190" height="96" rx="8"/><text class="tit" x="355" y="92" text-anchor="middle">.dockerignore</text><text class="mono" x="355" y="118" text-anchor="middle">.env</text><text class="mono" x="355" y="140" text-anchor="middle">notas/</text>
+<path class="linea" d="M200 116H258" marker-end="url(#ctx-f)"/><path class="linea" d="M450 116H508" marker-end="url(#ctx-f)"/><text class="mono tenue peq" x="229" y="106" text-anchor="middle">build</text>
+<rect class="caja-acento" x="510" y="24" width="210" height="184" rx="8"/><text class="tit" x="526" y="48">Llega al motor</text>
+<text class="mono" x="526" y="76">Dockerfile</text><text class="mono" x="526" y="100">app.py</text><text class="mono" x="526" y="124">requirements.txt</text>
+<text class="tenue peq" x="526" y="160">lo único que COPY</text><text class="tenue peq" x="526" y="176">puede meter en la imagen</text>
+</svg>
+<figcaption>Lo que no llega al motor no puede acabar en la imagen, aunque el <code>Dockerfile</code> diga <code>COPY . .</code>.</figcaption>
+</figure>
+<pre><code># .dockerignore: un patrón por línea, como .gitignore
+.env
+notas/
+.git/</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Un secreto en una capa</h2>
+<p>Las capas solo se añaden. Si una capa copia una clave y otra posterior la borra, la imagen final no la muestra, pero la capa que la copió sigue dentro y viaja con la imagen. Es el mismo problema que el commit que filtró una clave en <a href="../01-git/04-deshacer-y-seguridad.html">Git 4</a>.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 236" role="img" aria-label="La capa COPY api.key guarda la clave; la capa RUN rm solo la marca como borrada; docker save extrae todas las capas y la clave aparece">
+<defs><marker id="sec-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="tit" x="0" y="18">La imagen que publicas</text>
+<rect class="caja" x="0" y="34" width="340" height="40" rx="6"/><text class="mono" x="16" y="59">RUN rm api.key</text><text class="tenue peq" x="324" y="59" text-anchor="end">solo marca «borrado»</text>
+<rect class="caja-peligro" x="0" y="82" width="340" height="40" rx="6"/><text class="mono" x="16" y="107">COPY api.key .</text><text class="peligro fuerte" x="324" y="107" text-anchor="end">la clave, entera</text>
+<rect class="caja" x="0" y="130" width="340" height="40" rx="6"/><text class="mono" x="16" y="155">FROM python:3.12-alpine</text>
+<text class="tenue peq" x="0" y="196">Un contenedor de esta imagen no ve api.key,</text><text class="tenue peq" x="0" y="214">pero quien tenga la imagen tiene sus capas.</text>
+<path class="linea-peligro" d="M340 102H470" marker-end="url(#sec-fp)"/><text class="mono peligro fuerte" x="405" y="92" text-anchor="middle">docker save</text>
+<rect class="caja-peligro" x="474" y="64" width="246" height="80" rx="8"/><text class="tit" x="490" y="90">capa 2, extraída</text><text class="mono" x="490" y="114">app/api.key</text><text class="mono peligro fuerte" x="490" y="132">oa-3f9c…</text>
+</svg>
+<figcaption>Borrar en una capa posterior no borra: la única forma de que un secreto no esté en la imagen es que nunca entre en una capa.</figcaption>
+</figure>
+<p>Para usar un secreto durante la construcción sin guardarlo, BuildKit (el constructor de Docker Desktop) lo monta solo mientras dura un <code>RUN</code>, en <code>/run/secrets/</code>, y no lo escribe en ninguna capa:</p>
+<pre><code># en el Dockerfile
+RUN --mount=type=secret,id=api python informe.py --comprobar /run/secrets/api
+
+# al construir: el secreto sale de un fichero tuyo, que no está en el contexto
+docker build --secret id=api,src=api.key -t informe:2.0 .</code></pre>
+<p>Y para buscar secretos en una imagen ajena, como haría un auditor:</p>
+<pre><code>docker history --no-trunc imagen:versión        # qué hizo cada capa
+docker save imagen:versión -o imagen.tar         # todas las capas en un fichero
+mkdir capas &amp;&amp; tar -xf imagen.tar -C capas       # cada capa es un .tar en capas/blobs/sha256/
+for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep -q api.key &amp;&amp; echo "$capa"; done</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Si algo falla</h2>
+<div class="tabla"><table><thead><tr><th>Mensaje</th><th>Causa</th><th>Solución</th></tr></thead><tbody>
+<tr><td><code>failed to read dockerfile: open Dockerfile: no such file</code></td><td>No estás en la carpeta del <code>Dockerfile</code>, o se llama distinto.</td><td><code>cd</code> a su carpeta; se llama exactamente <code>Dockerfile</code>, sin extensión.</td></tr>
+<tr><td><code>COPY failed: … not found</code></td><td>El fichero no está en el contexto, o <code>.dockerignore</code> lo excluye.</td><td>Revisa la ruta, relativa a la carpeta del contexto, y tu <code>.dockerignore</code>.</td></tr>
+<tr><td>Cada construcción tarda lo mismo</td><td>Una capa de abajo cambia siempre, a menudo un <code>COPY . .</code>.</td><td>Copia primero lo que cambia poco.</td></tr>
+<tr><td><code>exec format error</code> o <code>no such file</code> al arrancar</td><td>Un script con saltos de línea de Windows.</td><td>Guárdalo con LF en VS Code (esquina inferior derecha, <b>CRLF</b> → <b>LF</b>).</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../../ejercicios/02-docker/e2.html">E2 · Tu primera imagen</a>, <a href="../../ejercicios/02-docker/e3.html">E3 · Capas, caché y .dockerignore</a> y <a href="../../ejercicios/02-docker/e4.html">E4 · El secreto de la capa</a>. En E4 recibes una imagen ya construida y haces lo que haría un atacante con ella.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Si pides a una IA que te escriba un <code>Dockerfile</code>, revisa tú el orden de las capas y qué copia: los ejemplos que circulan usan <code>COPY . .</code> y <code>latest</code> casi siempre.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Sabes escribir un <code>Dockerfile</code> con <code>FROM</code>, <code>WORKDIR</code>, <code>COPY</code> y <code>ENTRYPOINT</code> y construirlo con etiqueta</li>
+<li>Sabes qué parte de <code>docker run imagen a b</code> pone el <code>ENTRYPOINT</code> y cuál sustituye al <code>CMD</code></li>
+<li>Sabes ordenar las capas para aprovechar la caché</li>
+<li>Sabes por qué un secreto borrado en una capa posterior sigue en la imagen, y cómo evitarlo</li>
+<li>E2, E3 y E4 superados en el check <b>Corrector docker</b> y con su etiqueta</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de Docker"><a href="01-imagenes-y-contenedores.html">← Docker 1 · Imágenes y contenedores</a><a href="03-datos-y-redes.html">Docker 3 · Datos y redes →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

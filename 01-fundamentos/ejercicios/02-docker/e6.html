@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E6 · Red y puertos · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#02-docker">Ejercicios de Docker</a></nav>
+
+<h1>E6 · Red y puertos</h1>
+<p class="lead">Una web y una base de datos en una red propia: se encuentran por su nombre, la base de datos no se publica y la web solo para ti.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/02-docker/03-datos-y-redes.html">Docker 3 · Datos y redes</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/docker/e6/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-docker-e6</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara la carpeta</h2>
+<p>E6 no tiene ficheros de partida. Desde tu repositorio:</p><div class="cmd"><pre><code>mkdir -p fundamentos/docker/e6 &amp;&amp; cd fundamentos/docker/e6</code></pre></div><p>Necesitas la imagen <code>sondeo:1.0</code> de <a href="e2.html">E2</a>; si la borraste, vuelve a construirla.</p>
+
+<h2 class="step"><span class="n">2</span>Escribe levantar.sh</h2>
+<div class="cmd"><pre><code>code levantar.sh</code></pre></div><p>Con el mismo principio que en <a href="e5.html">E5</a>, el script tiene que:</p><ul><li>Crear la red <code>e6-red</code>.</li><li>Arrancar <code>e6-web</code> (<code>nginx:1.27-alpine</code>) en esa red, publicado en <code>127.0.0.1:8086</code>.</li><li>Arrancar <code>e6-datos</code> (<code>postgres:16-alpine</code>) en esa red, <b>sin publicar ningún puerto</b>.</li></ul>
+
+<h2 class="step"><span class="n">3</span>Comprueba quién llega a quién</h2>
+<div class="cmd"><pre><code>bash levantar.sh
+docker port e6-web
+docker port e6-datos
+docker run --rm --network e6-red curlimages/curl:8.11.1 -s -o /dev/null -w '%{http_code}\n' http://e6-web/
+docker run --rm curlimages/curl:8.11.1 -s -m 3 http://e6-web/</code></pre></div><p><code>e6-web</code> está publicado solo en <code>127.0.0.1</code> y <code>e6-datos</code>, en ninguno. Dentro de la red, <code>curl</code> llega por el nombre (200); fuera de ella, el nombre no existe.</p>
+
+<h2 class="step"><span class="n">4</span>Sondea desde dentro de la red</h2>
+<div class="cmd"><pre><code>until docker exec e6-datos pg_isready -U postgres -h localhost; do sleep 1; done
+{ docker run --rm --network e6-red sondeo:1.0 e6-web 80 443
+  docker run --rm --network e6-red sondeo:1.0 e6-datos 5432 80; } | tee sondeo.txt
+docker rm -f e6-web e6-datos &amp;&amp; docker network rm e6-red</code></pre></div><p>El 5432 de la base de datos está abierto <b>para quien esté en la red</b>, aunque no se haya publicado: es lo que verá nmap en la Mini auditoría.</p><p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li><code>levantar.sh</code> falla en un equipo limpio.</li>
+<li><code>e6-web</code> o <code>e6-datos</code> no están en <code>e6-red</code>, o no salen de las imágenes indicadas.</li>
+<li>La web no publica en <code>127.0.0.1:8086</code>, o la base de datos publica algún puerto.</li>
+<li><code>sondeo.txt</code> no tiene las cuatro líneas, con 80 y 5432 abiertos.</li>
+</ul>
+
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "feat(docker-e6): red propia y puertos solo donde hacen falta"
+git push</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E6 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e6 -m "E6 resuelto"
+git push origin entrega-fundamentos-docker-e6</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>. Cuenta tal como esté al cerrar el plazo; si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de Docker"><a href="e5.html">← E5 · Datos que sobreviven</a><a href="e7.html">E7 · Tu primer compose →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

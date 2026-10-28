@@ -134,6 +134,8 @@ svg.diagrama { width: 100%; min-width: 540px; max-width: 760px; height: auto; di
 .diagrama .linea-acento { stroke: var(--accent); stroke-width: 2; fill: none; }
 .diagrama .linea-peligro { stroke: var(--crit); stroke-width: 2; fill: none; }
 .diagrama .discontinua { stroke-dasharray: 5 4; }
+.diagrama .peq { font-size: 12px; }
+.diagrama .fuerte { font-weight: 700; }
 .diagrama .punta { fill: var(--muted); }
 .diagrama .punta-acento { fill: var(--accent); }
 .diagrama .punta-peligro { fill: var(--crit); }

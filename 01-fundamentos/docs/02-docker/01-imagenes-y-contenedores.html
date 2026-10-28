@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docker 1 · Imágenes y contenedores · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Docker 1 de 4</p>
+<h1>Imágenes y contenedores</h1>
+<p class="lead">Un contenedor es un programa que arranca con todo lo que necesita y aislado del resto del equipo. Docker los fabrica a partir de imágenes, y en este curso levanta todos los laboratorios.</p>
+<div class="meta"><span>Ejercicio: <a href="../../ejercicios/02-docker/e1.html">E1</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Qué problema resuelve</h2>
+<p>Una herramienta necesita su versión de Python, sus librerías y su configuración. Si cada alumno las instala a mano, cada equipo acaba distinto y aparece el clásico «en mi máquina funciona». Un contenedor lleva todo eso dentro, así que funciona igual en todos los portátiles.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 300" role="img" aria-label="Cada máquina virtual lleva un sistema operativo entero sobre un hipervisor; los contenedores comparten el sistema del anfitrión y solo llevan su aplicación y sus librerías">
+<text class="tit" x="0" y="20">Máquinas virtuales</text>
+<rect class="linea discontinua" x="0" y="36" width="164" height="140" rx="8"/><rect class="linea discontinua" x="176" y="36" width="164" height="140" rx="8"/>
+<rect class="caja-acento" x="10" y="46" width="144" height="32" rx="6"/><text x="82" y="66" text-anchor="middle">App</text>
+<rect class="caja" x="10" y="86" width="144" height="32" rx="6"/><text x="82" y="106" text-anchor="middle">Librerías</text>
+<rect class="caja" x="10" y="126" width="144" height="40" rx="6"/><text class="tit" x="82" y="151" text-anchor="middle">Sistema entero</text>
+<rect class="caja-acento" x="186" y="46" width="144" height="32" rx="6"/><text x="258" y="66" text-anchor="middle">App</text>
+<rect class="caja" x="186" y="86" width="144" height="32" rx="6"/><text x="258" y="106" text-anchor="middle">Librerías</text>
+<rect class="caja" x="186" y="126" width="144" height="40" rx="6"/><text class="tit" x="258" y="151" text-anchor="middle">Sistema entero</text>
+<rect class="caja" x="0" y="184" width="340" height="32" rx="6"/><text x="170" y="204" text-anchor="middle">Hipervisor</text>
+<rect class="caja" x="0" y="222" width="340" height="32" rx="6"/><text x="170" y="242" text-anchor="middle">Sistema anfitrión</text>
+<rect class="caja" x="0" y="260" width="340" height="32" rx="6"/><text x="170" y="280" text-anchor="middle">Hardware</text>
+<text class="tit" x="380" y="20">Contenedores</text>
+<rect class="linea discontinua" x="380" y="76" width="105" height="100" rx="8"/><rect class="linea discontinua" x="497" y="76" width="105" height="100" rx="8"/><rect class="linea discontinua" x="614" y="76" width="105" height="100" rx="8"/>
+<rect class="caja-acento" x="388" y="86" width="89" height="32" rx="6"/><text x="432" y="106" text-anchor="middle">App</text>
+<rect class="caja" x="388" y="126" width="89" height="40" rx="6"/><text x="432" y="151" text-anchor="middle">Librerías</text>
+<rect class="caja-acento" x="505" y="86" width="89" height="32" rx="6"/><text x="549" y="106" text-anchor="middle">App</text>
+<rect class="caja" x="505" y="126" width="89" height="40" rx="6"/><text x="549" y="151" text-anchor="middle">Librerías</text>
+<rect class="caja-acento" x="622" y="86" width="89" height="32" rx="6"/><text x="666" y="106" text-anchor="middle">App</text>
+<rect class="caja" x="622" y="126" width="89" height="40" rx="6"/><text x="666" y="151" text-anchor="middle">Librerías</text>
+<rect class="caja" x="380" y="184" width="340" height="32" rx="6"/><text x="550" y="204" text-anchor="middle">Motor de contenedores (Docker)</text>
+<rect class="caja" x="380" y="222" width="340" height="32" rx="6"/><text x="550" y="242" text-anchor="middle">Sistema anfitrión: su núcleo es de todos</text>
+<rect class="caja" x="380" y="260" width="340" height="32" rx="6"/><text x="550" y="280" text-anchor="middle">Hardware</text>
+<text class="tenue peq" x="550" y="52" text-anchor="middle">sin sistema propio: arrancan en un segundo</text>
+</svg>
+<figcaption>Cada máquina virtual arrastra un sistema operativo entero. Los contenedores comparten el núcleo del anfitrión y solo llevan lo suyo: ocupan megas, no gigas.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th></th><th>Máquina virtual</th><th>Contenedor</th></tr></thead><tbody>
+<tr><td>Arranque</td><td>Minutos: arranca un sistema entero</td><td>Segundos: arranca un programa</td></tr>
+<tr><td>Tamaño</td><td>Gigas</td><td>Megas</td></tr>
+<tr><td>Aislamiento</td><td>Fuerte: cada una tiene su núcleo</td><td>Más débil: comparten núcleo. Lo verás en <a href="04-compose-y-seguridad.html">Docker 4</a></td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Docker en tu Windows</h2>
+<p>Los contenedores del curso son de Linux. Docker Desktop mantiene en tu Windows una máquina Linux ligera (WSL 2) y dentro de ella corre el motor de Docker. La orden <code>docker</code> que escribes en Git Bash es solo el mando a distancia de ese motor.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 252" role="img" aria-label="Git Bash envía las órdenes a Docker Desktop, que las pasa al motor de Docker dentro de WSL 2; el navegador llega a un contenedor por un puerto publicado en localhost">
+<defs><marker id="win-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="win-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="linea discontinua" x="1" y="1" width="718" height="250" rx="10"/><text class="tenue peq" x="16" y="22">Tu portátil con Windows</text>
+<rect class="caja" x="20" y="60" width="150" height="56" rx="8"/><text class="tit" x="95" y="84" text-anchor="middle">Git Bash</text><text class="tenue peq mono" x="95" y="103" text-anchor="middle">docker run …</text>
+<rect class="caja" x="214" y="60" width="150" height="56" rx="8"/><text class="tit" x="289" y="84" text-anchor="middle">Docker Desktop</text><text class="tenue peq" x="289" y="103" text-anchor="middle">la aplicación</text>
+<path class="linea" d="M170 88H212" marker-end="url(#win-f)"/><path class="linea" d="M364 88H418" marker-end="url(#win-f)"/>
+<rect class="linea discontinua" x="404" y="36" width="300" height="200" rx="8"/><text class="tenue peq" x="420" y="56">WSL 2 · una máquina Linux ligera</text>
+<rect class="caja-acento" x="420" y="68" width="268" height="40" rx="8"/><text class="tit" x="554" y="93" text-anchor="middle">Motor de Docker</text>
+<path class="linea" d="M460 108V144M554 108V144M648 108V144"/>
+<rect class="caja" x="420" y="144" width="80" height="40" rx="8"/><text class="mono" x="460" y="169" text-anchor="middle">floci</text>
+<rect class="caja" x="514" y="144" width="80" height="40" rx="8"/><text class="mono" x="554" y="169" text-anchor="middle">web</text>
+<rect class="caja" x="608" y="144" width="80" height="40" rx="8"/><text class="mono" x="648" y="169" text-anchor="middle">trivy</text>
+<text class="tenue peq" x="554" y="214" text-anchor="middle">contenedores</text>
+<rect class="caja" x="20" y="164" width="150" height="56" rx="8"/><text class="tit" x="95" y="188" text-anchor="middle">Navegador</text><text class="tenue peq mono" x="95" y="207" text-anchor="middle">localhost:4566</text>
+<path class="linea-acento" d="M170 204H460V188" marker-end="url(#win-fa)"/><text class="acento fuerte" x="290" y="196" text-anchor="middle">puerto publicado</text>
+</svg>
+<figcaption>Las órdenes van de Git Bash al motor; el navegador llega a un contenedor solo si este publica un puerto.</figcaption>
+</figure>
+<h3 id="instalacion">Instalación</h3>
+<ol>
+<li>Docker Desktop lo instalaste en <a href="../../../00-presentacion/docs/04-docker.html">Presentación · Docker</a>. Si no lo tienes, instálalo desde PowerShell y ábrelo; usa el motor WSL 2, que propone al arrancar la primera vez, y si te pide reiniciar, reinicia:
+<div class="cmd"><pre><code>winget install -e --id Docker.DockerDesktop</code></pre></div></li>
+<li>Crea una cuenta gratuita en <a href="https://hub.docker.com/signup">Docker Hub</a> e inicia sesión desde Git Bash. Docker Hub limita las descargas anónimas por dirección IP, y toda el aula sale a Internet por la misma; con sesión iniciada, cada uno tiene su propio cupo:
+<div class="cmd"><pre><code>docker login</code></pre></div></li>
+<li>Git Bash convierte cualquier argumento que empiece por <code>/</code> en una ruta de Windows: <code>/usr/share</code> llegaría a Docker como <code>C:/Program Files/Git/usr/share</code>. Las rutas de dentro de un contenedor son de Linux y no se deben tocar. Esta función le dice a Git Bash que no convierta nada cuando la orden es <code>docker</code>; añádela una vez a tu <code>~/.bashrc</code>:
+<div class="cmd"><pre><code>echo 'docker() { MSYS_NO_PATHCONV=1 command docker "$@"; }' &gt;&gt; ~/.bashrc
+source ~/.bashrc</code></pre></div></li>
+<li>Comprueba que todo responde:
+<div class="cmd"><pre><code>docker run --rm hello-world
+docker compose version</code></pre></div></li>
+</ol>
+</section>
+
+<section class="seccion">
+<h2>Imagen y contenedor</h2>
+<p>Una <b>imagen</b> es el molde: los ficheros de un programa y lo que necesita, de solo lectura. Un <b>contenedor</b> es una pieza sacada de ese molde y en marcha. De una imagen salen tantos contenedores como quieras, y cada uno tiene encima una capa propia donde escribe sus cambios.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 220" role="img" aria-label="Una imagen de solo lectura y tres contenedores creados desde ella con docker run, cada uno con su propia capa escribible">
+<defs><marker id="img-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="tit" x="110" y="40" text-anchor="middle">Imagen</text><text class="mono tenue peq" x="110" y="58" text-anchor="middle">nginx:1.27-alpine</text>
+<rect class="caja" x="20" y="72" width="180" height="28" rx="6"/><text x="110" y="91" text-anchor="middle">configuración de nginx</text>
+<rect class="caja" x="20" y="104" width="180" height="28" rx="6"/><text x="110" y="123" text-anchor="middle">programa nginx</text>
+<rect class="caja" x="20" y="136" width="180" height="28" rx="6"/><text x="110" y="155" text-anchor="middle">Alpine Linux mínimo</text>
+<text class="tenue peq" x="110" y="186" text-anchor="middle">solo lectura</text>
+<path class="linea" d="M200 118L396 44" marker-end="url(#img-f)"/><path class="linea" d="M200 118H396" marker-end="url(#img-f)"/><path class="linea" d="M200 118L396 192" marker-end="url(#img-f)"/>
+<text class="acento fuerte mono" x="300" y="110" text-anchor="middle">docker run</text>
+<rect class="caja-acento" x="400" y="20" width="300" height="48" rx="8"/><text class="tit" x="420" y="41">web-1</text><text class="tenue peq" x="420" y="58">su capa escribible: lo que cambie, solo aquí</text>
+<rect class="caja-acento" x="400" y="94" width="300" height="48" rx="8"/><text class="tit" x="420" y="115">web-2</text><text class="tenue peq" x="420" y="132">su capa escribible</text>
+<rect class="caja-acento" x="400" y="168" width="300" height="48" rx="8"/><text class="tit" x="420" y="189">web-3</text><text class="tenue peq" x="420" y="206">su capa escribible</text>
+</svg>
+<figcaption>Los tres contenedores comparten la imagen sin copiarla. Si borras un contenedor, se pierde su capa, no la imagen.</figcaption>
+</figure>
+<h3>El nombre de una imagen</h3>
+<p>Las imágenes se descargan de un <b>registro</b>; el que Docker usa si no dices otro es Docker Hub. El nombre completo dice de dónde viene y qué versión es:</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 130" role="img" aria-label="El nombre docker.io/library/nginx:1.27-alpine se compone de registro, usuario, repositorio y etiqueta">
+<rect class="caja" x="0" y="16" width="150" height="40" rx="8"/><text class="mono tit" x="75" y="41" text-anchor="middle">docker.io</text>
+<text class="mono tit" x="162" y="42" text-anchor="middle">/</text>
+<rect class="caja" x="174" y="16" width="130" height="40" rx="8"/><text class="mono tit" x="239" y="41" text-anchor="middle">library</text>
+<text class="mono tit" x="316" y="42" text-anchor="middle">/</text>
+<rect class="caja" x="328" y="16" width="130" height="40" rx="8"/><text class="mono tit" x="393" y="41" text-anchor="middle">nginx</text>
+<text class="mono tit" x="470" y="42" text-anchor="middle">:</text>
+<rect class="caja-acento" x="482" y="16" width="200" height="40" rx="8"/><text class="mono tit" x="582" y="41" text-anchor="middle">1.27-alpine</text>
+<text class="tit" x="75" y="80" text-anchor="middle">registro</text><text class="tenue peq" x="75" y="98" text-anchor="middle">Docker Hub;</text><text class="tenue peq" x="75" y="114" text-anchor="middle">se puede omitir</text>
+<text class="tit" x="239" y="80" text-anchor="middle">usuario</text><text class="tenue peq" x="239" y="98" text-anchor="middle">library = oficial;</text><text class="tenue peq" x="239" y="114" text-anchor="middle">se puede omitir</text>
+<text class="tit" x="393" y="80" text-anchor="middle">repositorio</text><text class="tenue peq" x="393" y="98" text-anchor="middle">el programa</text>
+<text class="tit" x="582" y="80" text-anchor="middle">etiqueta</text><text class="tenue peq" x="582" y="98" text-anchor="middle">la versión; si falta,</text><text class="tenue peq" x="582" y="114" text-anchor="middle">se usa latest</text>
+</svg>
+<figcaption>Por eso <code>nginx:1.27-alpine</code> y <code>docker.io/library/nginx:1.27-alpine</code> son la misma imagen. <code>hashicorp/terraform:1.9</code> es del usuario <code>hashicorp</code>.</figcaption>
+</figure>
+<p><code>latest</code> no significa «la última»: es una etiqueta más, que el autor mueve cuando quiere. Dos alumnos que descargan <code>latest</code> en días distintos pueden tener versiones distintas. Por eso los laboratorios fijan la versión (<code>nginx:1.27-alpine</code>, <code>aquasec/trivy:0.58.0</code>). Floci se usa con <code>latest</code> a propósito, para recibir sus correcciones.</p>
+</section>
+
+<section class="seccion">
+<h2>Ciclo de vida de un contenedor</h2>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 262" role="img" aria-label="Desde la imagen, docker run crea un contenedor en marcha; docker stop lo para y docker start lo vuelve a arrancar; docker rm lo borra">
+<defs><marker id="cv-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="cv-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="100" width="120" height="48" rx="8"/><text class="tit" x="60" y="129" text-anchor="middle">Imagen</text>
+<rect class="caja-ok" x="230" y="40" width="160" height="48" rx="8"/><text class="tit" x="310" y="69" text-anchor="middle">En marcha</text>
+<rect class="caja" x="230" y="170" width="160" height="48" rx="8"/><text class="tit" x="310" y="199" text-anchor="middle">Parado</text>
+<rect class="linea discontinua" x="560" y="100" width="150" height="48" rx="8"/><text class="tit" x="635" y="129" text-anchor="middle">Borrado</text>
+<path class="linea-acento" d="M120 112L228 70" marker-end="url(#cv-fa)"/><text class="acento fuerte mono" x="160" y="76" text-anchor="middle">docker run</text>
+<path class="linea" d="M280 88V168" marker-end="url(#cv-f)"/><text class="mono" x="272" y="132" text-anchor="end">docker stop</text>
+<path class="linea" d="M340 170V90" marker-end="url(#cv-f)"/><text class="mono" x="348" y="132">docker start</text>
+<path class="linea" d="M390 194L558 132" marker-end="url(#cv-f)"/><text class="mono" x="500" y="190">docker rm</text>
+<path class="linea discontinua" d="M390 64L558 116" marker-end="url(#cv-f)"/><text class="mono" x="480" y="70">docker rm -f</text>
+<text class="tenue peq" x="310" y="24" text-anchor="middle">aquí funcionan logs, exec y cp</text>
+<text class="tenue peq" x="0" y="252">Con docker run --rm, al terminar el programa el contenedor se borra solo: así se usan las herramientas del curso.</text>
+</svg>
+<figcaption>Parar no es borrar: un contenedor parado conserva su capa y vuelve a arrancar tal como estaba.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
+<tr><td><code>docker pull nginx:1.27-alpine</code></td><td>Descarga la imagen.</td></tr>
+<tr><td><code>docker image ls</code></td><td>Imágenes descargadas.</td></tr>
+<tr><td><code>docker run -d --name web nginx:1.27-alpine</code></td><td>Crea y arranca un contenedor. <code>-d</code> lo deja en segundo plano; <code>--name</code> le pone nombre.</td></tr>
+<tr><td><code>docker run --rm imagen …</code></td><td>Ejecuta y borra el contenedor al terminar.</td></tr>
+<tr><td><code>docker ps</code> / <code>docker ps -a</code></td><td>Contenedores en marcha / también los parados.</td></tr>
+<tr><td><code>docker logs -f web</code></td><td>Lo que el programa escribe en pantalla. <code>-f</code> sigue mirando; se sale con Ctrl+C.</td></tr>
+<tr><td><code>docker exec web nginx -v</code></td><td>Ejecuta una orden dentro de un contenedor en marcha.</td></tr>
+<tr><td><code>docker cp fichero web:/ruta</code></td><td>Copia un fichero de tu equipo al contenedor (o al revés).</td></tr>
+<tr><td><code>docker stop web</code> / <code>docker start web</code></td><td>Para / vuelve a arrancar.</td></tr>
+<tr><td><code>docker rm web</code> / <code>docker rm -f web</code></td><td>Borra uno parado / lo para y lo borra.</td></tr>
+<tr><td><code>docker container inspect web</code></td><td>Todo lo que Docker sabe de él, en JSON.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Hablar con un contenedor</h2>
+<p>Un servidor web dentro de un contenedor escucha en su puerto 80, pero ese puerto es del contenedor, no de tu equipo. <code>-p 127.0.0.1:8080:80</code> abre la puerta 8080 de tu equipo, solo para ti, y la conecta con la 80 del contenedor. Lo verás a fondo en <a href="03-datos-y-redes.html">Docker 3</a>.</p>
+<p>Para comprobar que responde basta con <code>curl</code>, como en <a href="../api-rest/03-f12-curl-y-seguridad.html">API REST 3</a>: envía una <b>petición</b> y muestra la <b>respuesta</b>. Para Docker basta con mirar la primera línea, el código de estado de <a href="../api-rest/02-metodos-codigos-y-cabeceras.html">API REST 2</a>.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 200" role="img" aria-label="curl envía GET / al puerto 8080 de tu equipo, que llega al 80 del contenedor; nginx responde 200 OK con la página">
+<defs><marker id="http-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker><marker id="http-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="30" width="150" height="140" rx="8"/><text class="tit" x="75" y="94" text-anchor="middle">curl</text><text class="tenue peq" x="75" y="112" text-anchor="middle">en Git Bash</text>
+<rect class="caja-acento" x="570" y="30" width="150" height="140" rx="8"/><text class="tit" x="645" y="94" text-anchor="middle">nginx</text><text class="tenue peq" x="645" y="112" text-anchor="middle">contenedor web</text>
+<path class="linea-acento" d="M150 70H568" marker-end="url(#http-fa)"/><text class="mono acento fuerte" x="360" y="58" text-anchor="middle">GET / HTTP/1.1</text>
+<rect class="caja" x="270" y="88" width="180" height="26" rx="6"/><text class="mono" x="360" y="106" text-anchor="middle">127.0.0.1:8080 → 80</text>
+<path class="linea" d="M570 140H152" marker-end="url(#http-f)"/><text class="mono tit" x="360" y="160" text-anchor="middle">HTTP/1.1 200 OK</text><text class="tenue peq" x="360" y="180" text-anchor="middle">cabeceras y, después, la página</text>
+</svg>
+<figcaption>La petición sale de curl, entra por el puerto publicado y la contesta nginx. 200 es «todo bien»; 404 es «esa página no existe».</figcaption>
+</figure>
+<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
+curl -i http://localhost:8080/      # -i: muestra también la línea de estado y las cabeceras
+docker logs web                     # nginx anota cada petición recibida</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Espacio en disco</h2>
+<p>Las imágenes del curso ocupan varios gigas dentro del disco de WSL 2. Revisa de vez en cuando qué ocupa sitio y borra lo que no uses:</p>
+<pre><code>docker system df            # imágenes, contenedores y volúmenes, y cuánto ocupan
+docker container prune      # borra los contenedores parados
+docker image prune          # borra las imágenes sin nombre que han quedado sueltas</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Si algo falla</h2>
+<div class="tabla"><table><thead><tr><th>Mensaje</th><th>Causa</th><th>Solución</th></tr></thead><tbody>
+<tr><td><code>Cannot connect to the Docker daemon</code></td><td>Docker Desktop no está abierto.</td><td>Ábrelo y espera a que diga que el motor está en marcha.</td></tr>
+<tr><td><code>port is already allocated</code></td><td>Otro contenedor usa ese puerto de tu equipo.</td><td><code>docker ps</code> para ver cuál, y <code>docker stop</code> o elige otro puerto.</td></tr>
+<tr><td><code>Conflict. The container name "/web" is already in use</code></td><td>Ya existe un contenedor con ese nombre, quizá parado.</td><td><code>docker rm -f web</code> y repite.</td></tr>
+<tr><td><code>toomanyrequests</code></td><td>Límite de descargas de Docker Hub.</td><td><code>docker login</code> con tu cuenta.</td></tr>
+<tr><td>Rutas como <code>C:/Program Files/Git/usr/…</code></td><td>Git Bash ha convertido una ruta del contenedor.</td><td>Añade la función <code>docker()</code> de la instalación a <code>~/.bashrc</code>.</td></tr>
+<tr><td><code>the input device is not a TTY</code></td><td>Has usado <code>-it</code> y Git Bash no ofrece un terminal compatible.</td><td>Quita <code>-it</code> y pasa la orden completa: <code>docker exec web nginx -v</code>. En el curso no hace falta <code>-it</code>.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../../ejercicios/02-docker/e1.html">E1 · Ciclo de vida</a>: arrancas un nginx, cambias su página, lo paras, lo vuelves a arrancar y entregas lo que Docker sabe de él.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Si la IA te propone una orden de Docker, mira la imagen antes de ejecutarla: <code>docker run</code> descarga y ejecuta código de quien publicó esa imagen. Usa imágenes oficiales o de autores conocidos y con versión fija.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li><code>docker run --rm hello-world</code> funciona y has iniciado sesión con <code>docker login</code></li>
+<li>Sabes explicar la diferencia entre imagen y contenedor</li>
+<li>Sabes leer las partes de <code>hashicorp/terraform:1.9</code></li>
+<li>Sabes parar, arrancar y borrar un contenedor, y qué se pierde en cada caso</li>
+<li>E1 superado en el check <b>Corrector docker</b> y con su etiqueta</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de Docker"><a href="../01-git/04-deshacer-y-seguridad.html">← Git 4 · Deshacer y seguridad</a><a href="02-construir-imagenes.html">Docker 2 · Construir imágenes →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

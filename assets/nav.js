@@ -20,6 +20,12 @@
           ["Git 3 · Remotos y reescribir historia", "01-fundamentos/docs/01-git/03-remotos-y-reescribir-historia.html"],
           ["Git 4 · Deshacer y seguridad", "01-fundamentos/docs/01-git/04-deshacer-y-seguridad.html"],
         ]],
+        ["02 · Docker", "01-fundamentos/index.html#02-docker", [
+          ["Docker 1 · Imágenes y contenedores", "01-fundamentos/docs/02-docker/01-imagenes-y-contenedores.html"],
+          ["Docker 2 · Construir imágenes", "01-fundamentos/docs/02-docker/02-construir-imagenes.html"],
+          ["Docker 3 · Datos y redes", "01-fundamentos/docs/02-docker/03-datos-y-redes.html"],
+          ["Docker 4 · Compose y seguridad", "01-fundamentos/docs/02-docker/04-compose-y-seguridad.html"],
+        ]],
         ["API REST", "01-fundamentos/index.html#api-rest", [
           ["API REST 1 · Cliente, servidor y HTTP", "01-fundamentos/docs/api-rest/01-cliente-servidor-y-http.html"],
           ["API REST 2 · Métodos, códigos y cabeceras", "01-fundamentos/docs/api-rest/02-metodos-codigos-y-cabeceras.html"],
@@ -48,6 +54,16 @@
           ["E6 · Rebase interactivo", "01-fundamentos/ejercicios/01-git/e6.html"],
           ["E7 · Revert", "01-fundamentos/ejercicios/01-git/e7.html"],
           ["E8 · Secreto filtrado", "01-fundamentos/ejercicios/01-git/e8.html"],
+        ]],
+        ["02 · Docker", "01-fundamentos/ejercicios/index.html#02-docker", [
+          ["E1 · Ciclo de vida", "01-fundamentos/ejercicios/02-docker/e1.html"],
+          ["E2 · Tu primera imagen", "01-fundamentos/ejercicios/02-docker/e2.html"],
+          ["E3 · Capas, caché y .dockerignore", "01-fundamentos/ejercicios/02-docker/e3.html"],
+          ["E4 · El secreto de la capa", "01-fundamentos/ejercicios/02-docker/e4.html"],
+          ["E5 · Datos que sobreviven", "01-fundamentos/ejercicios/02-docker/e5.html"],
+          ["E6 · Red y puertos", "01-fundamentos/ejercicios/02-docker/e6.html"],
+          ["E7 · Tu primer compose", "01-fundamentos/ejercicios/02-docker/e7.html"],
+          ["E8 · Auditar un compose", "01-fundamentos/ejercicios/02-docker/e8.html"],
         ]],
         ["API REST", "01-fundamentos/ejercicios/index.html#api-rest", [
           ["Hackea el ranking · Solución", "01-fundamentos/ejercicios/api-rest/hackea-el-ranking/solucion.html"],

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E7 · Tu primer compose · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#02-docker">Ejercicios de Docker</a></nav>
+
+<h1>E7 · Tu primer compose</h1>
+<p class="lead">Lo que hiciste a mano en E5 y E6, en un solo docker-compose.yml, con la contraseña fuera del repositorio.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/02-docker/04-compose-y-seguridad.html">Docker 4 · Compose y seguridad</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/docker/e7/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-docker-e7</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara la carpeta</h2>
+<p>E7 no tiene ficheros de partida: reutiliza la web de E5. Desde tu repositorio:</p><div class="cmd"><pre><code>mkdir -p fundamentos/docker/e7 &amp;&amp; cd fundamentos/docker/e7
+cp -r ../e5/web .
+code docker-compose.yml</code></pre></div>
+
+<h2 class="step"><span class="n">2</span>Escribe el compose</h2>
+<p>Proyecto <code>e7-lab</code>, una red <code>lab</code>, un volumen <code>datos</code> y cuatro servicios en esa red:</p><div class="tabla"><table><thead><tr><th>Servicio</th><th>Qué es</th></tr></thead><tbody><tr><td><code>web</code></td><td><code>nginx:1.27-alpine</code>, publicado en <code>127.0.0.1:8087</code>, con <code>./web</code> en solo lectura.</td></tr><tr><td><code>datos</code></td><td><code>postgres:16-alpine</code> con el volumen <code>datos</code>, sin puertos publicados. <code>POSTGRES_PASSWORD</code> sale de <code>${POSTGRES_PASSWORD:?falta en .env}</code>.</td></tr><tr><td><code>sondeo</code></td><td>Se construye desde <code>../e2</code> con la imagen <code>sondeo:1.0</code>. En el perfil <code>herramientas</code>.</td></tr><tr><td><code>curl</code></td><td><code>curlimages/curl:8.11.1</code>. En el perfil <code>herramientas</code>.</td></tr></tbody></table></div><p>Cada clave equivale a una opción de <code>docker run</code>: la tabla está en <a href="../../docs/02-docker/04-compose-y-seguridad.html">Docker 4</a>.</p>
+
+<h2 class="step"><span class="n">3</span>La contraseña, en .env</h2>
+<div class="cmd"><pre><code>printf 'POSTGRES_PASSWORD=\n' &gt; .env.ejemplo
+cp .env.ejemplo .env
+code .env</code></pre></div><p>Pon una contraseña en <code>.env</code>. <code>.env.ejemplo</code> se sube, vacío, para que otro sepa qué variable hace falta; <code>.env</code> no aparece en <code>git status</code>.</p>
+
+<h2 class="step"><span class="n">4</span>Levántalo y pruébalo</h2>
+<div class="cmd"><pre><code>docker compose config -q &amp;&amp; echo correcto
+docker compose up -d
+docker compose ps
+docker compose run --rm curl -s http://web/
+docker compose run --rm sondeo datos 5432
+docker compose down</code></pre></div><p><code>up</code> solo levanta <code>web</code> y <code>datos</code>; las herramientas se lanzan con <code>run</code>. Prueba también a vaciar <code>.env</code>: <code>config</code> se niega con tu mensaje.</p><p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li><code>docker compose config</code> falla con un <code>.env</code> completo, o no falla sin él.</li>
+<li>Algún servicio no cumple la tabla: imagen, puerto, montaje, red o perfil.</li>
+<li>Con <code>up</code>, <code>curl</code> no recibe tu página o el sondeo no ve el 5432 de <code>datos</code>.</li>
+<li><code>.env</code> está en el repositorio, o falta <code>.env.ejemplo</code>.</li>
+</ul>
+
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "feat(docker-e7): el laboratorio en un compose"
+git push</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E7 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e7 -m "E7 resuelto"
+git push origin entrega-fundamentos-docker-e7</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>. Cuenta tal como esté al cerrar el plazo; si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de Docker"><a href="e6.html">← E6 · Red y puertos</a><a href="e8.html">E8 · Auditar un compose →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>
