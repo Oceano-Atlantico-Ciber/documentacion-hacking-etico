@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E8 · Auditar un compose · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#02-docker">Ejercicios de Docker</a></nav>
+
+<h1>E8 · Auditar un compose</h1>
+<p class="lead">El panel de administración de la empresa se despliega con un compose que abre todas las puertas. Audítalo, ciérralas y documenta cada fallo.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/02-docker/04-compose-y-seguridad.html">Docker 4 · Compose y seguridad</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/docker/e8/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-docker-e8</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, con Docker Desktop en marcha:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/02-docker/preparar.py e8
+cd fundamentos/docker/e8</code></pre></div>
+<p>Deja <code>docker-compose.yml</code>, la carpeta <code>panel/</code> con su <code>Dockerfile</code> y <code>web/</code>.</p>
+
+<h2 class="step"><span class="n">2</span>Levántalo tal cual y mira lo que ve cualquiera</h2>
+<div class="cmd"><pre><code>docker compose up -d --build
+curl http://localhost/docker-compose.yml
+docker compose down</code></pre></div><p>Cualquiera que llegue a tu puerto 80, también desde la wifi del aula, lee el propio compose con sus contraseñas. Es tu primer hallazgo.</p>
+
+<h2 class="step"><span class="n">3</span>Pasa Trivy al Dockerfile</h2>
+<div class="cmd"><pre><code>docker run --rm -v ./:/work:ro aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre></div>
+
+<h2 class="step"><span class="n">4</span>Corrige</h2>
+<p>Revisa el compose y el <code>Dockerfile</code> con la lista de <a href="../../docs/02-docker/04-compose-y-seguridad.html">Docker 4 · Puertas que abre un compose</a>. El panel y la web tienen que seguir funcionando en <code>127.0.0.1:8000</code> y <code>127.0.0.1:8088</code>. Las contraseñas pasan a <code>.env</code>, con un <code>.env.ejemplo</code> vacío.</p>
+
+<h2 class="step"><span class="n">5</span>Documenta</h2>
+<div class="cmd"><pre><code>code informe.md</code></pre></div><p>Una tabla con una fila por fallo: línea original, qué riesgo tenía y cómo lo has corregido. Ningún valor de <code>.env</code> en el informe.</p>
+
+<h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>docker run --rm -v ./:/work:ro aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work
+docker compose up -d --build
+curl http://localhost:8000/
+curl -i http://localhost:8088/docker-compose.yml
+docker compose exec panel id
+docker compose down</code></pre></div><p>Trivy sin avisos, el panel responde, la web ya no sirve el compose (404) y el panel no corre como root.</p><p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Trivy da avisos altos o críticos.</li>
+<li>Alguna imagen no tiene versión fija, o algún puerto se publica fuera de <code>127.0.0.1</code>; la base de datos no publica ninguno.</li>
+<li>Queda <code>privileged</code>, el socket de Docker o una carpeta montada con escritura.</li>
+<li>Alguna contraseña sigue escrita en el compose, o <code>.env</code> está en el repositorio.</li>
+<li>El panel no arranca o corre como root, o <code>informe.md</code> no tiene una fila por fallo.</li>
+</ul>
+
+
+<h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "fix(docker-e8): panel sin puertas abiertas"
+git push</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E8 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e8 -m "E8 resuelto"
+git push origin entrega-fundamentos-docker-e8</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>. Cuenta tal como esté al cerrar el plazo; si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de Docker"><a href="e7.html">← E7 · Tu primer compose</a><span></span></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

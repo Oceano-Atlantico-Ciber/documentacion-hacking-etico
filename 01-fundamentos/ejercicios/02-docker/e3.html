@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E3 · Capas, caché y .dockerignore · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#02-docker">Ejercicios de Docker</a></nav>
+
+<h1>E3 · Capas, caché y .dockerignore</h1>
+<p class="lead">Un Dockerfile que funciona, pero tarda siempre lo mismo y mete en la imagen lo que no debe. Arréglalo sin cambiar lo que hace.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/02-docker/02-construir-imagenes.html">Docker 2 · Construir imágenes</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/docker/e3/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-docker-e3</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, con Docker Desktop en marcha:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/02-docker/preparar.py e3
+cd fundamentos/docker/e3</code></pre></div>
+<p>Deja un cliente de una API: <code>Dockerfile</code>, <code>app.py</code>, <code>requirements.txt</code>, un <code>.env</code> con un token y la carpeta <code>notas/</code>. El <code>.env</code> no aparece en <code>git status</code>: tu <code>.gitignore</code> ya lo excluye.</p>
+
+<h2 class="step"><span class="n">2</span>Mira el problema</h2>
+<div class="cmd"><pre><code>docker build -t e3-app:1.0 .
+docker run --rm e3-app:1.0 ls -a /app
+docker run --rm e3-app:1.0 cat /app/.env</code></pre></div><p>El token y tus notas están dentro de la imagen. Cambia una letra de un comentario de <code>app.py</code> y reconstruye: <code>pip install</code> se repite entero.</p>
+
+<h2 class="step"><span class="n">3</span>Reordena las capas</h2>
+<p>Edita el <code>Dockerfile</code> para que la instalación de dependencias salga de la caché mientras <code>requirements.txt</code> no cambie: copia primero ese fichero, instala y copia después <code>app.py</code>. Deja el mismo <code>FROM</code> y el mismo <code>CMD</code>.</p>
+
+<h2 class="step"><span class="n">4</span>Deja fuera lo que no debe entrar</h2>
+<div class="cmd"><pre><code>code .dockerignore</code></pre></div><p>Excluye <code>.env</code> y <code>notas/</code>. Excluye también <code>Dockerfile</code> y <code>.dockerignore</code>, que no le hacen falta a la imagen.</p>
+
+<h2 class="step"><span class="n">5</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>docker build -t e3-app:1.0 .
+# cambia un comentario de app.py y:
+docker build --progress=plain -t e3-app:1.0 . 2&gt;&amp;1 | grep -B1 CACHED
+docker run --rm e3-app:1.0 ls -a /app
+docker run --rm e3-app:1.0</code></pre></div><p>El paso de <code>pip install</code> sale como <code>CACHED</code>, en <code>/app</code> solo están <code>app.py</code> y <code>requirements.txt</code>, y el programa sigue funcionando.</p><p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>La imagen no construye o <code>python app.py</code> no funciona.</li>
+<li><code>.env</code> o <code>notas/</code> están dentro de la imagen.</li>
+<li>Al cambiar <code>app.py</code>, <code>pip install</code> no sale de la caché.</li>
+<li>El programa no imprime lo mismo que antes, o has cambiado <code>requirements.txt</code>, el <code>FROM</code> o el <code>CMD</code>.</li>
+</ul>
+
+
+<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "fix(docker-e3): capas en orden y contexto limpio"
+git push</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E3 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e3 -m "E3 resuelto"
+git push origin entrega-fundamentos-docker-e3</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>. Cuenta tal como esté al cerrar el plazo; si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de Docker"><a href="e2.html">← E2 · Tu primera imagen</a><a href="e4.html">E4 · El secreto de la capa →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

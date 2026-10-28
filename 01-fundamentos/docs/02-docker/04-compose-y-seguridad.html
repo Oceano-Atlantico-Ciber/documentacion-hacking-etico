@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docker 4 · Compose y seguridad · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Docker 4 de 4</p>
+<h1>Compose y seguridad</h1>
+<p class="lead">Todo lo de Docker 1 a 3 cabe en un fichero, <code>docker-compose.yml</code>, que describe un laboratorio entero. Al final de este tema sabrás leer línea a línea los del curso y señalar cuáles abren una puerta que no debería estar abierta.</p>
+<div class="meta"><span>Ejercicios: <a href="../../ejercicios/02-docker/e7.html">E7</a> y <a href="../../ejercicios/02-docker/e8.html">E8</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Del fichero al laboratorio</h2>
+<p>En vez de una orden <code>docker run</code> por contenedor, con sus <code>-v</code>, <code>-p</code> y <code>--network</code>, se escribe una vez qué <b>servicios</b>, <b>redes</b> y <b>volúmenes</b> hay. <code>docker compose up -d</code> crea lo que falte y arranca todo.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 286" role="img" aria-label="El docker-compose.yml de Empresa con Terraform declara los servicios floci y terraform, la red lab y el volumen floci-data; docker compose los crea">
+<defs><marker id="cmp-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="0" width="300" height="286" rx="8"/>
+<text class="mono" x="16" y="24">services:</text>
+<text class="mono" x="32" y="44">floci:</text>
+<text class="mono tenue peq" x="48" y="62">image: floci/floci:latest</text>
+<text class="mono tenue peq" x="48" y="80">ports: ["4566:4566"]</text>
+<text class="mono tenue peq" x="48" y="98">volumes: [floci-data:/app/data]</text>
+<text class="mono tenue peq" x="48" y="116">networks: [lab]</text>
+<text class="mono" x="32" y="140">terraform:</text>
+<text class="mono tenue peq" x="48" y="158">image: hashicorp/terraform:1.9</text>
+<text class="mono tenue peq" x="48" y="176">volumes: [./terraform:/work]</text>
+<text class="mono tenue peq" x="48" y="194">networks: [lab]</text>
+<text class="mono" x="16" y="222">networks:</text><text class="mono tenue peq" x="32" y="240">lab:</text>
+<text class="mono" x="16" y="262">volumes:</text><text class="mono tenue peq" x="32" y="280">floci-data:</text>
+<path class="linea-acento" d="M300 143H352" marker-end="url(#cmp-fa)"/><text class="mono acento fuerte" x="326" y="133" text-anchor="middle">up</text>
+<rect class="linea discontinua" x="356" y="0" width="364" height="190" rx="10"/><text class="tenue peq" x="372" y="22">red lab</text>
+<rect class="caja-acento" x="376" y="40" width="150" height="56" rx="8"/><text class="tit" x="451" y="64" text-anchor="middle">floci</text><text class="tenue peq mono" x="451" y="82" text-anchor="middle">:4566 publicado</text>
+<rect class="caja" x="550" y="40" width="150" height="56" rx="8"/><text class="tit" x="625" y="64" text-anchor="middle">terraform</text><text class="tenue peq" x="625" y="82" text-anchor="middle">cuando lo lances</text>
+<text class="tenue peq" x="538" y="136" text-anchor="middle">se encuentran por su nombre: http://floci:4566</text>
+<rect class="caja-ok" x="376" y="210" width="150" height="56" rx="8"/><text class="tit" x="451" y="234" text-anchor="middle">floci-data</text><text class="tenue peq" x="451" y="252" text-anchor="middle">volumen</text>
+<rect class="caja-ok" x="550" y="210" width="150" height="56" rx="8"/><text class="tit" x="625" y="234" text-anchor="middle">./terraform</text><text class="tenue peq" x="625" y="252" text-anchor="middle">tu carpeta</text>
+<path class="linea" d="M451 96V208M625 96V208"/>
+</svg>
+<figcaption>Es el compose de Empresa con Terraform, recortado. Cada bloque del fichero es una de las piezas que ya conoces.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Clave</th><th>Equivale a</th><th>Tema</th></tr></thead><tbody>
+<tr><td><code>name: fundamentos-mini-auditoria</code></td><td>Nombre del proyecto; prefijo de sus contenedores, redes y volúmenes.</td><td>—</td></tr>
+<tr><td><code>image:</code> / <code>build: ./carpeta</code></td><td>La imagen que se descarga, o el <code>Dockerfile</code> que se construye.</td><td>1 y 2</td></tr>
+<tr><td><code>container_name: floci</code></td><td><code>--name floci</code></td><td>1</td></tr>
+<tr><td><code>entrypoint:</code> / <code>command:</code></td><td>Sustituyen al <code>ENTRYPOINT</code> y al <code>CMD</code> de la imagen.</td><td>2</td></tr>
+<tr><td><code>volumes:</code></td><td><code>-v</code>: volumen con nombre o carpeta relativa al compose.</td><td>3</td></tr>
+<tr><td><code>ports:</code></td><td><code>-p</code></td><td>3</td></tr>
+<tr><td><code>networks:</code>, <code>ipv4_address:</code>, <code>network_mode: service:web</code></td><td><code>--network</code>, <code>--ip</code>, <code>--network container:web</code></td><td>3</td></tr>
+<tr><td><code>environment:</code></td><td><code>-e</code>: variables de entorno.</td><td>4</td></tr>
+<tr><td><code>depends_on: [web]</code></td><td>Arranca antes ese servicio.</td><td>4</td></tr>
+<tr><td><code>restart: unless-stopped</code></td><td>Lo rearranca si se cae o reinicias Docker, salvo que lo pares tú.</td><td>4</td></tr>
+<tr><td><code>profiles: [herramientas]</code></td><td>No se levanta con <code>up</code>: solo con <code>run</code> o <code>--profile</code>.</td><td>4</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>up, run y exec</h2>
+<p>Las tres órdenes ejecutan algo en un servicio, pero no en el mismo contenedor. Confundirlas es el error más común con los laboratorios.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 230" role="img" aria-label="up -d deja los servicios en marcha; run --rm crea un contenedor de un solo uso que se borra al terminar; exec entra en un contenedor que ya está en marcha">
+<defs><marker id="urx-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="mono tit" x="0" y="34">compose up -d</text><text class="tenue peq" x="0" y="52">levanta y deja en marcha</text>
+<rect class="caja-ok" x="260" y="14" width="460" height="44" rx="8"/><text x="276" y="41">floci, web, datos… siguen ahí hasta <tspan class="mono">down</tspan></text>
+<path class="linea" d="M200 36H258" marker-end="url(#urx-f)"/>
+<text class="mono tit" x="0" y="110">compose run --rm aws s3 ls</text><text class="tenue peq" x="0" y="128">un contenedor nuevo, de usar y tirar</text>
+<rect class="caja" x="260" y="90" width="300" height="44" rx="8"/><text x="276" y="117">crea, ejecuta <tspan class="mono">aws s3 ls</tspan>, muestra</text>
+<rect class="linea discontinua" x="580" y="90" width="140" height="44" rx="8"/><text x="650" y="117" text-anchor="middle">se borra</text>
+<path class="linea" d="M560 112H578" marker-end="url(#urx-f)"/>
+<text class="mono tit" x="0" y="186">compose exec web sh -c …</text><text class="tenue peq" x="0" y="204">dentro de uno que ya está</text>
+<rect class="caja-ok" x="260" y="166" width="460" height="44" rx="8"/><text x="276" y="193">la orden corre dentro del contenedor web en marcha</text>
+<path class="linea" d="M220 188H258" marker-end="url(#urx-f)"/>
+</svg>
+<figcaption>Las herramientas del curso (Terraform, Trivy, la CLI de AWS, nmap, curl) se usan con <code>run --rm</code>: hacen su trabajo y no dejan contenedores parados.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
+<tr><td><code>docker compose up -d</code></td><td>Crea y arranca los servicios sin perfil. Si cambias el fichero y repites, recrea solo lo que cambió.</td></tr>
+<tr><td><code>docker compose ps</code> / <code>logs -f suricata</code></td><td>Estado de los servicios / lo que escribe uno.</td></tr>
+<tr><td><code>docker compose run --rm curl -i http://web/</code></td><td>Contenedor de un solo uso del servicio <code>curl</code>; lo de detrás son sus argumentos.</td></tr>
+<tr><td><code>docker compose restart suricata</code></td><td>Reinicia un servicio, por ejemplo tras cambiar sus reglas.</td></tr>
+<tr><td><code>docker compose up -d --force-recreate floci</code></td><td>Lo recrea aunque no haya cambiado.</td></tr>
+<tr><td><code>docker compose down</code> / <code>down -v</code></td><td>Para y borra contenedores y redes / también los volúmenes.</td></tr>
+<tr><td><code>docker compose config</code></td><td>El fichero tal como lo entiende Docker, con las variables ya sustituidas. Sirve para revisar.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Perfiles</h2>
+<p>Un servicio con <code>profiles:</code> no se arranca con <code>up</code>. Así el laboratorio separa lo que debe estar siempre en marcha de las herramientas que se lanzan cuando hacen falta.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 176" role="img" aria-label="En la Mini auditoría, up levanta floci, web, datos y suricata; terraform, auditor, curl y aws están en el perfil herramientas y solo se lanzan con run">
+<rect class="caja-ok" x="0" y="0" width="340" height="176" rx="10"/><text class="tit" x="16" y="26">Sin perfil</text><text class="tenue peq mono" x="16" y="44">docker compose up -d</text>
+<rect class="caja" x="16" y="60" width="148" height="44" rx="8"/><text class="mono" x="90" y="87" text-anchor="middle">floci</text>
+<rect class="caja" x="176" y="60" width="148" height="44" rx="8"/><text class="mono" x="250" y="87" text-anchor="middle">web</text>
+<rect class="caja" x="16" y="116" width="148" height="44" rx="8"/><text class="mono" x="90" y="143" text-anchor="middle">datos</text>
+<rect class="caja" x="176" y="116" width="148" height="44" rx="8"/><text class="mono" x="250" y="143" text-anchor="middle">suricata</text>
+<rect class="linea discontinua" x="380" y="0" width="340" height="176" rx="10"/><text class="tit" x="396" y="26">profiles: [herramientas]</text><text class="tenue peq mono" x="396" y="44">docker compose run --rm …</text>
+<rect class="caja" x="396" y="60" width="148" height="44" rx="8"/><text class="mono" x="470" y="87" text-anchor="middle">terraform</text>
+<rect class="caja" x="556" y="60" width="148" height="44" rx="8"/><text class="mono" x="630" y="87" text-anchor="middle">auditor</text>
+<rect class="caja" x="396" y="116" width="148" height="44" rx="8"/><text class="mono" x="470" y="143" text-anchor="middle">curl</text>
+<rect class="caja" x="556" y="116" width="148" height="44" rx="8"/><text class="mono" x="630" y="143" text-anchor="middle">aws</text>
+</svg>
+<figcaption><code>run</code> lanza un servicio aunque esté en un perfil. Para levantarlos con <code>up</code> haría falta <code>--profile herramientas</code>.</figcaption>
+</figure>
+</section>
+
+<section class="seccion">
+<h2>Variables y secretos</h2>
+<p>Un compose puede leer valores de fuera con <code>${VARIABLE}</code>. Docker las busca en tu entorno y en un fichero <code>.env</code> junto al compose. Así la contraseña no se escribe en un fichero que se sube a git.</p>
+<div class="tabla"><table><thead><tr><th>Forma</th><th>Si la variable no existe</th></tr></thead><tbody>
+<tr><td><code>${POSTGRES_PASSWORD}</code></td><td>Queda vacía, y Docker solo avisa.</td></tr>
+<tr><td><code>${POSTGRES_PASSWORD:-cambiar-en-clase}</code></td><td>Usa el valor por defecto. Es lo que hace la Mini auditoría.</td></tr>
+<tr><td><code>${POSTGRES_PASSWORD:?falta en .env}</code></td><td>Se niega a arrancar con ese mensaje. Lo más seguro para un secreto.</td></tr>
+</tbody></table></div>
+<pre><code># .env: junto al compose; ya está en el .gitignore de tu repositorio
+POSTGRES_PASSWORD=una-larga-y-solo-tuya
+
+# .env.ejemplo: este sí se sube, para que otro sepa qué variables hacen falta
+POSTGRES_PASSWORD=</code></pre>
+<p>Los compose del curso repiten las credenciales de AWS en tres servicios con un <b>ancla</b> de YAML: <code>&amp;aws</code> pone nombre a un bloque y <code>*aws</code> lo reutiliza. No es de Docker, es del formato YAML.</p>
+<pre><code>environment: &amp;aws          # el bloque se llama aws
+  AWS_ENDPOINT_URL: http://floci:4566
+…
+environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
+</section>
+
+<section class="seccion">
+<h2>El mapa de la Mini auditoría</h2>
+<p>Con todo lo anterior ya se lee el laboratorio de la Mini auditoría: una red con subred fija, cada servidor de la empresa en su IP, el sensor pegado a la web y el auditor entrando en la misma red.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 276" role="img" aria-label="Red 172.28.0.0/24: floci en .10, web en .20 con suricata pegado, datos en .30; auditor, curl y aws con IP dinámica; solo floci publica el puerto 4566">
+<defs><marker id="mapa-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="linea discontinua" x="0" y="0" width="720" height="210" rx="10"/><text class="tenue peq mono" x="16" y="22">lab-mini-auditoria · 172.28.0.0/24</text>
+<rect class="caja-acento" x="24" y="40" width="200" height="56" rx="8"/><text class="tit" x="40" y="64">floci</text><text class="mono tenue peq" x="40" y="82">172.28.0.10 · nube</text>
+<rect class="caja-acento" x="260" y="40" width="200" height="56" rx="8"/><text class="tit" x="276" y="64">web</text><text class="mono tenue peq" x="276" y="82">172.28.0.20 · nginx</text>
+<rect class="caja-acento" x="496" y="40" width="200" height="56" rx="8"/><text class="tit" x="512" y="64">datos</text><text class="mono tenue peq" x="512" y="82">172.28.0.30 · postgres</text>
+<rect class="caja-peligro" x="260" y="104" width="200" height="40" rx="8"/><text class="tit" x="276" y="129">suricata</text><text class="tenue peq" x="444" y="129" text-anchor="end">pegado a web</text>
+<rect class="caja" x="24" y="152" width="200" height="44" rx="8"/><text class="tit" x="40" y="179">auditor</text><text class="mono tenue peq" x="208" y="179" text-anchor="end">nmap · dinámica</text>
+<rect class="caja" x="260" y="152" width="200" height="44" rx="8"/><text class="tit" x="276" y="179">curl</text><text class="mono tenue peq" x="444" y="179" text-anchor="end">dinámica</text>
+<rect class="caja" x="496" y="152" width="200" height="44" rx="8"/><text class="tit" x="512" y="179">aws, terraform</text><text class="mono tenue peq" x="680" y="179" text-anchor="end">dinámica</text>
+<rect class="caja" x="24" y="226" width="200" height="44" rx="8"/><text class="tit" x="124" y="253" text-anchor="middle">tu equipo</text>
+<path class="linea-acento" d="M224 248H242V68H228" marker-end="url(#mapa-fa)"/><text class="mono acento fuerte" x="252" y="230">-p 4566:4566</text>
+<text class="tenue peq" x="380" y="252">Arriba, la empresa con IP fija; abajo, tus herramientas.</text>
+</svg>
+<figcaption>Lo que nmap encuentre en <code>172.28.0.0/24</code> es exactamente lo que dice este mapa. Suricata ve todo lo que llega a <code>.20</code>.</figcaption>
+</figure>
+</section>
+
+<section class="seccion">
+<h2>Puertas que abre un compose</h2>
+<p>Un contenedor está aislado del equipo, pero algunas líneas del compose abren puertas hacia él. Ordenadas de menos a más poder:</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 230" role="img" aria-label="De menos a más poder sobre tu equipo: nada montado, cap_add de red, carpeta montada con escritura, privileged y el socket de Docker, que equivale a administrador">
+<defs><marker id="pu-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<path class="linea-peligro" d="M0 20H710" marker-end="url(#pu-fp)"/><text class="tenue peq" x="0" y="44">menos poder</text><text class="peligro fuerte" x="720" y="44" text-anchor="end">control de tu equipo</text>
+<rect class="caja-ok" x="0" y="60" width="132" height="160" rx="8"/><text class="tit" x="12" y="84">Nada</text><text class="tenue peq" x="12" y="106">solo sus ficheros</text><text class="tenue peq" x="12" y="122">y su red</text>
+<rect class="caja" x="146" y="60" width="132" height="160" rx="8"/><text class="tit" x="158" y="84">cap_add</text><text class="mono tenue peq" x="158" y="106">NET_RAW</text><text class="mono tenue peq" x="158" y="122">NET_ADMIN</text><text class="tenue peq" x="158" y="146">lo justo para</text><text class="tenue peq" x="158" y="162">capturar tráfico</text><text class="tenue peq" x="158" y="196">Suricata</text>
+<rect class="caja" x="292" y="60" width="132" height="160" rx="8"/><text class="tit" x="304" y="84">Carpeta rw</text><text class="mono tenue peq" x="304" y="106">./web:/web</text><text class="tenue peq" x="304" y="130">puede cambiar</text><text class="tenue peq" x="304" y="146">tus ficheros</text><text class="tenue peq" x="304" y="196">usa :ro</text>
+<rect class="caja-peligro" x="438" y="60" width="132" height="160" rx="8"/><text class="tit" x="450" y="84">privileged</text><text class="mono tenue peq" x="450" y="106">privileged</text><text class="tenue peq" x="450" y="130">todos los permisos</text><text class="tenue peq" x="450" y="146">y dispositivos</text><text class="peligro fuerte" x="450" y="196">casi nunca</text>
+<rect class="caja-peligro" x="584" y="60" width="136" height="160" rx="8"/><text class="tit" x="596" y="84">Socket</text><text class="mono tenue peq" x="596" y="106">docker.sock</text><text class="tenue peq" x="596" y="130">manda en Docker:</text><text class="tenue peq" x="596" y="146">puede lanzar otro</text><text class="tenue peq" x="596" y="162">contenedor con todo</text><text class="peligro fuerte" x="596" y="196">Floci, a propósito</text>
+</svg>
+<figcaption>Floci monta el socket porque lanza su consola web como otro contenedor. Es aceptable en tu laboratorio; en un servidor real, quien comprometa Floci controla el equipo entero.</figcaption>
+</figure>
+<p>Lista para revisar cualquier compose, también los que te dé una IA:</p>
+<ul>
+<li><b>Versión fija</b> en cada imagen, sin <code>latest</code> salvo decisión consciente.</li>
+<li><b>Puertos en <code>127.0.0.1</code></b>, y solo los que se usan desde fuera; las bases de datos, ninguno.</li>
+<li><b>Sin <code>docker.sock</code> ni <code>privileged</code></b>; si hace falta un permiso, el <code>cap_add</code> concreto.</li>
+<li><b>Carpetas en <code>:ro</code></b> salvo que el contenedor deba escribir en ellas.</li>
+<li><b>Secretos en <code>.env</code></b>, con <code>${VAR:?…}</code>, y el <code>.env</code> fuera de git.</li>
+<li><b>Usuario no root</b> en las imágenes propias (<code>USER</code> en el <code>Dockerfile</code>).</li>
+</ul>
+<p>Para el <code>Dockerfile</code>, <code>trivy config</code> revisa la mayoría de estos puntos solo, igual que hiciste con Terraform:</p>
+<pre><code>docker run --rm -v ./:/work:ro aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Si algo falla</h2>
+<div class="tabla"><table><thead><tr><th>Mensaje</th><th>Causa</th><th>Solución</th></tr></thead><tbody>
+<tr><td><code>no configuration file provided: not found</code></td><td>No estás en la carpeta del compose.</td><td><code>cd</code> a ella, o <code>-f ruta/docker-compose.yml</code>.</td></tr>
+<tr><td><code>yaml: line 12: did not find expected key</code></td><td>Sangría mal: YAML usa espacios, nunca tabuladores.</td><td>Alinea con espacios; <code>docker compose config</code> dice si ya está bien.</td></tr>
+<tr><td><code>no such service: trivy</code></td><td>Te has equivocado de nombre o de carpeta.</td><td><code>docker compose config --services</code> lista los servicios.</td></tr>
+<tr><td><code>required variable POSTGRES_PASSWORD is missing</code></td><td>Falta en <code>.env</code> y el compose la exige con <code>:?</code>.</td><td>Copia <code>.env.ejemplo</code> a <code>.env</code> y rellénalo.</td></tr>
+<tr><td><code>Found orphan containers</code></td><td>Quedan contenedores de una versión anterior del compose.</td><td><code>docker compose up -d --remove-orphans</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../../ejercicios/02-docker/e7.html">E7 · Tu primer compose</a> convierte en un fichero lo que hiciste a mano en E5 y E6. <a href="../../ejercicios/02-docker/e8.html">E8 · Auditar un compose</a> te da uno con todas las puertas abiertas para que las cierres.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pide a la IA que te explique un compose línea a línea, pero no le pegues tu <code>.env</code>: los valores reales no le hacen falta para explicarlo.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Sabes traducir cada clave de un compose a la opción de <code>docker run</code> que sustituye</li>
+<li>Sabes cuándo usar <code>up -d</code>, <code>run --rm</code> y <code>exec</code></li>
+<li>Sabes leer el compose de la Mini auditoría y dibujar su mapa</li>
+<li>Sabes señalar las líneas peligrosas de un compose y cómo cerrarlas</li>
+<li>E7 y E8 superados en el check <b>Corrector docker</b> y con su etiqueta</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de Docker"><a href="03-datos-y-redes.html">← Docker 3 · Datos y redes</a><a href="../api-rest/01-cliente-servidor-y-http.html">API REST 1 · Cliente, servidor y HTTP →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

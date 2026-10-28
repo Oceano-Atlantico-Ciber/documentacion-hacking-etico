@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E2 · Tu primera imagen · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#02-docker">Ejercicios de Docker</a></nav>
+
+<h1>E2 · Tu primera imagen</h1>
+<p class="lead">Empaqueta en una imagen un sondeo de puertos escrito en Python y úsalo contra otro contenedor.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/02-docker/02-construir-imagenes.html">Docker 2 · Construir imágenes</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/docker/e2/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-docker-e2</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, con Docker Desktop en marcha:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/02-docker/preparar.py e2
+cd fundamentos/docker/e2</code></pre></div>
+<p>Deja <code>sondeo.py</code>, que dice qué puertos TCP de un equipo aceptan conexiones. No hace falta que lo cambies, ni Python en tu equipo: correrá en la imagen.</p>
+
+<h2 class="step"><span class="n">2</span>Escribe el Dockerfile</h2>
+<div class="cmd"><pre><code>code Dockerfile</code></pre></div><p>Cuatro instrucciones: parte de <code>python:3.12-alpine</code>, trabaja en <code>/app</code>, copia <code>sondeo.py</code> y haz que el contenedor arranque con <code>python sondeo.py</code> mediante <code>ENTRYPOINT</code>. La tabla de instrucciones está en <a href="../../docs/02-docker/02-construir-imagenes.html">Docker 2</a>.</p>
+
+<h2 class="step"><span class="n">3</span>Construye la imagen</h2>
+<div class="cmd"><pre><code>docker build -t sondeo:1.0 .
+docker run --rm sondeo:1.0</code></pre></div><p>Sin argumentos, el sondeo muestra cómo se usa. La etiqueta tiene que ser <code>sondeo:1.0</code>: la reutilizas en E6 y E7.</p>
+
+<h2 class="step"><span class="n">4</span>Sondea otro contenedor</h2>
+<p>Arranca un nginx sin publicar puertos y averigua su IP en la red por defecto de Docker:</p><div class="cmd"><pre><code>docker run -d --name e2-diana nginx:1.27-alpine
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' e2-diana</code></pre></div><p>Sondea esa IP y guarda el resultado:</p><div class="cmd"><pre><code>docker run --rm sondeo:1.0 &lt;IP&gt; 22 80 443 | tee sondeo.txt
+docker rm -f e2-diana</code></pre></div><p>El 80 sale <code>abierto</code> y los otros dos, <code>cerrado</code>. Por IP funciona; por el nombre <code>e2-diana</code>, no. El motivo, en <a href="../../docs/02-docker/03-datos-y-redes.html">Docker 3</a>.</p><p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>El <code>Dockerfile</code> no construye, no parte de <code>python:3.12-alpine</code> o la imagen no arranca con el sondeo.</li>
+<li>Con los argumentos <code>equipo puerto</code>, la imagen no imprime lo mismo que <code>python sondeo.py</code>.</li>
+<li><code>sondeo.txt</code> no tiene las tres líneas, con el 80 abierto.</li>
+</ul>
+
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "feat(docker-e2): imagen del sondeo de puertos"
+git push</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E2 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e2 -m "E2 resuelto"
+git push origin entrega-fundamentos-docker-e2</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>. Cuenta tal como esté al cerrar el plazo; si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de Docker"><a href="e1.html">← E1 · Ciclo de vida</a><a href="e3.html">E3 · Capas, caché y .dockerignore →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

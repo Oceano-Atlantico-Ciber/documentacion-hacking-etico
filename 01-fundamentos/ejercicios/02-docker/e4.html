@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E4 · El secreto de la capa · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#02-docker">Ejercicios de Docker</a></nav>
+
+<h1>E4 · El secreto de la capa</h1>
+<p class="lead">Te pasan una imagen ya construida. Alguien metió en ella la clave de una API y la «borró». Recupérala como haría un atacante y reconstruye la imagen sin ella.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/02-docker/02-construir-imagenes.html">Docker 2 · Construir imágenes</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/docker/e4/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-docker-e4</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, con Docker Desktop en marcha:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/02-docker/preparar.py e4
+cd fundamentos/docker/e4</code></pre></div>
+<p>Construye la imagen <code>e4-informe:1.0</code> con una clave distinta para cada alumno, y borra la clave de tu carpeta: solo queda dentro de la imagen. Deja también el <code>Dockerfile</code> que se usó.</p>
+
+<h2 class="step"><span class="n">2</span>Comprueba que «no está»</h2>
+<div class="cmd"><pre><code>docker run --rm e4-informe:1.0 ls -a /app
+docker history e4-informe:1.0</code></pre></div><p>En el contenedor no hay ninguna clave. Pero el historial tiene una capa <code>COPY api.key .</code> de unos KB.</p>
+
+<h2 class="step"><span class="n">3</span>Extrae las capas y encuentra la clave</h2>
+<div class="cmd"><pre><code>docker save e4-informe:1.0 -o e4.tar
+mkdir capas &amp;&amp; tar -xf e4.tar -C capas
+for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep api.key | sed "s|^|$capa  |"; done</code></pre></div><p>Salen dos capas: una con <code>app/api.key</code>, la que la copió, y otra con <code>app/.wh.api.key</code>, la marca de «borrado» que dejó <code>rm</code>. Lee la clave de la primera:</p><div class="cmd"><pre><code>tar -xOf capas/blobs/sha256/&lt;la-capa-con-app/api.key&gt; app/api.key</code></pre></div><p><code>e4.tar</code> y <code>capas/</code> no se suben: el <code>.gitignore</code> de la carpeta ya los excluye.</p>
+
+<h2 class="step"><span class="n">4</span>Redacta el hallazgo sin filtrar la clave</h2>
+<div class="cmd"><pre><code>code hallazgo.txt</code></pre></div><p>Una línea con la clave <b>ocultada</b>, como en un informe de auditoría: <code>oa-</code>, sus 8 primeros caracteres y <code>…</code> (por ejemplo, <code>oa-3f9c1a2b…</code>). La clave completa no debe estar en tu repositorio.</p>
+
+<h2 class="step"><span class="n">5</span>Reconstruye sin el secreto</h2>
+<p>Guarda la clave que encontraste en <code>api.key</code> (tu <code>.gitignore</code> excluye <code>*.key</code>) y cambia el <code>Dockerfile</code> para que <code>informe.py --comprobar</code> la lea de un secreto de construcción, en <code>/run/secrets/api</code>, sin <code>COPY</code>. Cómo, en <a href="../../docs/02-docker/02-construir-imagenes.html">Docker 2 · Un secreto en una capa</a>. Añade un <code>.dockerignore</code> con <code>api.key</code>, <code>*.tar</code> y <code>capas/</code>.</p><div class="cmd"><pre><code>docker build --secret id=api,src=api.key -t e4-informe:2.0 .</code></pre></div><p>La construcción tiene que decir <code>clave de la API válida</code>.</p>
+
+<h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>docker save e4-informe:2.0 -o e4-2.tar
+mkdir capas2 &amp;&amp; tar -xf e4-2.tar -C capas2
+for capa in capas2/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep api.key; done
+rm -r capas2 e4-2.tar</code></pre></div><p>El bucle no muestra nada: ninguna capa contiene la clave.</p><p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li><code>hallazgo.txt</code> no empieza por los 8 primeros caracteres de tu clave, o contiene la clave completa.</li>
+<li>Algún fichero subido contiene la clave completa.</li>
+<li>Con tu clave como secreto, el <code>Dockerfile</code> no construye o la comprobación no se ejecuta.</li>
+<li>Alguna capa de la imagen resultante contiene la clave.</li>
+</ul>
+
+
+<h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "fix(docker-e4): la clave ya no entra en ninguna capa"
+git push</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E4 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e4 -m "E4 resuelto"
+git push origin entrega-fundamentos-docker-e4</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>. Cuenta tal como esté al cerrar el plazo; si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de Docker"><a href="e3.html">← E3 · Capas, caché y .dockerignore</a><a href="e5.html">E5 · Datos que sobreviven →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

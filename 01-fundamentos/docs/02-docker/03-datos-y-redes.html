@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docker 3 · Datos y redes · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Docker 3 de 4</p>
+<h1>Datos y redes</h1>
+<p class="lead">Un contenedor se puede borrar en cualquier momento, así que los datos que importan se guardan fuera de él. Y un laboratorio son varios contenedores que se hablan por una red: quién puede llegar a cada uno es una decisión de seguridad.</p>
+<div class="meta"><span>Ejercicios: <a href="../../ejercicios/02-docker/e5.html">E5</a> y <a href="../../ejercicios/02-docker/e6.html">E6</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Tres sitios para los datos</h2>
+<p>Lo que un contenedor escribe en su propia capa desaparece con <code>docker rm</code>. Para conservarlo, se monta en una de sus carpetas algo que vive fuera: un <b>volumen</b>, que gestiona Docker, o una carpeta de tu equipo, un <b>bind mount</b>.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 270" role="img" aria-label="La capa del contenedor se pierde al borrarlo; un volumen y un bind mount viven fuera y sobreviven">
+<defs><marker id="dat-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="linea discontinua" x="180" y="4" width="360" height="92" rx="8"/><text class="tit" x="196" y="26">Contenedor</text>
+<rect class="caja" x="196" y="40" width="100" height="40" rx="6"/><text class="mono" x="246" y="65" text-anchor="middle">/tmp</text>
+<rect class="caja" x="310" y="40" width="100" height="40" rx="6"/><text class="mono" x="360" y="65" text-anchor="middle">/datos</text>
+<rect class="caja" x="424" y="40" width="100" height="40" rx="6"/><text class="mono" x="474" y="65" text-anchor="middle">/web</text>
+<path class="linea" d="M246 80L110 146" marker-end="url(#dat-f)"/><path class="linea" d="M360 80V146" marker-end="url(#dat-f)"/><path class="linea" d="M474 80L610 146" marker-end="url(#dat-f)"/>
+<rect class="caja-peligro" x="0" y="148" width="220" height="112" rx="8"/><text class="tit" x="16" y="172">Capa del contenedor</text><text class="tenue peq" x="16" y="194">lo que no se monta</text><text class="tenue peq" x="16" y="212">nadie la ve desde fuera</text><text class="peligro fuerte" x="16" y="244">se pierde con docker rm</text>
+<rect class="caja-ok" x="250" y="148" width="220" height="112" rx="8"/><text class="tit" x="266" y="172">Volumen</text><text class="mono tenue peq" x="266" y="194">-v datos-db:/datos</text><text class="tenue peq" x="266" y="212">lo guarda Docker</text><text class="acento fuerte" x="266" y="244">sobrevive</text>
+<rect class="caja-ok" x="500" y="148" width="220" height="112" rx="8"/><text class="tit" x="516" y="172">Bind mount</text><text class="mono tenue peq" x="516" y="194">-v ./web:/web:ro</text><text class="tenue peq" x="516" y="212">una carpeta tuya</text><text class="acento fuerte" x="516" y="244">sobrevive y la editas</text>
+</svg>
+<figcaption>Un volumen es para los datos del programa (una base de datos); un bind mount, para ficheros que quieres ver o editar desde tu equipo (una web, un Terraform).</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
+<tr><td><code>docker volume create datos-db</code></td><td>Crea un volumen. <code>docker run -v</code> también lo crea si no existe.</td></tr>
+<tr><td><code>docker run -v datos-db:/var/lib/postgresql/data …</code></td><td>Monta el volumen en esa carpeta del contenedor.</td></tr>
+<tr><td><code>docker run -v ./web:/usr/share/nginx/html:ro …</code></td><td>Monta tu carpeta <code>web/</code>. <code>:ro</code>: el contenedor la lee, pero no puede cambiarla.</td></tr>
+<tr><td><code>docker volume ls</code> / <code>docker volume rm datos-db</code></td><td>Lista / borra volúmenes. Borrar uno borra sus datos.</td></tr>
+</tbody></table></div>
+<p class="note">Un bind mount sin <code>:ro</code> deja al contenedor escribir en tu carpeta, igual que un programa más. En los laboratorios, Trivy y la web montan lo tuyo en solo lectura por eso. Y cuando en la puesta en marcha haces <code>docker compose down -v</code>, la <code>-v</code> borra los volúmenes: Floci pierde todo lo que desplegaste.</p>
+</section>
+
+<section class="seccion">
+<h2>Puertos: quién puede llegar</h2>
+<p><code>-p</code> publica un puerto del contenedor en tu equipo, con la forma <code>dirección:puerto-tuyo:puerto-del-contenedor</code>. Si no pones dirección, Docker usa <code>0.0.0.0</code>: todas las interfaces de tu equipo, también la de la wifi del aula.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 250" role="img" aria-label="Con -p 4566:4566 un compañero de la misma wifi llega a tu Floci; con -p 127.0.0.1:4566:4566 solo llegas tú">
+<defs><marker id="pto-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="pto-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="mono tit" x="0" y="18">-p 4566:4566</text><text class="mono tit" x="380" y="18">-p 127.0.0.1:4566:4566</text>
+<rect class="caja" x="0" y="34" width="340" height="132" rx="8"/><text class="tit" x="16" y="56">Tu portátil</text>
+<rect class="caja-acento" x="190" y="72" width="134" height="40" rx="6"/><text class="mono" x="257" y="97" text-anchor="middle">floci :4566</text>
+<rect class="caja" x="16" y="72" width="120" height="40" rx="6"/><text x="76" y="97" text-anchor="middle">tú</text>
+<path class="linea" d="M136 92H188" marker-end="url(#pto-f)"/>
+<text class="tenue peq" x="16" y="148">escucha en 0.0.0.0: todas las interfaces</text>
+<rect class="caja-peligro" x="0" y="196" width="200" height="48" rx="8"/><text class="tit" x="100" y="218" text-anchor="middle">Compañero</text><text class="tenue peq" x="100" y="235" text-anchor="middle">misma wifi</text>
+<path class="linea-peligro" d="M200 220H257V114" marker-end="url(#pto-fp)"/><text class="peligro fuerte" x="268" y="190">entra</text>
+<rect class="caja" x="380" y="34" width="340" height="132" rx="8"/><text class="tit" x="396" y="56">Tu portátil</text>
+<rect class="caja-acento" x="570" y="72" width="134" height="40" rx="6"/><text class="mono" x="637" y="97" text-anchor="middle">floci :4566</text>
+<rect class="caja" x="396" y="72" width="120" height="40" rx="6"/><text x="456" y="97" text-anchor="middle">tú</text>
+<path class="linea-acento" d="M516 92H568" marker-end="url(#pto-f)"/>
+<text class="tenue peq" x="396" y="148">escucha solo en 127.0.0.1</text>
+<rect class="caja-ok" x="380" y="196" width="200" height="48" rx="8"/><text class="tit" x="480" y="218" text-anchor="middle">Compañero</text><text class="tenue peq" x="480" y="235" text-anchor="middle">misma wifi</text>
+<path class="linea discontinua" d="M580 220H630V180"/><path class="linea-peligro" d="M616 178H644"/><text class="acento fuerte" x="650" y="214">no llega</text>
+</svg>
+<figcaption>Una cuenta AWS emulada con credenciales <code>test/test</code> abierta a toda la red es una exposición accidental de manual. Publica en <code>127.0.0.1</code> salvo que quieras que otros entren.</figcaption>
+</figure>
+<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
+docker port web          # 80/tcp -&gt; 127.0.0.1:8080</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Redes entre contenedores</h2>
+<p>Los contenedores se hablan entre sí sin publicar puertos, por una red de Docker. En una red creada por ti, Docker incluye un DNS: cada contenedor llega a los demás <b>por su nombre</b>. En la red por defecto no hay nombres, solo direcciones IP que cambian.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 236" role="img" aria-label="En la red lab, terraform y aws llegan a floci por su nombre gracias al DNS de Docker; desde fuera solo se entra por el puerto publicado">
+<defs><marker id="red-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="red-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="linea discontinua" x="150" y="4" width="570" height="228" rx="10"/><text class="tenue peq" x="166" y="26">red lab</text>
+<rect class="caja" x="180" y="44" width="150" height="48" rx="8"/><text class="tit" x="255" y="73" text-anchor="middle">terraform</text>
+<rect class="caja" x="180" y="152" width="150" height="48" rx="8"/><text class="tit" x="255" y="181" text-anchor="middle">aws</text>
+<rect class="caja-acento" x="530" y="98" width="170" height="48" rx="8"/><text class="tit" x="615" y="127" text-anchor="middle">floci</text>
+<rect class="caja" x="380" y="100" width="100" height="44" rx="8"/><text class="tit" x="430" y="120" text-anchor="middle">DNS</text><text class="tenue peq" x="430" y="136" text-anchor="middle">de Docker</text>
+<path class="linea-acento" d="M330 68H600V96" marker-end="url(#red-fa)"/><text class="mono acento fuerte" x="465" y="60" text-anchor="middle">http://floci:4566</text>
+<path class="linea-acento" d="M330 176H600V148" marker-end="url(#red-fa)"/><text class="mono acento fuerte" x="465" y="194" text-anchor="middle">http://floci:4566</text>
+<path class="linea discontinua" d="M330 92L380 112M330 152L380 132"/>
+<rect class="caja" x="0" y="98" width="110" height="48" rx="8"/><text class="tit" x="55" y="120" text-anchor="middle">tu equipo</text><text class="tenue peq" x="55" y="136" text-anchor="middle">localhost</text>
+<path class="linea" d="M55 146V220H650V148" marker-end="url(#red-f)"/><text class="tenue peq mono" x="420" y="214" text-anchor="middle">solo por el puerto publicado (-p)</text>
+</svg>
+<figcaption>Por eso los compose del curso dicen <code>AWS_ENDPOINT_URL: http://floci:4566</code>: <code>floci</code> es el nombre del contenedor en la red <code>lab</code>.</figcaption>
+</figure>
+<pre><code>docker network create lab
+docker run -d --name web --network lab nginx:1.27-alpine
+docker run --rm --network lab curlimages/curl:8.11.1 -s http://web/    # llega por el nombre
+docker network inspect lab     # quién está conectado y con qué IP</code></pre>
+<p>Una red puede tener una subred fija y cada contenedor una IP fija. La Mini auditoría lo hace para que el mapa de la empresa no cambie entre alumnos: la web siempre es <code>172.28.0.20</code>.</p>
+<pre><code>docker network create --subnet 172.28.0.0/24 lab-mini
+docker run -d --name web --network lab-mini --ip 172.28.0.20 nginx:1.27-alpine</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Compartir la red de otro contenedor</h2>
+<p>Un sensor de red tiene que ver el tráfico que llega a un servidor. Para eso no se conecta a la red como uno más: se mete <b>dentro de la red del servidor</b>. Comparten tarjeta de red, IP y puertos, así que el sensor ve exactamente lo que ve el servidor. En la Mini auditoría, Suricata lo hace con la web.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 190" role="img" aria-label="nmap envía tráfico a 172.28.0.20; web y suricata comparten la misma tarjeta de red, así que suricata ve cada paquete que recibe web">
+<defs><marker id="sen-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="64" width="150" height="56" rx="8"/><text class="tit" x="75" y="88" text-anchor="middle">auditor</text><text class="mono tenue peq" x="75" y="106" text-anchor="middle">nmap</text>
+<path class="linea-acento" d="M150 92H298" marker-end="url(#sen-fa)"/><text class="mono acento fuerte" x="224" y="82" text-anchor="middle">172.28.0.20</text>
+<rect class="linea discontinua" x="300" y="8" width="420" height="174" rx="10"/><text class="tenue peq" x="316" y="30">una sola pila de red: misma IP, mismos puertos</text>
+<rect class="caja-acento" x="316" y="70" width="80" height="44" rx="8"/><text class="mono tit" x="356" y="97" text-anchor="middle">eth0</text>
+<rect class="caja" x="440" y="44" width="260" height="48" rx="8"/><text class="tit" x="456" y="66">web</text><text class="tenue peq" x="456" y="83">nginx atiende la petición</text>
+<rect class="caja" x="440" y="112" width="260" height="56" rx="8"/><text class="tit" x="456" y="134">suricata</text><text class="mono tenue peq" x="456" y="152">network_mode: service:web</text>
+<path class="linea" d="M396 84L438 70M396 100L438 136"/>
+</svg>
+<figcaption>El sensor no tiene IP propia: cualquier paquete para la web pasa por la misma <code>eth0</code> que él escucha.</figcaption>
+</figure>
+<pre><code>docker run -d --name web --network lab nginx:1.27-alpine
+docker run -d --name sensor --network container:web …   # en compose: network_mode: service:web</code></pre>
+</section>
+
+<section class="seccion">
+<h2>Si algo falla</h2>
+<div class="tabla"><table><thead><tr><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead><tbody>
+<tr><td><code>Could not resolve host: web</code></td><td>Los dos contenedores no están en la misma red creada por ti.</td><td>Añade <code>--network</code> a los dos; mira <code>docker network inspect</code>.</td></tr>
+<tr><td>Funciona dentro pero no desde el navegador</td><td>No has publicado el puerto, o lo has publicado en otro.</td><td><code>docker port</code> y repite con <code>-p</code>.</td></tr>
+<tr><td>Los datos desaparecen al recrear</td><td>No había volumen, o lo has borrado con <code>-v</code>.</td><td>Monta un volumen con nombre y no uses <code>down -v</code> si quieres conservarlo.</td></tr>
+<tr><td><code>invalid mount config</code> con <code>./web</code></td><td>Docker antiguo, sin rutas relativas en <code>-v</code>.</td><td>Actualiza Docker Desktop (<code>winget upgrade Docker.DockerDesktop</code>).</td></tr>
+<tr><td>Windows pide permiso de firewall para Docker</td><td>Has publicado un puerto en todas las interfaces.</td><td>Publica en <code>127.0.0.1</code>; si no necesitas red, no lo permitas.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../../ejercicios/02-docker/e5.html">E5 · Datos que sobreviven</a> y <a href="../../ejercicios/02-docker/e6.html">E6 · Red y puertos</a>. En E6 reutilizas la imagen de sondeo de E2 para comprobar desde dentro de la red qué puertos responde cada contenedor.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Las órdenes que propone una IA casi siempre publican puertos sin dirección (<code>-p 8080:80</code>). Añade tú <code>127.0.0.1:</code> salvo que quieras abrir el servicio a la red.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Sabes elegir entre volumen y bind mount, y para qué sirve <code>:ro</code></li>
+<li>Sabes qué significa cada parte de <code>-p 127.0.0.1:8080:80</code> y quién puede llegar sin la dirección</li>
+<li>Sabes por qué <code>http://floci:4566</code> funciona dentro de la red <code>lab</code></li>
+<li>Sabes por qué Suricata ve el tráfico de la web en la Mini auditoría</li>
+<li>E5 y E6 superados en el check <b>Corrector docker</b> y con su etiqueta</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de Docker"><a href="02-construir-imagenes.html">← Docker 2 · Construir imágenes</a><a href="04-compose-y-seguridad.html">Docker 4 · Compose y seguridad →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>
