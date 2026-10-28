@@ -26,6 +26,10 @@ h1 code,h2 code{font-size:.9em}
 .cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
 .cmd button:hover{border-color:var(--accent)}
 .cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.table{overflow-x:auto;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
 .ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
 .ficha dt{color:var(--muted)}
 .ficha dd{margin:0}
@@ -38,7 +42,7 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 </head>
 <body>
 <main>
-<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos</a> · <a href="../#01-git">Ejercicios de git</a></nav>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#01-git">Ejercicios de git</a></nav>
 
 <h1>E5 · Rebase</h1>
 <p class="lead">Un compañero ha subido un cambio a <code>main</code> mientras trabajabas en tu rama. Pon tu rama al día sin merges.</p>
@@ -70,7 +74,7 @@ git rebase main</code></pre></div><p>Si hubiera conflicto: resuélvelo, <code>gi
 <h2 class="step"><span class="n">4</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push origin main
 git push -u origin git/e5-feature</code></pre></div>
-<p>Mira el check <b>Corrector git</b> junto al último commit de <code>main</code> en GitHub. Cuando la fila de E5 salga sin fallos, etiqueta la punta de <code>git/e5-feature</code>:</p>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E5 salga sin fallos, etiqueta la punta de <code>git/e5-feature</code>:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e5 git/e5-feature -m "E5 resuelto"
 git push origin entrega-fundamentos-git-e5</code></pre></div>
 <p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
@@ -95,5 +99,6 @@ document.querySelectorAll('.cmd').forEach(function (box) {
   box.appendChild(btn);
 });
 </script>
+<script src="../../../assets/nav.js" defer></script>
 </body>
 </html>

@@ -26,6 +26,10 @@ h1 code,h2 code{font-size:.9em}
 .cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
 .cmd button:hover{border-color:var(--accent)}
 .cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.table{overflow-x:auto;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
 .ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
 .ficha dt{color:var(--muted)}
 .ficha dd{margin:0}
@@ -38,7 +42,7 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 </head>
 <body>
 <main>
-<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos</a> · <a href="../#01-git">Ejercicios de git</a></nav>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#01-git">Ejercicios de git</a></nav>
 
 <h1>E6 · Rebase interactivo</h1>
 <p class="lead">Cuatro commits a medias no cuentan nada. Fúndelos en uno que se lea de un vistazo.</p>
@@ -56,7 +60,6 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 <h2 class="step"><span class="n">2</span>Abre el rebase interactivo</h2>
 <div class="cmd"><pre><code>git switch git/e6-wip
 git rebase -i HEAD~4</code></pre></div><p>En el editor, deja <code>pick</code> en la primera línea y cambia las otras tres a <code>squash</code> (o <code>fixup</code>). Guarda y cierra.</p>
-<p>Si el editor es vim y prefieres otro: <code>git config --global core.editor "code --wait"</code>.</p>
 
 <h2 class="step"><span class="n">3</span>Escribe el mensaje</h2>
 <p>Git te pide el mensaje del commit resultante. Borra todo y deja exactamente:</p><div class="cmd"><pre><code>docs(e6): informe de alcance</code></pre></div>
@@ -75,7 +78,7 @@ git show --stat git/e6-wip</code></pre></div>
 
 <h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push -u origin git/e6-wip</code></pre></div>
-<p>Mira el check <b>Corrector git</b> junto al último commit de <code>main</code> en GitHub. Cuando la fila de E6 salga sin fallos, etiqueta la punta de <code>git/e6-wip</code>:</p>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E6 salga sin fallos, etiqueta la punta de <code>git/e6-wip</code>:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e6 git/e6-wip -m "E6 resuelto"
 git push origin entrega-fundamentos-git-e6</code></pre></div>
 <p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
@@ -100,5 +103,6 @@ document.querySelectorAll('.cmd').forEach(function (box) {
   box.appendChild(btn);
 });
 </script>
+<script src="../../../assets/nav.js" defer></script>
 </body>
 </html>

@@ -37,7 +37,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 <nav class="top"><a href="../../">Hacking ético</a> · <a href="../">Fundamentos, alcance y herramientas</a></nav>
 
 <h1>Ejercicios de Fundamentos</h1>
-<p class="lead">Ficheros de partida y laboratorios del bloque. Cada carpeta de <code>01-fundamentos/ejercicios/</code> es un ejercicio; el enunciado está en su tema.</p>
+<p class="lead">Ficheros de partida y laboratorios del bloque. Cada carpeta de <code>01-fundamentos/ejercicios/</code> es un ejercicio; el enunciado está en su tema o en su página.</p>
 
 <h2>Cómo conseguir los ficheros</h2>
 <pre><code>git clone https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico.git
@@ -51,7 +51,7 @@ cd documentacion-hacking-etico/01-fundamentos/ejercicios</code></pre>
 <tr><td><code>fundamentos/terraform/</code></td><td>El Terraform corregido (sin <code>.terraform/</code> ni <code>tfstate</code>).</td><td><a href="../docs/la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/trivy-antes.txt</code>, <code>fundamentos/trivy-despues.txt</code></td><td>Salida de Trivy antes y después de corregir. La segunda sin avisos altos ni críticos.</td><td><a href="../docs/la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/inventario/red.txt</code>, <code>fundamentos/inventario/nube.txt</code></td><td>Salida de nmap sobre la red del laboratorio y de la CLI de AWS sobre la cuenta emulada.</td><td><a href="../docs/fases-y-auditoria.html">Fases y auditoría</a></td></tr>
-<tr><td><code>fundamentos/git/</code></td><td>Los ejercicios de git. No van en esta etiqueta: cada uno tiene la suya.</td><td><a href="#01-git">01 · Git</a></td></tr>
+<tr><td><code>fundamentos/git/</code></td><td>Los ejercicios de git. Se corrigen con sus propias etiquetas, no con <code>entrega-fundamentos</code>.</td><td><a href="#01-git">01 · Git</a></td></tr>
 <tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/alertas/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="../docs/fases-y-auditoria.html">Fases y auditoría</a></td></tr>
 </tbody></table>
 <p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>

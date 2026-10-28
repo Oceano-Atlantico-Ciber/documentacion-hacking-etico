@@ -26,6 +26,10 @@ h1 code,h2 code{font-size:.9em}
 .cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
 .cmd button:hover{border-color:var(--accent)}
 .cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.table{overflow-x:auto;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
 .ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
 .ficha dt{color:var(--muted)}
 .ficha dd{margin:0}
@@ -38,7 +42,7 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 </head>
 <body>
 <main>
-<nav class="top"><a href="../../../">Hacking ético</a> · <a href="../../">Fundamentos</a> · <a href="../#01-git">Ejercicios de git</a></nav>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#01-git">Ejercicios de git</a></nav>
 
 <h1>E8 · Secreto filtrado</h1>
 <p class="lead">Alguien subió una clave de API y luego la borró. Encuéntrala en la historia, púrgala y comprueba qué queda en GitHub.</p>
@@ -60,8 +64,11 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 <div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app</code></pre></div><p>Salen dos commits: el que añade la clave (líneas con <code>+</code>) y el que la borra (<code>−</code>). Apunta el SHA <b>completo</b>, de 40 caracteres, del que la añade.</p>
 
 <h2 class="step"><span class="n">4</span>Purga el <code>.env</code> de toda la rama</h2>
-<div class="cmd"><pre><code>pip install git-filter-repo
-git filter-repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div><p>Reescribe todos los commits de la rama sin ese fichero. Los SHA cambian.</p>
+<p>Instala <code>git-filter-repo</code> según tu sistema y comprueba que responde:</p><div class="table"><table><thead><tr><th>Sistema</th><th>Orden</th></tr></thead><tbody>
+<tr><td>macOS</td><td><code>brew install git-filter-repo</code></td></tr>
+<tr><td>Ubuntu o Debian</td><td><code>sudo apt install git-filter-repo</code></td></tr>
+<tr><td>Windows</td><td><code>py -m pip install git-filter-repo</code></td></tr>
+</tbody></table></div><div class="cmd"><pre><code>git filter-repo --version</code></pre></div><p>Después, purga:</p><div class="cmd"><pre><code>git filter-repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div><p>Reescribe todos los commits de la rama sin ese fichero. Los SHA cambian.</p>
 
 <h2 class="step"><span class="n">5</span>Guarda tu hallazgo</h2>
 <div class="cmd"><pre><code>git switch git/e8-app</code></pre></div><p>Crea con tu editor <code>fundamentos/git/e8/hallazgo.txt</code> con el SHA del paso 3 en una línea y haz commit:</p><div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt
@@ -81,13 +88,13 @@ git ls-tree -r --name-only git/e8-app fundamentos/git/e8</code></pre></div>
 
 <h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push --force-with-lease origin git/e8-app</code></pre></div>
-<p>Mira el check <b>Corrector git</b> junto al último commit de <code>main</code> en GitHub. Cuando la fila de E8 salga sin fallos, etiqueta la punta de <code>git/e8-app</code>:</p>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E8 salga sin fallos, etiqueta la punta de <code>git/e8-app</code>:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e8 git/e8-app -m "E8 resuelto"
 git push origin entrega-fundamentos-git-e8</code></pre></div>
 <p class="note">Cuenta la <b>primera</b> etiqueta que subas. Moverla o borrarla después no cambia la entrega.</p>
 
 <h2 class="step"><span class="n">8</span>Mira qué queda en GitHub</h2>
-<p>Abre <code>https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;/commit/&lt;SHA&gt;</code>. ¿Sigue ahí la clave? ¿Qué habría que hacer con ella en un caso real?</p>
+<p>Abre <code>https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;/commit/&lt;SHA&gt;</code>. ¿Sigue ahí la clave? ¿Qué habría que hacer con ella en un caso real?</p><p>Esta pregunta no se entrega: la comentamos en clase.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e7.html">← E7 · Revert</a><span></span></nav>
 </main>
@@ -109,5 +116,6 @@ document.querySelectorAll('.cmd').forEach(function (box) {
   box.appendChild(btn);
 });
 </script>
+<script src="../../../assets/nav.js" defer></script>
 </body>
 </html>
