@@ -31,9 +31,11 @@
 
 <h2 class="step"><span class="n">4</span>Purga el <code>.env</code> de toda la rama</h2>
 <p><code>git-filter-repo</code> ya lo tienes instalado desde <a href="../../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a>. Se lanza como módulo de Python, que funciona aunque su carpeta no esté en el PATH; es la misma herramienta que <code>git filter-repo</code>:</p><div class="cmd"><pre><code>py -m git_filter_repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div><p>Reescribe todos los commits de la rama sin ese fichero. Los SHA cambian.</p>
+<p class="note">Desde aquí, <code>git status</code> dirá que tu rama y <code>origin/git/e8-app</code> han divergido y te sugerirá <code>git pull</code>. <b>No lo hagas</b>: traería de vuelta los commits con la clave. Lo correcto es el push forzado del paso 7.</p>
 
 <h2 class="step"><span class="n">5</span>Guarda tu hallazgo</h2>
-<div class="cmd"><pre><code>git switch git/e8-app</code></pre></div><p>Crea con tu editor <code>fundamentos/git/e8/hallazgo.txt</code> con el SHA del paso 3 en una línea y haz commit:</p><div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt
+<div class="cmd"><pre><code>git switch git/e8-app
+code fundamentos/git/e8/hallazgo.txt</code></pre></div><p>Escribe en él el SHA del paso 3 en una línea, guarda y haz commit:</p><div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt
 git commit -m "docs(e8): commit que filtró la clave"</code></pre></div>
 
 <h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
@@ -50,7 +52,7 @@ git ls-tree -r --name-only git/e8-app fundamentos/git/e8</code></pre></div>
 
 <h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push --force-with-lease origin git/e8-app</code></pre></div>
-<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E8 salga sin fallos, etiqueta la punta de <code>git/e8-app</code>:</p>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E8 salga sin fallos, etiqueta la punta de <code>git/e8-app</code>:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e8 git/e8-app -m "E8 resuelto"
 git push origin entrega-fundamentos-git-e8</code></pre></div>
 <p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>:</p>
@@ -62,25 +64,9 @@ git push --force origin entrega-fundamentos-git-e8</code></pre></div>
 <p>Abre <code>https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;/commit/&lt;SHA&gt;</code>. ¿Sigue ahí la clave? ¿Qué habría que hacer con ella en un caso real?</p><p>Esta pregunta no se entrega: la comentamos en clase.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e7.html">← E7 · Revert</a><span></span></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
-<script>
-document.querySelectorAll('.cmd').forEach(function (box) {
-  var btn = document.createElement('button');
-  btn.type = 'button';
-  btn.textContent = 'Copiar';
-  btn.addEventListener('click', function () {
-    var code = box.querySelector('code');
-    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1500); };
-    var fallback = function () {
-      var r = document.createRange(); r.selectNodeContents(code);
-      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-      btn.textContent = 'Pulsa Ctrl/Cmd+C';
-    };
-    try { navigator.clipboard.writeText(code.textContent).then(done, fallback); } catch (e) { fallback(); }
-  });
-  box.appendChild(btn);
-});
-</script>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>

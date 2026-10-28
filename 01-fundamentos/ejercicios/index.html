@@ -14,19 +14,20 @@
 <p class="lead">Ficheros de partida y laboratorios del bloque. Cada carpeta de <code>01-fundamentos/ejercicios/</code> es un ejercicio; el enunciado está en su tema o en su página.</p>
 
 <h2>Cómo conseguir los ficheros</h2>
-<pre><code>git clone https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico.git
-cd documentacion-hacking-etico/01-fundamentos/ejercicios</code></pre>
-<p>Para empezar tu repositorio de entregas, copia <code>plantilla-alumno/</code> (en la raíz) y trabaja cada bloque en su carpeta: <code>fundamentos/</code>, <code>redes-inalambricas/</code>…</p>
+<p>Ya los tienes en el clon del material que hiciste en <a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a>, en <code>~/hacking-etico/documentacion-hacking-etico/01-fundamentos/ejercicios/</code>. Actualízalo antes de cada sesión:</p>
+<pre><code>git -C ~/hacking-etico/documentacion-hacking-etico pull</code></pre>
+<p>En tu repositorio de entregas, cada bloque va en su carpeta: <code>fundamentos/</code>, <code>redes-inalambricas/</code>…</p>
 
 <h2>Qué debe haber en tu repositorio al poner la etiqueta</h2>
 <table><thead><tr><th>Ruta</th><th>Contenido</th><th>Tema</th></tr></thead><tbody>
-<tr><td><code>fundamentos/puesto.txt</code></td><td>Salida de <code>git --version</code>, <code>docker compose version</code> y una respuesta de tu IA.</td><td><a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a></td></tr>
+<tr><td><code>fundamentos/puesto.txt</code></td><td>Salida de <code>git --version</code>, <code>py --version</code> y <code>docker compose version</code>, y una respuesta de tu IA.</td><td><a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a></td></tr>
 <tr><td><code>fundamentos/alcance.html</code></td><td>La plantilla de alcance rellena para la empresa ficticia.</td><td><a href="../docs/etica-y-seguridad/01-etica-ley-y-alcance.html">Ética, ley y alcance</a></td></tr>
 <tr><td><code>fundamentos/terraform/</code></td><td>El Terraform corregido (sin <code>.terraform/</code> ni <code>tfstate</code>).</td><td><a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/trivy-antes.txt</code>, <code>fundamentos/trivy-despues.txt</code></td><td>Salida de Trivy antes y después de corregir. La segunda sin avisos altos ni críticos.</td><td><a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/inventario/red.txt</code>, <code>fundamentos/inventario/nube.txt</code></td><td>Salida de nmap sobre la red del laboratorio y de la CLI de AWS sobre la cuenta emulada.</td><td><a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
+<tr><td><code>fundamentos/casos-analizados/</code></td><td>Un Markdown por caso: <code>hackea-el-ranking.md</code> y <code>cve-2026-109618-php2shell.md</code>.</td><td><a href="../casos-analizados/index.html#entrega">Casos analizados</a></td></tr>
 <tr><td><code>fundamentos/git/</code></td><td>Los ejercicios de git. Se corrigen con sus propias etiquetas, no con <code>entrega-fundamentos</code>.</td><td><a href="#01-git">01 · Git</a></td></tr>
-<tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/alertas/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
+<tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/mini-auditoria/suricata/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
 </tbody></table>
 <p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>
 
@@ -34,10 +35,10 @@ cd documentacion-hacking-etico/01-fundamentos/ejercicios</code></pre>
 <p class="note"><b>Antes de empezar:</b> <a href="../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a> y <a href="../../00-presentacion/docs/07-primer-commit.html">07 · Primer commit</a>.</p>
 <p>Carpeta <code>01-git/</code>. Teoría: <a href="../docs/01-git/01-modelo-y-commits.html">Git 1 · Modelo y commits</a>, <a href="../docs/01-git/02-ramas-y-fusiones.html">Git 2 · Ramas y fusiones</a>, <a href="../docs/01-git/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a> y <a href="../docs/01-git/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a>.</p>
 <p>Ocho ejercicios en <code>fundamentos/git/</code> de tu repositorio de entregas. Cada uno empieza con <code>preparar.py</code>, que crea los ficheros, ramas y commits de partida a partir de tu usuario de GitHub: tu escenario es distinto del de tus compañeros. Ejecútalo desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
-<pre><code>cd entregas-&lt;tu-usuario&gt;
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e1</code></pre>
 <p>Cada ejercicio se entrega con su propia <b>etiqueta anotada</b>, <code>entrega-fundamentos-git-eN</code>, sobre el commit donde está resuelto. Qué es una etiqueta y cómo se crea se explica en <a href="../docs/01-git/01-modelo-y-commits.html#etiquetas">Git 1</a>, antes del primer ejercicio. Cada ejercicio tiene su página con los pasos, cómo comprobarlo y qué mira el corrector. Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores.</p>
-<p class="note"><b>Cuenta la etiqueta tal como esté al cerrar el plazo.</b> Si el corrector marca fallos, se puede mover (<a href="../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>). Moverla después de la fecha límite deja la entrega fuera de plazo. Antes de etiquetar, sube tu trabajo y mira el resultado provisional: en GitHub, junto al último commit de <code>main</code>, aparece el check <b>Corrector git</b> con una fila por ejercicio. Se actualiza cuando el docente lanza la corrección. Cuando tu ejercicio salga sin fallos, etiqueta.</p>
+<p class="note"><b>Cuenta la etiqueta tal como esté al cerrar el plazo</b>, que es el del bloque: jueves 5 de noviembre a las 23:59. Si el corrector marca fallos, se puede mover (<a href="../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>). Moverla después de la fecha límite deja la entrega fuera de plazo. Antes de etiquetar, sube tu trabajo y mira el resultado provisional: en GitHub, junto al último commit de <code>main</code>, aparece el check <b>Corrector git</b> con una fila por ejercicio. Se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando tu ejercicio salga sin fallos, etiqueta.</p>
 <table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Etiqueta sobre</th></tr></thead><tbody>
 <tr><td><a href="01-git/e1.html">E1</a></td><td>Tres commits, uno por fichero, con mensajes Conventional Commits y tu identidad.</td><td><code>main</code></td></tr>
 <tr><td><a href="01-git/e2.html">E2</a></td><td>Un <code>.gitignore</code> que deja fuera lo que no debe subirse.</td><td><code>main</code></td></tr>
@@ -52,16 +53,16 @@ py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e
 <h3>Cómo se valora</h3>
 <ul>
 <li>Cada ejercicio vale lo mismo y se corrige de forma automática desde su etiqueta: estructura del historial (padres de los merges, commits por rama, conflicto real) y contenido de los ficheros.</li>
-<li>Las fechas de los commits no cuentan. Cuenta la hora a la que subiste la etiqueta, antes del cierre del bloque.</li>
+<li>Las fechas de los commits no cuentan: se corrige cada etiqueta tal como esté al cierre del bloque.</li>
 </ul>
 
 <h2 id="empresa-con-terraform">Empresa con Terraform</h2>
 <p>Carpeta <code>empresa-con-terraform/</code>. Enunciado: <a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a>. Cómo montar el laboratorio paso a paso: <a href="empresa-con-terraform/puesta-en-marcha.html">Puesta en marcha</a>.</p>
 <ol>
 <li>Copia <code>plantilla-alumno/alcance.html</code> a <code>fundamentos/alcance.html</code> y rellénalo: objetivo (la cuenta emulada en tu portátil), qué se permite, quién autoriza (el docente) y fechas.</li>
-<li>Copia la carpeta del ejercicio a <code>fundamentos/</code> de tu repositorio y levanta la nube: <code>docker compose up -d floci</code>.</li>
-<li>Pasa Trivy y guarda la salida: <code>docker compose run --rm trivy | tee fundamentos/trivy-antes.txt</code>.</li>
-<li>Por cada aviso, pide a la IA que explique qué significa y qué cambio propone, compruébalo en la documentación del recurso de Terraform y aplícalo. Repite Trivy hasta que no quede ningún aviso alto ni crítico: <code>fundamentos/trivy-despues.txt</code>.</li>
+<li>Copia el laboratorio a <code>fundamentos/</code> de tu repositorio, como explica la <a href="empresa-con-terraform/puesta-en-marcha.html">puesta en marcha</a>, y desde <code>fundamentos/</code> levanta la nube: <code>docker compose up -d floci</code>.</li>
+<li>Pasa Trivy y guarda la salida: <code>docker compose run --rm trivy | tee trivy-antes.txt</code>.</li>
+<li>Por cada aviso, pide a la IA que explique qué significa y qué cambio propone, compruébalo en la documentación del recurso de Terraform y aplícalo. Repite Trivy hasta que no quede ningún aviso alto ni crítico y guarda esa última salida en <code>trivy-despues.txt</code>.</li>
 <li>Despliega en Floci y comprueba con la CLI de AWS que la empresa existe:
 <pre><code>docker compose run --rm terraform init
 docker compose run --rm terraform apply
@@ -76,7 +77,7 @@ docker compose run --rm aws iam list-users</code></pre></li>
 </ul>
 
 <h2 id="mini-auditoria">Mini auditoría</h2>
-<p>Carpeta <code>mini-auditoria/</code>. Enunciado: <a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a>.</p>
+<p>Carpeta <code>mini-auditoria/</code>. Como en Empresa con Terraform, se copia a tu repositorio y se trabaja desde ahí: el laboratorio despliega el Terraform que corregiste y la regla que escribas se entrega en su sitio. Enunciado: <a href="../docs/mini-auditoria/01-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a>.</p>
 <table><thead><tr><th>Contenedor</th><th>Dirección</th><th>Qué es</th></tr></thead><tbody>
 <tr><td><code>floci</code></td><td>172.28.0.10</td><td>La cuenta AWS emulada de la empresa (puerto 4566).</td></tr>
 <tr><td><code>web</code></td><td>172.28.0.20</td><td>Servidor web de la empresa. Suricata escucha pegado a él.</td></tr>
@@ -84,16 +85,34 @@ docker compose run --rm aws iam list-users</code></pre></li>
 <tr><td><code>auditor</code></td><td>dinámica</td><td>Tu puesto: nmap dentro de la misma red.</td></tr>
 </tbody></table>
 <ol>
-<li>Levanta el laboratorio (<code>docker compose up -d</code>) y vuelve a desplegar el Terraform corregido de <a href="#empresa-con-terraform">Empresa con Terraform</a> contra este Floci, para que la cuenta tenga contenido.</li>
-<li><b>Reconocimiento:</b> qué equipos hay en la red. <code>docker compose run --rm auditor -sn 172.28.0.0/24</code>.</li>
-<li><b>Enumeración:</b> qué servicio y versión hay en cada uno (<code>-sV</code> sobre las tres direcciones) y qué recursos tiene la cuenta (<code>aws s3 ls</code>, <code>aws iam list-users</code>, <code>aws ec2 describe-security-groups</code>). Todo a <code>fundamentos/inventario/red.txt</code> y <code>fundamentos/inventario/nube.txt</code>.</li>
-<li>Mira la web con <code>curl</code> desde el auditor (portada y <code>robots.txt</code>) y anota qué descubres.</li>
-<li><b>Detección:</b> <code>py etiquetar.py</code> resume las alertas de Suricata por fase y por origen. Guarda la salida en <code>fundamentos/alertas/resumen.txt</code>.</li>
-<li>Escribe al menos una regla propia en <code>suricata/local.rules</code> (sid a partir de 1000100) que detecte algo que hayas hecho y que no saltara, reinicia Suricata y comprueba que salta. Entrega el fichero en <code>fundamentos/alertas/local.rules</code>.</li>
+<li>Copia el laboratorio y para el de Empresa con Terraform, que usa el mismo contenedor <code>floci</code> y el puerto 4566:
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+cp -r ../documentacion-hacking-etico/01-fundamentos/ejercicios/mini-auditoria fundamentos/
+cd fundamentos/mini-auditoria
+docker compose -f ../docker-compose.yml down</code></pre>
+Desde aquí, todos los comandos se lanzan en <code>fundamentos/mini-auditoria/</code>.</li>
+<li>Levanta el laboratorio y despliega en este Floci el Terraform que corregiste en <a href="#empresa-con-terraform">Empresa con Terraform</a>, para que la cuenta tenga contenido. Terraform verá que los recursos no existen en este Floci y los volverá a crear:
+<pre><code>docker compose up -d
+docker compose run --rm terraform init
+docker compose run --rm terraform apply</code></pre></li>
+<li><b>Reconocimiento:</b> qué equipos hay en la red.
+<pre><code>mkdir -p ../inventario ../alertas
+docker compose run --rm auditor -sn 172.28.0.0/24 | tee ../inventario/red.txt</code></pre></li>
+<li><b>Enumeración:</b> qué servicio y versión hay en cada equipo y qué recursos tiene la cuenta.
+<pre><code>docker compose run --rm auditor -sV 172.28.0.10 172.28.0.20 172.28.0.30 | tee -a ../inventario/red.txt
+docker compose run --rm aws s3 ls | tee ../inventario/nube.txt
+docker compose run --rm aws iam list-users | tee -a ../inventario/nube.txt
+docker compose run --rm aws ec2 describe-security-groups | tee -a ../inventario/nube.txt</code></pre></li>
+<li>Mira la web con <code>curl</code> desde dentro de la red del laboratorio y anota qué descubres:
+<pre><code>docker compose run --rm curl -i http://172.28.0.20/
+docker compose run --rm curl -i http://172.28.0.20/robots.txt</code></pre></li>
+<li><b>Detección:</b> <code>etiquetar.py</code> resume las alertas de Suricata por fase y por origen.
+<pre><code>py etiquetar.py | tee ../alertas/resumen.txt</code></pre></li>
+<li>Escribe al menos una regla propia en <code>suricata/local.rules</code> (sid a partir de 1000100) que detecte algo que hayas hecho y que no saltara. Reinicia Suricata con <code>docker compose restart suricata</code>, repite lo que hiciste y comprueba con <code>py etiquetar.py</code> que salta. Se entrega ese mismo fichero. Lo que escribe Suricata en <code>salidas/</code> no se sube.</li>
 </ol>
-<p><b>Opcional:</b> en <code>mini-auditoria/floci-ec2/</code> hay un Terraform que pide a Floci una instancia EC2 de verdad (un contenedor). Si arranca y aparece en <code>docker ps</code>, es la base de lo que haremos en Redes y sistemas.</p>
+<p><b>Opcional:</b> en <code>floci-ec2/</code> hay un Terraform que pide a Floci una instancia EC2 de verdad (un contenedor). Si arranca y aparece en <code>docker ps</code>, es la base de lo que haremos en Redes y sistemas.</p>
 
-<footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../../assets/nav.js" defer></script>
 </body>

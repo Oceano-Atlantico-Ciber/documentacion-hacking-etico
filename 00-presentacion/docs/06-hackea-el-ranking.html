@@ -151,7 +151,7 @@ button{font:inherit}
   <div class="activity"><span class="number">3</span><h3>Formula una hipótesis y pruébala</h3><p>Mira el método y los datos de cada petición. A partir de las pistas, prueba una variación con la consola del navegador o con <code>curl</code> y comprueba el efecto en el ranking.</p></div>
   <div class="activity"><span class="number">4</span><h3>Explica el resultado</h3><p>Describe qué aceptó el servidor, por qué era posible y qué validación faltaba. El jueves, repite la prueba cuando el docente cambie a <code>validated</code>.</p></div>
 </div>
-<div class="callout"><h3>Primera comprobación útil</h3><p>El endpoint <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Añádelo a la dirección exacta que te haya dado el docente. Un código HTTP <code>200</code> indica que la consulta ha funcionado.</p><pre><code>curl -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre><p>Reemplaza <code>https://DIRECCION-DEL-JUEGO</code> por el enlace de Pinggy que proyecta el docente, sin puerto. Si el enlace cambia durante la clase, usad el nuevo. Lanza <code>curl</code> desde Git Bash, la terminal del curso.</p></div>
+<div class="callout"><h3>Primera comprobación útil</h3><p>El endpoint <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Añádelo a la dirección exacta que te haya dado el docente. Un código HTTP <code>200</code> indica que la consulta ha funcionado.</p><pre><code>curl -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre><p>Reemplaza <code>https://DIRECCION-DEL-JUEGO</code> por el enlace de Pinggy que proyecta el docente, sin puerto. Si el enlace cambia durante la clase, usad el nuevo. Lanza <code>curl</code> desde Git Bash, la terminal del curso. Si no sabes qué son un método, una cabecera o un código de estado, lee antes <a href="08-api-rest.html">Qué es una API REST</a>.</p></div>
 </section>
 
 <section class="section" aria-labelledby="evidencia">
@@ -177,6 +177,7 @@ button{font:inherit}
 <tr><td>¿Cómo se corrige?</td><td>El servidor calcula la puntuación y comprueba quién pide qué.</td></tr>
 </tbody></table></div>
 <p class="intro">Así nacen los catálogos: con estas cuatro respuestas se asigna el <a href="#ataques">CWE</a> de cada flag y, en un producto real, se pide su CVE. Qué propiedad rompe cada truco se ve en <a href="../../01-fundamentos/docs/etica-y-seguridad/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a>.</p>
+<p class="intro">Las respuestas de cada flag, con tus notas de la partida como evidencia, van en <code>fundamentos/casos-analizados/hackea-el-ranking.md</code>, dentro de la entrega de Fundamentos. Es el primero de los <a href="../../01-fundamentos/casos-analizados/index.html">casos analizados</a>.</p>
 </section>
 </main>
 

@@ -83,7 +83,8 @@ git cat-file -t &lt;sha&gt;           # qué tipo de objeto es</code></pre>
 git diff                   # trabajo frente a índice
 git diff --staged          # índice frente al último commit
 git add -p                 # elegir trozo a trozo qué entra
-git log --oneline --graph --all</code></pre>
+git commit -m "tipo: qué hace"   # guardar el índice como commit
+git push                   # subir tus commits a GitHub (cómo funciona, en Git 3)</code></pre>
 </section>
 
 <section class="seccion">
@@ -135,7 +136,7 @@ git config --global user.email "un-correo-verificado@ejemplo.com"</code></pre>
 <pre><code>git tag -a entrega-fundamentos-git-e1 -m "E1 resuelto"
 git push origin entrega-fundamentos-git-e1
 git cat-file -t entrega-fundamentos-git-e1    # tag, no commit</code></pre>
-<p>Antes de etiquetar, comprueba que el ejercicio está bien. Cada vez que el docente lanza la corrección, GitHub muestra un ✓ o una ✗ junto al último commit de <code>main</code> en la portada de tu repositorio. Pulsa ese símbolo y abre <b>Details</b> en <b>Corrector git</b>: hay una fila por ejercicio, con los fallos que encuentra el corrector. Cuando la fila de tu ejercicio salga sin fallos, etiqueta. Una etiqueta ya subida también se puede mover a otro commit, pero eso reescribe lo publicado: lo verás en <a href="03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>.</p>
+<p>Antes de etiquetar, comprueba que el ejercicio está bien. Cada vez que el docente lanza la corrección, GitHub muestra un ✓ o una ✗ junto al último commit de <code>main</code> en la portada de tu repositorio. Pulsa ese símbolo y abre <b>Details</b> en <b>Corrector git</b>: hay una fila por ejercicio, con los fallos que encuentra el corrector. El símbolo va en el commit que se corrigió: si subes algo después, tu último commit no lo tendrá hasta la siguiente corrección. Cuando la fila de tu ejercicio salga sin fallos, etiqueta. Una etiqueta ya subida también se puede mover a otro commit, pero eso reescribe lo publicado: lo verás en <a href="03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>.</p>
 </section>
 
 <section class="seccion">

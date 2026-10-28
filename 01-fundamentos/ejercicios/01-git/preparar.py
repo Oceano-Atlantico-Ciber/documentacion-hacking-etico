@@ -3,7 +3,7 @@
 
 Uso, desde cualquier carpeta de tu repositorio y con el árbol de trabajo limpio:
 
-    python3 preparar.py e3
+    py preparar.py e3        (Windows; en Linux o macOS, python3)
 
 Crea las ramas, commits y ficheros de partida del ejercicio. El contenido depende de tu
 usuario de GitHub (se deduce del remoto origin, entregas-<usuario>), así que cada alumno
@@ -271,7 +271,7 @@ def preparar(ejercicio: str, cwd: Path) -> None:
 
 def main(argv: list[str]) -> int:
     if len(argv) != 1 or argv[0] not in ESCENARIOS:
-        print(f"uso: python3 preparar.py {{{','.join(EJERCICIOS)}}}", file=sys.stderr)
+        print(f"uso: py preparar.py {{{','.join(EJERCICIOS)}}}", file=sys.stderr)
         return 2
     try:
         preparar(argv[0], Path.cwd())

@@ -1,8 +1,11 @@
 # Laboratorio de la mini auditoría: la nube emulada, dos servidores de la empresa
 # y un sensor Suricata pegado al servidor web. El puesto del auditor es otro contenedor de la misma red.
+# Se copia a fundamentos/mini-auditoria/ del repositorio del alumno y se lanza desde ahí.
+#   docker compose run --rm terraform apply                       # la empresa corregida (../terraform) en este Floci
 #   docker compose up -d                                          # levanta todo
 #   docker compose run --rm auditor -sn 172.28.0.0/24             # el auditor usa nmap
 #   docker compose run --rm aws iam list-users                    # y la CLI de AWS contra Floci
+#   docker compose run --rm curl -i http://172.28.0.20/           # y curl contra la web
 #   docker compose logs -f suricata                               # qué ve el sensor
 name: fundamentos-mini-auditoria
 services:
@@ -51,18 +54,32 @@ services:
       - ./salidas/suricata:/var/log/suricata
     depends_on: [web]
 
+  terraform:
+    image: hashicorp/terraform:1.9
+    working_dir: /work
+    volumes:
+      - ../terraform:/work   # el Terraform corregido en Empresa con Terraform
+    environment: &aws
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: eu-west-1
+      AWS_ENDPOINT_URL: http://floci:4566
+    networks: [lab]
+    profiles: [herramientas]
+
   auditor:
     image: instrumentisto/nmap:7.95
     networks: [lab]
     profiles: [herramientas]
 
+  curl:
+    image: curlimages/curl:8.11.1
+    networks: [lab]
+    profiles: [herramientas]
+
   aws:
     image: amazon/aws-cli:2.22.0
-    environment:
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
-      AWS_DEFAULT_REGION: eu-west-1
-      AWS_ENDPOINT_URL: http://floci:4566
+    environment: *aws
     networks: [lab]
     profiles: [herramientas]
 
