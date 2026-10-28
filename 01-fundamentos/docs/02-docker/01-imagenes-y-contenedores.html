@@ -168,7 +168,7 @@ docker compose version</code></pre></div></li>
 <section class="seccion">
 <h2>Hablar con un contenedor</h2>
 <p>Un servidor web dentro de un contenedor escucha en su puerto 80, pero ese puerto es del contenedor, no de tu equipo. <code>-p 127.0.0.1:8080:80</code> abre la puerta 8080 de tu equipo, solo para ti, y la conecta con la 80 del contenedor. Lo verás a fondo en <a href="03-datos-y-redes.html">Docker 3</a>.</p>
-<p>Para comprobar que responde basta con <code>curl</code>, como en <a href="../api-rest/03-f12-curl-y-seguridad.html">API REST 3</a>: envía una <b>petición</b> y muestra la <b>respuesta</b>. Para Docker basta con mirar la primera línea, el código de estado de <a href="../api-rest/02-metodos-codigos-y-cabeceras.html">API REST 2</a>.</p>
+<p>Para comprobar que responde basta con <code>curl</code>, que envía una <b>petición</b> y muestra la <b>respuesta</b>. Aquí solo hace falta mirar su primera línea: un número que empieza por 2 significa que ha ido bien. Las peticiones, los códigos de estado y curl se ven a fondo en la unidad <a href="../03-api-rest/01-cliente-servidor-y-http.html">03 · API REST</a>.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 200" role="img" aria-label="curl envía GET / al puerto 8080 de tu equipo, que llega al 80 del contenedor; nginx responde 200 OK con la página">
 <defs><marker id="http-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker><marker id="http-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>

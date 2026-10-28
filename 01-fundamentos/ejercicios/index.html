@@ -75,19 +75,19 @@ py ../documentacion-hacking-etico/01-fundamentos/ejercicios/02-docker/preparar.p
 <tr><td><a href="02-docker/e8.html">E8</a></td><td>Auditar y cerrar un compose con todas las puertas abiertas.</td><td>Docker 4</td></tr>
 </tbody></table>
 
-<h2 id="api-rest">API REST</h2>
-<p>Carpeta <code>api-rest/</code>. Teoría: <a href="../docs/api-rest/01-cliente-servidor-y-http.html">API REST 1</a>, <a href="../docs/api-rest/02-metodos-codigos-y-cabeceras.html">API REST 2</a> y <a href="../docs/api-rest/03-f12-curl-y-seguridad.html">API REST 3</a>. La práctica es el minijuego.</p>
+<h2 id="03-api-rest">03 · API REST</h2>
+<p>Carpeta <code>03-api-rest/</code>. Teoría: <a href="../docs/03-api-rest/01-cliente-servidor-y-http.html">API REST 1</a>, <a href="../docs/03-api-rest/02-metodos-codigos-y-cabeceras.html">API REST 2</a> y <a href="../docs/03-api-rest/03-f12-curl-y-seguridad.html">API REST 3</a>. La práctica es el minijuego.</p>
 <h3 id="hackea-el-ranking">Hackea el ranking</h3>
 <dl class="ficha">
-<dt>Enunciado</dt><dd><a href="../docs/api-rest/04-hackea-el-ranking.html">Hackea el ranking</a>: los cuatro objetivos y qué entregar</dd>
-<dt>Solución</dt><dd><a href="api-rest/hackea-el-ranking/solucion.html">Solución de «Hackea el ranking»</a>, reto a reto</dd>
-<dt>Ficheros</dt><dd><a href="api-rest/hackea-el-ranking/docker-compose.yml"><code>docker-compose.yml</code></a>, <a href="api-rest/hackea-el-ranking/server/server.py"><code>server/server.py</code></a> y <a href="api-rest/hackea-el-ranking/web/index.html"><code>web/index.html</code></a></dd>
+<dt>Enunciado</dt><dd><a href="../docs/03-api-rest/04-hackea-el-ranking.html">Hackea el ranking</a>: los cuatro objetivos y qué entregar</dd>
+<dt>Solución</dt><dd><a href="03-api-rest/hackea-el-ranking/solucion.html">Solución de «Hackea el ranking»</a>, reto a reto</dd>
+<dt>Ficheros</dt><dd><a href="03-api-rest/hackea-el-ranking/docker-compose.yml"><code>docker-compose.yml</code></a>, <a href="03-api-rest/hackea-el-ranking/server/server.py"><code>server/server.py</code></a> y <a href="03-api-rest/hackea-el-ranking/web/index.html"><code>web/index.html</code></a></dd>
 <dt>Alcance</dt><dd>Solo la dirección del juego que proyecta el docente, solo durante la clase</dd>
-<dt>Entrega</dt><dd><code>fundamentos/casos-analizados/hackea-el-ranking.md</code>, como explica <a href="../docs/api-rest/04-hackea-el-ranking.html#documentar">De truco a vulnerabilidad</a></dd>
+<dt>Entrega</dt><dd><code>fundamentos/casos-analizados/hackea-el-ranking.md</code>, como explica <a href="../docs/03-api-rest/04-hackea-el-ranking.html#documentar">De truco a vulnerabilidad</a></dd>
 </dl>
 <p>Se juega desde el navegador, F12, <code>curl</code> y la IA.</p>
 <h3>Levantar el juego (docente)</h3>
-<p>El servidor tiene dos modos: <code>trusted</code>, que acepta la puntuación que manda el navegador, y <code>validated</code>, que lleva la partida en el servidor. Se juega con el primero y se termina desplegando el segundo para ver que los mismos trucos ya no funcionan. Desde <code>api-rest/hackea-el-ranking/</code>:</p>
+<p>El servidor tiene dos modos: <code>trusted</code>, que acepta la puntuación que manda el navegador, y <code>validated</code>, que lleva la partida en el servidor. Se juega con el primero y se termina desplegando el segundo para ver que los mismos trucos ya no funcionan. Desde <code>03-api-rest/hackea-el-ranking/</code>:</p>
 <pre><code>MODE=trusted docker compose up -d --remove-orphans      # http://IP-DEL-DOCENTE:8080  (?scoreboard para el proyector)
 MODE=validated docker compose up -d --force-recreate --remove-orphans</code></pre>
 <p>El docente abre un túnel con Pinggy desde su equipo; la URL <code>https://….pinggy.link</code> que imprime es la dirección del juego y el alcance de la práctica. Se proyecta con <code>?scoreboard</code> al final.</p>
