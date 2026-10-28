@@ -59,9 +59,9 @@ py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e
 <p>Carpeta <code>empresa-con-terraform/</code>. Enunciado: <a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a>. Cómo montar el laboratorio paso a paso: <a href="empresa-con-terraform/puesta-en-marcha.html">Puesta en marcha</a>.</p>
 <ol>
 <li>Copia <code>plantilla-alumno/alcance.html</code> a <code>fundamentos/alcance.html</code> y rellénalo: objetivo (la cuenta emulada en tu portátil), qué se permite, quién autoriza (el docente) y fechas.</li>
-<li>Copia la carpeta del ejercicio a <code>fundamentos/</code> de tu repositorio y levanta la nube: <code>docker compose up -d floci</code>.</li>
-<li>Pasa Trivy y guarda la salida: <code>docker compose run --rm trivy | tee fundamentos/trivy-antes.txt</code>.</li>
-<li>Por cada aviso, pide a la IA que explique qué significa y qué cambio propone, compruébalo en la documentación del recurso de Terraform y aplícalo. Repite Trivy hasta que no quede ningún aviso alto ni crítico: <code>fundamentos/trivy-despues.txt</code>.</li>
+<li>Copia el laboratorio a <code>fundamentos/</code> de tu repositorio, como explica la <a href="empresa-con-terraform/puesta-en-marcha.html">puesta en marcha</a>, y desde <code>fundamentos/</code> levanta la nube: <code>docker compose up -d floci</code>.</li>
+<li>Pasa Trivy y guarda la salida: <code>docker compose run --rm trivy | tee trivy-antes.txt</code>.</li>
+<li>Por cada aviso, pide a la IA que explique qué significa y qué cambio propone, compruébalo en la documentación del recurso de Terraform y aplícalo. Repite Trivy hasta que no quede ningún aviso alto ni crítico y guarda esa última salida en <code>trivy-despues.txt</code>.</li>
 <li>Despliega en Floci y comprueba con la CLI de AWS que la empresa existe:
 <pre><code>docker compose run --rm terraform init
 docker compose run --rm terraform apply
@@ -84,10 +84,12 @@ docker compose run --rm aws iam list-users</code></pre></li>
 <tr><td><code>auditor</code></td><td>dinámica</td><td>Tu puesto: nmap dentro de la misma red.</td></tr>
 </tbody></table>
 <ol>
-<li>Levanta el laboratorio (<code>docker compose up -d</code>) y vuelve a desplegar el Terraform corregido de <a href="#empresa-con-terraform">Empresa con Terraform</a> contra este Floci, para que la cuenta tenga contenido.</li>
+<li>Para antes el laboratorio de Empresa con Terraform (<code>docker compose down</code> en su carpeta): los dos usan el contenedor <code>floci</code> y el puerto 4566. Levanta el laboratorio (<code>docker compose up -d</code>) y vuelve a desplegar el Terraform corregido de <a href="#empresa-con-terraform">Empresa con Terraform</a> contra este Floci, para que la cuenta tenga contenido.</li>
 <li><b>Reconocimiento:</b> qué equipos hay en la red. <code>docker compose run --rm auditor -sn 172.28.0.0/24</code>.</li>
 <li><b>Enumeración:</b> qué servicio y versión hay en cada uno (<code>-sV</code> sobre las tres direcciones) y qué recursos tiene la cuenta (<code>aws s3 ls</code>, <code>aws iam list-users</code>, <code>aws ec2 describe-security-groups</code>). Todo a <code>fundamentos/inventario/red.txt</code> y <code>fundamentos/inventario/nube.txt</code>.</li>
-<li>Mira la web con <code>curl</code> desde el auditor (portada y <code>robots.txt</code>) y anota qué descubres.</li>
+<li>Mira la web con <code>curl</code> desde dentro de la red del laboratorio y anota qué descubres:
+<pre><code>docker compose run --rm curl -i http://172.28.0.20/
+docker compose run --rm curl -i http://172.28.0.20/robots.txt</code></pre></li>
 <li><b>Detección:</b> <code>py etiquetar.py</code> resume las alertas de Suricata por fase y por origen. Guarda la salida en <code>fundamentos/alertas/resumen.txt</code>.</li>
 <li>Escribe al menos una regla propia en <code>suricata/local.rules</code> (sid a partir de 1000100) que detecte algo que hayas hecho y que no saltara, reinicia Suricata y comprueba que salta. Entrega el fichero en <code>fundamentos/alertas/local.rules</code>.</li>
 </ol>

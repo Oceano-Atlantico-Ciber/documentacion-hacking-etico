@@ -16,8 +16,10 @@
 
 <div class="flow" aria-label="Orden del laboratorio"><span>Floci</span><i>→</i><span>Trivy</span><i>→</i><span>corregir</span><i>→</i><span>Terraform apply</span><i>→</i><span>AWS CLI</span></div>
 
-<p>Todos los comandos se lanzan desde la carpeta del ejercicio:</p>
-<div class="cmd"><pre><code>cd documentacion-hacking-etico/01-fundamentos/ejercicios/empresa-con-terraform</code></pre></div>
+<p>Trabajas en tu repositorio, no en el material: copia el laboratorio a <code>fundamentos/</code> y lanza todos los comandos desde ahí. Así el Terraform que corriges es el que entregas, y el <code>pull</code> del material no choca con tus cambios.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+cp -r ../documentacion-hacking-etico/01-fundamentos/ejercicios/empresa-con-terraform/{docker-compose.yml,terraform} fundamentos/
+cd fundamentos</code></pre></div>
 
 <h2>Requisitos</h2>
 <p>Basta con uno de los dos motores. Floci, Terraform, Trivy y la CLI de AWS llegan como contenedores.</p>
@@ -46,8 +48,8 @@ podman machine start</code></pre></div>
 <h2 class="step"><span class="n">3</span>Analizar con Trivy</h2>
 <p>Trivy revisa los ficheros de <code>terraform/</code> y avisa de los fallos de gravedad alta o crítica. El comando muestra los fallos en la terminal y deja <code>informe-trivy.html</code> en la carpeta del ejercicio.</p>
 <div class="cmd"><pre><code>docker compose --profile herramientas run --rm trivy</code></pre></div>
-<div class="cmd"><pre><code>open informe-trivy.html</code></pre></div>
-<p>En Windows o Linux, abre el HTML con doble clic. La primera ejecución descarga las reglas y tarda algo más.</p>
+<div class="cmd"><pre><code>start informe-trivy.html</code></pre></div>
+<p><code>start</code> lo abre en el navegador desde Git Bash. La primera ejecución descarga las reglas y tarda algo más.</p>
 <p class="note">Con Docker Desktop basta <code>docker compose run --rm trivy</code>. Con Podman hay que añadir <code>--profile herramientas</code>, porque Trivy, Terraform y la CLI de AWS están en ese perfil.</p>
 
 <h2 class="step"><span class="n">4</span>Desplegar con Terraform</h2>

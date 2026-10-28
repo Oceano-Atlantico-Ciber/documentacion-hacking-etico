@@ -1,6 +1,6 @@
 """Resume las alertas de Suricata (salidas/suricata/eve.json) por fase del ataque y por origen.
 
-Uso: python3 etiquetar.py [ruta/a/eve.json]
+Uso: py etiquetar.py [ruta/a/eve.json]   (en Linux o macOS, python3)
 Las fases salen de la primera palabra del mensaje de cada regla (RECONOCIMIENTO, ENUMERACION...).
 Completa FASES_POR_SID para las reglas que escribas tú si su mensaje no empieza por la fase.
 """
