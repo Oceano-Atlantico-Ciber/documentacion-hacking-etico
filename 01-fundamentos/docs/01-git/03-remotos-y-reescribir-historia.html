@@ -93,6 +93,14 @@ git rebase --abort       # o vuelve a como estaba</code></pre>
 <p><code>--force-with-lease</code> solo sobrescribe si el remoto sigue donde tú creías. Si alguien subió algo entretanto, se niega en lugar de borrarlo, que es lo que haría <code>--force</code>. Sobre <code>main</code> no se fuerza nunca.</p>
 </section>
 
+<section class="seccion" id="mover-etiqueta">
+<h2>Mover una etiqueta</h2>
+<p>Una etiqueta subida es historia publicada, como un commit: quien ya la descargó conserva la antigua. Por eso, en un proyecto real, una versión publicada no se mueve: se corrige y se publica otra. En el curso, la etiqueta de un ejercicio sí se puede mover para entregar la corrección. Cuenta la etiqueta tal como esté al cerrar el plazo; si la mueves después, la entrega queda fuera de plazo.</p>
+<pre><code>git tag -fa entrega-fundamentos-git-e1 -m "E1 resuelto"    # -f: la reemplaza en tu repositorio
+git push --force origin entrega-fundamentos-git-e1         # y en GitHub</code></pre>
+<p>Para una etiqueta no existe <code>--force-with-lease</code>: <code>--force</code> la sustituye siempre, así que asegúrate de que es la etiqueta que quieres mover. Sirve para cualquier ejercicio que ya hayas entregado, también los de Git 1 y Git 2.</p>
+</section>
+
 <section class="seccion">
 <h2>Práctica</h2>
 <p><a href="../../ejercicios/01-git/e5.html">E5 · Rebase</a> y <a href="../../ejercicios/01-git/e6.html">E6 · Rebase interactivo</a>. Las dos etiquetas van sobre la punta de su rama, no sobre <code>main</code>.</p>
