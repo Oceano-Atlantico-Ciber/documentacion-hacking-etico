@@ -26,10 +26,6 @@ h1 code,h2 code{font-size:.9em}
 .cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
 .cmd button:hover{border-color:var(--accent)}
 .cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.table{overflow-x:auto;margin:10px 0}
-table{width:100%;border-collapse:collapse;font-size:15px}
-th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--muted);font-weight:600}
 .ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
 .ficha dt{color:var(--muted)}
 .ficha dd{margin:0}
@@ -54,7 +50,7 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
 <p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
-<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e5</code></pre></div>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e5</code></pre></div>
 <p>Crea <code>git/e5-feature</code> con dos commits y, después, añade un commit a <code>main</code>, como si lo hubiera subido un compañero. Míralo con <code>git log --oneline --graph --all</code>: las dos líneas se han separado.</p>
 
 <h2 class="step"><span class="n">2</span>Rebasa la rama sobre <code>main</code></h2>

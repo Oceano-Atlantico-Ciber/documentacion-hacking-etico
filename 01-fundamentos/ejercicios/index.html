@@ -57,10 +57,11 @@ cd documentacion-hacking-etico/01-fundamentos/ejercicios</code></pre>
 <p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>
 
 <h2 id="01-git">01 · Git</h2>
+<p class="note"><b>Antes de empezar:</b> <a href="../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a> y <a href="../../00-presentacion/docs/07-primer-commit.html">07 · Primer commit</a>.</p>
 <p>Carpeta <code>01-git/</code>. Teoría: <a href="../docs/01-git/01-modelo-y-commits.html">Git 1 · Modelo y commits</a>, <a href="../docs/01-git/02-ramas-y-fusiones.html">Git 2 · Ramas y fusiones</a>, <a href="../docs/01-git/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a> y <a href="../docs/01-git/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a>.</p>
 <p>Ocho ejercicios en <code>fundamentos/git/</code> de tu repositorio de entregas. Cada uno empieza con <code>preparar.py</code>, que crea los ficheros, ramas y commits de partida a partir de tu usuario de GitHub: tu escenario es distinto del de tus compañeros. Ejecútalo desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
 <pre><code>cd entregas-&lt;tu-usuario&gt;
-python3 ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e1</code></pre>
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e1</code></pre>
 <p>Cada ejercicio se entrega con su propia <b>etiqueta anotada</b>, <code>entrega-fundamentos-git-eN</code>, sobre el commit donde está resuelto:</p>
 <pre><code>git tag -a entrega-fundamentos-git-e1 -m "E1 resuelto"
 git push origin entrega-fundamentos-git-e1</code></pre>
@@ -116,7 +117,7 @@ docker compose run --rm aws iam list-users</code></pre></li>
 <li><b>Reconocimiento:</b> qué equipos hay en la red. <code>docker compose run --rm auditor -sn 172.28.0.0/24</code>.</li>
 <li><b>Enumeración:</b> qué servicio y versión hay en cada uno (<code>-sV</code> sobre las tres direcciones) y qué recursos tiene la cuenta (<code>aws s3 ls</code>, <code>aws iam list-users</code>, <code>aws ec2 describe-security-groups</code>). Todo a <code>fundamentos/inventario/red.txt</code> y <code>fundamentos/inventario/nube.txt</code>.</li>
 <li>Mira la web con <code>curl</code> desde el auditor (portada y <code>robots.txt</code>) y anota qué descubres.</li>
-<li><b>Detección:</b> <code>python3 etiquetar.py</code> resume las alertas de Suricata por fase y por origen. Guarda la salida en <code>fundamentos/alertas/resumen.txt</code>.</li>
+<li><b>Detección:</b> <code>py etiquetar.py</code> resume las alertas de Suricata por fase y por origen. Guarda la salida en <code>fundamentos/alertas/resumen.txt</code>.</li>
 <li>Escribe al menos una regla propia en <code>suricata/local.rules</code> (sid a partir de 1000100) que detecte algo que hayas hecho y que no saltara, reinicia Suricata y comprueba que salta. Entrega el fichero en <code>fundamentos/alertas/local.rules</code>.</li>
 </ol>
 <p><b>Opcional:</b> en <code>mini-auditoria/floci-ec2/</code> hay un Terraform que pide a Floci una instancia EC2 de verdad (un contenedor). Si arranca y aparece en <code>docker ps</code>, es la base de lo que haremos en Redes y sistemas.</p>

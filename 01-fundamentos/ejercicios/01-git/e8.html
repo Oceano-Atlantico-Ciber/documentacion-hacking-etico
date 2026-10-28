@@ -26,10 +26,6 @@ h1 code,h2 code{font-size:.9em}
 .cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
 .cmd button:hover{border-color:var(--accent)}
 .cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.table{overflow-x:auto;margin:10px 0}
-table{width:100%;border-collapse:collapse;font-size:15px}
-th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--muted);font-weight:600}
 .ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
 .ficha dt{color:var(--muted)}
 .ficha dd{margin:0}
@@ -54,7 +50,7 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
 <p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
-<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e8</code></pre></div>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e8</code></pre></div>
 <p>Crea <code>git/e8-app</code>. En uno de sus commits alguien subió un <code>.env</code> con una clave de API, y en otro lo borró.</p>
 
 <h2 class="step"><span class="n">2</span>Sube la rama tal cual</h2>
@@ -64,11 +60,7 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 <div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app</code></pre></div><p>Salen dos commits: el que añade la clave (líneas con <code>+</code>) y el que la borra (<code>−</code>). Apunta el SHA <b>completo</b>, de 40 caracteres, del que la añade.</p>
 
 <h2 class="step"><span class="n">4</span>Purga el <code>.env</code> de toda la rama</h2>
-<p>Instala <code>git-filter-repo</code> según tu sistema y comprueba que responde:</p><div class="table"><table><thead><tr><th>Sistema</th><th>Orden</th></tr></thead><tbody>
-<tr><td>macOS</td><td><code>brew install git-filter-repo</code></td></tr>
-<tr><td>Ubuntu o Debian</td><td><code>sudo apt install git-filter-repo</code></td></tr>
-<tr><td>Windows</td><td><code>py -m pip install git-filter-repo</code></td></tr>
-</tbody></table></div><div class="cmd"><pre><code>git filter-repo --version</code></pre></div><p>Después, purga:</p><div class="cmd"><pre><code>git filter-repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div><p>Reescribe todos los commits de la rama sin ese fichero. Los SHA cambian.</p>
+<p><code>git-filter-repo</code> ya lo tienes instalado desde <a href="../../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a>. Se lanza como módulo de Python, que funciona aunque su carpeta no esté en el PATH; es la misma herramienta que <code>git filter-repo</code>:</p><div class="cmd"><pre><code>py -m git_filter_repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div><p>Reescribe todos los commits de la rama sin ese fichero. Los SHA cambian.</p>
 
 <h2 class="step"><span class="n">5</span>Guarda tu hallazgo</h2>
 <div class="cmd"><pre><code>git switch git/e8-app</code></pre></div><p>Crea con tu editor <code>fundamentos/git/e8/hallazgo.txt</code> con el SHA del paso 3 en una línea y haz commit:</p><div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt

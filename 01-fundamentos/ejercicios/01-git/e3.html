@@ -26,10 +26,6 @@ h1 code,h2 code{font-size:.9em}
 .cmd button{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
 .cmd button:hover{border-color:var(--accent)}
 .cmd button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.table{overflow-x:auto;margin:10px 0}
-table{width:100%;border-collapse:collapse;font-size:15px}
-th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--muted);font-weight:600}
 .ficha{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 8px;font-size:15px}
 .ficha dt{color:var(--muted)}
 .ficha dd{margin:0}
@@ -54,14 +50,14 @@ nav.ejercicios{display:flex;justify-content:space-between;gap:16px;margin-top:48
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
 <p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
-<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e3</code></pre></div>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e3</code></pre></div>
 <p>Crea las ramas <code>git/e3-ff</code> y <code>git/e3-noff</code>, con un commit cada una, y te deja en <code>main</code>. Míralas con <code>git log --oneline --graph --all</code>.</p>
 
 <h2 class="step"><span class="n">2</span>Fusiona <code>git/e3-ff</code> con fast-forward</h2>
 <div class="cmd"><pre><code>git merge --ff-only git/e3-ff</code></pre></div><p><code>main</code> avanza hasta el commit de la rama, sin crear ningún commit nuevo. Hazlo primero: después del siguiente paso ya no sería posible.</p>
 
 <h2 class="step"><span class="n">3</span>Fusiona <code>git/e3-noff</code> con commit de merge</h2>
-<div class="cmd"><pre><code>git merge --no-ff git/e3-noff</code></pre></div><p>Se abre el editor con el mensaje del merge: guárdalo tal cual y ciérralo. Si es vim, escribe <code>:wq</code> y pulsa Intro. Para usar otro editor a partir de ahora:</p><div class="cmd"><pre><code>git config --global core.editor "code --wait"</code></pre></div>
+<div class="cmd"><pre><code>git merge --no-ff git/e3-noff</code></pre></div><p>Se abre VS Code con el mensaje del merge: déjalo tal cual y cierra la pestaña para guardarlo. Si no se abre VS Code, revisa <code>core.editor</code> en <a href="../../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a>.</p>
 
 <h2 class="step"><span class="n">4</span>Comprueba antes de subir</h2>
 <div class="cmd"><pre><code>git log --oneline --graph -5</code></pre></div>
