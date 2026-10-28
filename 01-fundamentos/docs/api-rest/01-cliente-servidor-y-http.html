@@ -6,9 +6,11 @@
 <title>API REST 1 · Cliente, servidor y HTTP · Hacking ético</title>
 <link rel="stylesheet" href="../../../assets/estilo.css">
 <style>
-/* El viaje de una petición: lo que no pertenece al paso actual se atenúa. */
-.viaje [data-pasos]:not(.nodo) { opacity: .12; }
-.viaje [data-pasos].activo { opacity: 1; }
+/* El viaje de una petición: el recorrido se ve siempre; el paso actual se pinta en el color de acento
+   y solo se muestran sus etiquetas. */
+.viaje text[data-pasos]:not(.activo) { visibility: hidden; }
+.viaje text[data-pasos] { fill: var(--accent); font-weight: 700; }
+.viaje g.activo .linea { stroke: var(--accent); stroke-width: 3; marker-end: url(#vi-fa); }
 .viaje .nodo.activo rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; }
 .pasos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
 .pasos span { font: 600 13px var(--f-mono); color: var(--muted); }
@@ -25,7 +27,7 @@ dl.ficha dt[class] { font-weight: 700; }
 .json-ok { color: var(--ok); font-weight: 600; }
 .json-mal { color: var(--crit); font-weight: 600; }
 @media (prefers-reduced-motion: no-preference) {
-  .viaje [data-pasos], .viaje .nodo rect { transition: opacity .2s, fill .2s, stroke .2s; }
+  .viaje .linea, .viaje .nodo rect { transition: fill .2s, stroke .2s; }
 }
 </style>
 </head>
@@ -53,7 +55,7 @@ dl.ficha dt[class] { font-weight: 700; }
 <path class="linea" d="M410 58L518 58" marker-end="url(#qa-f)"/><text class="tenue" x="465" y="50" text-anchor="middle">responde</text>
 <rect class="caja" x="520" y="28" width="160" height="60" rx="8"/><text class="tit" x="600" y="54" text-anchor="middle">HTML</text><text class="tenue" x="600" y="74" text-anchor="middle">una página para leer</text>
 <text class="tenue mono" x="0" y="118">UNA API</text>
-<rect class="caja" x="0" y="128" width="140" height="60" rx="8"/><text class="tit" x="70" y="154" text-anchor="middle">Programa</text><text class="tenue" x="70" y="174" text-anchor="middle">JavaScript, app o curl</text>
+<rect class="caja" x="0" y="128" width="140" height="60" rx="8"/><text class="tit" x="70" y="154" text-anchor="middle">Programa</text><text class="tenue" x="70" y="174" text-anchor="middle">JS, app o curl</text>
 <path class="linea" d="M140 158L268 158" marker-end="url(#qa-f)"/><text class="mono" x="205" y="150" text-anchor="middle">GET /api/players</text>
 <rect class="caja-acento" x="270" y="128" width="140" height="60" rx="8"/><text class="tit" x="340" y="154" text-anchor="middle">Servidor</text><text class="tenue" x="340" y="174" text-anchor="middle">API</text>
 <path class="linea" d="M410 158L518 158" marker-end="url(#qa-f)"/><text class="tenue" x="465" y="150" text-anchor="middle">responde</text>
@@ -68,7 +70,7 @@ dl.ficha dt[class] { font-weight: 700; }
 <p>Cada vez que un cliente necesita algo del servidor hace una <b>petición</b> y espera una <b>respuesta</b>. Siempre es el cliente quien empieza: el servidor solo contesta. Recorre el viaje paso a paso.</p>
 <figure>
 <svg class="diagrama viaje" viewBox="0 0 700 185" role="img" aria-label="Cliente, red, servidor y datos en fila. La petición va del cliente al servidor pasando por la red; el servidor consulta sus datos y la respuesta vuelve por el mismo camino.">
-<defs><marker id="vi-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<defs><marker id="vi-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="vi-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
 <g class="nodo" data-pasos="1 5"><rect class="caja" x="0" y="60" width="130" height="80" rx="8"/><text class="tit" x="65" y="96" text-anchor="middle">Cliente</text><text class="tenue" x="65" y="116" text-anchor="middle">navegador o app</text></g>
 <g class="nodo" data-pasos="2 4"><rect class="caja discontinua" x="190" y="60" width="130" height="80" rx="8"/><text class="tit" x="255" y="96" text-anchor="middle">Red</text><text class="tenue" x="255" y="116" text-anchor="middle">wifi y routers</text></g>
 <g class="nodo" data-pasos="3"><rect class="caja" x="380" y="60" width="130" height="80" rx="8"/><text class="tit" x="445" y="96" text-anchor="middle">Servidor</text><text class="tenue" x="445" y="116" text-anchor="middle">la API</text></g>
@@ -76,10 +78,10 @@ dl.ficha dt[class] { font-weight: 700; }
 <g data-pasos="2"><path class="linea" d="M130 88L188 88" marker-end="url(#vi-f)"/><path class="linea" d="M320 88L378 88" marker-end="url(#vi-f)"/></g>
 <g data-pasos="3"><path class="linea" d="M510 88L568 88" marker-end="url(#vi-f)"/><path class="linea" d="M570 112L512 112" marker-end="url(#vi-f)"/></g>
 <g data-pasos="4"><path class="linea" d="M380 112L322 112" marker-end="url(#vi-f)"/><path class="linea" d="M190 112L132 112" marker-end="url(#vi-f)"/></g>
-<text class="mono acento" x="65" y="44" text-anchor="middle" data-pasos="1 2">GET /api/players/1</text>
+<text class="mono" x="65" y="44" text-anchor="middle" data-pasos="1 2">GET /api/players/1</text>
 <text x="445" y="44" text-anchor="middle" data-pasos="3">¿existe? ¿tiene permiso?</text>
 <text x="635" y="44" text-anchor="middle" data-pasos="3">busca el jugador 1</text>
-<text class="mono acento" x="255" y="170" text-anchor="middle" data-pasos="4">200 OK + JSON</text>
+<text class="mono" x="255" y="170" text-anchor="middle" data-pasos="4">200 OK + JSON</text>
 <text x="65" y="170" text-anchor="middle" data-pasos="5">pinta el ranking</text>
 </svg>
 <figcaption class="note" id="viaje-texto" aria-live="polite"></figcaption>
