@@ -4,53 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Qué es una API REST · Hacking ético</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../assets/estilo.css">
 <style>
-/* Layout: una petición HTTP desmontada en piezas; selector de método que cambia la petición y la respuesta; tablas cortas de códigos y reglas. Tokens de la web del curso. */
-:root {
-  --bg: #f4f5f2; --surface: #ffffff; --ink: #1b2229; --muted: #5d6771; --line: #d6dad5;
-  --accent: #0f6b64; --accent-soft: #dcefec; --term: #1b2229; --term-ink: #e8ecea;
-  --get: #0f6b64; --post: #6a4bb3; --put: #9a4d12; --patch: #8a6d00; --del: #b3263a;
-  --ok: #1d7a3a; --warn: #9a4d12; --bad: #b3263a;
-  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
-  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
-  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
-}
+:root { --term: #1b2229; --term-ink: #e8ecea; --get: #0f6b64; --post: #6a4bb3; --put: #9a4d12; --patch: #8a6d00; --del: #b3263a; --bad: #b3263a; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
-    --accent: #6fcfc3; --accent-soft: #163a37; --term: #0b0f11; --term-ink: #e8ecea;
-    --get: #6fcfc3; --post: #b9a2f0; --put: #f0a868; --patch: #e3c75a; --del: #f2838f;
-    --ok: #7fd49a; --warn: #f0a868; --bad: #f2838f;
-    color-scheme: dark;
-  }
+  :root:not([data-theme="light"]) { --term: #0b0f11; --get: #6fcfc3; --post: #b9a2f0; --put: #f0a868; --patch: #e3c75a; --del: #f2838f; --bad: #f2838f; }
 }
-:root[data-theme="dark"] {
-  --bg: #12171a; --surface: #1a2125; --ink: #e8ecea; --muted: #9ca8a4; --line: #2d373b;
-  --accent: #6fcfc3; --accent-soft: #163a37; --term: #0b0f11; --term-ink: #e8ecea;
-  --get: #6fcfc3; --post: #b9a2f0; --put: #f0a868; --patch: #e3c75a; --del: #f2838f;
-  --ok: #7fd49a; --warn: #f0a868; --bad: #f2838f;
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--ink); font: 17px/1.5 var(--f-body);
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.wrap { max-width: 960px; margin: 0 auto; padding-block: 36px 72px; display: grid; gap: 44px; }
-h1, h2, h3 { font-family: var(--f-display); margin: 0; line-height: 1.1; text-wrap: balance; }
-h1 { font-size: clamp(32px, 6vw, 50px); font-weight: 800; }
-h2 { font-size: clamp(22px, 3.2vw, 28px); font-weight: 700; }
-h3 { font-size: 18px; font-weight: 700; }
-p { margin: 0; }
-code { font: 500 .86em var(--f-mono); background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
-.eyebrow { font: 600 12px/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.lead { color: var(--muted); font-size: 19px; max-width: 60ch; }
+:root[data-theme="dark"] { --term: #0b0f11; --get: #6fcfc3; --post: #b9a2f0; --put: #f0a868; --patch: #e3c75a; --del: #f2838f; --bad: #f2838f; }
+/* Layout: una petición HTTP desmontada en piezas; selector de método que cambia la petición y la respuesta; tablas cortas de códigos y reglas. Tokens de la web del curso. */
 section { display: grid; gap: 16px; }
-header { display: grid; gap: 12px; }
-
 /* Petición desmontada */
 .anatomy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
 .msg { background: var(--term); color: var(--term-ink); border-radius: 10px; padding: 16px; font: 14px/1.7 var(--f-mono); overflow-x: auto; min-width: 0; }
@@ -60,7 +22,6 @@ header { display: grid; gap: 12px; }
 .part { border-top: 3px solid var(--accent); padding-top: 10px; display: grid; gap: 4px; min-width: 0; }
 .part b { font-family: var(--f-display); font-size: 17px; }
 .part span { color: var(--muted); font-size: 15px; }
-
 /* Selector de método */
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
 .tab { font: 600 15px var(--f-mono); padding: 8px 14px; border-radius: 8px; border: 2px solid var(--m); color: var(--m); background: transparent; cursor: pointer; }
@@ -73,26 +34,17 @@ header { display: grid; gap: 12px; }
 .chip { font: 600 12px/1 var(--f-mono); padding: 6px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
 .chip.on { border-color: var(--ok); color: var(--ok); }
 .stack { display: grid; gap: 12px; min-width: 0; }
-
 /* Tablas */
 .tbl { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 16px; }
-th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { font: 600 12px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 td.code { font: 600 15px var(--f-mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.c2 { color: var(--ok); } .c4 { color: var(--warn); } .c5 { color: var(--bad); }
+.c2 { color: var(--ok); }
+.c4 { color: var(--warn); }
+.c5 { color: var(--bad); }
 .m { font: 600 14px var(--f-mono); }
-
 /* Reglas */
 .rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .rule { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
 .rule span { color: var(--muted); font-size: 15px; }
-nav.top { font-size: 14px; color: var(--muted); }
-nav.top a, .temas a { color: var(--accent); }
-.temas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 16px; border-top: 1px solid var(--line); }
-footer { color: var(--muted); font-size: 13px; }
-.note { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; color: var(--muted); max-width: 70ch; }
-
 @media (max-width: 720px) {
   .anatomy, .method-card { grid-template-columns: minmax(0, 1fr); }
   .parts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
