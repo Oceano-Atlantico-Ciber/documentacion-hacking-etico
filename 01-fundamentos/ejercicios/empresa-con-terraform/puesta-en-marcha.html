@@ -87,27 +87,9 @@ podman machine start</code></pre></div>
 <div class="cmd"><pre><code>docker compose down -v</code></pre></div>
 <p class="note warn">Después de <code>down -v</code>, borra también <code>terraform/terraform.tfstate</code>. Si no, Terraform cree que los recursos siguen existiendo.</p>
 
-<footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
-<script>
-document.querySelectorAll('.cmd').forEach(function (box) {
-  var btn = document.createElement('button');
-  btn.type = 'button';
-  btn.textContent = 'Copiar';
-  btn.addEventListener('click', function () {
-    var code = box.querySelector('code');
-    var text = code.textContent;
-    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1500); };
-    var fallback = function () {
-      var r = document.createRange(); r.selectNodeContents(code);
-      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-      btn.textContent = 'Pulsa Ctrl/Cmd+C';
-    };
-    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
-  });
-  box.appendChild(btn);
-});
-</script>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>

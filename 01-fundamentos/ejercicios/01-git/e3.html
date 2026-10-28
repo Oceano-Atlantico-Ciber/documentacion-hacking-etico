@@ -41,31 +41,15 @@
 
 <h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push</code></pre></div>
-<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E3 salga sin fallos, etiqueta:</p>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E3 salga sin fallos, etiqueta:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e3 -m "E3 resuelto"
 git push origin entrega-fundamentos-git-e3</code></pre></div>
-<p class="note">Etiqueta cuando la fila salga sin fallos. Si después hubiera que corregir algo, se puede mover la etiqueta: lo verás en <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>. Cuenta la etiqueta tal como esté al cerrar el plazo.</p>
+<p class="note">Si después hubiera que corregir algo, se puede mover la etiqueta: lo verás en <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>. Cuenta la etiqueta tal como esté al cerrar el plazo.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e2.html">← E2 · <code>.gitignore</code></a><a href="e4.html">E4 · Conflicto →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
-<script>
-document.querySelectorAll('.cmd').forEach(function (box) {
-  var btn = document.createElement('button');
-  btn.type = 'button';
-  btn.textContent = 'Copiar';
-  btn.addEventListener('click', function () {
-    var code = box.querySelector('code');
-    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1500); };
-    var fallback = function () {
-      var r = document.createRange(); r.selectNodeContents(code);
-      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-      btn.textContent = 'Pulsa Ctrl/Cmd+C';
-    };
-    try { navigator.clipboard.writeText(code.textContent).then(done, fallback); } catch (e) { fallback(); }
-  });
-  box.appendChild(btn);
-});
-</script>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>

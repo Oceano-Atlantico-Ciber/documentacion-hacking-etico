@@ -14,13 +14,13 @@
 <p class="lead">Ficheros de partida y laboratorios del bloque. Cada carpeta de <code>01-fundamentos/ejercicios/</code> es un ejercicio; el enunciado está en su tema o en su página.</p>
 
 <h2>Cómo conseguir los ficheros</h2>
-<pre><code>git clone https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico.git
-cd documentacion-hacking-etico/01-fundamentos/ejercicios</code></pre>
-<p>Para empezar tu repositorio de entregas, copia <code>plantilla-alumno/</code> (en la raíz) y trabaja cada bloque en su carpeta: <code>fundamentos/</code>, <code>redes-inalambricas/</code>…</p>
+<p>Ya los tienes en el clon del material que hiciste en <a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a>, en <code>~/hacking-etico/documentacion-hacking-etico/01-fundamentos/ejercicios/</code>. Actualízalo antes de cada sesión:</p>
+<pre><code>git -C ~/hacking-etico/documentacion-hacking-etico pull</code></pre>
+<p>En tu repositorio de entregas, cada bloque va en su carpeta: <code>fundamentos/</code>, <code>redes-inalambricas/</code>…</p>
 
 <h2>Qué debe haber en tu repositorio al poner la etiqueta</h2>
 <table><thead><tr><th>Ruta</th><th>Contenido</th><th>Tema</th></tr></thead><tbody>
-<tr><td><code>fundamentos/puesto.txt</code></td><td>Salida de <code>git --version</code>, <code>docker compose version</code> y una respuesta de tu IA.</td><td><a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a></td></tr>
+<tr><td><code>fundamentos/puesto.txt</code></td><td>Salida de <code>git --version</code>, <code>py --version</code> y <code>docker compose version</code>, y una respuesta de tu IA.</td><td><a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a></td></tr>
 <tr><td><code>fundamentos/alcance.html</code></td><td>La plantilla de alcance rellena para la empresa ficticia.</td><td><a href="../docs/etica-y-seguridad/01-etica-ley-y-alcance.html">Ética, ley y alcance</a></td></tr>
 <tr><td><code>fundamentos/terraform/</code></td><td>El Terraform corregido (sin <code>.terraform/</code> ni <code>tfstate</code>).</td><td><a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/trivy-antes.txt</code>, <code>fundamentos/trivy-despues.txt</code></td><td>Salida de Trivy antes y después de corregir. La segunda sin avisos altos ni críticos.</td><td><a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
@@ -34,10 +34,10 @@ cd documentacion-hacking-etico/01-fundamentos/ejercicios</code></pre>
 <p class="note"><b>Antes de empezar:</b> <a href="../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a> y <a href="../../00-presentacion/docs/07-primer-commit.html">07 · Primer commit</a>.</p>
 <p>Carpeta <code>01-git/</code>. Teoría: <a href="../docs/01-git/01-modelo-y-commits.html">Git 1 · Modelo y commits</a>, <a href="../docs/01-git/02-ramas-y-fusiones.html">Git 2 · Ramas y fusiones</a>, <a href="../docs/01-git/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a> y <a href="../docs/01-git/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a>.</p>
 <p>Ocho ejercicios en <code>fundamentos/git/</code> de tu repositorio de entregas. Cada uno empieza con <code>preparar.py</code>, que crea los ficheros, ramas y commits de partida a partir de tu usuario de GitHub: tu escenario es distinto del de tus compañeros. Ejecútalo desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
-<pre><code>cd entregas-&lt;tu-usuario&gt;
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e1</code></pre>
 <p>Cada ejercicio se entrega con su propia <b>etiqueta anotada</b>, <code>entrega-fundamentos-git-eN</code>, sobre el commit donde está resuelto. Qué es una etiqueta y cómo se crea se explica en <a href="../docs/01-git/01-modelo-y-commits.html#etiquetas">Git 1</a>, antes del primer ejercicio. Cada ejercicio tiene su página con los pasos, cómo comprobarlo y qué mira el corrector. Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores.</p>
-<p class="note"><b>Cuenta la etiqueta tal como esté al cerrar el plazo.</b> Si el corrector marca fallos, se puede mover (<a href="../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>). Moverla después de la fecha límite deja la entrega fuera de plazo. Antes de etiquetar, sube tu trabajo y mira el resultado provisional: en GitHub, junto al último commit de <code>main</code>, aparece el check <b>Corrector git</b> con una fila por ejercicio. Se actualiza cuando el docente lanza la corrección. Cuando tu ejercicio salga sin fallos, etiqueta.</p>
+<p class="note"><b>Cuenta la etiqueta tal como esté al cerrar el plazo</b>, que es el del bloque: jueves 5 de noviembre a las 23:59. Si el corrector marca fallos, se puede mover (<a href="../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>). Moverla después de la fecha límite deja la entrega fuera de plazo. Antes de etiquetar, sube tu trabajo y mira el resultado provisional: en GitHub, junto al último commit de <code>main</code>, aparece el check <b>Corrector git</b> con una fila por ejercicio. Se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando tu ejercicio salga sin fallos, etiqueta.</p>
 <table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Etiqueta sobre</th></tr></thead><tbody>
 <tr><td><a href="01-git/e1.html">E1</a></td><td>Tres commits, uno por fichero, con mensajes Conventional Commits y tu identidad.</td><td><code>main</code></td></tr>
 <tr><td><a href="01-git/e2.html">E2</a></td><td>Un <code>.gitignore</code> que deja fuera lo que no debe subirse.</td><td><code>main</code></td></tr>
@@ -52,7 +52,7 @@ py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e
 <h3>Cómo se valora</h3>
 <ul>
 <li>Cada ejercicio vale lo mismo y se corrige de forma automática desde su etiqueta: estructura del historial (padres de los merges, commits por rama, conflicto real) y contenido de los ficheros.</li>
-<li>Las fechas de los commits no cuentan. Cuenta la hora a la que subiste la etiqueta, antes del cierre del bloque.</li>
+<li>Las fechas de los commits no cuentan: se corrige cada etiqueta tal como esté al cierre del bloque.</li>
 </ul>
 
 <h2 id="empresa-con-terraform">Empresa con Terraform</h2>
@@ -93,7 +93,7 @@ docker compose run --rm aws iam list-users</code></pre></li>
 </ol>
 <p><b>Opcional:</b> en <code>mini-auditoria/floci-ec2/</code> hay un Terraform que pide a Floci una instancia EC2 de verdad (un contenedor). Si arranca y aparece en <code>docker ps</code>, es la base de lo que haremos en Redes y sistemas.</p>
 
-<footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../../assets/nav.js" defer></script>
 </body>
