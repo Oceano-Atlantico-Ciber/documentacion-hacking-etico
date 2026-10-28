@@ -13,7 +13,10 @@
       ["06 · Hackea el ranking", "00-presentacion/docs/06-hackea-el-ranking.html"],
       ["07 · Primer commit", "00-presentacion/docs/07-primer-commit.html"],
       ["08 · Qué es una API REST", "00-presentacion/docs/08-api-rest.html"],
-      ["Ejercicios", "00-presentacion/ejercicios/index.html"],
+      ["Ejercicios", "00-presentacion/ejercicios/index.html", [
+        ["Hackea el ranking", "00-presentacion/ejercicios/index.html#01-hackea-el-ranking"],
+        ["Solución de Hackea el ranking", "00-presentacion/ejercicios/01-hackea-el-ranking/solucion.html"],
+      ]],
     ]],
     ["Fundamentos", "01-fundamentos/index.html", [
       ["01 · Git", "01-fundamentos/ejercicios/index.html#01-git", [

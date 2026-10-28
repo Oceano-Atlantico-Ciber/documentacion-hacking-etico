@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solución de Hackea el ranking · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Presentación</a> · <a href="../index.html#01-hackea-el-ranking">Ejercicios de la presentación</a></nav>
+
+<h1>Solución de «Hackea el ranking»</h1>
+<p>Cada reto rompe una de las cuatro propiedades de la seguridad. Esta tabla resume qué afecta a qué; el detalle está en cada apartado.</p>
+<div class="tabla"><table>
+<thead>
+<tr>
+<th>Reto</th>
+<th>Qué se hace</th>
+<th>Propiedad afectada</th>
+<th>Objetivo del enunciado</th>
+<th>Flag</th>
+<th>CWE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Leer el código del cliente y encontrar rutas olvidadas</td>
+<td>Confidencialidad</td>
+<td>2</td>
+<td>— (la evidencia es la línea del código)</td>
+<td>CWE-615</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Enviar una puntuación inventada con <code>curl</code></td>
+<td>Integridad</td>
+<td>1</td>
+<td>Impossible score, No browser</td>
+<td>CWE-602</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Falsificar la cabecera <code>X-Game</code></td>
+<td>Integridad</td>
+<td>1</td>
+<td>Impossible score (sin No browser)</td>
+<td>CWE-290</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Fabricar la petición desde la consola</td>
+<td>Integridad</td>
+<td>1</td>
+<td>Impossible score</td>
+<td>CWE-602</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Cambiar la puntuación de otra persona</td>
+<td>Autenticidad</td>
+<td>3</td>
+<td>Changed another player's score</td>
+<td>CWE-639</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Vaciar el ranking con la ruta de administración</td>
+<td>Disponibilidad</td>
+<td>4</td>
+<td>Hidden admin route</td>
+<td>CWE-306</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Alcance y preparación</h2>
+<p>Trabaja únicamente contra la web del juego que ha indicado el docente y durante la práctica autorizada. Si la dirección no es <code>http://localhost:8080</code>, sustituye esa base por la URL exacta que te hayan dado. No escanees la red del aula ni pruebes estas técnicas contra otras webs.</p>
+<p><strong>La aplicación está en inglés y esta guía en español.</strong> En la pantalla, <strong>Start game</strong> inicia una partida, <strong>Click</strong> suma pulsaciones, <strong>Leaderboard</strong> es el ranking y <strong>Flags</strong> son las flags: la prueba de que has encontrado un fallo. En el curso las llamamos así, en inglés. <code>trusted</code> significa que el servidor se fía de los datos enviados por el navegador; <code>validated</code> significa que el servidor calcula la puntuación. La dirección con <code>?scoreboard</code> muestra el marcador para el proyector y oculta los controles para jugar.</p>
+<p><code>localhost</code> siempre apunta a <strong>tu propio equipo</strong>. En clase el juego se publica con un túnel de Pinggy: usa el enlace que proyecta el docente, por ejemplo <code>https://abcd.a.free.pinggy.link</code> (sin <code>:8080</code>), tanto en el navegador como en todos los comandos. Si el túnel se reabre, el enlace cambia y hay que usar el nuevo. <code>http://localhost:8080</code> solo sirve si levantas el juego en tu equipo.</p>
+<p>La solución está escrita para el modo <code>trusted</code>. Abre la página en el navegador y comprueba el modo y el marcador antes de empezar:</p>
+<pre><code>curl -i http://localhost:8080/api/leaderboard
+</code></pre>
+<p>Busca <code>"mode": "trusted"</code> y <code>"leaderboard"</code> en la respuesta. <code>-i</code> muestra también el código HTTP: <code>200</code> significa que la petición ha funcionado. Los comandos funcionan tal cual en Git Bash, la terminal del curso. La barra invertida al final de línea continúa el comando en la línea siguiente.</p>
+<h2>1. Observa qué hace el navegador</h2>
+<p><strong>Afecta a la confidencialidad.</strong> El servidor entrega al navegador información que no debería ver nadie de fuera del equipo de desarrollo.</p>
+<p>Abre las herramientas de desarrollo con F12 y entra en <strong>Network/Red</strong>. Si hay mucho tráfico, filtra por <strong>Fetch/XHR</strong>. Escribe tu nombre, pulsa <strong>Start game</strong>, pulsa <strong>Click</strong> varias veces y espera los diez segundos. Selecciona las peticiones a <code>/api/game</code> y <code>/api/score</code>: mira <strong>Headers/Cabeceras</strong>, <strong>Payload/Carga útil</strong> y <strong>Response/Respuesta</strong>. Identifica qué petición guarda la puntuación, su método HTTP, la ruta, las cabeceras y los campos enviados. Si no ves las peticiones, abre Network antes de iniciar otra partida.</p>
+<p>También puedes leer el código del cliente con <strong>Ver código fuente</strong>. Apunta qué datos calcula el navegador y qué pistas deja el propio código sobre otras rutas. No des por hecho que una cabecera o un botón del navegador impiden enviar peticiones directamente.</p>
+<p>En el JavaScript de la página hay dos comentarios que el equipo de desarrollo olvidó quitar:</p>
+<pre><code>// TODO: Remove the test route /api/admin/reset?name=... before release.
+// TODO: Remove the old score editor endpoint: PUT /api/score/{name}.
+</code></pre>
+<p>Esas dos líneas son la evidencia del objetivo 2: revelan una ruta de administración y un endpoint antiguo que no aparecen en la interfaz. No dan flag, pero son la puerta de los retos 5 y 6. Corrección: no dejar comentarios ni rutas de prueba en el código que se entrega al cliente, y no confiar en que una ruta esté «escondida».</p>
+<h2>2. Envía una puntuación inventada con curl</h2>
+<p><strong>Afecta a la integridad.</strong> El ranking deja de reflejar partidas reales: cualquiera puede escribir la puntuación que quiera.</p>
+<p>El cliente normal envía la puntuación al terminar. Prueba a enviar una puntuación directamente al mismo endpoint, sin jugar:</p>
+<pre><code>curl -i -X POST http://localhost:8080/api/score \
+  -H 'Content-Type: application/json' \
+  --data '{&quot;name&quot;:&quot;ana&quot;,&quot;score&quot;:9999}'
+</code></pre>
+<p>Después consulta el ranking:</p>
+<pre><code>curl -sS http://localhost:8080/api/leaderboard
+</code></pre>
+<p>Deberías recibir <code>200</code> y ver a <code>ana</code> con una puntuación de <code>9999</code>, superior al máximo estimado de <code>150</code>. Las flags de este ejemplo son <code>impossible</code> y <code>no_browser</code> (en pantalla, <strong>Impossible score</strong> y <strong>No browser</strong>). Anota qué demuestra cada una. ¿Qué dato está aceptando el servidor sin verificar que la partida haya ocurrido? Usa otro nombre si <code>ana</code> ya aparece en el marcador.</p>
+<h2>3. Falsifica una cabecera del navegador</h2>
+<p><strong>Afecta a la integridad.</strong> Es el mismo fallo del reto 2, pero además se engaña al único control que tenía el servidor para saber de dónde venía la petición.</p>
+<p>El cliente envía <code>X-Game: browser</code>. Repite la petición anterior con esa cabecera:</p>
+<pre><code>curl -i -X POST http://localhost:8080/api/score \
+  -H 'Content-Type: application/json' \
+  -H 'X-Game: browser' \
+  --data '{&quot;name&quot;:&quot;bea&quot;,&quot;score&quot;:9999}'
+</code></pre>
+<p>Vuelve a mirar el ranking. <code>bea</code> debería obtener <code>impossible</code>, pero no <code>no_browser</code>, aunque la petición también se haya enviado con <code>curl</code>. ¿Puede el servidor saber por esa cabecera si la petición viene realmente de la web? ¿Qué tendría que validar en su lugar?</p>
+<h2>4. Cambia la petición desde la consola del navegador</h2>
+<p><strong>Afecta a la integridad.</strong> Otra forma de fabricar la puntuación, ahora desde el propio navegador.</p>
+<p>Con la página del juego abierta, entra en <strong>Console/Consola</strong> y ejecuta una petición desde el mismo origen:</p>
+<pre><code>fetch(&quot;/api/score&quot;, {
+  method: &quot;POST&quot;,
+  headers: {
+    &quot;Content-Type&quot;: &quot;application/json&quot;,
+    &quot;X-Game&quot;: &quot;browser&quot;
+  },
+  body: JSON.stringify({ name: &quot;cris&quot;, score: 9999 })
+}).then(r =&gt; r.json()).then(console.log)
+</code></pre>
+<p>Consulta el ranking y compara el resultado con los retos hechos con <code>curl</code>. Esta técnica y la anterior llegan al mismo fallo de diseño por caminos distintos: el cliente puede fabricar la petición y sus valores. Este ejemplo usa una ruta relativa (<code>/api/score</code>), por eso debe ejecutarse en la consola de la página del juego.</p>
+<h2>5. Modifica la puntuación de otra persona</h2>
+<p><strong>Afecta a la autenticidad.</strong> El servidor acepta que digas quién eres (<code>author</code>) sin comprobarlo, y te deja actuar sobre los datos de otra persona como si fueras ella.</p>
+<p>Prueba el método <code>PUT</code> que reveló el comentario del reto 1. Si lo envías solo con <code>score</code>, el servidor responde <code>400 Author or score is missing</code>: el propio mensaje de error indica el campo que falta. Pide a otra persona que juegue primero; cambia <code>dani</code> por el nombre exacto que aparece en el ranking y <code>ana</code> por el tuyo:</p>
+<pre><code>curl -i -X PUT http://localhost:8080/api/score/dani \
+  -H 'Content-Type: application/json' \
+  --data '{&quot;author&quot;:&quot;ana&quot;,&quot;score&quot;:9999}'
+</code></pre>
+<p>Consulta el ranking. La puntuación de <code>dani</code> debería subir a <code>9999</code> y <code>ana</code> debería recibir <code>other_player</code> (<strong>Changed another player's score</strong>). El servidor conserva la puntuación más alta de cada nombre, así que usa un valor superior al que ya tenga el jugador elegido. Explica qué control de autorización falta: conocer o escribir el nombre de una persona no debería bastar para cambiar sus datos.</p>
+<h2>6. Encuentra y prueba la ruta de reinicio</h2>
+<p><strong>Afecta a la disponibilidad.</strong> El ranking deja de estar disponible para toda la clase: desaparecen las puntuaciones y también las flags que había conseguido cada uno.</p>
+<p>La ruta es la del primer comentario del reto 1. <strong>Este reto borra todo el ranking, las flags y las partidas en curso de toda la clase.</strong> Está permitido: avisa en voz alta antes de lanzarlo para que nadie pierda una partida a medias.</p>
+<pre><code>curl -i 'http://localhost:8080/api/admin/reset?name=ana'
+</code></pre>
+<p>Consulta el ranking de nuevo: los resultados anteriores desaparecen y <code>ana</code> recibe <code>hidden_route</code> (<strong>Hidden admin route</strong>). ¿Se pidió autenticación? ¿Qué efecto tiene que una operación que modifica el estado se pueda llamar con <code>GET</code>? Describe cómo se podría limitar esta acción a una persona autorizada.</p>
+<h2>Comparación con el modo <code>validated</code></h2>
+<p>Al final, el docente puede reiniciar el juego en modo <code>validated</code>. Compruébalo primero en <code>/api/leaderboard</code>; al cambiar de modo se reinicia el marcador. Juega una partida normal y observa que el navegador envía cada pulsación a <code>/api/click</code> y termina con <code>/api/finish</code>. Repite las comprobaciones de los retos 2, 5 y 6 contra esa instancia: <code>/api/score</code> y el <code>PUT</code> deben responder <code>404</code>, y el reinicio debe responder <code>403</code>. Comprueba también que esas peticiones no cambian el marcador. En este modo el servidor lleva la cuenta de la partida.</p>
+<h2>Si algo no coincide</h2>
+<ul>
+<li><strong>No conecta o no abre la web:</strong> comprueba que estás usando el enlace de Pinggy que se proyecta ahora mismo; si responde <code>502</code> o no existe, el túnel se ha reabierto con otra URL. <code>localhost</code> solo sirve si el juego está en tu equipo.</li>
+<li><strong>Recibes <code>404</code> en <code>/api/score</code>:</strong> consulta <code>/api/leaderboard</code>; probablemente el servidor ya está en modo <code>validated</code>, o has escrito otra ruta.</li>
+<li><strong>Recibes <code>400 Invalid name</code>:</strong> usa un nombre de entre 1 y 24 caracteres. Se admiten letras, números, espacios, guiones, puntos y guiones bajos.</li>
+<li><strong>El ranking parece tardar en actualizarse:</strong> vuelve a consultar <code>/api/leaderboard</code> o espera unos segundos; la página lo refresca cada cinco segundos.</li>
+<li><strong>Recibes un resultado inesperado:</strong> guarda el método, la URL, el cuerpo, el código HTTP y la respuesta antes de repetir la prueba. Así podrás distinguir un error de escritura de un comportamiento del servidor.</li>
+</ul>
+<h2>Qué debes entregar en tus notas</h2>
+<p>Para cada reto, registra:</p>
+<ul>
+<li>Qué querías comprobar y qué petición enviaste (método, ruta, cabeceras y cuerpo).</li>
+<li>La respuesta del servidor y el cambio observado en el ranking.</li>
+<li>La causa del fallo y una medida concreta para corregirlo.</li>
+<li>Si la prueba modificó datos compartidos; en especial, el reto de reinicio.</li>
+</ul>
+<p>Puedes usar este formato breve: <strong>hipótesis → petición enviada → respuesta y cambio en el ranking → explicación → corrección propuesta</strong>. Copia solo los fragmentos relevantes de la respuesta; no hace falta pegar toda la salida de la terminal.</p>
+<p>No es necesario buscar inyección SQL: esta práctica no usa una base de datos. El código también escapa el nombre antes de insertarlo en la tabla, así que no afirmes que has encontrado XSS sin una prueba que lo demuestre.</p>
+<footer>Hacking ético · Curso de especialización en ciberseguridad en entornos de las TI</footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>
