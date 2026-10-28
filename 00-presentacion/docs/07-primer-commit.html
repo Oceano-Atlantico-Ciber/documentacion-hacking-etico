@@ -78,19 +78,49 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 <header>
 <p class="eyebrow">Presentación · Semana 1</p>
 <h1>Primer commit</h1>
-<p class="lead">El primer commit del curso deja constancia de que el puesto de trabajo está listo.</p>
+<p class="lead">Deja preparadas las carpetas del curso y sube el primer commit, que demuestra que tu puesto de trabajo está listo. Necesitas haber hecho <a href="03-git-y-github.html">Git y GitHub</a>.</p>
 </header>
 <section class="seccion">
+<h2>Las carpetas del curso</h2>
+<p>Trabajarás con dos repositorios, uno al lado del otro dentro de una misma carpeta. Los ejercicios cuentan con esta estructura: desde tu repositorio llegan al material con <code>../documentacion-hacking-etico/</code>.</p>
+<pre><code>hacking-etico/
+├── documentacion-hacking-etico/   el material del curso (esta web); solo lo actualizas
+└── entregas-&lt;tu-usuario&gt;/         tu repositorio privado: aquí trabajas y entregas</code></pre>
+</section>
+<section class="seccion">
+<h2>Pasos</h2>
+<p>En Git Bash, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <ol>
-<li>Clona tu repositorio privado de la organización y crea la carpeta <code>fundamentos/</code>.</li>
-<li>Guarda en <code>fundamentos/puesto.txt</code> la salida de <code>git --version</code>, <code>docker compose version</code> y una respuesta de tu IA a «qué es un escaneo de puertos».</li>
-<li>Commit y push. Es el primero de los que se miran en la entrega del bloque.</li>
+<li>Crea la carpeta del curso y clona los dos repositorios:
+<pre><code>mkdir ~/hacking-etico &amp;&amp; cd ~/hacking-etico
+git clone https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico.git
+git clone https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;.git
+cd entregas-&lt;tu-usuario&gt;</code></pre></li>
+<li>Copia el <code>.gitignore</code> de la plantilla a la raíz de tu repositorio. Evita que subas secretos, estados de Terraform o capturas de red:
+<pre><code>cp ../documentacion-hacking-etico/plantilla-alumno/.gitignore .</code></pre></li>
+<li>Crea <code>fundamentos/puesto.txt</code> con la versión de tus herramientas:
+<pre><code>mkdir fundamentos
+{ git --version; py --version; docker compose version; } &gt; fundamentos/puesto.txt
+code fundamentos/puesto.txt</code></pre>
+En VS Code, añade al final la respuesta de tu IA a «qué es un escaneo de puertos» y guarda.</li>
+<li>Commit y push:
+<pre><code>git add .gitignore fundamentos/puesto.txt
+git commit -m "chore: puesto de trabajo listo"
+git push</code></pre></li>
 </ol>
+<p>Si ya hiciste el primer commit en la semana 1, haz solo lo que te falte: el clon del material al lado de tu repositorio y el <code>.gitignore</code> en la raíz.</p>
+</section>
+<section class="seccion">
+<h2>Cada vez que empieces a trabajar</h2>
+<p>El material se actualiza durante el curso. Tráete la última versión antes de cada sesión:</p>
+<pre><code>git -C ~/hacking-etico/documentacion-hacking-etico pull</code></pre>
 </section>
 <section class="seccion">
 <h2>Comprobación</h2>
 <ul class="check">
-<li><code>fundamentos/puesto.txt</code> subido a tu repositorio</li>
+<li>En <code>~/hacking-etico/</code> están las dos carpetas, una al lado de la otra</li>
+<li><code>.gitignore</code> y <code>fundamentos/puesto.txt</code> aparecen en tu repositorio en GitHub</li>
+<li>El commit muestra tu avatar en GitHub: tu correo está asociado a tu cuenta</li>
 </ul>
 </section>
 <nav class="temas" aria-label="Temas de la presentación"><a href="06-hackea-el-ranking.html">← Hackea el ranking</a><a href="08-api-rest.html">Qué es una API REST →</a></nav>
