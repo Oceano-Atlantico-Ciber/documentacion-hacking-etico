@@ -1,6 +1,6 @@
 // Índice lateral con el árbol de todo el sitio. Cada página lo carga con una ruta relativa
 // (<script src="../assets/nav.js" defer>), así que funciona igual en Pages que abriendo el repo
-// descargado. Para añadir una página, añade su nodo a ARBOL: [título, ruta desde la raíz, hijos].
+// descargado. Su aspecto está en estilo.css. Para añadir una página, añade su nodo a ARBOL: [título, ruta desde la raíz, hijos].
 (() => {
   const ARBOL = [
     ["Inicio", "index.html"],
@@ -54,53 +54,33 @@
   const raiz = new URL("../", document.currentScript.src);
   // Pages sirve «carpeta/» como «carpeta/index.html»: las dos formas son la misma página.
   const pagina = (url) => url.origin + url.pathname.replace(/\/$/, "/index.html");
-  const actual = pagina(new URL(location.href));
 
-  // La página actual es el primer nodo con su ruta, prefiriendo el que no lleva ancla.
-  const coincidencias = [];
-  const recorrer = (nodos) => nodos.forEach((nodo) => {
-    nodo.url = new URL(nodo[1], raiz);
-    if (pagina(nodo.url) === actual) coincidencias.push(nodo);
-    if (nodo[2]) recorrer(nodo[2]);
-  });
-  recorrer(ARBOL);
-  const marcado = coincidencias.find((n) => !n.url.hash) ?? coincidencias[0];
-
-  const enlace = (nodo) => {
-    const a = document.createElement("a");
-    a.href = nodo.url.href;
-    a.textContent = nodo[0];
-    if (nodo === marcado) a.setAttribute("aria-current", "page");
-    return a;
-  };
-  // Devuelve la lista y si contiene la página actual, para abrir sus ramas.
+  const enlaces = [];
   const lista = (nodos) => {
     const ul = document.createElement("ul");
-    let contiene = false;
-    for (const nodo of nodos) {
+    for (const [titulo, ruta, hijos] of nodos) {
       const li = document.createElement("li");
-      if (nodo[2]) {
-        const [hijos, dentro] = lista(nodo[2]);
+      const a = document.createElement("a");
+      a.href = new URL(ruta, raiz).href;
+      a.textContent = titulo;
+      enlaces.push(a);
+      if (hijos) {
         const details = document.createElement("details");
         const summary = document.createElement("summary");
-        summary.append(enlace(nodo));
-        details.append(summary, hijos);
-        details.open = dentro || nodo === marcado;
+        summary.append(a);
+        details.append(summary, lista(hijos));
         li.append(details);
-        contiene ||= details.open;
       } else {
-        li.append(enlace(nodo));
-        contiene ||= nodo === marcado;
+        li.append(a);
       }
       ul.append(li);
     }
-    return [ul, contiene];
+    return ul;
   };
-
   const nav = document.createElement("nav");
   nav.id = "arbol";
   nav.setAttribute("aria-label", "Índice del curso");
-  nav.append(lista(ARBOL)[0]);
+  nav.append(lista(ARBOL));
 
   const boton = document.createElement("button");
   boton.id = "arbol-boton";
@@ -116,36 +96,22 @@
   document.addEventListener("keydown", (e) => e.key === "Escape" && abrir(false));
   document.addEventListener("click", (e) => !nav.contains(e.target) && e.target !== boton && abrir(false));
 
-  const estilo = document.createElement("style");
-  estilo.textContent = `
-#arbol { --arbol-fondo: var(--surface, var(--card, Canvas)); --arbol-texto: var(--ink, var(--fg, CanvasText));
-  position: fixed; inset: 0 auto 0 0; width: 280px; overflow-y: auto; z-index: 20; padding: 20px 14px 40px;
-  background: var(--arbol-fondo); border-right: 1px solid var(--line); font: 14px/1.4 system-ui, sans-serif; }
-#arbol ul { list-style: none; margin: 0; padding: 0 0 0 12px; display: grid; gap: 2px; }
-#arbol > ul { padding: 0; }
-#arbol a { display: block; padding: 4px 8px; border-radius: 6px; color: var(--arbol-texto); text-decoration: none; }
-#arbol a:hover { background: var(--bg); }
-#arbol a[aria-current="page"] { color: var(--accent); font-weight: 600; background: var(--bg); }
-#arbol summary { display: flex; align-items: center; cursor: pointer; color: var(--muted); }
-#arbol summary::marker { content: ""; }
-#arbol summary::before { content: "▸"; width: 12px; flex: none; transition: transform .15s; }
-#arbol details[open] > summary::before { transform: rotate(90deg); }
-#arbol summary a { flex: 1; }
-#arbol-boton { position: fixed; right: 16px; bottom: 16px; z-index: 21; padding: 10px 16px; border-radius: 999px;
-  border: 1px solid var(--line); background: var(--accent); color: var(--bg); font: 600 14px system-ui, sans-serif; cursor: pointer; }
-@media (min-width: 1200px) {
-  body { margin-left: 280px; }
-  #arbol-boton { display: none; }
-}
-@media (max-width: 1199px) {
-  #arbol { width: min(320px, 85vw); transform: translateX(-100%); visibility: hidden;
-    transition: transform .2s, visibility .2s; box-shadow: 0 0 24px rgb(0 0 0 / .2); }
-  .arbol-abierto #arbol { transform: none; visibility: visible; }
-}
-@media print { #arbol, #arbol-boton { display: none; } body { margin-left: 0; } }`;
-
-  document.head.append(estilo);
   document.body.append(nav, boton);
-  const elegido = nav.querySelector('[aria-current="page"]');
-  if (elegido) nav.scrollTop = elegido.offsetTop - nav.clientHeight / 2;
+
+  // Marca el enlace de la página actual: el de su ancla si lo hay, si no el de la página sin
+  // ancla. Abre sus ramas y lo deja a la vista. Se repite al navegar entre anclas.
+  const marcar = () => {
+    const aqui = new URL(location.href);
+    const candidatos = enlaces.filter((a) => pagina(new URL(a.href)) === pagina(aqui));
+    const elegido = candidatos.find((a) => a.hash && a.hash === aqui.hash)
+      ?? candidatos.find((a) => !a.hash) ?? candidatos[0];
+    for (const a of enlaces) a.removeAttribute("aria-current");
+    if (!elegido) return;
+    elegido.setAttribute("aria-current", "page");
+    for (let d = elegido.closest("details"); d; d = d.parentElement.closest("details")) d.open = true;
+    const caja = nav.getBoundingClientRect(), fila = elegido.getBoundingClientRect();
+    if (fila.top < caja.top || fila.bottom > caja.bottom) nav.scrollTop += fila.top - caja.top - caja.height / 2;
+  };
+  marcar();
+  addEventListener("hashchange", marcar);
 })();
