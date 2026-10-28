@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API REST 2 · Métodos, códigos y cabeceras · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+<style>
+/* Un color por método, en los diagramas y en la API simulada. */
+:root { --get: #0f6b64; --post: #6a4bb3; --put: #9a4d12; --patch: #7a6200; --del: #b3263a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --get: #6fcfc3; --post: #b9a2f0; --put: #f0a868; --patch: #e3c75a; --del: #f2838f; }
+}
+:root[data-theme="dark"] { --get: #6fcfc3; --post: #b9a2f0; --put: #f0a868; --patch: #e3c75a; --del: #f2838f; }
+.diagrama .metodo rect { fill: var(--surface); stroke: var(--m); stroke-width: 2; }
+.diagrama .metodo text { fill: var(--m); font: 700 13px var(--f-mono); }
+/* Anatomía: la parte elegida en la leyenda se resalta en los dos mensajes. */
+.anatomia { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.anatomia [data-parte="vacia"] { display: inline-block; width: 100%; }
+.anatomia .marcada { background: color-mix(in srgb, var(--accent) 45%, transparent); border-radius: 3px; }
+/* API simulada */
+.sim { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.sim > * { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.sim-linea { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 600 12px/1 var(--f-mono); padding: 6px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+.chip.si { border-color: var(--ok); color: var(--ok); }
+#sim-tabla tr.cambiada td { background: var(--accent-soft); }
+#sim-historial { font: 13px var(--f-mono); }
+td.codigo { font: 600 15px var(--f-mono); white-space: nowrap; }
+.c2 { color: var(--ok); }
+.c3 { color: var(--accent); }
+.c4 { color: var(--warn); }
+.c5 { color: var(--crit); }
+@media (max-width: 720px) { .anatomia, .sim { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · API REST 2 de 4</p>
+<h1>Métodos, códigos y cabeceras</h1>
+<p class="lead">Una petición dice qué quieres hacer con el método, y la respuesta dice cómo ha ido con el código. Al final del tema tienes una API simulada para probarlo todo sin instalar nada.</p>
+<div class="meta"><span>Antes: <a href="01-cliente-servidor-y-http.html">Cliente, servidor y HTTP</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Anatomía de un mensaje</h2>
+<p>Petición y respuesta tienen las mismas cuatro piezas. Elige una para verla en los dos mensajes. Este ejemplo crea un jugador nuevo.</p>
+<div class="opciones" id="partes">
+<button type="button" data-parte="inicio" aria-pressed="true">Primera línea</button>
+<button type="button" data-parte="cabeceras" aria-pressed="false">Cabeceras</button>
+<button type="button" data-parte="vacia" aria-pressed="false">Línea en blanco</button>
+<button type="button" data-parte="cuerpo" aria-pressed="false">Cuerpo</button>
+</div>
+<div class="anatomia">
+<figure><figcaption>Petición · la envía el cliente</figcaption><pre><code><span data-parte="inicio">POST /api/players HTTP/1.1</span>
+<span data-parte="cabeceras">Host: api.ranking.example
+Authorization: Bearer token-de-clase
+Content-Type: application/json</span>
+<span data-parte="vacia"> </span>
+<span data-parte="cuerpo">{"name": "marta"}</span></code></pre></figure>
+<figure><figcaption>Respuesta · la devuelve el servidor</figcaption><pre><code><span data-parte="inicio">HTTP/1.1 201 Created</span>
+<span data-parte="cabeceras">Content-Type: application/json
+Location: /api/players/3</span>
+<span data-parte="vacia"> </span>
+<span data-parte="cuerpo">{"id": 3, "name": "marta", "score": 0}</span></code></pre></figure>
+</div>
+<p class="note" id="parte-texto" aria-live="polite"></p>
+</section>
+
+<section class="seccion">
+<h2>Los métodos: qué quieres hacer</h2>
+<p>La ruta dice sobre qué recurso actúas; el <b>método</b> dice qué haces con él. Cinco métodos cubren casi todo: leer, crear, sustituir, cambiar y borrar.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 700 280" role="img" aria-label="GET /api/players lee la lista; POST /api/players crea un jugador; GET /api/players/3 lee el jugador 3; PUT /api/players/3 lo sustituye entero; PATCH /api/players/3 cambia solo los campos enviados; DELETE /api/players/3 lo borra.">
+<defs><marker id="me-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja-acento" x="130" y="21" width="190" height="40" rx="8"/><text class="mono" x="225" y="45" text-anchor="middle">/api/players</text>
+<rect class="caja" x="130" y="175" width="190" height="40" rx="8"/><text class="mono" x="225" y="199" text-anchor="middle">/api/players/3</text>
+<g class="metodo" style="--m: var(--get)"><rect x="0" y="4" width="80" height="32" rx="6"/><text x="40" y="25" text-anchor="middle">GET</text></g>
+<path class="linea" d="M80 20L128 37" marker-end="url(#me-f)"/><path class="linea" d="M320 41L378 20" marker-end="url(#me-f)"/><text x="385" y="25">lee la lista de jugadores</text>
+<g class="metodo" style="--m: var(--post)"><rect x="0" y="46" width="80" height="32" rx="6"/><text x="40" y="67" text-anchor="middle">POST</text></g>
+<path class="linea" d="M80 62L128 45" marker-end="url(#me-f)"/><path class="linea" d="M320 41L378 62" marker-end="url(#me-f)"/><text x="385" y="67">crea un jugador nuevo; el servidor le da el id</text>
+<g class="metodo" style="--m: var(--get)"><rect x="0" y="116" width="80" height="32" rx="6"/><text x="40" y="137" text-anchor="middle">GET</text></g>
+<path class="linea" d="M80 132L128 189" marker-end="url(#me-f)"/><path class="linea" d="M320 195L378 132" marker-end="url(#me-f)"/><text x="385" y="137">lee el jugador 3</text>
+<g class="metodo" style="--m: var(--put)"><rect x="0" y="158" width="80" height="32" rx="6"/><text x="40" y="179" text-anchor="middle">PUT</text></g>
+<path class="linea" d="M80 174L128 193" marker-end="url(#me-f)"/><path class="linea" d="M320 195L378 174" marker-end="url(#me-f)"/><text x="385" y="179">lo sustituye entero por lo que envías</text>
+<g class="metodo" style="--m: var(--patch)"><rect x="0" y="200" width="80" height="32" rx="6"/><text x="40" y="221" text-anchor="middle">PATCH</text></g>
+<path class="linea" d="M80 216L128 197" marker-end="url(#me-f)"/><path class="linea" d="M320 195L378 216" marker-end="url(#me-f)"/><text x="385" y="221">cambia solo los campos que envías</text>
+<g class="metodo" style="--m: var(--del)"><rect x="0" y="242" width="80" height="32" rx="6"/><text x="40" y="263" text-anchor="middle">DELETE</text></g>
+<path class="linea" d="M80 258L128 201" marker-end="url(#me-f)"/><path class="linea" d="M320 195L378 258" marker-end="url(#me-f)"/><text x="385" y="263">lo borra</text>
+</svg>
+<figcaption>Arriba, la colección: se lee entera o se le añade un elemento. Abajo, un elemento: se lee, se sustituye, se cambia o se borra.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Método</th><th>Hace</th><th>Cuerpo</th><th>Respuesta típica</th></tr></thead><tbody>
+<tr><td><code>GET</code></td><td>Leer</td><td>No</td><td><code>200</code> con los datos</td></tr>
+<tr><td><code>POST</code></td><td>Crear o lanzar una acción</td><td>Sí</td><td><code>201</code> y la cabecera <code>Location</code></td></tr>
+<tr><td><code>PUT</code></td><td>Sustituir entero</td><td>Sí, el recurso completo</td><td><code>200</code></td></tr>
+<tr><td><code>PATCH</code></td><td>Cambiar una parte</td><td>Sí, solo lo que cambia</td><td><code>200</code></td></tr>
+<tr><td><code>DELETE</code></td><td>Borrar</td><td>No</td><td><code>204</code>, sin cuerpo</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Seguro e idempotente</h2>
+<p>Dos palabras que verás en toda la documentación de HTTP. Un método es <b>seguro</b> si solo lee: llamarlo no cambia nada en el servidor. Es <b>idempotente</b> si repetirlo una o diez veces deja el servidor igual que hacerlo una vez.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 680 170" role="img" aria-label="POST repetido dos veces crea dos jugadores, el 3 y el 4: no es idempotente. PUT repetido dos veces deja un solo jugador 3 con 50 puntos, igual que con una vez: es idempotente.">
+<defs><marker id="id-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<g class="metodo" style="--m: var(--post)"><rect x="0" y="24" width="80" height="32" rx="6"/><text x="40" y="45" text-anchor="middle">POST</text></g>
+<text class="tit tenue" x="92" y="45">×2</text>
+<path class="linea" d="M122 40L178 40" marker-end="url(#id-f)"/>
+<rect class="caja" x="180" y="8" width="180" height="64" rx="8"/><text class="mono" x="198" y="34">3 · marta · 0</text><text class="mono" x="198" y="58">4 · marta · 0</text>
+<path class="linea" d="M360 40L398 40" marker-end="url(#id-f)"/>
+<text class="tit peligro" x="405" y="36">Dos jugadores</text><text class="tenue" x="405" y="56">repetirlo cambia el resultado</text>
+<g class="metodo" style="--m: var(--put)"><rect x="0" y="114" width="80" height="32" rx="6"/><text x="40" y="135" text-anchor="middle">PUT</text></g>
+<text class="tit tenue" x="92" y="135">×2</text>
+<path class="linea" d="M122 130L178 130" marker-end="url(#id-f)"/>
+<rect class="caja" x="180" y="98" width="180" height="64" rx="8"/><text class="mono" x="198" y="135">3 · marta · 50</text>
+<path class="linea" d="M360 130L398 130" marker-end="url(#id-f)"/>
+<text class="tit bien" x="405" y="126">Un jugador, igual que con una vez</text><text class="tenue" x="405" y="146">repetirlo no cambia nada más</text>
+</svg>
+<figcaption>La idempotencia mira cómo queda el servidor, no la respuesta: el segundo DELETE de un mismo jugador responde 404, pero el jugador sigue igual de borrado.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Método</th><th>Seguro</th><th>Idempotente</th></tr></thead><tbody>
+<tr><td><code>GET</code></td><td>Sí</td><td>Sí</td></tr>
+<tr><td><code>POST</code></td><td>No</td><td>No</td></tr>
+<tr><td><code>PUT</code></td><td>No</td><td>Sí</td></tr>
+<tr><td><code>PATCH</code></td><td>No</td><td>No siempre</td></tr>
+<tr><td><code>DELETE</code></td><td>No</td><td>Sí</td></tr>
+</tbody></table></div>
+<p>Importa en seguridad: si un <code>POST</code> que suma puntos se puede repetir sin control, repetirlo es sumar puntos.</p>
+</section>
+
+<section class="seccion">
+<h2>Códigos de estado: cómo ha ido</h2>
+<p>La primera línea de la respuesta lleva un número de tres cifras. La primera cifra ya te dice de quién es el problema.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 700 105" role="img" aria-label="Familias de códigos: 1xx informativo, 2xx ha ido bien, 3xx está en otro sitio, 4xx error del cliente, 5xx error del servidor.">
+<rect class="caja" x="0" y="4" width="132" height="64" rx="8"/><text class="tit mono" x="66" y="32" text-anchor="middle">1xx</text><text class="tenue mono" x="66" y="54" text-anchor="middle">101</text>
+<rect class="caja-ok" x="142" y="4" width="132" height="64" rx="8"/><text class="tit mono" x="208" y="32" text-anchor="middle">2xx</text><text class="tenue mono" x="208" y="54" text-anchor="middle">200 · 201 · 204</text>
+<rect class="caja-acento" x="284" y="4" width="132" height="64" rx="8"/><text class="tit mono" x="350" y="32" text-anchor="middle">3xx</text><text class="tenue mono" x="350" y="54" text-anchor="middle">301 · 302</text>
+<rect class="caja-ia" x="426" y="4" width="132" height="64" rx="8"/><text class="tit mono" x="492" y="32" text-anchor="middle">4xx</text><text class="tenue mono" x="492" y="54" text-anchor="middle">400 · 401 · 404</text>
+<rect class="caja-peligro" x="568" y="4" width="132" height="64" rx="8"/><text class="tit mono" x="634" y="32" text-anchor="middle">5xx</text><text class="tenue mono" x="634" y="54" text-anchor="middle">500 · 502</text>
+<text x="66" y="92" text-anchor="middle">espera, sigo</text>
+<text x="208" y="92" text-anchor="middle">ha ido bien</text>
+<text x="350" y="92" text-anchor="middle">está en otro sitio</text>
+<text x="492" y="92" text-anchor="middle">fallo de tu petición</text>
+<text x="634" y="92" text-anchor="middle">fallo del servidor</text>
+</svg>
+</figure>
+<div class="tabla"><table><thead><tr><th>Código</th><th>Nombre</th><th>Cuándo lo verás</th></tr></thead><tbody>
+<tr><td class="codigo c2">200</td><td>OK</td><td>La petición ha funcionado.</td></tr>
+<tr><td class="codigo c2">201</td><td>Created</td><td>Se ha creado un recurso; la cabecera <code>Location</code> dice su ruta.</td></tr>
+<tr><td class="codigo c2">204</td><td>No Content</td><td>Hecho, sin nada que devolver.</td></tr>
+<tr><td class="codigo c3">301, 302</td><td>Moved</td><td>Está en otra dirección, que llega en <code>Location</code>. El navegador la sigue solo.</td></tr>
+<tr><td class="codigo c4">400</td><td>Bad Request</td><td>Faltan datos o están mal escritos. Lee el mensaje de error.</td></tr>
+<tr><td class="codigo c4">401</td><td>Unauthorized</td><td>No has dicho quién eres, o la credencial no vale.</td></tr>
+<tr><td class="codigo c4">403</td><td>Forbidden</td><td>Se sabe quién eres, pero no tienes permiso.</td></tr>
+<tr><td class="codigo c4">404</td><td>Not Found</td><td>Esa ruta o ese recurso no existe.</td></tr>
+<tr><td class="codigo c4">405</td><td>Method Not Allowed</td><td>La ruta existe, pero no con ese método. La cabecera <code>Allow</code> dice cuáles sí.</td></tr>
+<tr><td class="codigo c4">429</td><td>Too Many Requests</td><td>Vas demasiado rápido: hay límite de peticiones.</td></tr>
+<tr><td class="codigo c5">500</td><td>Internal Server Error</td><td>El servidor ha fallado al procesarla.</td></tr>
+<tr><td class="codigo c5">502</td><td>Bad Gateway</td><td>Un intermediario, como un túnel, no llega al servidor.</td></tr>
+</tbody></table></div>
+<p>Para un auditor, los errores también son información: un <code>401</code> en vez de un <code>404</code> confirma que una ruta existe, y un <code>500</code> suele indicar una entrada que el servidor no esperaba.</p>
+</section>
+
+<section class="seccion">
+<h2>Cabeceras: datos sobre el mensaje</h2>
+<div class="tabla"><table><thead><tr><th>Cabecera</th><th>Va en</th><th>Para qué sirve</th></tr></thead><tbody>
+<tr><td><code>Host</code></td><td>Petición</td><td>A qué máquina va. Un mismo servidor puede atender varias.</td></tr>
+<tr><td><code>Content-Type</code></td><td>Las dos</td><td>Formato del cuerpo. En APIs, <code>application/json</code>.</td></tr>
+<tr><td><code>Authorization</code></td><td>Petición</td><td>Quién eres: un token o una clave. Sin ella, el servidor no sabe quién pide.</td></tr>
+<tr><td><code>Cookie</code> y <code>Set-Cookie</code></td><td>Petición y respuesta</td><td>La otra forma de identificarte: el servidor manda la cookie con <code>Set-Cookie</code> y el navegador la devuelve sola en cada petición.</td></tr>
+<tr><td><code>Location</code></td><td>Respuesta</td><td>Dónde está el recurso creado o adónde redirige.</td></tr>
+<tr><td><code>Allow</code></td><td>Respuesta</td><td>Qué métodos admite la ruta, con un <code>405</code>.</td></tr>
+<tr><td><code>X-…</code></td><td>Petición</td><td>Cabeceras inventadas por cada aplicación. Las escribe el cliente, así que pueden decir cualquier cosa.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion" id="api-simulada">
+<h2>Pruébalo: una API simulada</h2>
+<p>Esta API de jugadores vive dentro de la página, en tu navegador: no se envía nada por la red. Leer es libre; para cambiar datos hay que mandar la cabecera <code>Authorization</code>. Pulsa un ejemplo o escribe tu propia petición, envíala y mira la respuesta, los datos del servidor y el historial.</p>
+<div class="opciones" id="sim-ejemplos"></div>
+<div class="sim">
+<div class="panel">
+<div class="sim-linea">
+<label>Método <select id="sim-metodo"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select></label>
+<label>Ruta <input id="sim-ruta" spellcheck="false" autocomplete="off" value="/api/players"></label>
+</div>
+<p class="chips" id="sim-chips"></p>
+<label class="casilla"><input type="checkbox" id="sim-auth"> Enviar <code>Authorization: Bearer token-de-clase</code></label>
+<label>Cuerpo en JSON <textarea id="sim-cuerpo" rows="3" spellcheck="false"></textarea></label>
+<div class="opciones"><button type="button" id="sim-enviar">Enviar petición</button><button type="button" id="sim-reiniciar">Reiniciar los datos</button></div>
+</div>
+<div>
+<figure><figcaption>Datos del servidor</figcaption><div class="tabla"><table id="sim-tabla"><thead><tr><th>id</th><th>name</th><th>score</th></tr></thead><tbody></tbody></table></div></figure>
+<figure><figcaption>Historial, lo último arriba</figcaption><ul id="sim-historial"></ul></figure>
+</div>
+<figure><figcaption>Petición</figcaption><pre><code id="sim-req"></code></pre></figure>
+<figure><figcaption>Respuesta</figcaption><pre><code id="sim-res"></code></pre></figure>
+</div>
+<p class="note" id="sim-explica" aria-live="polite">Envía una petición para ver la respuesta.</p>
+<p>Retos para comprobar lo que has leído:</p>
+<ol>
+<li>Crea a <code>marta</code> dos veces. ¿Cuántos jugadores hay? ¿Qué método no es idempotente?</li>
+<li>Sustituye al jugador 1 con <code>PUT</code> enviando solo <code>{"score": 50}</code>. ¿Por qué falla, si con <code>PATCH</code> funciona?</li>
+<li>Borra al jugador 2 dos veces. Compara los dos códigos y cómo quedan los datos.</li>
+<li>Consigue un <code>401</code>, un <code>404</code>, un <code>405</code> y un <code>400</code>, y explica cada uno con una frase.</li>
+</ol>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Señalas en cualquier mensaje HTTP la primera línea, las cabeceras, la línea en blanco y el cuerpo</li>
+<li>Eliges el método para leer, crear, sustituir, cambiar y borrar, y sabes cuáles son seguros e idempotentes</li>
+<li>Por la primera cifra de un código sabes si el fallo es tuyo o del servidor</li>
+<li>Sabes qué cabecera dice quién eres y qué cabeceras puede inventarse el cliente</li>
+<li>Has resuelto los cuatro retos de la API simulada</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="01-cliente-servidor-y-http.html">← Cliente, servidor y HTTP</a><a href="03-f12-curl-y-seguridad.html">F12, curl y seguridad →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script>
+(() => {
+  // Anatomía: resalta en los dos mensajes la parte elegida.
+  const PARTES = {
+    inicio: "La primera línea. En la petición: método, ruta y versión de HTTP. En la respuesta: versión, código y su nombre.",
+    cabeceras: "Las cabeceras, una por línea con la forma Nombre: valor. Datos sobre el mensaje: destino, formato del cuerpo, quién eres.",
+    vacia: "Una línea en blanco separa las cabeceras del cuerpo. Así sabe quien lee dónde empiezan los datos.",
+    cuerpo: "El cuerpo: los datos, aquí en JSON. Va en las peticiones que crean o cambian y en las respuestas que devuelven algo.",
+  };
+  const botonesParte = [...document.querySelectorAll("#partes button")];
+  const piezas = [...document.querySelectorAll(".anatomia [data-parte]")];
+  const marcarParte = (parte) => {
+    for (const b of botonesParte) b.setAttribute("aria-pressed", String(b.dataset.parte === parte));
+    for (const p of piezas) p.classList.toggle("marcada", p.dataset.parte === parte);
+    document.getElementById("parte-texto").textContent = PARTES[parte];
+  };
+  document.getElementById("partes").addEventListener("click", (e) => {
+    const parte = e.target.closest("button")?.dataset.parte;
+    if (parte) marcarParte(parte);
+  });
+  marcarParte("inicio");
+
+  // API simulada: un Map de jugadores por id y las reglas de una API REST corriente.
+  const HOST = "api.ranking.example";
+  const CREDENCIAL = "Bearer token-de-clase";
+  const PROPIEDADES = { GET: [true, true], POST: [false, false], PUT: [false, true], PATCH: [false, false], DELETE: [false, true] };
+  const CON_CUERPO = new Set(["POST", "PUT", "PATCH"]);
+  const PERMITIDOS = { coleccion: ["GET", "POST"], elemento: ["GET", "PUT", "PATCH", "DELETE"] };
+  const CAMPOS = new Map([["name", ["string", "un texto"]], ["score", ["number", "un número"]]]);
+  const OBLIGATORIOS = { POST: ["name"], PUT: ["name", "score"], PATCH: [] };
+  const ESTADOS = new Map([
+    [200, ["OK", "Ha ido bien y la respuesta trae los datos."]],
+    [201, ["Created", "Se ha creado un jugador; Location dice su ruta."]],
+    [204, ["No Content", "Hecho. No hay nada que devolver, así que no hay cuerpo."]],
+    [400, ["Bad Request", "El cuerpo no vale: el mensaje de error dice por qué."]],
+    [401, ["Unauthorized", "Para cambiar datos hay que enviar la credencial."]],
+    [404, ["Not Found", "No existe esa ruta o ese jugador."]],
+    [405, ["Method Not Allowed", "La ruta existe, pero no admite ese método. Allow dice cuáles sí."]],
+  ]);
+  const INICIALES = [{ id: 1, name: "ana", score: 42 }, { id: 2, name: "luis", score: 17 }];
+  const EJEMPLOS = [
+    ["Listar", "GET", "/api/players", false, ""],
+    ["Ver uno", "GET", "/api/players/1", false, ""],
+    ["Crear", "POST", "/api/players", true, '{"name": "marta"}'],
+    ["Sustituir", "PUT", "/api/players/1", true, '{"name": "ana", "score": 50}'],
+    ["Cambiar un campo", "PATCH", "/api/players/2", true, '{"score": 99}'],
+    ["Borrar", "DELETE", "/api/players/2", true, ""],
+    ["Sin credencial", "DELETE", "/api/players/1", false, ""],
+    ["Método no admitido", "DELETE", "/api/players", true, ""],
+    ["No existe", "GET", "/api/players/99", false, ""],
+    ["JSON roto", "POST", "/api/players", true, "{'name': 'marta'}"],
+  ];
+
+  let jugadores, siguienteId;
+  const reiniciar = () => {
+    jugadores = new Map(INICIALES.map((j) => [j.id, { ...j }]));
+    siguienteId = INICIALES.length + 1;
+  };
+
+  const responder = (codigo, cuerpo, cabeceras = [], tocado) => ({ codigo, cuerpo, cabeceras, tocado });
+  const fallo = (codigo, error, cabeceras) => responder(codigo, { error }, cabeceras);
+
+  const errorDeCuerpo = (datos, metodo) => {
+    if (typeof datos !== "object" || datos === null || Array.isArray(datos)) return "El cuerpo tiene que ser un objeto JSON";
+    for (const [clave, valor] of Object.entries(datos)) {
+      const campo = CAMPOS.get(clave);
+      if (!campo) return `Campo desconocido: ${clave}`;
+      if (typeof valor !== campo[0]) return `${clave} tiene que ser ${campo[1]}`;
+    }
+    const falta = OBLIGATORIOS[metodo].find((c) => !(c in datos));
+    if (falta) return `Falta ${falta}${metodo === "PUT" ? ": PUT sustituye al jugador entero" : ""}`;
+  };
+
+  const atender = (metodo, ruta, autorizado, texto) => {
+    const encaje = ruta.match(/^\/api\/players(?:\/(\d+))?\/?$/);
+    if (!encaje) return fallo(404, `No existe la ruta ${ruta}`);
+    const id = encaje[1] === undefined ? null : Number(encaje[1]);
+    const permitidos = PERMITIDOS[id === null ? "coleccion" : "elemento"];
+    if (!permitidos.includes(metodo)) return fallo(405, `${metodo} no se admite en ${ruta}`, [["Allow", permitidos.join(", ")]]);
+    if (metodo !== "GET" && !autorizado) return fallo(401, "Hace falta una credencial para cambiar datos", [["WWW-Authenticate", "Bearer"]]);
+    if (id !== null && !jugadores.has(id)) return fallo(404, `No existe el jugador ${id}`);
+    if (metodo === "GET") return responder(200, id === null ? [...jugadores.values()] : jugadores.get(id));
+    if (metodo === "DELETE") {
+      jugadores.delete(id);
+      return responder(204, undefined, [], id);
+    }
+    let datos;
+    try { datos = JSON.parse(texto); } catch { return fallo(400, "El cuerpo no es JSON válido"); }
+    const error = errorDeCuerpo(datos, metodo);
+    if (error) return fallo(400, error);
+    if (metodo === "POST") {
+      const nuevo = { id: siguienteId++, name: datos.name, score: datos.score ?? 0 };
+      jugadores.set(nuevo.id, nuevo);
+      return responder(201, nuevo, [["Location", `/api/players/${nuevo.id}`]], nuevo.id);
+    }
+    const jugador = metodo === "PUT" ? { id, ...datos } : { ...jugadores.get(id), ...datos };
+    jugadores.set(id, jugador);
+    return responder(200, jugador, [], id);
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const metodo = $("sim-metodo"), ruta = $("sim-ruta"), auth = $("sim-auth"), cuerpo = $("sim-cuerpo");
+
+  const pintarFormulario = () => {
+    const [seguro, idempotente] = PROPIEDADES[metodo.value];
+    const conCuerpo = CON_CUERPO.has(metodo.value);
+    cuerpo.disabled = !conCuerpo;
+    $("sim-chips").replaceChildren(...[[seguro, "Seguro"], [idempotente, "Idempotente"], [conCuerpo, "Lleva cuerpo"]].map(([si, nombre]) => {
+      const chip = document.createElement("span");
+      chip.className = si ? "chip si" : "chip";
+      chip.textContent = `${si ? "✓" : "✗"} ${nombre}`;
+      return chip;
+    }));
+  };
+
+  const pintarDatos = (tocado) => {
+    $("sim-tabla").tBodies[0].replaceChildren(...[...jugadores.values()].map((j) => {
+      const tr = document.createElement("tr");
+      tr.classList.toggle("cambiada", j.id === tocado);
+      for (const v of [j.id, j.name, j.score]) tr.insertCell().textContent = v;
+      return tr;
+    }));
+  };
+
+  const enviar = () => {
+    const m = metodo.value, r = ruta.value.trim(), conCuerpo = CON_CUERPO.has(m);
+    const peticion = [`${m} ${r} HTTP/1.1`, `Host: ${HOST}`];
+    if (auth.checked) peticion.push(`Authorization: ${CREDENCIAL}`);
+    if (conCuerpo) peticion.push("Content-Type: application/json", "", cuerpo.value);
+    const res = atender(m, r, auth.checked, cuerpo.value);
+    const [nombre, explicacion] = ESTADOS.get(res.codigo);
+    const respuesta = [`HTTP/1.1 ${res.codigo} ${nombre}`, ...res.cabeceras.map(([k, v]) => `${k}: ${v}`)];
+    if (res.cuerpo !== undefined) {
+      respuesta.splice(1, 0, "Content-Type: application/json");
+      respuesta.push("", JSON.stringify(res.cuerpo, null, 2));
+    }
+    $("sim-req").textContent = peticion.join("\n");
+    $("sim-res").textContent = respuesta.join("\n");
+    $("sim-explica").textContent = `${res.codigo} ${nombre}. ${explicacion}`;
+    const li = document.createElement("li");
+    li.textContent = `${m} ${r} → ${res.codigo}`;
+    const historial = $("sim-historial");
+    historial.prepend(li);
+    while (historial.children.length > 8) historial.lastElementChild.remove();
+    pintarDatos(res.tocado);
+  };
+
+  $("sim-ejemplos").append(...EJEMPLOS.map(([titulo, m, r, conAuth, c]) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = titulo;
+    b.addEventListener("click", () => {
+      metodo.value = m; ruta.value = r; auth.checked = conAuth; cuerpo.value = c;
+      pintarFormulario();
+      enviar();
+    });
+    return b;
+  }));
+  metodo.addEventListener("change", pintarFormulario);
+  $("sim-enviar").addEventListener("click", enviar);
+  $("sim-reiniciar").addEventListener("click", () => {
+    reiniciar();
+    $("sim-historial").replaceChildren();
+    pintarDatos();
+  });
+  reiniciar();
+  pintarFormulario();
+  pintarDatos();
+})();
+</script>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

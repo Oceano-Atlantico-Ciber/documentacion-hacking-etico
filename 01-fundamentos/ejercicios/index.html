@@ -14,13 +14,13 @@
 <p class="lead">Ficheros de partida y laboratorios del bloque. Cada carpeta de <code>01-fundamentos/ejercicios/</code> es un ejercicio; el enunciado está en su tema o en su página.</p>
 
 <h2>Cómo conseguir los ficheros</h2>
-<p>Ya los tienes en el clon del material que hiciste en <a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a>, en <code>~/hacking-etico/documentacion-hacking-etico/01-fundamentos/ejercicios/</code>. Actualízalo antes de cada sesión:</p>
+<p>Ya los tienes en el clon del material que hiciste en <a href="../../00-presentacion/docs/06-primer-commit.html">Primer commit</a>, en <code>~/hacking-etico/documentacion-hacking-etico/01-fundamentos/ejercicios/</code>. Actualízalo antes de cada sesión:</p>
 <pre><code>git -C ~/hacking-etico/documentacion-hacking-etico pull</code></pre>
 <p>En tu repositorio de entregas, cada bloque va en su carpeta: <code>fundamentos/</code>, <code>redes-inalambricas/</code>…</p>
 
 <h2>Qué debe haber en tu repositorio al poner la etiqueta</h2>
 <table><thead><tr><th>Ruta</th><th>Contenido</th><th>Tema</th></tr></thead><tbody>
-<tr><td><code>fundamentos/puesto.txt</code></td><td>Salida de <code>git --version</code>, <code>py --version</code> y <code>docker compose version</code>, y una respuesta de tu IA.</td><td><a href="../../00-presentacion/docs/07-primer-commit.html">Primer commit</a></td></tr>
+<tr><td><code>fundamentos/puesto.txt</code></td><td>Salida de <code>git --version</code>, <code>py --version</code> y <code>docker compose version</code>, y una respuesta de tu IA.</td><td><a href="../../00-presentacion/docs/06-primer-commit.html">Primer commit</a></td></tr>
 <tr><td><code>fundamentos/alcance.html</code></td><td>La plantilla de alcance rellena para la empresa ficticia.</td><td><a href="../docs/etica-y-seguridad/01-etica-ley-y-alcance.html">Ética, ley y alcance</a></td></tr>
 <tr><td><code>fundamentos/terraform/</code></td><td>El Terraform corregido (sin <code>.terraform/</code> ni <code>tfstate</code>).</td><td><a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
 <tr><td><code>fundamentos/trivy-antes.txt</code>, <code>fundamentos/trivy-despues.txt</code></td><td>Salida de Trivy antes y después de corregir. La segunda sin avisos altos ni críticos.</td><td><a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
@@ -32,7 +32,7 @@
 <p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>
 
 <h2 id="01-git">01 · Git</h2>
-<p class="note"><b>Antes de empezar:</b> <a href="../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a> y <a href="../../00-presentacion/docs/07-primer-commit.html">07 · Primer commit</a>.</p>
+<p class="note"><b>Antes de empezar:</b> <a href="../../00-presentacion/docs/03-git-y-github.html">03 · Git y GitHub</a> y <a href="../../00-presentacion/docs/06-primer-commit.html">06 · Primer commit</a>.</p>
 <p>Carpeta <code>01-git/</code>. Teoría: <a href="../docs/01-git/01-modelo-y-commits.html">Git 1 · Modelo y commits</a>, <a href="../docs/01-git/02-ramas-y-fusiones.html">Git 2 · Ramas y fusiones</a>, <a href="../docs/01-git/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a> y <a href="../docs/01-git/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a>.</p>
 <p>Ocho ejercicios en <code>fundamentos/git/</code> de tu repositorio de entregas. Cada uno empieza con <code>preparar.py</code>, que crea los ficheros, ramas y commits de partida a partir de tu usuario de GitHub: tu escenario es distinto del de tus compañeros. Ejecútalo desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
 <pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
@@ -55,6 +55,26 @@ py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/preparar.py e
 <li>Cada ejercicio vale lo mismo y se corrige de forma automática desde su etiqueta: estructura del historial (padres de los merges, commits por rama, conflicto real) y contenido de los ficheros.</li>
 <li>Las fechas de los commits no cuentan: se corrige cada etiqueta tal como esté al cierre del bloque.</li>
 </ul>
+
+<h2 id="api-rest">API REST</h2>
+<p>Carpeta <code>api-rest/</code>. Teoría: <a href="../docs/api-rest/01-cliente-servidor-y-http.html">API REST 1</a>, <a href="../docs/api-rest/02-metodos-codigos-y-cabeceras.html">API REST 2</a> y <a href="../docs/api-rest/03-f12-curl-y-seguridad.html">API REST 3</a>. La práctica es el minijuego.</p>
+<h3 id="hackea-el-ranking">Hackea el ranking</h3>
+<dl class="ficha">
+<dt>Enunciado</dt><dd><a href="../docs/api-rest/04-hackea-el-ranking.html">Hackea el ranking</a>: los cuatro objetivos y qué entregar</dd>
+<dt>Solución</dt><dd><a href="api-rest/hackea-el-ranking/solucion.html">Solución de «Hackea el ranking»</a>, reto a reto</dd>
+<dt>Ficheros</dt><dd><a href="api-rest/hackea-el-ranking/docker-compose.yml"><code>docker-compose.yml</code></a>, <a href="api-rest/hackea-el-ranking/server/server.py"><code>server/server.py</code></a> y <a href="api-rest/hackea-el-ranking/web/index.html"><code>web/index.html</code></a></dd>
+<dt>Alcance</dt><dd>Solo la dirección del juego que proyecta el docente, solo durante la clase</dd>
+<dt>Entrega</dt><dd><code>fundamentos/casos-analizados/hackea-el-ranking.md</code>, como explica <a href="../docs/api-rest/04-hackea-el-ranking.html#documentar">De truco a vulnerabilidad</a></dd>
+</dl>
+<p>Se juega desde el navegador, F12, <code>curl</code> y la IA.</p>
+<h3>Levantar el juego (docente)</h3>
+<p>El servidor tiene dos modos: <code>trusted</code>, que acepta la puntuación que manda el navegador, y <code>validated</code>, que lleva la partida en el servidor. Se juega con el primero y se termina desplegando el segundo para ver que los mismos trucos ya no funcionan. Desde <code>api-rest/hackea-el-ranking/</code>:</p>
+<pre><code>MODE=trusted docker compose up -d --remove-orphans      # http://IP-DEL-DOCENTE:8080  (?scoreboard para el proyector)
+MODE=validated docker compose up -d --force-recreate --remove-orphans</code></pre>
+<p>El docente abre un túnel con Pinggy desde su equipo; la URL <code>https://….pinggy.link</code> que imprime es la dirección del juego y el alcance de la práctica. Se proyecta con <code>?scoreboard</code> al final.</p>
+<pre><code>ssh -p 443 -R0:localhost:8080 free@a.pinggy.io</code></pre>
+<p class="note">En el plan gratuito el túnel se cierra a los 60 minutos y al reabrirlo cambia la URL: hay que volver a proyectarla. El juego tiene que estar levantado antes de abrir el túnel o la URL responde 502.</p>
+<p>Para repetirlo en casa, levanta el juego en tu equipo desde Git Bash con la primera orden: la dirección pasa a ser <code>http://localhost:8080</code>.</p>
 
 <h2 id="empresa-con-terraform">Empresa con Terraform</h2>
 <p>Carpeta <code>empresa-con-terraform/</code>. Enunciado: <a href="../docs/empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci</a>. Cómo montar el laboratorio paso a paso: <a href="empresa-con-terraform/puesta-en-marcha.html">Puesta en marcha</a>.</p>

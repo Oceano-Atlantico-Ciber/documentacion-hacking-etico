@@ -5,15 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>Cómo funciona «Hackea el ranking» · Hacking ético</title>
-<link rel="stylesheet" href="../../assets/estilo.css">
+<link rel="stylesheet" href="../../../assets/estilo.css">
 <style>
 .shell { max-width: 920px; margin: 0 auto; padding-block: 24px 72px; }
 html{scroll-behavior:smooth}
 a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 button{font:inherit}
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:14px}
-.top a{text-decoration:none;font-weight:700}
-.top span{color:var(--muted)}
 .hero{padding:clamp(32px,6vw,64px) 0 36px;border-bottom:1px solid var(--line)}
 .hero-links{display:flex;gap:10px;flex-wrap:wrap}
 .button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 17px;border-radius:8px;text-decoration:none;font-weight:700;border:1px solid var(--accent);background:var(--accent);color:var(--bg)}
@@ -52,20 +49,20 @@ button{font:inherit}
 .callout{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:20px;margin-top:24px}
 .callout p:last-child{margin-bottom:0}
 .tabla{overflow-x:auto;margin-top:22px}
-.footer{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;padding-top:30px;font-size:14px;color:var(--muted)}
+.shell > :is(nav.temas, footer){margin-top:30px}
 @media(max-width:700px){.facts,.activity-grid{grid-template-columns:1fr}.diagram{grid-template-columns:1fr;gap:6px}.node{min-height:unset;padding:16px}.arrow{transform:rotate(90deg);line-height:1}.shell{padding-bottom:50px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.node{transition:none}}
 </style>
 </head>
 <body>
 <div class="shell">
-<nav class="top" aria-label="Navegación"><a href="../index.html">← Presentación</a><span>Hacking ético · Primer día</span></nav>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
 
 <header class="hero">
-<p class="eyebrow">Presentación · Práctica del primer día · RA1, criterios c, e, h</p>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · API REST 4 de 4 · Práctica · Criterios c, e, h</p>
 <h1>Hackea el ranking</h1>
 <p class="lead">Un juego de diez segundos para descubrir una idea clave: lo que muestra o calcula el navegador puede ser distinto de lo que el servidor debería aceptar.</p>
-<div class="hero-links"><a class="button" href="#recorrido">Ver cómo funciona</a><a class="button secondary" href="#trabajo">Qué tengo que hacer</a><a class="button secondary" href="../ejercicios/index.html#01-hackea-el-ranking">Ficheros del juego</a></div>
+<div class="hero-links"><a class="button" href="#recorrido">Ver cómo funciona</a><a class="button secondary" href="#trabajo">Qué tengo que hacer</a><a class="button secondary" href="../../ejercicios/index.html#api-rest">Ficheros del juego</a></div>
 </header>
 
 <main>
@@ -151,7 +148,7 @@ button{font:inherit}
   <div class="activity"><span class="number">3</span><h3>Formula una hipótesis y pruébala</h3><p>Mira el método y los datos de cada petición. A partir de las pistas, prueba una variación con la consola del navegador o con <code>curl</code> y comprueba el efecto en el ranking.</p></div>
   <div class="activity"><span class="number">4</span><h3>Explica el resultado</h3><p>Describe qué aceptó el servidor, por qué era posible y qué validación faltaba. El jueves, repite la prueba cuando el docente cambie a <code>validated</code>.</p></div>
 </div>
-<div class="callout"><h3>Primera comprobación útil</h3><p>El endpoint <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Añádelo a la dirección exacta que te haya dado el docente. Un código HTTP <code>200</code> indica que la consulta ha funcionado.</p><pre><code>curl -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre><p>Reemplaza <code>https://DIRECCION-DEL-JUEGO</code> por el enlace de Pinggy que proyecta el docente, sin puerto. Si el enlace cambia durante la clase, usad el nuevo. Lanza <code>curl</code> desde Git Bash, la terminal del curso. Si no sabes qué son un método, una cabecera o un código de estado, lee antes <a href="08-api-rest.html">Qué es una API REST</a>.</p></div>
+<div class="callout"><h3>Primera comprobación útil</h3><p>El endpoint <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Añádelo a la dirección exacta que te haya dado el docente. Un código HTTP <code>200</code> indica que la consulta ha funcionado.</p><pre><code>curl -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre><p>Reemplaza <code>https://DIRECCION-DEL-JUEGO</code> por el enlace de Pinggy que proyecta el docente, sin puerto. Si el enlace cambia durante la clase, usad el nuevo. Lanza <code>curl</code> desde Git Bash, la terminal del curso. Si no sabes qué son un método, una cabecera o un código de estado, repasa los <a href="01-cliente-servidor-y-http.html">temas anteriores de la unidad</a>.</p></div>
 </section>
 
 <section class="section" aria-labelledby="evidencia">
@@ -176,12 +173,13 @@ button{font:inherit}
 <tr><td>¿Qué permite?</td><td>Alterar la integridad del ranking.</td></tr>
 <tr><td>¿Cómo se corrige?</td><td>El servidor calcula la puntuación y comprueba quién pide qué.</td></tr>
 </tbody></table></div>
-<p class="intro">Así nacen los catálogos: con estas cuatro respuestas se asigna el <a href="#ataques">CWE</a> de cada flag y, en un producto real, se pide su CVE. Qué propiedad rompe cada truco se ve en <a href="../../01-fundamentos/docs/etica-y-seguridad/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a>.</p>
-<p class="intro">Las respuestas de cada flag, con tus notas de la partida como evidencia, van en <code>fundamentos/casos-analizados/hackea-el-ranking.md</code>, dentro de la entrega de Fundamentos. Es el primero de los <a href="../../01-fundamentos/casos-analizados/index.html">casos analizados</a>.</p>
+<p class="intro">Así nacen los catálogos: con estas cuatro respuestas se asigna el <a href="#ataques">CWE</a> de cada flag y, en un producto real, se pide su CVE. Qué propiedad rompe cada truco se ve en <a href="../etica-y-seguridad/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a>.</p>
+<p class="intro">Las respuestas de cada flag, con tus notas de la partida como evidencia, van en <code>fundamentos/casos-analizados/hackea-el-ranking.md</code>, dentro de la entrega de Fundamentos. Es el primero de los <a href="../../casos-analizados/index.html">casos analizados</a>.</p>
 </section>
 </main>
 
-<footer class="footer"><a href="05-ia.html">← IA: local o en la nube</a><a href="07-primer-commit.html">Primer commit →</a></footer>
+<nav class="temas" aria-label="Temas de la unidad"><a href="03-f12-curl-y-seguridad.html">← F12, curl y seguridad</a><a href="../etica-y-seguridad/01-etica-ley-y-alcance.html">Ética, ley y alcance →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script>
 (() => {
@@ -229,6 +227,6 @@ button{font:inherit}
   stepButtons.forEach(button => button.addEventListener("click", () => { step = Number(button.dataset.step); render(); }));
 })();
 </script>
-<script src="../../assets/nav.js" defer></script>
+<script src="../../../assets/nav.js" defer></script>
 </body>
 </html>

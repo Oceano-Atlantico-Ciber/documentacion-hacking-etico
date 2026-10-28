@@ -113,6 +113,44 @@ ul.falla li::marker { color: var(--crit); }
 .flow span { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }
 .flow i { color: var(--muted); font-style: normal; }
 
+/* Diagramas SVG en línea: <svg class="diagrama" viewBox="…">. Los colores salen de los tokens,
+   así que cambian solos con el modo oscuro. En móvil no encogen por debajo de lo legible: el
+   <figure> que los contiene se desplaza en horizontal. */
+svg.diagrama { width: 100%; min-width: 540px; max-width: 760px; height: auto; display: block; }
+.diagrama text { font: 500 13px var(--f-body); fill: var(--ink); }
+.diagrama .mono { font-family: var(--f-mono); font-size: 12px; }
+.diagrama .tit { font-weight: 700; font-size: 14px; }
+.diagrama .tenue { fill: var(--muted); }
+.diagrama .acento { fill: var(--accent); }
+.diagrama .peligro { fill: var(--crit); }
+.diagrama .bien { fill: var(--ok); }
+.diagrama .caja { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+.diagrama .caja-acento { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.diagrama .caja-ia { fill: var(--ia-soft); stroke: var(--ia); stroke-width: 1.5; }
+.diagrama .caja-peligro { fill: var(--crit-soft); stroke: var(--crit); stroke-width: 1.5; }
+.diagrama .caja-ok { fill: var(--ok-soft); stroke: var(--ok); stroke-width: 1.5; }
+.diagrama .linea { stroke: var(--muted); stroke-width: 2; fill: none; }
+.diagrama .linea-acento { stroke: var(--accent); stroke-width: 2; fill: none; }
+.diagrama .linea-peligro { stroke: var(--crit); stroke-width: 2; fill: none; }
+.diagrama .discontinua { stroke-dasharray: 5 4; }
+.diagrama .punta { fill: var(--muted); }
+.diagrama .punta-acento { fill: var(--accent); }
+.diagrama .punta-peligro { fill: var(--crit); }
+
+/* Interactivos: botones de opción (aria-pressed) y paneles de resultado. */
+.opciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.opciones button { font: 600 14px var(--f-body); padding: 7px 14px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); cursor: pointer; }
+.opciones button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.opciones button:disabled { opacity: .45; cursor: default; }
+.opciones button:focus-visible, .panel :is(input, select, textarea, button):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.panel :is(input, select, textarea) { font: 14px var(--f-mono); color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 6px; padding: 7px 10px; min-width: 0; }
+.panel textarea { resize: vertical; }
+.panel label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+.panel label.casilla { display: flex; gap: 8px; align-items: center; color: var(--ink); }
+
 /* Índice lateral (lo monta nav.js). Fija sus propios valores para que el estilo de una página no lo altere. */
 #arbol { position: fixed; inset: 0 auto 0 0; width: 280px; overflow-y: auto; z-index: 20; padding: 20px 14px 40px;
   background: var(--surface); border-right: 1px solid var(--line); font: 15px/1.35 var(--f-body); }

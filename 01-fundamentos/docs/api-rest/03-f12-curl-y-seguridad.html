@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API REST 3 · F12, curl y seguridad · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+<style>
+/* Imitación del panel Red de las herramientas de desarrollo: lista de peticiones y detalle. */
+.devtools { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); font: 13px var(--f-mono); }
+.dt-barra { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--bg); color: var(--muted); }
+.dt-barra b { color: var(--accent); }
+.dt-cuerpo { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+.dt-filas { list-style: none; margin: 0; padding: 0; gap: 0; border-right: 1px solid var(--line); align-content: start; }
+.dt-filas button { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 7ch 4ch; gap: 8px; text-align: left; padding: 8px 12px;
+  font: inherit; color: var(--ink); background: none; border: 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.dt-filas button[aria-pressed="true"] { background: var(--accent-soft); }
+.dt-filas button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.dt-filas .mal { color: var(--crit); }
+.dt-detalle { display: grid; gap: 10px; padding: 12px; align-content: start; min-width: 0; }
+.dt-detalle pre { white-space: pre-wrap; word-break: break-word; }
+.ordenes { display: grid; gap: 8px; list-style: none; padding: 0; }
+.ordenes li { display: grid; grid-template-columns: minmax(0, max-content) minmax(0, 1fr); gap: 4px 12px; align-items: baseline; }
+.ordenes code { overflow-wrap: anywhere; }
+@media (max-width: 720px) {
+  .dt-cuerpo { grid-template-columns: minmax(0, 1fr); }
+  .dt-filas { border-right: 0; }
+  .ordenes li { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · API REST 3 de 4</p>
+<h1>F12, curl y seguridad</h1>
+<p class="lead">El navegador te enseña cada petición que hace una web, y curl te deja repetirla cambiando lo que quieras. Con las dos herramientas y tres reglas ya puedes mirar una API como un auditor.</p>
+<div class="meta"><span>Antes: <a href="02-metodos-codigos-y-cabeceras.html">Métodos, códigos y cabeceras</a></span><span>Terminal: Git Bash</span></div>
+</header>
+
+<section class="seccion">
+<h2>F12: lo que sale de tu navegador</h2>
+<p>Pulsa <b>F12</b> en Chrome, Edge o Firefox y se abren las herramientas de desarrollo. Su pestaña <b>Network</b> (en español, <b>Red</b>) apunta cada petición que hace la página y la respuesta que recibe. Lo que ves ahí es exactamente lo que viaja: ni más ni menos.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 680 170" role="img" aria-label="Dentro de tu navegador, la página y su JavaScript hacen las peticiones y la pestaña Red de F12 las ve todas antes de que salgan hacia el servidor, y también las respuestas que vuelven.">
+<defs><marker id="f12-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja discontinua" x="0" y="8" width="400" height="154" rx="10"/><text class="tenue mono" x="16" y="32">TU NAVEGADOR</text>
+<rect class="caja" x="20" y="50" width="160" height="80" rx="8"/><text class="tit" x="100" y="86" text-anchor="middle">Página</text><text class="tenue" x="100" y="106" text-anchor="middle">su JavaScript pide</text>
+<path class="linea" d="M180 90L218 90" marker-end="url(#f12-f)"/>
+<rect class="caja-acento" x="220" y="50" width="160" height="80" rx="8"/><text class="tit" x="300" y="86" text-anchor="middle">F12 · Red</text><text class="tenue" x="300" y="106" text-anchor="middle">ve cada petición</text>
+<path class="linea" d="M380 80L518 80" marker-end="url(#f12-f)"/><text class="tenue" x="450" y="70" text-anchor="middle">petición</text>
+<path class="linea" d="M520 100L382 100" marker-end="url(#f12-f)"/><text class="tenue" x="450" y="122" text-anchor="middle">respuesta</text>
+<rect class="caja" x="520" y="50" width="160" height="80" rx="8"/><text class="tit" x="600" y="86" text-anchor="middle">Servidor</text><text class="tenue" x="600" y="106" text-anchor="middle">la API</text>
+</svg>
+<figcaption>Todo lo que hay a la izquierda de la red está en tu equipo, y por tanto en tus manos.</figcaption>
+</figure>
+<ol>
+<li>Abre la web, pulsa F12 y ve a la pestaña <b>Network</b>.</li>
+<li>Pulsa el filtro <b>Fetch/XHR</b>: deja solo las peticiones que hace el JavaScript a la API, sin imágenes ni estilos.</li>
+<li>Marca <b>Preserve log</b> (Conservar registro) para que la lista no se borre al cambiar de página, y recarga.</li>
+<li>Pulsa una fila. <b>Headers</b> enseña la URL, el método, el código y las cabeceras; <b>Payload</b>, el cuerpo enviado; <b>Response</b>, lo que devolvió el servidor.</li>
+</ol>
+<p>Practica aquí con las peticiones que haría una página de la API de jugadores del tema anterior:</p>
+<div class="devtools">
+<div class="dt-barra"><span>Elements</span><span>Console</span><span>Sources</span><b>Network</b></div>
+<div class="dt-barra"><span>All</span><b>Fetch/XHR</b><span>Doc</span><span>JS</span><span>Img</span><span>☑ Preserve log</span></div>
+<div class="dt-cuerpo">
+<ul class="dt-filas" id="dt-filas" aria-label="Peticiones"></ul>
+<div class="dt-detalle">
+<div class="opciones" id="dt-pestanas">
+<button type="button" data-pestana="headers" aria-pressed="true">Headers</button>
+<button type="button" data-pestana="payload" aria-pressed="false">Payload</button>
+<button type="button" data-pestana="response" aria-pressed="false">Response</button>
+</div>
+<pre><code id="dt-contenido"></code></pre>
+</div>
+</div>
+</div>
+<p>En la pestaña <b>Sources</b> (o con botón derecho → <b>Ver código fuente</b>) está el JavaScript de la página. Buscar en él <code>fetch(</code> enseña rutas de la API que quizá aún no has visto pasar por la pestaña Red.</p>
+</section>
+
+<section class="seccion">
+<h2>curl: la petición desde la terminal</h2>
+<p><b>curl</b> envía peticiones HTTP desde la terminal. Viene con Git para Windows, así que ya lo tienes en Git Bash. Elige un método, una URL, si mandas credencial y el cuerpo, y mira cómo se escribe la orden y qué hace cada pieza.</p>
+<div class="panel">
+<div class="opciones" id="c-metodos">
+<button type="button" aria-pressed="true">GET</button>
+<button type="button" aria-pressed="false">POST</button>
+<button type="button" aria-pressed="false">PUT</button>
+<button type="button" aria-pressed="false">PATCH</button>
+<button type="button" aria-pressed="false">DELETE</button>
+</div>
+<label>URL <input id="c-url" type="url" spellcheck="false" autocomplete="off" value="https://api.ranking.example/api/players/1"></label>
+<label class="casilla"><input type="checkbox" id="c-auth"> Enviar la cabecera <code>Authorization</code></label>
+<label>Cuerpo en JSON <textarea id="c-cuerpo" rows="2" spellcheck="false">{"score": 99}</textarea></label>
+<pre><code id="c-orden"></code></pre>
+<ul class="ordenes" id="c-piezas"></ul>
+</div>
+<p class="note">En Git Bash, todo lo que lleve espacios, comillas dobles, <code>?</code> o <code>&amp;</code> va entre <b>comillas simples</b>. Por eso el JSON se escribe <code>'{"score": 99}'</code>: las simples protegen a las dobles. La dirección <code>api.ranking.example</code> es de ejemplo y no existe; en la práctica usarás la del juego.</p>
+<p>Si la respuesta es un JSON largo, sin <code>-i</code> y con <code>| py -m json.tool</code> al final, Python lo imprime ordenado.</p>
+</section>
+
+<section class="seccion">
+<h2>De F12 a curl en cuatro pasos</h2>
+<p>No hace falta escribir la orden a mano: el navegador la copia por ti con todas sus cabeceras.</p>
+<div class="flow"><span>F12 → Network</span><i>→</i><span>botón derecho en la petición</span><i>→</i><span>Copy → <b>Copy as cURL (bash)</b></span><i>→</i><span>pegar en Git Bash</span><i>→</i><span>cambiar un dato y repetir</span></div>
+<ul>
+<li>Elige siempre la versión <b>(bash)</b>. Las versiones <i>cmd</i> y <i>PowerShell</i> usan otras comillas y fallan en Git Bash.</li>
+<li>Cambia <b>una sola cosa</b> cada vez y compara con la respuesta original: así sabes qué provocó cada diferencia.</li>
+<li>La orden copiada lleva tus cookies y tus tokens: son tu sesión. No la pegues en una IA en la nube, en un chat ni en tu repositorio sin borrarlos antes.</li>
+</ul>
+</section>
+
+<section class="seccion">
+<h2>Tres reglas para mirar una API</h2>
+<h3>1 · El cliente es tuyo</h3>
+<p>Todo lo que manda el navegador lo puede cambiar quien lo usa: con F12, con curl o escribiendo su propio programa. Si un dato importa, el servidor tiene que comprobarlo o calcularlo él.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 680 185" role="img" aria-label="El navegador calcula 12 puntos, pero tú cambias el envío a 9999 con F12 o curl. Si el servidor se lo cree, 9999 entra en el ranking; si lo comprueba, lo rechaza o lo calcula él.">
+<defs><marker id="r1-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="60" width="140" height="70" rx="8"/><text class="tit" x="70" y="90" text-anchor="middle">Navegador</text><text class="tenue mono" x="70" y="112" text-anchor="middle">score: 12</text>
+<path class="linea" d="M140 95L178 95" marker-end="url(#r1-f)"/>
+<rect class="caja-ia" x="180" y="60" width="150" height="70" rx="8"/><text class="tit" x="255" y="90" text-anchor="middle">Tú, con F12</text><text class="mono" x="255" y="112" text-anchor="middle">score: 9999</text>
+<path class="linea" d="M330 95L368 95" marker-end="url(#r1-f)"/>
+<rect class="caja" x="370" y="60" width="120" height="70" rx="8"/><text class="tit" x="430" y="100" text-anchor="middle">Servidor</text>
+<path class="linea-peligro" d="M490 85L528 45" marker-end="url(#r1-f)"/><path class="linea" d="M490 105L528 145" marker-end="url(#r1-f)"/>
+<rect class="caja-peligro" x="530" y="10" width="150" height="60" rx="8"/><text class="tit peligro" x="605" y="36" text-anchor="middle">Se lo cree</text><text class="tenue" x="605" y="56" text-anchor="middle">9999 en el ranking</text>
+<rect class="caja-ok" x="530" y="115" width="150" height="60" rx="8"/><text class="tit bien" x="605" y="141" text-anchor="middle">Lo comprueba</text><text class="tenue" x="605" y="161" text-anchor="middle">lo rechaza o lo calcula</text>
+</svg>
+<figcaption>Ocultar un botón, desactivar un campo o validar en JavaScript ayuda a quien usa bien la web, pero no frena a nadie.</figcaption>
+</figure>
+<h3>2 · Cada petición va sola</h3>
+<p>Una API REST no recuerda nada entre peticiones: cada una tiene que demostrar quién la envía. Una credencial que el servidor comprueba es una prueba; una cabecera que el cliente rellena a su gusto, no.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 700 200" role="img" aria-label="Tres peticiones llegan a un servidor que no recuerda las anteriores. Con Authorization y un token válido, el servidor comprueba que es ana. Sin credencial, responde 401. Con X-User: admin, si el servidor se fía, cualquiera puede escribir esa cabecera.">
+<defs><marker id="r2-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="10" width="270" height="44" rx="8"/><text class="mono" x="12" y="37">Authorization: Bearer token-de-ana</text>
+<rect class="caja" x="0" y="78" width="270" height="44" rx="8"/><text class="mono tenue" x="12" y="105">(sin credencial)</text>
+<rect class="caja-peligro" x="0" y="146" width="270" height="44" rx="8"/><text class="mono" x="12" y="173">X-User: admin</text>
+<path class="linea" d="M270 32L338 32" marker-end="url(#r2-f)"/><path class="linea" d="M270 100L338 100" marker-end="url(#r2-f)"/><path class="linea" d="M270 168L338 168" marker-end="url(#r2-f)"/>
+<rect class="caja-acento" x="340" y="10" width="130" height="180" rx="8"/><text class="tit" x="405" y="92" text-anchor="middle">Servidor</text><text class="tenue" x="405" y="112" text-anchor="middle">no recuerda</text><text class="tenue" x="405" y="130" text-anchor="middle">las anteriores</text>
+<path class="linea" d="M470 32L508 32" marker-end="url(#r2-f)"/><path class="linea" d="M470 100L508 100" marker-end="url(#r2-f)"/><path class="linea" d="M470 168L508 168" marker-end="url(#r2-f)"/>
+<text class="tit bien" x="515" y="30">comprueba el token</text><text class="tenue" x="515" y="48">es ana</text>
+<text class="tit" x="515" y="98">401</text><text class="tenue" x="515" y="116">¿quién eres?</text>
+<text class="tit peligro" x="515" y="166">¿se lo cree?</text><text class="tenue" x="515" y="184">la escribe cualquiera</text>
+</svg>
+<figcaption>Las cabeceras <code>X-…</code> las inventa la aplicación y las rellena el cliente: nunca prueban quién eres.</figcaption>
+</figure>
+<h3>3 · Cada método, su papel</h3>
+<p>Un <code>GET</code> no debería cambiar nada. Si lo hace, basta con que el navegador cargue una dirección para provocar el cambio, y el navegador carga direcciones solo: imágenes, enlaces, vistas previas.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 680 120" role="img" aria-label="Una página cualquiera incluye una imagen cuya dirección es /api/borrar/1. Al abrirla, tu navegador pide esa dirección con GET y añade tus cookies. Si el servidor borra con un GET, borra.">
+<defs><marker id="r3-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="20" width="210" height="80" rx="8"/><text class="tit" x="105" y="52" text-anchor="middle">Una página cualquiera</text><text class="mono tenue" x="105" y="76" text-anchor="middle">&lt;img src="…/api/borrar/1"&gt;</text>
+<path class="linea" d="M210 60L258 60" marker-end="url(#r3-f)"/><text class="tenue" x="234" y="50" text-anchor="middle">la abres</text>
+<rect class="caja" x="260" y="20" width="190" height="80" rx="8"/><text class="tit" x="355" y="48" text-anchor="middle">Tu navegador</text><text class="tenue" x="355" y="68" text-anchor="middle">la pide con GET</text><text class="tenue" x="355" y="86" text-anchor="middle">y añade tus cookies</text>
+<path class="linea-peligro" d="M450 60L488 60" marker-end="url(#r3-f)"/>
+<rect class="caja-peligro" x="490" y="20" width="190" height="80" rx="8"/><text class="tit" x="585" y="52" text-anchor="middle">Servidor</text><text class="tenue" x="585" y="76" text-anchor="middle">si GET borra, borra</text>
+</svg>
+<figcaption>Las acciones que cambian datos van con <code>POST</code>, <code>PUT</code>, <code>PATCH</code> o <code>DELETE</code>, y el servidor comprueba quién las pide.</figcaption>
+</figure>
+</section>
+
+<section class="seccion">
+<h2>Antes de jugar</h2>
+<p>La práctica de la unidad, <a href="04-hackea-el-ranking.html">Hackea el ranking</a>, junta todo lo anterior. Ten a mano:</p>
+<ul class="check">
+<li>La dirección del juego, que es también el alcance: nada fuera de ella</li>
+<li>F12 con la pestaña Network, el filtro Fetch/XHR y Preserve log</li>
+<li>Git Bash con curl y las comillas simples</li>
+<li>Un fichero de notas para apuntar cada petición, su respuesta y lo que cambió</li>
+</ul>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Encuentras en F12 una petición a una API y dices su método, su código y qué envió</li>
+<li>Escribes en Git Bash un <code>curl</code> con método, cabecera y cuerpo JSON</li>
+<li>Copias una petición como cURL (bash), cambias un dato y comparas la respuesta</li>
+<li>Explicas con un ejemplo cada una de las tres reglas</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="02-metodos-codigos-y-cabeceras.html">← Métodos, códigos y cabeceras</a><a href="04-hackea-el-ranking.html">Hackea el ranking →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script>
+(() => {
+  // Panel Red de imitación: cada petición sabe pintar sus tres pestañas.
+  const HOST = "https://api.ranking.example";
+  const PETICIONES = [
+    { nombre: "players", metodo: "GET", codigo: "200 OK", ruta: "/api/players",
+      respuesta: '[\n  {"id": 1, "name": "ana", "score": 42},\n  {"id": 2, "name": "luis", "score": 17}\n]' },
+    { nombre: "players", metodo: "POST", codigo: "201 Created", ruta: "/api/players", cookie: true,
+      cuerpo: '{"name": "marta"}', extra: ["Location: /api/players/3"], respuesta: '{"id": 3, "name": "marta", "score": 0}' },
+    { nombre: "3", metodo: "PATCH", codigo: "200 OK", ruta: "/api/players/3", cookie: true,
+      cuerpo: '{"score": 99}', respuesta: '{"id": 3, "name": "marta", "score": 99}' },
+    { nombre: "99", metodo: "GET", codigo: "404 Not Found", ruta: "/api/players/99",
+      respuesta: '{"error": "No existe el jugador 99"}' },
+  ];
+  const PESTANAS = {
+    headers: (p) => [
+      "General",
+      `Request URL: ${HOST}${p.ruta}`,
+      `Request Method: ${p.metodo}`,
+      `Status Code: ${p.codigo}`,
+      "",
+      "Response Headers",
+      "Content-Type: application/json",
+      ...(p.extra ?? []),
+      "",
+      "Request Headers",
+      "Host: api.ranking.example",
+      ...(p.cookie ? ["Cookie: sesion=7f3a9c…"] : []),
+      ...(p.cuerpo ? ["Content-Type: application/json"] : []),
+    ].join("\n"),
+    payload: (p) => p.cuerpo ?? `Sin cuerpo: una petición ${p.metodo} no lleva.`,
+    response: (p) => p.respuesta,
+  };
+  let elegida = PETICIONES[0], pestana = "headers";
+  const filas = PETICIONES.map((p) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    for (const [texto, clase] of [[p.nombre], [p.metodo], [p.codigo.slice(0, 3), p.codigo.startsWith("2") ? "" : "mal"]]) {
+      const span = document.createElement("span");
+      span.textContent = texto;
+      if (clase) span.className = clase;
+      b.append(span);
+    }
+    b.addEventListener("click", () => { elegida = p; pintarPanel(); });
+    const li = document.createElement("li");
+    li.append(b);
+    return [p, b, li];
+  });
+  document.getElementById("dt-filas").append(...filas.map(([, , li]) => li));
+  const botonesPestana = [...document.querySelectorAll("#dt-pestanas button")];
+  const pintarPanel = () => {
+    for (const [p, b] of filas) b.setAttribute("aria-pressed", String(p === elegida));
+    for (const b of botonesPestana) b.setAttribute("aria-pressed", String(b.dataset.pestana === pestana));
+    document.getElementById("dt-contenido").textContent = PESTANAS[pestana](elegida);
+  };
+  document.getElementById("dt-pestanas").addEventListener("click", (e) => {
+    const p = e.target.closest("button")?.dataset.pestana;
+    if (p) { pestana = p; pintarPanel(); }
+  });
+  pintarPanel();
+
+  // Constructor de órdenes curl para Git Bash, con la explicación de cada pieza.
+  const CON_CUERPO = new Set(["POST", "PUT", "PATCH"]);
+  const comillas = (texto) => `'${texto.replaceAll("'", `'\\''`)}'`;
+  const botonesMetodo = [...document.querySelectorAll("#c-metodos button")];
+  const url = document.getElementById("c-url"), auth = document.getElementById("c-auth"), cuerpo = document.getElementById("c-cuerpo");
+  let metodo = "GET";
+  const pintarOrden = () => {
+    const conCuerpo = CON_CUERPO.has(metodo);
+    for (const b of botonesMetodo) b.setAttribute("aria-pressed", String(b.textContent === metodo));
+    cuerpo.disabled = !conCuerpo;
+    const piezas = [["curl", "el programa"], ["-i", "enseña el código y las cabeceras de la respuesta, no solo el cuerpo"]];
+    if (metodo !== "GET") piezas.push([`-X ${metodo}`, "el método; sin -X, curl hace GET"]);
+    piezas.push([comillas(url.value.trim()), "la URL, entre comillas simples"]);
+    if (auth.checked) piezas.push([`-H ${comillas("Authorization: Bearer token-de-clase")}`, "una cabecera; -H se repite una vez por cabecera"]);
+    if (conCuerpo) piezas.push(
+      ["-H 'Content-Type: application/json'", "avisa de que el cuerpo es JSON"],
+      [`--data ${comillas(cuerpo.value)}`, "el cuerpo de la petición"],
+    );
+    document.getElementById("c-orden").textContent = piezas.map(([orden]) => orden).join(" ");
+    document.getElementById("c-piezas").replaceChildren(...piezas.map(([orden, explicacion]) => {
+      const li = document.createElement("li");
+      const code = document.createElement("code");
+      code.textContent = orden;
+      li.append(code, explicacion);
+      return li;
+    }));
+  };
+  document.getElementById("c-metodos").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b) { metodo = b.textContent; pintarOrden(); }
+  });
+  for (const campo of [url, auth, cuerpo]) campo.addEventListener("input", pintarOrden);
+  pintarOrden();
+})();
+</script>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

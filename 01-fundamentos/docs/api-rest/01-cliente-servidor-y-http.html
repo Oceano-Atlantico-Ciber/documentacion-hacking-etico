@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API REST 1 · Cliente, servidor y HTTP · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+<style>
+/* El viaje de una petición: lo que no pertenece al paso actual se atenúa. */
+.viaje [data-pasos]:not(.nodo) { opacity: .12; }
+.viaje [data-pasos].activo { opacity: 1; }
+.viaje .nodo.activo rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; }
+.pasos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.pasos span { font: 600 13px var(--f-mono); color: var(--muted); }
+/* Despiece de la URL: cada parte con su color, el mismo en el texto y en la ficha. */
+.url-pintada { font: 15px/1.6 var(--f-mono); word-break: break-all; background: var(--bg); padding: 10px 12px; border-radius: 6px; }
+.url-pintada span { border-bottom: 3px solid currentColor; }
+dl.ficha dt[class] { font-weight: 700; }
+.p-esquema { color: var(--accent); }
+.p-host { color: var(--ok); }
+.p-puerto { color: var(--ia); }
+.p-ruta { color: var(--ink); }
+.p-consulta { color: var(--warn); }
+.p-fragmento { color: var(--muted); }
+.json-ok { color: var(--ok); font-weight: 600; }
+.json-mal { color: var(--crit); font-weight: 600; }
+@media (prefers-reduced-motion: no-preference) {
+  .viaje [data-pasos], .viaje .nodo rect { transition: opacity .2s, fill .2s, stroke .2s; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · API REST 1 de 4</p>
+<h1>Cliente, servidor y HTTP</h1>
+<p class="lead">Casi todo lo que auditaremos habla con un servidor a través de una API. Antes de buscarle fallos hay que saber leer esa conversación: quién pregunta, qué viaja por la red y en qué formato.</p>
+<div class="meta"><span>Práctica de la unidad: <a href="04-hackea-el-ranking.html">Hackea el ranking</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Qué es una API</h2>
+<p>Una <b>API</b> (<i>Application Programming Interface</i>) es la puerta que un programa ofrece a otros programas. Piensa en el mostrador de una cafetería: no entras a la cocina, pides en el mostrador con unas palabras acordadas y te devuelven lo que has pedido. Quien pide es el <b>cliente</b>; quien atiende, el <b>servidor</b>.</p>
+<p>Un mismo servidor suele atender a dos tipos de cliente. A una persona con su navegador le devuelve páginas en HTML, pensadas para leerse. A un programa le devuelve datos en JSON, pensados para procesarse. La página que ves en el navegador suele ser las dos cosas: llega en HTML y después su JavaScript pide datos a la API.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 680 195" role="img" aria-label="Una web: el navegador pide GET /ranking y el servidor devuelve HTML, una página para leer. Una API: un programa pide GET /api/players y el servidor devuelve JSON, datos para programas.">
+<defs><marker id="qa-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="tenue mono" x="0" y="18">UNA WEB</text>
+<rect class="caja" x="0" y="28" width="140" height="60" rx="8"/><text class="tit" x="70" y="54" text-anchor="middle">Navegador</text><text class="tenue" x="70" y="74" text-anchor="middle">lo usa una persona</text>
+<path class="linea" d="M140 58L268 58" marker-end="url(#qa-f)"/><text class="mono" x="205" y="50" text-anchor="middle">GET /ranking</text>
+<rect class="caja-acento" x="270" y="28" width="140" height="60" rx="8"/><text class="tit" x="340" y="54" text-anchor="middle">Servidor</text><text class="tenue" x="340" y="74" text-anchor="middle">web</text>
+<path class="linea" d="M410 58L518 58" marker-end="url(#qa-f)"/><text class="tenue" x="465" y="50" text-anchor="middle">responde</text>
+<rect class="caja" x="520" y="28" width="160" height="60" rx="8"/><text class="tit" x="600" y="54" text-anchor="middle">HTML</text><text class="tenue" x="600" y="74" text-anchor="middle">una página para leer</text>
+<text class="tenue mono" x="0" y="118">UNA API</text>
+<rect class="caja" x="0" y="128" width="140" height="60" rx="8"/><text class="tit" x="70" y="154" text-anchor="middle">Programa</text><text class="tenue" x="70" y="174" text-anchor="middle">JavaScript, app o curl</text>
+<path class="linea" d="M140 158L268 158" marker-end="url(#qa-f)"/><text class="mono" x="205" y="150" text-anchor="middle">GET /api/players</text>
+<rect class="caja-acento" x="270" y="128" width="140" height="60" rx="8"/><text class="tit" x="340" y="154" text-anchor="middle">Servidor</text><text class="tenue" x="340" y="174" text-anchor="middle">API</text>
+<path class="linea" d="M410 158L518 158" marker-end="url(#qa-f)"/><text class="tenue" x="465" y="150" text-anchor="middle">responde</text>
+<rect class="caja-ok" x="520" y="128" width="160" height="60" rx="8"/><text class="tit" x="600" y="154" text-anchor="middle">JSON</text><text class="tenue" x="600" y="174" text-anchor="middle">datos para programas</text>
+</svg>
+<figcaption>Las dos conversaciones usan el mismo protocolo, HTTP. Cambia lo que se devuelve y para quién.</figcaption>
+</figure>
+</section>
+
+<section class="seccion">
+<h2>El viaje de una petición</h2>
+<p>Cada vez que un cliente necesita algo del servidor hace una <b>petición</b> y espera una <b>respuesta</b>. Siempre es el cliente quien empieza: el servidor solo contesta. Recorre el viaje paso a paso.</p>
+<figure>
+<svg class="diagrama viaje" viewBox="0 0 700 185" role="img" aria-label="Cliente, red, servidor y datos en fila. La petición va del cliente al servidor pasando por la red; el servidor consulta sus datos y la respuesta vuelve por el mismo camino.">
+<defs><marker id="vi-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<g class="nodo" data-pasos="1 5"><rect class="caja" x="0" y="60" width="130" height="80" rx="8"/><text class="tit" x="65" y="96" text-anchor="middle">Cliente</text><text class="tenue" x="65" y="116" text-anchor="middle">navegador o app</text></g>
+<g class="nodo" data-pasos="2 4"><rect class="caja discontinua" x="190" y="60" width="130" height="80" rx="8"/><text class="tit" x="255" y="96" text-anchor="middle">Red</text><text class="tenue" x="255" y="116" text-anchor="middle">wifi y routers</text></g>
+<g class="nodo" data-pasos="3"><rect class="caja" x="380" y="60" width="130" height="80" rx="8"/><text class="tit" x="445" y="96" text-anchor="middle">Servidor</text><text class="tenue" x="445" y="116" text-anchor="middle">la API</text></g>
+<g class="nodo" data-pasos="3"><rect class="caja" x="570" y="60" width="130" height="80" rx="8"/><text class="tit" x="635" y="96" text-anchor="middle">Datos</text><text class="tenue" x="635" y="116" text-anchor="middle">lo que guarda</text></g>
+<g data-pasos="2"><path class="linea" d="M130 88L188 88" marker-end="url(#vi-f)"/><path class="linea" d="M320 88L378 88" marker-end="url(#vi-f)"/></g>
+<g data-pasos="3"><path class="linea" d="M510 88L568 88" marker-end="url(#vi-f)"/><path class="linea" d="M570 112L512 112" marker-end="url(#vi-f)"/></g>
+<g data-pasos="4"><path class="linea" d="M380 112L322 112" marker-end="url(#vi-f)"/><path class="linea" d="M190 112L132 112" marker-end="url(#vi-f)"/></g>
+<text class="mono acento" x="65" y="44" text-anchor="middle" data-pasos="1 2">GET /api/players/1</text>
+<text x="445" y="44" text-anchor="middle" data-pasos="3">¿existe? ¿tiene permiso?</text>
+<text x="635" y="44" text-anchor="middle" data-pasos="3">busca el jugador 1</text>
+<text class="mono acento" x="255" y="170" text-anchor="middle" data-pasos="4">200 OK + JSON</text>
+<text x="65" y="170" text-anchor="middle" data-pasos="5">pinta el ranking</text>
+</svg>
+<figcaption class="note" id="viaje-texto" aria-live="polite"></figcaption>
+</figure>
+<div class="pasos opciones">
+<button type="button" id="viaje-atras">← Anterior</button>
+<button type="button" id="viaje-adelante">Siguiente →</button>
+<span id="viaje-contador"></span>
+</div>
+</section>
+
+<section class="seccion">
+<h2>HTTP: la conversación es texto</h2>
+<p>Cliente y servidor hablan <b>HTTP</b>. Una petición y una respuesta HTTP son texto con un orden fijo, y eso es lo que las hace tan fáciles de leer y de modificar. Esta es la petición del viaje anterior y su respuesta:</p>
+<pre><code>GET /api/players/1 HTTP/1.1
+Host: api.ranking.example
+Accept: application/json</code></pre>
+<pre><code>HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"id": 1, "name": "ana", "score": 42}</code></pre>
+<ul>
+<li>La <b>primera línea</b> de la petición dice qué quieres (<code>GET</code>, leer) y sobre qué (<code>/api/players/1</code>). La de la respuesta, cómo ha ido: <code>200 OK</code>.</li>
+<li>Después van las <b>cabeceras</b>, una por línea con la forma <code>Nombre: valor</code>: datos sobre el mensaje, como a qué máquina va o en qué formato está el cuerpo.</li>
+<li>Tras una <b>línea en blanco</b>, el <b>cuerpo</b>: los datos. Una petición de lectura no lleva cuerpo.</li>
+</ul>
+<p>Cada pieza (método, códigos y cabeceras) se desmonta en el tema siguiente. Con <b>HTTPS</b> el texto es el mismo, pero viaja cifrado: nadie en la red puede leerlo ni cambiarlo por el camino. El cifrado protege el viaje; lo que se envía lo sigue decidiendo el cliente.</p>
+</section>
+
+<section class="seccion">
+<h2>Las partes de una URL</h2>
+<p>La <b>URL</b> es la dirección completa de lo que pides. Cambia la de abajo, o elige un ejemplo, y mira cómo se descompone.</p>
+<div class="panel">
+<label>URL <input id="url" type="url" spellcheck="false" autocomplete="off" value="https://api.ranking.example:8443/api/players/1?orden=desc&amp;limite=5#arriba"></label>
+<div class="opciones" id="url-ejemplos">
+<button type="button" data-url="https://api.ranking.example:8443/api/players/1?orden=desc&amp;limite=5#arriba">Completa</button>
+<button type="button" data-url="http://localhost:8080/api/leaderboard">Juego en tu equipo</button>
+<button type="button" data-url="https://github.com/search?q=floci&amp;type=repositories">Búsqueda en GitHub</button>
+</div>
+<p class="url-pintada" id="url-pintada" aria-live="polite"></p>
+<dl class="ficha" id="url-partes"></dl>
+</div>
+</section>
+
+<section class="seccion">
+<h2>REST: cada cosa tiene su dirección</h2>
+<p><b>REST</b> es una forma de organizar una API: cada cosa que maneja el servidor es un <b>recurso</b> con su propia ruta, y las rutas se escriben como nombres, no como acciones. Lo que quieres hacer con el recurso lo dice el método, como verás en el tema siguiente.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 650 200" role="img" aria-label="La colección /api/players contiene los elementos /api/players/1, /api/players/2 y /api/players/3; del jugador 1 cuelga /api/players/1/partidas.">
+<rect class="caja-acento" x="0" y="75" width="170" height="40" rx="8"/><text class="mono" x="85" y="99" text-anchor="middle">/api/players</text>
+<path class="linea" d="M170 95C210 95 210 40 250 40"/><path class="linea" d="M170 95L250 95"/><path class="linea" d="M170 95C210 95 210 150 250 150"/>
+<rect class="caja" x="250" y="20" width="170" height="40" rx="8"/><text class="mono" x="335" y="44" text-anchor="middle">/api/players/1</text>
+<rect class="caja" x="250" y="75" width="170" height="40" rx="8"/><text class="mono" x="335" y="99" text-anchor="middle">/api/players/2</text>
+<rect class="caja" x="250" y="130" width="170" height="40" rx="8"/><text class="mono" x="335" y="154" text-anchor="middle">/api/players/3</text>
+<path class="linea" d="M420 40L450 40"/>
+<rect class="caja-ok" x="450" y="20" width="200" height="40" rx="8"/><text class="mono" x="550" y="44" text-anchor="middle">/api/players/1/partidas</text>
+<text class="tenue" x="85" y="195" text-anchor="middle">la colección</text>
+<text class="tenue" x="335" y="195" text-anchor="middle">un elemento por identificador</text>
+<text class="tenue" x="550" y="85" text-anchor="middle">lo que cuelga de uno</text>
+</svg>
+<figcaption>Colección en plural, elemento con su identificador y, debajo, lo que pertenece a ese elemento.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Así sí</th><th>Así no</th><th>Por qué</th></tr></thead><tbody>
+<tr><td><code>/api/players/1</code></td><td><code>/api/getPlayer?id=1</code></td><td>La ruta nombra el recurso; leer lo dice el método.</td></tr>
+<tr><td><code>/api/players</code></td><td><code>/api/player-list</code></td><td>La colección y sus elementos comparten raíz.</td></tr>
+</tbody></table></div>
+<p>Muchas APIs no siguen estas reglas al pie de la letra. Para auditar no hace falta que la API sea bonita, sino entender qué ruta toca qué datos.</p>
+</section>
+
+<section class="seccion">
+<h2>JSON: el formato de los datos</h2>
+<p>Las APIs se intercambian los datos en <b>JSON</b>, un texto con seis tipos de valor:</p>
+<div class="tabla"><table><thead><tr><th>Tipo</th><th>Ejemplo</th><th>Para qué</th></tr></thead><tbody>
+<tr><td>Objeto</td><td><code>{"name": "ana", "score": 42}</code></td><td>Pares clave y valor. Las claves, siempre entre comillas dobles.</td></tr>
+<tr><td>Lista</td><td><code>[1, 2, 3]</code></td><td>Valores en orden.</td></tr>
+<tr><td>Texto</td><td><code>"ana"</code></td><td>Siempre con comillas dobles.</td></tr>
+<tr><td>Número</td><td><code>42</code>, <code>3.5</code></td><td>Sin comillas.</td></tr>
+<tr><td>Booleano</td><td><code>true</code>, <code>false</code></td><td>Sí o no.</td></tr>
+<tr><td>Nulo</td><td><code>null</code></td><td>Sin valor.</td></tr>
+</tbody></table></div>
+<p>Un error de una sola coma hace que el servidor rechace la petición entera. Escribe o pega JSON en la caja y comprueba si es válido; los botones cargan los tres errores más habituales.</p>
+<div class="panel">
+<label for="json">JSON</label>
+<textarea id="json" rows="6" spellcheck="false"></textarea>
+<div class="opciones" id="json-ejemplos">
+<button type="button" data-ejemplo="bien">Correcto</button>
+<button type="button" data-ejemplo="simples">Comillas simples</button>
+<button type="button" data-ejemplo="coma">Coma al final</button>
+<button type="button" data-ejemplo="clave">Clave sin comillas</button>
+</div>
+<p id="json-resultado" aria-live="polite"></p>
+</div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Sabes explicar quién empieza siempre la conversación y qué devuelve el servidor a una persona y a un programa</li>
+<li>Distingues en un mensaje HTTP la primera línea, las cabeceras y el cuerpo</li>
+<li>Sabes qué parte de una URL no llega nunca al servidor</li>
+<li>Lees una ruta REST y dices si apunta a una colección o a un elemento</li>
+<li>Encuentras el fallo de un JSON que el servidor rechaza</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="../01-git/04-deshacer-y-seguridad.html">← Git 4 · Deshacer y seguridad</a><a href="02-metodos-codigos-y-cabeceras.html">Métodos, códigos y cabeceras →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script>
+(() => {
+  // El viaje de una petición: cada elemento con data-pasos se ilumina en los pasos que lista.
+  const PASOS = [
+    "1 · El cliente prepara la petición: qué quiere (leer) y sobre qué (el jugador 1).",
+    "2 · La petición sale por la red hasta el servidor. Con HTTPS viaja cifrada.",
+    "3 · El servidor comprueba que la ruta existe y que puedes pedirla, y busca el dato.",
+    "4 · El servidor responde con un código (200, ha ido bien) y los datos en JSON.",
+    "5 · El cliente usa la respuesta: la página pinta el ranking con esos datos.",
+  ];
+  const marcables = [...document.querySelectorAll(".viaje [data-pasos]")]
+    .map((el) => [el, new Set(el.dataset.pasos.split(" ").map(Number))]);
+  const atras = document.getElementById("viaje-atras");
+  const adelante = document.getElementById("viaje-adelante");
+  let paso = 1;
+  const pintarViaje = () => {
+    for (const [el, pasos] of marcables) el.classList.toggle("activo", pasos.has(paso));
+    document.getElementById("viaje-texto").textContent = PASOS[paso - 1];
+    document.getElementById("viaje-contador").textContent = `Paso ${paso} de ${PASOS.length}`;
+    atras.disabled = paso === 1;
+    adelante.disabled = paso === PASOS.length;
+  };
+  atras.addEventListener("click", () => { paso--; pintarViaje(); });
+  adelante.addEventListener("click", () => { paso++; pintarViaje(); });
+  pintarViaje();
+
+  // Despiece de la URL con la API URL del propio navegador.
+  const PUERTO_POR_DEFECTO = { "http:": "80", "https:": "443" };
+  const entrada = document.getElementById("url");
+  const pintada = document.getElementById("url-pintada");
+  const partes = document.getElementById("url-partes");
+  const pintarUrl = () => {
+    let u;
+    try { u = new URL(entrada.value.trim()); } catch {
+      pintada.textContent = "No es una URL completa: empieza por http:// o https://";
+      partes.replaceChildren();
+      return;
+    }
+    const filas = [
+      ["p-esquema", "Esquema", `${u.protocol}//`, u.protocol === "https:" ? "HTTPS: el viaje va cifrado." : "Cómo se habla con el servidor."],
+      ["p-host", "Host", u.hostname, "El nombre de la máquina a la que va la petición."],
+      ["p-puerto", "Puerto", u.port && `:${u.port}`, u.port ? "La puerta de esa máquina en la que escucha el servicio."
+        : `No aparece: se usa el de serie, ${PUERTO_POR_DEFECTO[u.protocol] ?? "el del esquema"}.`],
+      ["p-ruta", "Ruta", u.pathname, "Qué recurso pides."],
+      ["p-consulta", "Consulta", u.search, u.search ? [...u.searchParams].map(([k, v]) => `${k} = ${v}`).join(" · ") + ". Opciones que el servidor lee." : "Sin parámetros."],
+      ["p-fragmento", "Fragmento", u.hash, u.hash ? "Se queda en el navegador: no se envía al servidor." : "Sin fragmento."],
+    ];
+    pintada.replaceChildren(...filas.filter(([, , texto]) => texto).map(([clase, , texto]) => {
+      const span = document.createElement("span");
+      span.className = clase;
+      span.textContent = texto;
+      return span;
+    }));
+    partes.replaceChildren(...filas.flatMap(([clase, nombre, texto, explicacion]) => {
+      const dt = document.createElement("dt");
+      dt.className = clase;
+      dt.textContent = nombre;
+      const dd = document.createElement("dd");
+      dd.textContent = texto ? `${texto} · ${explicacion}` : explicacion;
+      return [dt, dd];
+    }));
+  };
+  entrada.addEventListener("input", pintarUrl);
+  document.getElementById("url-ejemplos").addEventListener("click", (e) => {
+    const url = e.target.closest("button")?.dataset.url;
+    if (url) { entrada.value = url; pintarUrl(); }
+  });
+  pintarUrl();
+
+  // Validador de JSON con JSON.parse, el mismo que usan muchos servidores.
+  const EJEMPLOS = {
+    bien: '{\n  "name": "ana",\n  "score": 42,\n  "flags": ["integridad"]\n}',
+    simples: "{\n  'name': 'ana',\n  'score': 42\n}",
+    coma: '{\n  "name": "ana",\n  "score": 42,\n}',
+    clave: '{\n  name: "ana",\n  "score": 42\n}',
+  };
+  const caja = document.getElementById("json");
+  const resultado = document.getElementById("json-resultado");
+  const describir = (v) => {
+    if (Array.isArray(v)) return `una lista de ${v.length} elementos`;
+    if (v === null) return "null";
+    if (typeof v === "object") {
+      const claves = Object.keys(v);
+      return `un objeto con ${claves.length} claves (${claves.join(", ")})`;
+    }
+    return { string: "un texto", number: "un número", boolean: "un booleano" }[typeof v];
+  };
+  const validar = () => {
+    try {
+      resultado.className = "json-ok";
+      resultado.textContent = `Válido: ${describir(JSON.parse(caja.value))}.`;
+    } catch (e) {
+      resultado.className = "json-mal";
+      resultado.textContent = `No es JSON válido. El navegador dice: ${e.message}`;
+    }
+  };
+  caja.addEventListener("input", validar);
+  document.getElementById("json-ejemplos").addEventListener("click", (e) => {
+    const ejemplo = e.target.closest("button")?.dataset.ejemplo;
+    if (ejemplo) { caja.value = EJEMPLOS[ejemplo]; validar(); }
+  });
+  caja.value = EJEMPLOS.bien;
+  validar();
+})();
+</script>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

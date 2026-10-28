@@ -5,21 +5,12 @@
   const ARBOL = [
     ["Inicio", "index.html"],
     ["Presentación", "00-presentacion/index.html", [
-      ["Temas", "00-presentacion/index.html#temas", [
-        ["01 · Quién soy", "00-presentacion/docs/01-quien-soy.html"],
-        ["02 · Cómo funciona la asignatura", "00-presentacion/docs/02-como-funciona-la-asignatura.html"],
-        ["03 · Git y GitHub", "00-presentacion/docs/03-git-y-github.html"],
-        ["04 · Docker", "00-presentacion/docs/04-docker.html"],
-        ["05 · IA: local o en la nube", "00-presentacion/docs/05-ia.html"],
-        ["06 · Hackea el ranking", "00-presentacion/docs/06-hackea-el-ranking.html"],
-        ["07 · Primer commit", "00-presentacion/docs/07-primer-commit.html"],
-        ["08 · Qué es una API REST", "00-presentacion/docs/08-api-rest.html"],
-      ]],
-      ["Ejercicios", "00-presentacion/ejercicios/index.html", [
-        ["01 · Hackea el ranking", "00-presentacion/ejercicios/index.html#01-hackea-el-ranking", [
-          ["Solución", "00-presentacion/ejercicios/01-hackea-el-ranking/solucion.html"],
-        ]],
-      ]],
+      ["01 · Quién soy", "00-presentacion/docs/01-quien-soy.html"],
+      ["02 · Cómo funciona la asignatura", "00-presentacion/docs/02-como-funciona-la-asignatura.html"],
+      ["03 · Git y GitHub", "00-presentacion/docs/03-git-y-github.html"],
+      ["04 · Docker", "00-presentacion/docs/04-docker.html"],
+      ["05 · IA: local o en la nube", "00-presentacion/docs/05-ia.html"],
+      ["06 · Primer commit", "00-presentacion/docs/06-primer-commit.html"],
     ]],
     ["Fundamentos", "01-fundamentos/index.html", [
       ["Temas", "01-fundamentos/index.html#temas", [
@@ -28,6 +19,12 @@
           ["Git 2 · Ramas y fusiones", "01-fundamentos/docs/01-git/02-ramas-y-fusiones.html"],
           ["Git 3 · Remotos y reescribir historia", "01-fundamentos/docs/01-git/03-remotos-y-reescribir-historia.html"],
           ["Git 4 · Deshacer y seguridad", "01-fundamentos/docs/01-git/04-deshacer-y-seguridad.html"],
+        ]],
+        ["API REST", "01-fundamentos/index.html#api-rest", [
+          ["API REST 1 · Cliente, servidor y HTTP", "01-fundamentos/docs/api-rest/01-cliente-servidor-y-http.html"],
+          ["API REST 2 · Métodos, códigos y cabeceras", "01-fundamentos/docs/api-rest/02-metodos-codigos-y-cabeceras.html"],
+          ["API REST 3 · F12, curl y seguridad", "01-fundamentos/docs/api-rest/03-f12-curl-y-seguridad.html"],
+          ["API REST 4 · Hackea el ranking", "01-fundamentos/docs/api-rest/04-hackea-el-ranking.html"],
         ]],
         ["Ética y seguridad", "01-fundamentos/index.html#etica-y-seguridad", [
           ["Ética, ley y alcance", "01-fundamentos/docs/etica-y-seguridad/01-etica-ley-y-alcance.html"],
@@ -52,13 +49,16 @@
           ["E7 · Revert", "01-fundamentos/ejercicios/01-git/e7.html"],
           ["E8 · Secreto filtrado", "01-fundamentos/ejercicios/01-git/e8.html"],
         ]],
+        ["API REST", "01-fundamentos/ejercicios/index.html#api-rest", [
+          ["Hackea el ranking · Solución", "01-fundamentos/ejercicios/api-rest/hackea-el-ranking/solucion.html"],
+        ]],
         ["Empresa con Terraform", "01-fundamentos/ejercicios/index.html#empresa-con-terraform", [
           ["Puesta en marcha del laboratorio", "01-fundamentos/ejercicios/empresa-con-terraform/puesta-en-marcha.html"],
         ]],
         ["Mini auditoría", "01-fundamentos/ejercicios/index.html#mini-auditoria"],
       ]],
       ["Casos analizados", "01-fundamentos/casos-analizados/index.html", [
-        ["Hackea el ranking", "00-presentacion/docs/06-hackea-el-ranking.html#documentar"],
+        ["Hackea el ranking", "01-fundamentos/docs/api-rest/04-hackea-el-ranking.html#documentar"],
         ["PHP2Shell", "01-fundamentos/casos-analizados/cve-2026-109618-php2shell.html"],
       ]],
     ]],
