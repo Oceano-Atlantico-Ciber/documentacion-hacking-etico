@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seguridad, vulnerabilidades y ataques · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Semanas 2 y 3</p>
+<h1>Seguridad, vulnerabilidades y ataques</h1>
+<p class="lead">Las cuatro propiedades que protege la seguridad y cómo se clasifican los fallos y los ataques que las rompen, con ejemplos que ya conocéis.</p>
+<div class="meta"><span>Criterios <b>d, f, g, h</b></span></div>
+</header>
+<section class="seccion">
+<h2>Las cuatro propiedades</h2>
+<p>Qué rompía cada truco del <a href="../../../00-presentacion/docs/06-hackea-el-ranking.html">minijuego</a>: <b>integridad</b> (puntuación falsa), <b>autenticidad</b> (cambiar la puntuación de otro), <b>disponibilidad</b> (vaciar el ranking) y <b>confidencialidad</b> (la ruta de administración visible en el código). Toda vulnerabilidad rompe al menos una.</p>
+</section>
+<section class="seccion">
+<h2>Tipos de vulnerabilidad</h2>
+<ul>
+<li><b>De diseño:</b> el juego se fiaba del cliente. No la arregla un parche, la arregla cambiar cómo funciona.</li>
+<li><b>De configuración:</b> el bucket público y el permiso total de <a href="../empresa-con-terraform/01-la-empresa-en-floci.html">la empresa en Floci</a>. Las encuentra Trivy.</li>
+<li><b>De software:</b> una versión con un fallo conocido (un CVE). Las delata la enumeración de versiones de la <a href="../mini-auditoria/01-fases-y-auditoria.html">auditoría</a>. Ejemplo real: <a href="../../cve/cve-2026-109618-php2shell.html">PHP2Shell</a>, en <a href="../../cve/index.html">CVE analizados</a>.</li>
+<li><b>Humanas:</b> contraseñas débiles, engaños. Se tratan en <a href="../../../04-sistemas-comprometidos/index.html">Sistemas comprometidos</a>.</li>
+</ul>
+<p>Para documentar cualquiera se responden cuatro preguntas: dónde está, cuál es el fallo, qué permite y cómo se corrige. Lo practicáis con <a href="../../../00-presentacion/docs/06-hackea-el-ranking.html#documentar">cada flag del juego</a>.</p>
+</section>
+<section class="seccion">
+<h2>Tipos de ataque</h2>
+<p>Los ataques se clasifican por la propiedad que rompen: leer lo que no debes (confidencialidad), cambiarlo (integridad), tumbar el servicio (disponibilidad) o hacerte pasar por otro (autenticidad).</p>
+</section>
+
+<nav class="temas" aria-label="Temas del bloque"><a href="01-etica-ley-y-alcance.html">← Ética, ley y alcance</a><a href="../empresa-con-terraform/01-la-empresa-en-floci.html">La empresa en Floci →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>
