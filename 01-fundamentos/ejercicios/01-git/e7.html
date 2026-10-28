@@ -46,7 +46,7 @@ git show HEAD</code></pre></div>
 <p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E7 salga sin fallos, etiqueta:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e7 -m "E7 resuelto"
 git push origin entrega-fundamentos-git-e7</code></pre></div>
-<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y mueve la etiqueta a tu nuevo commit:</p>
+<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y <a href="../../docs/01-git/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>:</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e7 -m "E7 resuelto"
 git push --force origin entrega-fundamentos-git-e7</code></pre></div>
 <p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>

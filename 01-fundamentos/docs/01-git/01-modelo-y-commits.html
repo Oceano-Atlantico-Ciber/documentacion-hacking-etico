@@ -112,7 +112,21 @@ git rm --cached fichero               # dejar de versionar algo que ya estaba</c
 <p>Un fichero que ya está versionado no se ignora aunque añadas su patrón: primero hay que sacarlo con <code>git rm --cached</code>. Y si contenía un secreto, sacarlo no basta: sigue en la historia. Lo veremos en <a href="04-deshacer-y-seguridad.html">Git 4</a>.</p>
 </section>
 
-<section class="seccion">
+<section class="seccion" id="mirar">
+<h2>Mirar el historial</h2>
+<p>Ninguna de estas órdenes cambia nada: solo enseñan. Los ejercicios las usan para comprobar el resultado antes de subirlo.</p>
+<div class="tabla"><table><thead><tr><th>Orden</th><th>Enseña</th></tr></thead><tbody>
+<tr><td><code>git status --short -uall</code></td><td>Una línea por fichero cambiado o sin seguimiento, también los que están dentro de carpetas nuevas.</td></tr>
+<tr><td><code>git log --oneline --stat</code></td><td>Cada commit en una línea y, debajo, los ficheros que tocó. Con <code>--name-only</code>, solo sus nombres.</td></tr>
+<tr><td><code>git log --oneline --graph --all</code></td><td>Todas las ramas como un grafo.</td></tr>
+<tr><td><code>git show &lt;commit&gt;</code></td><td>El autor, el mensaje y el diff de un commit. Con <code>--stat</code>, solo los ficheros.</td></tr>
+<tr><td><code>git show &lt;commit&gt;:&lt;ruta&gt;</code></td><td>El contenido de un fichero tal como estaba en ese commit.</td></tr>
+<tr><td><code>git ls-tree -r --name-only &lt;commit&gt;</code></td><td>Los ficheros del tree de ese commit: lo que se ve al descargarlo.</td></tr>
+</tbody></table></div>
+<p><code>&lt;commit&gt;</code> puede ser un SHA, una rama o <code>HEAD</code>, el commit en el que estás. Si añades <code>-- &lt;ruta&gt;</code> a <code>git log</code>, solo verás los commits que tocaron esa ruta.</p>
+</section>
+
+<section class="seccion" id="etiquetas">
 <h2>Identidad y etiquetas</h2>
 <p>El autor de cada commit sale de tu configuración. GitHub asocia el commit a tu cuenta solo si ese correo es uno de los verificados en <b>Settings → Emails</b>. Si prefieres no publicar tu correo, usa la dirección <code>…@users.noreply.github.com</code> que aparece en esa misma página.</p>
 <pre><code>git config --global user.name "Tu Nombre"
@@ -121,7 +135,7 @@ git config --global user.email "un-correo-verificado@ejemplo.com"</code></pre>
 <pre><code>git tag -a entrega-fundamentos-git-e1 -m "E1 resuelto"
 git push origin entrega-fundamentos-git-e1
 git cat-file -t entrega-fundamentos-git-e1    # tag, no commit</code></pre>
-<p>Antes de etiquetar, mira el check <b>Corrector git</b> de tu último commit en GitHub. Si después hay que corregir algo, la etiqueta se mueve con <code>git tag -fa</code> y se sube con <code>git push --force</code>. Cuenta tal como esté al cerrar el plazo.</p>
+<p>Antes de etiquetar, comprueba que el ejercicio está bien. Cada vez que el docente lanza la corrección, GitHub muestra un ✓ o una ✗ junto al último commit de <code>main</code> en la portada de tu repositorio. Pulsa ese símbolo y abre <b>Details</b> en <b>Corrector git</b>: hay una fila por ejercicio, con los fallos que encuentra el corrector. Cuando la fila de tu ejercicio salga sin fallos, etiqueta. Una etiqueta ya subida también se puede mover a otro commit, pero eso reescribe lo publicado: lo verás en <a href="03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>.</p>
 </section>
 
 <section class="seccion">
