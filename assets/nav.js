@@ -5,42 +5,56 @@
   const ARBOL = [
     ["Inicio", "index.html"],
     ["Presentación", "00-presentacion/index.html", [
-      ["01 · Quién soy", "00-presentacion/docs/01-quien-soy.html"],
-      ["02 · Cómo funciona la asignatura", "00-presentacion/docs/02-como-funciona-la-asignatura.html"],
-      ["03 · Git y GitHub", "00-presentacion/docs/03-git-y-github.html"],
-      ["04 · Docker", "00-presentacion/docs/04-docker.html"],
-      ["05 · IA: local o en la nube", "00-presentacion/docs/05-ia.html"],
-      ["06 · Hackea el ranking", "00-presentacion/docs/06-hackea-el-ranking.html"],
-      ["07 · Primer commit", "00-presentacion/docs/07-primer-commit.html"],
-      ["08 · Qué es una API REST", "00-presentacion/docs/08-api-rest.html"],
+      ["Temas", "00-presentacion/index.html#temas", [
+        ["01 · Quién soy", "00-presentacion/docs/01-quien-soy.html"],
+        ["02 · Cómo funciona la asignatura", "00-presentacion/docs/02-como-funciona-la-asignatura.html"],
+        ["03 · Git y GitHub", "00-presentacion/docs/03-git-y-github.html"],
+        ["04 · Docker", "00-presentacion/docs/04-docker.html"],
+        ["05 · IA: local o en la nube", "00-presentacion/docs/05-ia.html"],
+        ["06 · Hackea el ranking", "00-presentacion/docs/06-hackea-el-ranking.html"],
+        ["07 · Primer commit", "00-presentacion/docs/07-primer-commit.html"],
+        ["08 · Qué es una API REST", "00-presentacion/docs/08-api-rest.html"],
+      ]],
       ["Ejercicios", "00-presentacion/ejercicios/index.html", [
-        ["Hackea el ranking", "00-presentacion/ejercicios/index.html#01-hackea-el-ranking"],
-        ["Solución de Hackea el ranking", "00-presentacion/ejercicios/01-hackea-el-ranking/solucion.html"],
+        ["01 · Hackea el ranking", "00-presentacion/ejercicios/index.html#01-hackea-el-ranking", [
+          ["Solución", "00-presentacion/ejercicios/01-hackea-el-ranking/solucion.html"],
+        ]],
       ]],
     ]],
     ["Fundamentos", "01-fundamentos/index.html", [
-      ["01 · Git", "01-fundamentos/ejercicios/index.html#01-git", [
-        ["Git 1 · Modelo y commits", "01-fundamentos/docs/01-git/01-modelo-y-commits.html"],
-        ["Git 2 · Ramas y fusiones", "01-fundamentos/docs/01-git/02-ramas-y-fusiones.html"],
-        ["Git 3 · Remotos y reescribir historia", "01-fundamentos/docs/01-git/03-remotos-y-reescribir-historia.html"],
-        ["Git 4 · Deshacer y seguridad", "01-fundamentos/docs/01-git/04-deshacer-y-seguridad.html"],
-        ["E1 · Identidad y commits atómicos", "01-fundamentos/ejercicios/01-git/e1.html"],
-        ["E2 · .gitignore", "01-fundamentos/ejercicios/01-git/e2.html"],
-        ["E3 · Fusiones", "01-fundamentos/ejercicios/01-git/e3.html"],
-        ["E4 · Conflicto", "01-fundamentos/ejercicios/01-git/e4.html"],
-        ["E5 · Rebase", "01-fundamentos/ejercicios/01-git/e5.html"],
-        ["E6 · Rebase interactivo", "01-fundamentos/ejercicios/01-git/e6.html"],
-        ["E7 · Revert", "01-fundamentos/ejercicios/01-git/e7.html"],
-        ["E8 · Secreto filtrado", "01-fundamentos/ejercicios/01-git/e8.html"],
+      ["Temas", "01-fundamentos/index.html#temas", [
+        ["01 · Git", "01-fundamentos/index.html#01-git", [
+          ["Git 1 · Modelo y commits", "01-fundamentos/docs/01-git/01-modelo-y-commits.html"],
+          ["Git 2 · Ramas y fusiones", "01-fundamentos/docs/01-git/02-ramas-y-fusiones.html"],
+          ["Git 3 · Remotos y reescribir historia", "01-fundamentos/docs/01-git/03-remotos-y-reescribir-historia.html"],
+          ["Git 4 · Deshacer y seguridad", "01-fundamentos/docs/01-git/04-deshacer-y-seguridad.html"],
+        ]],
+        ["Ética y seguridad", "01-fundamentos/index.html#etica-y-seguridad", [
+          ["Ética, ley y alcance", "01-fundamentos/docs/etica-y-seguridad/01-etica-ley-y-alcance.html"],
+          ["Seguridad, vulnerabilidades y ataques", "01-fundamentos/docs/etica-y-seguridad/02-seguridad-y-vulnerabilidades.html"],
+        ]],
+        ["Empresa con Terraform", "01-fundamentos/index.html#empresa-con-terraform", [
+          ["La empresa en Floci", "01-fundamentos/docs/empresa-con-terraform/01-la-empresa-en-floci.html"],
+        ]],
+        ["Mini auditoría", "01-fundamentos/index.html#mini-auditoria", [
+          ["Fases de un ataque y auditoría vigilada", "01-fundamentos/docs/mini-auditoria/01-fases-y-auditoria.html"],
+          ["Herramientas y darknets", "01-fundamentos/docs/mini-auditoria/02-herramientas-y-darknets.html"],
+        ]],
       ]],
-      ["Ética, ley y alcance", "01-fundamentos/docs/etica-ley-y-alcance.html"],
-      ["Seguridad, vulnerabilidades y ataques", "01-fundamentos/docs/seguridad-y-vulnerabilidades.html"],
-      ["La empresa en Floci", "01-fundamentos/docs/la-empresa-en-floci.html"],
-      ["Fases de un ataque y auditoría vigilada", "01-fundamentos/docs/fases-y-auditoria.html"],
-      ["Herramientas y darknets", "01-fundamentos/docs/herramientas-y-darknets.html"],
       ["Ejercicios", "01-fundamentos/ejercicios/index.html", [
-        ["Empresa con Terraform", "01-fundamentos/ejercicios/index.html#empresa-con-terraform"],
-        ["Puesta en marcha del laboratorio", "01-fundamentos/ejercicios/empresa-con-terraform/puesta-en-marcha.html"],
+        ["01 · Git", "01-fundamentos/ejercicios/index.html#01-git", [
+          ["E1 · Identidad y commits atómicos", "01-fundamentos/ejercicios/01-git/e1.html"],
+          ["E2 · .gitignore", "01-fundamentos/ejercicios/01-git/e2.html"],
+          ["E3 · Fusiones", "01-fundamentos/ejercicios/01-git/e3.html"],
+          ["E4 · Conflicto", "01-fundamentos/ejercicios/01-git/e4.html"],
+          ["E5 · Rebase", "01-fundamentos/ejercicios/01-git/e5.html"],
+          ["E6 · Rebase interactivo", "01-fundamentos/ejercicios/01-git/e6.html"],
+          ["E7 · Revert", "01-fundamentos/ejercicios/01-git/e7.html"],
+          ["E8 · Secreto filtrado", "01-fundamentos/ejercicios/01-git/e8.html"],
+        ]],
+        ["Empresa con Terraform", "01-fundamentos/ejercicios/index.html#empresa-con-terraform", [
+          ["Puesta en marcha del laboratorio", "01-fundamentos/ejercicios/empresa-con-terraform/puesta-en-marcha.html"],
+        ]],
         ["Mini auditoría", "01-fundamentos/ejercicios/index.html#mini-auditoria"],
       ]],
       ["CVE analizados", "01-fundamentos/cve/index.html", [
@@ -51,7 +65,7 @@
     ["Redes y sistemas", "03-redes-y-sistemas/index.html"],
     ["Sistemas comprometidos", "04-sistemas-comprometidos/index.html"],
     ["Aplicaciones web", "05-aplicaciones-web/index.html"],
-    ["Glosario", "glosario.html"],
+    ["Glosario", "glosario/index.html"],
   ];
 
   const raiz = new URL("../", document.currentScript.src);
