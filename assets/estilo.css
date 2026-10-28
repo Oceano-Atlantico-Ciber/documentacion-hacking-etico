@@ -124,7 +124,8 @@ svg.diagrama { width: 100%; min-width: 540px; max-width: 760px; height: auto; di
 .diagrama .acento { fill: var(--accent); }
 .diagrama .peligro { fill: var(--crit); }
 .diagrama .bien { fill: var(--ok); }
-.diagrama .caja { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+/* El borde de las cajas mezcla --muted con el fondo: --line sola apenas se ve en modo oscuro. */
+.diagrama .caja { fill: var(--surface); stroke: color-mix(in srgb, var(--muted) 55%, var(--surface)); stroke-width: 1.5; }
 .diagrama .caja-acento { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
 .diagrama .caja-ia { fill: var(--ia-soft); stroke: var(--ia); stroke-width: 1.5; }
 .diagrama .caja-peligro { fill: var(--crit-soft); stroke: var(--crit); stroke-width: 1.5; }
