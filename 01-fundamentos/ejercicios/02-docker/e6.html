@@ -39,7 +39,7 @@ docker run --rm curlimages/curl:8.11.1 -s -m 3 http://e6-web/</code></pre></div>
   docker run --rm --network e6-red sondeo:1.0 e6-datos 5432 80; } | tee sondeo.txt
 docker rm -f e6-web e6-datos &amp;&amp; docker network rm e6-red</code></pre></div><p>El 5432 de la base de datos está abierto <b>para quien esté en la red</b>, aunque no se haya publicado: es lo que verá nmap en la Mini auditoría.</p><p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li><code>levantar.sh</code> falla en un equipo limpio.</li>
+<li><code>levantar.sh</code> tiene algo que no es una orden <code>docker</code> de las admitidas en <a href="e5.html">E5</a>, falla en un equipo limpio, o algún contenedor no sigue en marcha.</li>
 <li><code>e6-web</code> o <code>e6-datos</code> no están en <code>e6-red</code>, o no salen de las imágenes indicadas.</li>
 <li>La web no publica en <code>127.0.0.1:8086</code>, o la base de datos publica algún puerto.</li>
 <li><code>sondeo.txt</code> no tiene las cuatro líneas, con 80 y 5432 abiertos.</li>

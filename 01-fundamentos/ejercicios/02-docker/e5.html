@@ -32,6 +32,7 @@ cd fundamentos/docker/e5</code></pre></div>
 set -euo pipefail
 export MSYS_NO_PATHCONV=1
 cd "$(dirname "$0")"</code></pre></div><p>La contraseña de este ejercicio puede ir escrita en el script porque es de usar y tirar. En E7 la sacarás a un <code>.env</code>.</p>
+<p class="note">El corrector no ejecuta tu script con bash: lo lee y lanza una a una sus órdenes <code>docker</code>. Por eso solo admite esas cuatro líneas del principio, comentarios y órdenes <code>docker volume create</code>, <code>network create</code>, <code>run</code>, <code>rm</code>, <code>stop</code> y <code>pull</code>, una por línea (puedes partirlas con <code>\</code>). Nada de variables, bucles ni otros programas. Es lo que haría cualquiera antes de ejecutar un script ajeno: leerlo.</p>
 
 <h2 class="step"><span class="n">3</span>Arranca y guarda un dato</h2>
 <div class="cmd"><pre><code>bash levantar.sh
@@ -50,7 +51,7 @@ docker exec e5-db psql -U postgres -c "SELECT texto FROM hallazgos" | tee consul
 docker exec e5-web sh -c 'echo prueba &gt; /usr/share/nginx/html/prueba.html'
 docker rm -f e5-db e5-web</code></pre></div><p>La web sirve tu página, y el contenedor no puede escribir en tu carpeta: <code>Read-only file system</code>.</p><p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li><code>levantar.sh</code> falla en un equipo limpio, o no crea <code>e5-db</code> y <code>e5-web</code> como dice el enunciado.</li>
+<li><code>levantar.sh</code> tiene algo que no es una orden <code>docker</code> de las admitidas, falla en un equipo limpio, o no crea <code>e5-db</code> y <code>e5-web</code> como dice el enunciado.</li>
 <li>Los datos de Postgres no están en el volumen <code>e5-datos</code>, o la web no monta <code>./web</code> en solo lectura.</li>
 <li>La web no responde en <code>127.0.0.1:8085</code> con tu página.</li>
 <li><code>consulta.txt</code> no muestra tu fila (<code>(1 row)</code>).</li>
