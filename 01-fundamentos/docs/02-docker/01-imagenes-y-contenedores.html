@@ -17,6 +17,22 @@
 </header>
 
 <section class="seccion">
+<h2>Palabras de este tema</h2>
+<p>Estas palabras salen en todo el tema. Si al leer una no la recuerdas, vuelve aquí.</p>
+<dl class="ficha">
+<dt>Sistema operativo</dt><dd>El programa que hace funcionar el equipo: Windows, Linux, macOS. Su parte central, el <b>núcleo</b>, reparte el procesador, la memoria y el disco entre los demás programas.</dd>
+<dt>Máquina virtual</dt><dd>Un ordenador entero simulado dentro del tuyo, con su propio sistema operativo.</dd>
+<dt>Imagen</dt><dd>Un paquete con un programa y todo lo que necesita para funcionar. No cambia nunca: es el molde.</dd>
+<dt>Contenedor</dt><dd>Un programa en marcha creado a partir de una imagen y aislado del resto del equipo.</dd>
+<dt>Motor de Docker</dt><dd>El programa que crea, arranca y vigila los contenedores. La orden <code>docker</code> solo le da instrucciones.</dd>
+<dt>Registro</dt><dd>Un almacén de imágenes en Internet, como GitHub lo es del código. Docker usa Docker Hub si no dices otro.</dd>
+<dt>Etiqueta</dt><dd>La versión de una imagen: lo que va detrás de los dos puntos en <code>nginx:1.27-alpine</code>.</dd>
+<dt>Puerto</dt><dd>El número de la puerta por la que se llega a un programa dentro de un equipo. Un servidor web suele atender en el 80.</dd>
+<dt>JSON</dt><dd>Un formato de texto para datos, con llaves y pares <code>"nombre": valor</code>. Docker lo usa para describir sus contenedores.</dd>
+</dl>
+</section>
+
+<section class="seccion">
 <h2>Qué problema resuelve</h2>
 <p>Una herramienta necesita su versión de Python, sus librerías y su configuración. Si cada alumno las instala a mano, cada equipo acaba distinto y aparece el clásico «en mi máquina funciona». Un contenedor lleva todo eso dentro, así que funciona igual en todos los portátiles.</p>
 <figure>
@@ -89,6 +105,40 @@ source ~/.bashrc</code></pre></div></li>
 <div class="cmd"><pre><code>docker run --rm hello-world
 docker compose version</code></pre></div></li>
 </ol>
+<p>La primera orden de la lista ya hace cinco cosas seguidas. Son las mismas que hará cualquier laboratorio del curso:</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 236" role="img" aria-label="docker run --rm hello-world: Git Bash pasa la orden al motor, el motor descarga la imagen de Docker Hub si no la tiene, crea el contenedor, el programa escribe su saludo y termina, y --rm borra el contenedor">
+<defs><marker id="hw-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="hw-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="148" y="0" width="128" height="44" rx="8"/><text class="tit" x="212" y="20" text-anchor="middle">Docker Hub</text><text class="tenue peq" x="212" y="36" text-anchor="middle">registro en Internet</text>
+<path class="linea-acento" d="M212 44V76" marker-end="url(#hw-fa)"/><text class="acento fuerte peq" x="222" y="64">solo la 1.ª vez</text>
+<rect class="caja" x="0" y="80" width="128" height="110" rx="8"/><text class="tit" x="64" y="104" text-anchor="middle">1 · Orden</text>
+<text class="peq" x="64" y="126" text-anchor="middle">Git Bash pasa</text>
+<text class="peq" x="64" y="144" text-anchor="middle">docker run al</text>
+<text class="peq" x="64" y="162" text-anchor="middle">motor de Docker</text>
+<rect class="caja" x="148" y="80" width="128" height="110" rx="8"/><text class="tit" x="212" y="104" text-anchor="middle">2 · Imagen</text>
+<text class="peq" x="212" y="126" text-anchor="middle">¿Ya la tiene?</text>
+<text class="peq" x="212" y="144" text-anchor="middle">Si no, la baja</text>
+<text class="peq" x="212" y="162" text-anchor="middle">de Docker Hub</text>
+<path class="linea" d="M128 135H146" marker-end="url(#hw-f)"/>
+<rect class="caja-acento" x="296" y="80" width="128" height="110" rx="8"/><text class="tit" x="360" y="104" text-anchor="middle">3 · Contenedor</text>
+<text class="peq" x="360" y="126" text-anchor="middle">Lo crea desde</text>
+<text class="peq" x="360" y="144" text-anchor="middle">la imagen y</text>
+<text class="peq" x="360" y="162" text-anchor="middle">lo arranca</text>
+<path class="linea" d="M276 135H294" marker-end="url(#hw-f)"/>
+<rect class="caja-acento" x="444" y="80" width="128" height="110" rx="8"/><text class="tit" x="508" y="104" text-anchor="middle">4 · Programa</text>
+<text class="peq" x="508" y="126" text-anchor="middle">Escribe «Hello</text>
+<text class="peq" x="508" y="144" text-anchor="middle">from Docker!»</text>
+<text class="peq" x="508" y="162" text-anchor="middle">y termina</text>
+<path class="linea" d="M424 135H442" marker-end="url(#hw-f)"/>
+<rect class="caja" x="592" y="80" width="128" height="110" rx="8"/><text class="tit" x="656" y="104" text-anchor="middle">5 · Limpieza</text>
+<text class="peq" x="656" y="126" text-anchor="middle">--rm borra el</text>
+<text class="peq" x="656" y="144" text-anchor="middle">contenedor; la</text>
+<text class="peq" x="656" y="162" text-anchor="middle">imagen se queda</text>
+<path class="linea" d="M572 135H590" marker-end="url(#hw-f)"/>
+<text class="tenue peq" x="360" y="222" text-anchor="middle">La segunda vez no hay descarga: la imagen ya está en tu equipo. Por eso la primera vez tarda más.</text>
+</svg>
+<figcaption>Si te quedas con este dibujo, entiendes el resto del tema: imagen, contenedor, registro y la diferencia entre borrar uno y otro.</figcaption>
+</figure>
 </section>
 
 <section class="seccion">
@@ -183,6 +233,27 @@ docker compose version</code></pre></div></li>
 <pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
 curl -i http://localhost:8080/      # -i: muestra también la línea de estado y las cabeceras
 docker logs web                     # nginx anota cada petición recibida</code></pre>
+<p>Así se lee esa primera orden, trozo a trozo:</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 180" role="img" aria-label="docker run es la orden; -d, --name web y -p 127.0.0.1:8080:80 son opciones; nginx:1.27-alpine es la imagen y va detrás de las opciones">
+<text class="tenue peq" x="54" y="18" text-anchor="middle">orden</text>
+<path class="linea" d="M140 32V26H534V32"/><text class="tenue peq" x="337" y="18" text-anchor="middle">opciones: empiezan por guion</text>
+<text class="tenue peq" x="645" y="18" text-anchor="middle">imagen</text>
+<rect class="caja" x="4" y="40" width="100" height="36" rx="6"/><text class="mono fuerte" x="54" y="63" text-anchor="middle">docker run</text>
+<text x="54" y="98" text-anchor="middle">crea y arranca</text><text class="tenue peq" x="54" y="116" text-anchor="middle">un contenedor</text>
+<rect class="caja" x="140" y="40" width="60" height="36" rx="6"/><text class="mono fuerte" x="170" y="63" text-anchor="middle">-d</text>
+<text x="170" y="98" text-anchor="middle">de fondo</text><text class="tenue peq" x="170" y="116" text-anchor="middle">terminal libre</text>
+<rect class="caja" x="240" y="40" width="92" height="36" rx="6"/><text class="mono fuerte" x="286" y="63" text-anchor="middle">--name web</text>
+<text x="286" y="98" text-anchor="middle">su nombre</text><text class="tenue peq" x="286" y="116" text-anchor="middle">para logs, stop…</text>
+<rect class="caja" x="370" y="40" width="164" height="36" rx="6"/><text class="mono fuerte" x="452" y="63" text-anchor="middle">-p 127.0.0.1:8080:80</text>
+<text x="452" y="98" text-anchor="middle">tu 8080, solo para ti</text><text class="tenue peq" x="452" y="116" text-anchor="middle">llega a su puerto 80</text>
+<rect class="caja-acento" x="574" y="40" width="142" height="36" rx="6"/><text class="mono fuerte" x="645" y="63" text-anchor="middle">nginx:1.27-alpine</text>
+<text x="645" y="98" text-anchor="middle">de qué imagen</text><text class="tenue peq" x="645" y="116" text-anchor="middle">va tras las opciones</text>
+<text class="tenue peq" x="0" y="150">Las opciones van entre docker run y la imagen. Lo que escribas detrás de la imagen ya no es para Docker:</text>
+<text class="tenue peq" x="0" y="168">es para el programa de dentro. En docker run --rm sondeo:1.0 web 80, «web 80» lo recibe el sondeo.</text>
+</svg>
+<figcaption>Todas las órdenes <code>docker run</code> del curso tienen esta forma. Cuando leas una, busca la imagen: lo de antes es para Docker y lo de después, para el programa.</figcaption>
+</figure>
 </section>
 
 <section class="seccion">
@@ -216,7 +287,7 @@ docker image prune          # borra las imágenes sin nombre que han quedado sue
 <ul class="check">
 <li><code>docker run --rm hello-world</code> funciona y has iniciado sesión con <code>docker login</code></li>
 <li>Sabes explicar la diferencia entre imagen y contenedor</li>
-<li>Sabes leer las partes de <code>hashicorp/terraform:1.9</code></li>
+<li>Sabes decir qué es cada trozo de <code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine</code></li>
 <li>Sabes parar, arrancar y borrar un contenedor, y qué se pierde en cada caso</li>
 <li>E1 superado en el check <b>Corrector docker</b> y con su etiqueta</li>
 </ul>

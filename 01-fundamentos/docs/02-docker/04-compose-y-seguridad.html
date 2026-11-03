@@ -17,6 +17,56 @@
 </header>
 
 <section class="seccion">
+<h2>Palabras de este tema</h2>
+<p>Las de Docker 1 a 3 siguen valiendo. Estas son nuevas:</p>
+<dl class="ficha">
+<dt>Compose</dt><dd>La herramienta que levanta varios contenedores a la vez a partir de un fichero, <code>docker-compose.yml</code>.</dd>
+<dt>YAML</dt><dd>El formato de ese fichero. Los espacios del principio de cada línea dicen qué va dentro de qué.</dd>
+<dt>Servicio</dt><dd>Cada contenedor descrito en el compose, con su imagen y sus opciones.</dd>
+<dt>Proyecto</dt><dd>Todo lo que levanta un compose: servicios, redes y volúmenes. Su nombre es el prefijo de cada pieza.</dd>
+<dt>Perfil</dt><dd>Un grupo de servicios que no arranca con los demás, solo cuando lo pides.</dd>
+<dt>Variable de entorno</dt><dd>Un dato con nombre que un programa recibe al arrancar, como <code>POSTGRES_PASSWORD</code>.</dd>
+<dt><code>.env</code></dt><dd>Un fichero con los valores de esas variables. Puede llevar secretos, así que no se sube a git.</dd>
+<dt>Privilegio</dt><dd>Poder sobre tu equipo que se le concede a un contenedor. Cuanto menos, mejor.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>Leer YAML</h2>
+<p>Un compose se escribe en <b>YAML</b>, un formato de texto pensado para que lo lea una persona. Casi todo se reduce a una idea: <b>lo que está más a la derecha va dentro de lo que tiene encima</b>. La sangría, los espacios del principio de cada línea, es la que dice qué contiene a qué.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 232" role="img" aria-label="Un trozo de compose a la izquierda y, a la derecha, el árbol que forma: services contiene web, y web contiene image, ports y environment">
+<rect class="caja" x="0" y="0" width="340" height="232" rx="8"/>
+<path class="linea-acento discontinua" d="M24 40V182M38 64V182M52 110V134M52 158V182"/>
+<text class="mono fuerte" x="16" y="30">services:</text>
+<text class="mono fuerte" x="31" y="54">web:</text>
+<text class="mono" x="45" y="78">image: nginx:1.27-alpine</text>
+<text class="mono" x="45" y="102">ports:</text>
+<text class="mono" x="60" y="126">- "127.0.0.1:8087:80"</text>
+<text class="mono" x="45" y="150">environment:</text>
+<text class="mono" x="60" y="174">TZ: Europe/Madrid</text>
+<text class="mono tenue" x="16" y="212"># comentario: Docker lo ignora</text>
+<rect class="caja" x="390" y="10" width="110" height="30" rx="6"/><text class="mono fuerte" x="445" y="30" text-anchor="middle">services</text>
+<path class="linea" d="M410 40V77H428"/>
+<rect class="caja-acento" x="428" y="62" width="80" height="30" rx="6"/><text class="mono fuerte" x="468" y="82" text-anchor="middle">web</text>
+<path class="linea" d="M448 92V200M448 118H466M448 160H466M448 200H466"/>
+<text class="mono" x="472" y="122">image: nginx:1.27-alpine</text><text class="tenue peq" x="652" y="122">un valor</text>
+<text class="mono" x="472" y="164">ports</text><text class="tenue peq" x="520" y="164">una lista: cada guion, un elemento</text>
+<text class="mono" x="472" y="204">environment</text><text class="tenue peq" x="568" y="204">un grupo de clave: valor</text>
+</svg>
+<figcaption>Las rayas discontinuas marcan cada nivel. Mueve una línea dos espacios y cambia de dueño: el fichero dice otra cosa o deja de valer.</figcaption>
+</figure>
+<div class="tabla"><table><thead><tr><th>Regla</th><th>Ejemplo</th></tr></thead><tbody>
+<tr><td>Cada nivel, dos espacios más que el de arriba. Nunca tabuladores.</td><td><code>services:</code> → <code>&nbsp;&nbsp;web:</code></td></tr>
+<tr><td><code>clave: valor</code>, con un espacio después de los dos puntos.</td><td><code>image: nginx:1.27-alpine</code></td></tr>
+<tr><td>Un guion y un espacio empiezan cada elemento de una lista. Entre corchetes es la misma lista en una línea.</td><td><code>- lab</code> es lo mismo que <code>[lab]</code></td></tr>
+<tr><td>Los puertos, entre comillas: sin ellas, YAML puede leer algunos, como <code>22:22</code>, como un número.</td><td><code>- "127.0.0.1:8087:80"</code></td></tr>
+<tr><td>Lo que va tras <code>#</code> es un comentario.</td><td><code># lo dejó el equipo anterior</code></td></tr>
+</tbody></table></div>
+<p>Si dudas de cómo ha entendido Docker tu fichero, <code>docker compose config</code> te lo devuelve ordenado, o te dice en qué línea está el error.</p>
+</section>
+
+<section class="seccion">
 <h2>Del fichero al laboratorio</h2>
 <p>En vez de una orden <code>docker run</code> por contenedor, con sus <code>-v</code>, <code>-p</code> y <code>--network</code>, se escribe una vez qué <b>servicios</b>, <b>redes</b> y <b>volúmenes</b> hay. <code>docker compose up -d</code> crea lo que falte y arranca todo.</p>
 <figure>
