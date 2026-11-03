@@ -17,8 +17,35 @@
 </header>
 
 <section class="seccion">
+<h2>Palabras de este tema</h2>
+<p>Las de <a href="01-imagenes-y-contenedores.html">Docker 1</a> siguen valiendo. Estas son nuevas:</p>
+<dl class="ficha">
+<dt>Dockerfile</dt><dd>La receta de una imagen: un fichero de texto con una instrucción por línea.</dd>
+<dt>Construir</dt><dd>Seguir la receta para fabricar la imagen. Lo hace <code>docker build</code>.</dd>
+<dt>Imagen base</dt><dd>La imagen de la que parte la receta, la de <code>FROM</code>. Nadie empieza desde cero.</dd>
+<dt>Capa</dt><dd>Lo que añade un paso de la receta, guardado aparte. Una imagen es una pila de capas.</dd>
+<dt>Caché</dt><dd>Capas ya fabricadas que Docker reutiliza si su paso no ha cambiado. Por eso la segunda construcción es rápida.</dd>
+<dt>Contexto</dt><dd>La carpeta que se envía al motor para construir. <code>COPY</code> solo ve lo que hay en ella.</dd>
+<dt>Dependencia</dt><dd>Una librería que tu programa necesita y que se instala aparte, como <code>requests</code> con <code>pip</code>.</dd>
+<dt>Secreto</dt><dd>Un dato que da acceso a algo: una contraseña, un token o una clave de una API.</dd>
+</dl>
+</section>
+
+<section class="seccion">
 <h2>El Dockerfile</h2>
 <p>Un <code>Dockerfile</code> es un fichero de texto con una instrucción por línea. Docker las ejecuta en orden, de arriba abajo, partiendo de una imagen que ya existe.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 116" role="img" aria-label="Con el Dockerfile y tu carpeta, docker build fabrica una imagen; con la imagen, docker run crea un contenedor">
+<defs><marker id="rec-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="10" width="150" height="64" rx="8"/><text class="tit" x="75" y="38" text-anchor="middle">Dockerfile</text><text class="tenue peq" x="75" y="58" text-anchor="middle">y tu carpeta</text>
+<rect class="caja-acento" x="285" y="10" width="150" height="64" rx="8"/><text class="tit" x="360" y="38" text-anchor="middle">Imagen</text><text class="tenue peq mono" x="360" y="58" text-anchor="middle">sondeo:1.0</text>
+<rect class="caja" x="570" y="10" width="150" height="64" rx="8"/><text class="tit" x="645" y="38" text-anchor="middle">Contenedor</text><text class="tenue peq" x="645" y="58" text-anchor="middle">el programa en marcha</text>
+<path class="linea-acento" d="M150 42H283" marker-end="url(#rec-fa)"/><text class="mono acento fuerte" x="217" y="32" text-anchor="middle">docker build</text>
+<path class="linea-acento" d="M435 42H568" marker-end="url(#rec-fa)"/><text class="mono acento fuerte" x="502" y="32" text-anchor="middle">docker run</text>
+<text class="tenue peq" x="360" y="104" text-anchor="middle">En Docker 1 la imagen venía hecha de Docker Hub; ahora la fabricas tú.</text>
+</svg>
+<figcaption>Construir es pasar de la receta a la imagen. Ejecutar, de la imagen al contenedor.</figcaption>
+</figure>
 <div class="tabla"><table><thead><tr><th>Instrucción</th><th>Qué hace</th></tr></thead><tbody>
 <tr><td><code>FROM python:3.12-alpine</code></td><td>Imagen de partida. Siempre la primera.</td></tr>
 <tr><td><code>WORKDIR /app</code></td><td>Carpeta de trabajo dentro de la imagen; las demás instrucciones se ejecutan ahí.</td></tr>

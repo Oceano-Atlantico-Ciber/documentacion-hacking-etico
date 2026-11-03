@@ -17,6 +17,23 @@
 </header>
 
 <section class="seccion">
+<h2>Palabras de este tema</h2>
+<p>Las de <a href="01-imagenes-y-contenedores.html">Docker 1</a> y <a href="02-construir-imagenes.html">Docker 2</a> siguen valiendo. Estas son nuevas:</p>
+<dl class="ficha">
+<dt>Montar</dt><dd>Hacer que algo de fuera aparezca dentro del contenedor, en una carpeta suya.</dd>
+<dt>Volumen</dt><dd>Un almacén de datos que crea y guarda Docker, fuera de cualquier contenedor.</dd>
+<dt>Bind mount</dt><dd>Una carpeta de tu equipo montada dentro del contenedor: los dos ven los mismos ficheros.</dd>
+<dt>Dirección IP</dt><dd>El número que identifica a un equipo dentro de una red, como <code>192.168.1.23</code>.</dd>
+<dt>Interfaz de red</dt><dd>Cada conexión de tu equipo a una red: la wifi, el cable, la de Docker. Cada una tiene su IP.</dd>
+<dt><code>127.0.0.1</code></dt><dd>También llamada <code>localhost</code>: tu propio equipo. Solo se llega a ella desde él.</dd>
+<dt><code>0.0.0.0</code></dt><dd>«Todas mis interfaces a la vez»: llega cualquiera que llegue a tu equipo.</dd>
+<dt>Publicar un puerto</dt><dd>Conectar una puerta de tu equipo con una del contenedor. Lo hace <code>-p</code>.</dd>
+<dt>Red de Docker</dt><dd>Una red privada dentro de tu equipo en la que unos contenedores se ven con otros.</dd>
+<dt>DNS</dt><dd>El servicio que traduce un nombre, como <code>floci</code>, a su dirección IP.</dd>
+</dl>
+</section>
+
+<section class="seccion">
 <h2>Tres sitios para los datos</h2>
 <p>Lo que un contenedor escribe en su propia capa desaparece con <code>docker rm</code>. Para conservarlo, se monta en una de sus carpetas algo que vive fuera: un <b>volumen</b>, que gestiona Docker, o una carpeta de tu equipo, un <b>bind mount</b>.</p>
 <figure>
@@ -44,6 +61,24 @@
 
 <section class="seccion">
 <h2>Puertos: quién puede llegar</h2>
+<p>Antes de publicar nada, dos ideas. Cada equipo de una red tiene una <b>dirección IP</b>, como un edificio tiene su dirección postal. Dentro del equipo, cada programa que espera conexiones atiende detrás de un <b>puerto</b>, una puerta numerada. Para llegar a un programa hacen falta las dos cosas: <code>192.168.1.23:8080</code>.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 196" role="img" aria-label="Un cliente llama a 192.168.1.23:8080; la IP lleva a tu equipo y el puerto 8080 a la puerta detrás de la que escucha nginx; en el 4566 escucha Floci y en el 5432 no escucha nadie">
+<defs><marker id="pt-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker><marker id="pt-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="70" width="150" height="56" rx="8"/><text class="tit" x="75" y="94" text-anchor="middle">Cliente</text><text class="tenue peq" x="75" y="112" text-anchor="middle">curl, navegador…</text>
+<text class="tenue peq" x="75" y="150" text-anchor="middle">llama a</text><text class="mono acento fuerte" x="75" y="168" text-anchor="middle">192.168.1.23:8080</text>
+<path class="linea-acento" d="M150 92L246 66" marker-end="url(#pt-fa)"/>
+<rect class="linea discontinua" x="200" y="4" width="519" height="188" rx="10"/><text class="tenue peq" x="216" y="26">Tu equipo · su dirección IP en la wifi: 192.168.1.23</text>
+<rect class="caja-acento" x="250" y="46" width="90" height="36" rx="6"/><text class="mono fuerte" x="295" y="69" text-anchor="middle">8080</text>
+<rect class="caja-acento" x="250" y="96" width="90" height="36" rx="6"/><text class="mono fuerte" x="295" y="119" text-anchor="middle">4566</text>
+<rect class="linea discontinua" x="250" y="146" width="90" height="36" rx="6"/><text class="mono tenue" x="295" y="169" text-anchor="middle">5432</text>
+<path class="linea" d="M340 64H398" marker-end="url(#pt-f)"/><path class="linea" d="M340 114H398" marker-end="url(#pt-f)"/>
+<rect class="caja" x="400" y="46" width="200" height="36" rx="6"/><text x="500" y="69" text-anchor="middle">nginx, en un contenedor</text>
+<rect class="caja" x="400" y="96" width="200" height="36" rx="6"/><text x="500" y="119" text-anchor="middle">Floci, en un contenedor</text>
+<text class="tenue peq" x="400" y="169">nadie escucha: puerto cerrado</text>
+</svg>
+<figcaption>La IP dice a qué equipo llamas; el puerto, a qué puerta. Una puerta está abierta solo si detrás hay un programa escuchando: es lo que comprueba el sondeo de E2.</figcaption>
+</figure>
 <p><code>-p</code> publica un puerto del contenedor en tu equipo, con la forma <code>dirección:puerto-tuyo:puerto-del-contenedor</code>. Si no pones dirección, Docker usa <code>0.0.0.0</code>: todas las interfaces de tu equipo, también la de la wifi del aula.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 250" role="img" aria-label="Con -p 4566:4566 un compañero de la misma wifi llega a tu Floci; con -p 127.0.0.1:4566:4566 solo llegas tú">

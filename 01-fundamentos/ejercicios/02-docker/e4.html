@@ -14,8 +14,10 @@
 <p class="lead">Te pasan una imagen ya construida. Alguien metió en ella la clave de una API y la «borró». Recupérala como haría un atacante y reconstruye la imagen sin ella.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../../docs/02-docker/02-construir-imagenes.html">Docker 2 · Construir imágenes</a></dd>
+<dt>Aprendes</dt><dd>Que borrar un fichero en una capa no lo borra: así se filtran claves en imágenes publicadas.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/docker/e4/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-docker-e4</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Jueves 12 de noviembre, 23:59</dd>
 </dl>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
@@ -46,7 +48,7 @@ mkdir capas2 &amp;&amp; tar -xf e4-2.tar -C capas2
 for capa in capas2/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep api.key; done
 rm -r capas2 e4-2.tar</code></pre></div><p>El bucle no muestra nada: ninguna capa contiene la clave.</p><p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li><code>hallazgo.txt</code> no empieza por los 8 primeros caracteres de tu clave, o contiene la clave completa.</li>
+<li><code>hallazgo.txt</code> no tiene tu clave ocultada (<code>oa-</code> y sus 8 primeros caracteres), o tiene la clave completa.</li>
 <li>Algún fichero subido contiene la clave completa.</li>
 <li>Con tu clave como secreto, el <code>Dockerfile</code> no construye o la comprobación no se ejecuta.</li>
 <li>Alguna capa de la imagen resultante contiene la clave.</li>
