@@ -47,8 +47,11 @@ until docker exec e5-db pg_isready -U postgres -h localhost; do sleep 1; done
 docker exec e5-db psql -U postgres -c "SELECT texto FROM hallazgos" | tee consulta.txt</code></pre></div><p>El contenedor es nuevo, pero el dato sigue: estaba en el volumen. <code>docker volume create</code> no falla si el volumen ya existe.</p>
 
 <h2 class="step"><span class="n">5</span>Comprueba la web</h2>
-<div class="cmd"><pre><code>curl http://localhost:8085/
-docker exec e5-web sh -c 'echo prueba &gt; /usr/share/nginx/html/prueba.html'
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>curl.exe http://localhost:8085/</code></pre></div>
+<p><b>macOS y Linux</b></p>
+<div class="cmd"><pre><code>curl http://localhost:8085/</code></pre></div>
+<div class="cmd"><pre><code>docker exec e5-web sh -c 'echo prueba &gt; /usr/share/nginx/html/prueba.html'
 docker rm -f e5-db e5-web</code></pre></div><p>La web sirve tu página, y el contenedor no puede escribir en tu carpeta: <code>Read-only file system</code>.</p><p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li><code>levantar.sh</code> tiene algo que no es una orden <code>docker</code> de las admitidas, falla en un equipo limpio, o no crea <code>e5-db</code> y <code>e5-web</code> como dice el enunciado.</li>

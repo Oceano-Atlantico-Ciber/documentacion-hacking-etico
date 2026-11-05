@@ -28,9 +28,12 @@ cd fundamentos/docker/e8</code></pre></div>
 <p>Deja <code>docker-compose.yml</code>, la carpeta <code>panel/</code> con su <code>Dockerfile</code> y <code>web/</code>.</p>
 
 <h2 class="step"><span class="n">2</span>Levántalo tal cual y mira lo que ve cualquiera</h2>
-<div class="cmd"><pre><code>docker compose up -d --build
-curl http://localhost/docker-compose.yml
-docker compose down</code></pre></div><p>Cualquiera que llegue a tu puerto 80, también desde la wifi del aula, lee el propio compose con sus contraseñas. Es tu primer hallazgo.</p>
+<div class="cmd"><pre><code>docker compose up -d --build</code></pre></div>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>curl.exe http://localhost/docker-compose.yml</code></pre></div>
+<p><b>macOS y Linux</b></p>
+<div class="cmd"><pre><code>curl http://localhost/docker-compose.yml</code></pre></div>
+<div class="cmd"><pre><code>docker compose down</code></pre></div><p>Cualquiera que llegue a tu puerto 80, también desde la wifi del aula, lee el propio compose con sus contraseñas. Es tu primer hallazgo.</p>
 
 <h2 class="step"><span class="n">3</span>Pasa Trivy al Dockerfile</h2>
 <div class="cmd"><pre><code>docker run --rm -v ./:/work:ro aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre></div>
@@ -43,10 +46,14 @@ docker compose down</code></pre></div><p>Cualquiera que llegue a tu puerto 80, t
 
 <h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
 <div class="cmd"><pre><code>docker run --rm -v ./:/work:ro aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work
-docker compose up -d --build
-curl http://localhost:8000/
-curl -i http://localhost:8088/docker-compose.yml
-docker compose exec panel id
+docker compose up -d --build</code></pre></div>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>curl.exe http://localhost:8000/
+curl.exe -i http://localhost:8088/docker-compose.yml</code></pre></div>
+<p><b>macOS y Linux</b></p>
+<div class="cmd"><pre><code>curl http://localhost:8000/
+curl -i http://localhost:8088/docker-compose.yml</code></pre></div>
+<div class="cmd"><pre><code>docker compose exec panel id
 docker compose down</code></pre></div><p>Trivy sin avisos, el panel responde, la web ya no sirve el compose (404) y el panel no corre como root.</p><p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Trivy da avisos altos o críticos.</li>
