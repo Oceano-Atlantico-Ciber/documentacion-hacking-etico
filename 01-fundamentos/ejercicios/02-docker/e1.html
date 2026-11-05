@@ -33,25 +33,37 @@ docker run -d --name e1-web -p 127.0.0.1:8080:80 nginx:1.27-alpine
 docker ps</code></pre></div><p>El nombre tiene que ser exactamente <code>e1-web</code> y el puerto, <code>127.0.0.1:8080</code>.</p>
 
 <h2 class="step"><span class="n">3</span>Pídele la página</h2>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>curl.exe -i http://localhost:8080/</code></pre></div>
+<p><b>macOS y Linux</b></p>
 <div class="cmd"><pre><code>curl -i http://localhost:8080/</code></pre></div><p>La primera línea es <code>HTTP/1.1 200 OK</code> y el cuerpo es la página de bienvenida de nginx.</p>
 
 <h2 class="step"><span class="n">4</span>Cambia la página por la tuya</h2>
-<div class="cmd"><pre><code>docker cp index.html e1-web:/usr/share/nginx/html/index.html
-curl http://localhost:8080/</code></pre></div><p>Ahora responde con tu página. Has cambiado la capa escribible del contenedor, no la imagen.</p>
+<div class="cmd"><pre><code>docker cp index.html e1-web:/usr/share/nginx/html/index.html</code></pre></div>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>curl.exe http://localhost:8080/</code></pre></div>
+<p><b>macOS y Linux</b></p>
+<div class="cmd"><pre><code>curl http://localhost:8080/</code></pre></div><p>Ahora responde con tu página. Has cambiado la capa escribible del contenedor, no la imagen.</p>
 
 <h2 class="step"><span class="n">5</span>Páralo y vuelve a arrancarlo</h2>
 <div class="cmd"><pre><code>docker stop e1-web
 docker ps -a
-docker start e1-web
-curl http://localhost:8080/</code></pre></div><p>Parado, <code>docker ps -a</code> lo muestra como <code>Exited</code>. Al arrancarlo sigue sirviendo tu página: parar no borra la capa.</p>
+docker start e1-web</code></pre></div>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>curl.exe http://localhost:8080/</code></pre></div>
+<p><b>macOS y Linux</b></p>
+<div class="cmd"><pre><code>curl http://localhost:8080/</code></pre></div><p>Parado, <code>docker ps -a</code> lo muestra como <code>Exited</code>. Al arrancarlo sigue sirviendo tu página: parar no borra la capa.</p>
 
 <h2 class="step"><span class="n">6</span>Guarda las pruebas</h2>
 <div class="cmd"><pre><code>docker container inspect e1-web &gt; inspect.json
 docker logs e1-web &gt; logs.txt 2&gt;&amp;1</code></pre></div><p><code>inspect.json</code> es todo lo que Docker sabe del contenedor; <code>logs.txt</code>, cada petición que recibió nginx.</p>
 
 <h2 class="step"><span class="n">7</span>Bórralo y comprueba</h2>
-<div class="cmd"><pre><code>docker rm -f e1-web
-curl http://localhost:8080/</code></pre></div><p>El último <code>curl</code> falla: el contenedor y tu cambio ya no existen. Si lanzaras otro desde la imagen, volvería la página de bienvenida.</p><p>El corrector marca fallo si:</p>
+<div class="cmd"><pre><code>docker rm -f e1-web</code></pre></div>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>curl.exe http://localhost:8080/</code></pre></div>
+<p><b>macOS y Linux</b></p>
+<div class="cmd"><pre><code>curl http://localhost:8080/</code></pre></div><p>El último <code>curl</code> falla: el contenedor y tu cambio ya no existen. Si lanzaras otro desde la imagen, volvería la página de bienvenida.</p><p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Faltan <code>inspect.json</code> o <code>logs.txt</code>, o <code>index.html</code> ha cambiado.</li>
 <li>El contenedor no se llamaba <code>e1-web</code>, no salía de <code>nginx:1.27-alpine</code> o no publicaba <code>127.0.0.1:8080</code>.</li>

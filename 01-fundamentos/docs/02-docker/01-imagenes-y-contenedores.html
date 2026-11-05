@@ -230,9 +230,12 @@ docker compose version</code></pre></div></li>
 </svg>
 <figcaption>La petición sale de curl, entra por el puerto publicado y la contesta nginx. 200 es «todo bien»; 404 es «esa página no existe».</figcaption>
 </figure>
-<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
-curl -i http://localhost:8080/      # -i: muestra también la línea de estado y las cabeceras
-docker logs web                     # nginx anota cada petición recibida</code></pre>
+<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine</code></pre>
+<p><b>Windows (PowerShell)</b></p>
+<pre><code>curl.exe -i http://localhost:8080/   # -i: muestra también la línea de estado y las cabeceras</code></pre>
+<p><b>macOS y Linux</b></p>
+<pre><code>curl -i http://localhost:8080/       # -i: muestra también la línea de estado y las cabeceras</code></pre>
+<pre><code>docker logs web                      # nginx anota cada petición recibida</code></pre>
 <p>Así se lee esa primera orden, trozo a trozo:</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 180" role="img" aria-label="docker run es la orden; -d, --name web y -p 127.0.0.1:8080:80 son opciones; nginx:1.27-alpine es la imagen y va detrás de las opciones">
