@@ -32,17 +32,34 @@ cd fundamentos/docker/e4</code></pre></div>
 docker history e4-informe:1.0</code></pre></div><p>En el contenedor no hay ninguna clave. Pero el historial tiene una capa <code>COPY api.key .</code> de unos KB.</p>
 
 <h2 class="step"><span class="n">3</span>Extrae las capas y encuentra la clave</h2>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>docker save e4-informe:1.0 -o e4.tar
+mkdir capas; tar -xf e4.tar -C capas
+foreach ($capa in Get-ChildItem capas/blobs/sha256) { tar -tf $capa.FullName 2&gt;$null | Select-String api.key | ForEach-Object { "capas/blobs/sha256/$($capa.Name)  $_" } }</code></pre></div>
+<p><b>macOS y Linux</b></p>
 <div class="cmd"><pre><code>docker save e4-informe:1.0 -o e4.tar
 mkdir capas &amp;&amp; tar -xf e4.tar -C capas
-for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep api.key | sed "s|^|$capa  |"; done</code></pre></div><p>Salen dos capas: una con <code>app/api.key</code>, la que la copió, y otra con <code>app/.wh.api.key</code>, la marca de «borrado» que dejó <code>rm</code>. Lee la clave de la primera:</p><div class="cmd"><pre><code>tar -xOf capas/blobs/sha256/&lt;la-capa-con-app/api.key&gt; app/api.key</code></pre></div><p><code>e4.tar</code> y <code>capas/</code> no se suben: el <code>.gitignore</code> de la carpeta ya los excluye.</p>
+for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep api.key | sed "s|^|$capa  |"; done</code></pre></div><p>Salen dos capas: una con <code>app/api.key</code>, la que la copió, y otra con <code>app/.wh.api.key</code>, la marca de «borrado» que dejó <code>rm</code>. Lee la clave de la primera (igual en Windows, macOS y Linux):</p><div class="cmd"><pre><code>tar -xOf capas/blobs/sha256/&lt;la-capa-con-app/api.key&gt; app/api.key</code></pre></div><p><code>e4.tar</code> y <code>capas/</code> no se suben: el <code>.gitignore</code> de la carpeta ya los excluye.</p>
 
 <h2 class="step"><span class="n">4</span>Redacta el hallazgo sin filtrar la clave</h2>
 <div class="cmd"><pre><code>code hallazgo.txt</code></pre></div><p>Una línea con la clave <b>ocultada</b>, como en un informe de auditoría: <code>oa-</code>, sus 8 primeros caracteres y <code>…</code> (por ejemplo, <code>oa-3f9c1a2b…</code>). La clave completa no debe estar en tu repositorio.</p>
 
 <h2 class="step"><span class="n">5</span>Reconstruye sin el secreto</h2>
-<p>Guarda la clave que encontraste en <code>api.key</code> (tu <code>.gitignore</code> excluye <code>*.key</code>) y cambia el <code>Dockerfile</code> para que <code>informe.py --comprobar</code> la lea de un secreto de construcción, en <code>/run/secrets/api</code>, sin <code>COPY</code>. Cómo, en <a href="../../docs/02-docker/02-construir-imagenes.html">Docker 2 · Un secreto en una capa</a>. Añade un <code>.dockerignore</code> con <code>api.key</code>, <code>*.tar</code> y <code>capas/</code>.</p><div class="cmd"><pre><code>docker build --secret id=api,src=api.key -t e4-informe:2.0 .</code></pre></div><p>La construcción tiene que decir <code>clave de la API válida</code>.</p>
+<p>Guarda la clave que encontraste en <code>api.key</code> (tu <code>.gitignore</code> excluye <code>*.key</code>):</p>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>tar -xOf capas/blobs/sha256/&lt;la-capa-con-app/api.key&gt; app/api.key | Set-Content -Encoding ascii api.key</code></pre></div>
+<p class="note">En Windows PowerShell, <code>&gt;</code> guarda en UTF-16 y <code>informe.py</code> no podría leer la clave: usa <code>Set-Content -Encoding ascii</code>.</p>
+<p><b>macOS y Linux</b></p>
+<div class="cmd"><pre><code>tar -xOf capas/blobs/sha256/&lt;la-capa-con-app/api.key&gt; app/api.key &gt; api.key</code></pre></div>
+<p>Después cambia el <code>Dockerfile</code> para que <code>informe.py --comprobar</code> la lea de un secreto de construcción, en <code>/run/secrets/api</code>, sin <code>COPY</code>. Cómo, en <a href="../../docs/02-docker/02-construir-imagenes.html">Docker 2 · Un secreto en una capa</a>. Añade un <code>.dockerignore</code> con <code>api.key</code>, <code>*.tar</code> y <code>capas/</code>. Construye (igual en Windows, macOS y Linux):</p><div class="cmd"><pre><code>docker build --secret id=api,src=api.key -t e4-informe:2.0 .</code></pre></div><p>La construcción tiene que decir <code>clave de la API válida</code>.</p>
 
 <h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
+<p><b>Windows (PowerShell)</b></p>
+<div class="cmd"><pre><code>docker save e4-informe:2.0 -o e4-2.tar
+mkdir capas2; tar -xf e4-2.tar -C capas2
+foreach ($capa in Get-ChildItem capas2/blobs/sha256) { tar -tf $capa.FullName 2&gt;$null | Select-String api.key }
+Remove-Item -Recurse capas2, e4-2.tar</code></pre></div>
+<p><b>macOS y Linux</b></p>
 <div class="cmd"><pre><code>docker save e4-informe:2.0 -o e4-2.tar
 mkdir capas2 &amp;&amp; tar -xf e4-2.tar -C capas2
 for capa in capas2/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep api.key; done
