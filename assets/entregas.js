@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2000-01-01T00:00+00:00",
+ "actualizado": "2026-11-17T20:39+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -26,7 +26,7 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "agracia90": {
-     "e1": "sin",
+     "e1": "bien",
      "e2": "bien",
      "e3": "bien",
      "e4": "bien",
