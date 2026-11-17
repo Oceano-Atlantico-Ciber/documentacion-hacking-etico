@@ -6,14 +6,36 @@
 <title>Estado de las entregas · Hacking ético</title>
 <link rel="stylesheet" href="../assets/estilo.css">
 <style>
-/* Tabla alumno × ejercicio: la primera columna queda fija al desplazar en horizontal. */
-.tablero { overflow-x: auto; }
-.tablero table { border-collapse: separate; border-spacing: 0; min-width: 100%; }
-.tablero th, .tablero td { text-align: center; padding: 6px 8px; white-space: nowrap; }
-.tablero th:first-child, .tablero td:first-child { position: sticky; left: 0; background: var(--surface); text-align: left; font: 13px var(--f-mono); z-index: 1; }
-.tablero td.e { font-size: 17px; line-height: 1; }
-.tablero tr.total td { font: 600 12px var(--f-mono); color: var(--muted); border-top: 2px solid var(--line); }
-.leyenda { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 15px; }
+/* Una sola matriz: una fila por alumno y, por columnas, los ejercicios agrupados por bloque.
+   Cada estado es una casilla de color con su símbolo, la misma en la leyenda y en la tabla. */
+.resumen { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.resumen div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; }
+.resumen b { font: 700 15px var(--f-display); }
+.resumen .cifra { font: 700 26px/1 var(--f-display); font-variant-numeric: tabular-nums; }
+.resumen .cifra small { font: 500 14px var(--f-body); color: var(--muted); }
+.barra { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; display: flex; }
+.barra i { display: block; height: 100%; }
+.barra .b { background: var(--ok); }
+.barra .m { background: var(--crit); }
+.leyenda { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 14px; align-items: center; }
+.leyenda span { display: inline-flex; gap: 6px; align-items: center; }
+.c { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 5px; font: 700 12px/1 var(--f-mono); }
+.c.bien { background: var(--ok); color: var(--surface); }
+.c.mal { background: var(--crit); color: var(--surface); }
+.c.provisional { border: 2px solid var(--warn); color: var(--warn); }
+.c.pendiente { border: 2px dashed var(--muted); }
+.c.sin::after { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--line); }
+.matriz { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.matriz table { border-collapse: separate; border-spacing: 0; width: 100%; font-variant-numeric: tabular-nums; }
+.matriz th, .matriz td { padding: 5px 3px; text-align: center; border: 0; }
+.matriz thead th { font: 600 11px var(--f-mono); color: var(--muted); background: var(--surface); }
+.matriz thead tr:first-child th { font: 700 13px var(--f-display); color: var(--ink); padding-top: 12px; }
+.matriz .alumno { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; padding: 5px 14px;
+  font: 13px var(--f-mono); white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.matriz .total { padding: 5px 14px; font: 600 13px var(--f-mono); color: var(--muted); white-space: nowrap; }
+.matriz .sep { border-left: 1px solid var(--line); padding-left: 10px; }
+.matriz tbody tr:hover td { background: var(--accent-soft); }
+.matriz tbody tr:not(:last-child) td { border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent); }
 #aviso[hidden] { display: none; }
 </style>
 </head>
@@ -22,43 +44,75 @@
 <nav class="top"><a href="../index.html">Hacking ético</a></nav>
 
 <h1>Estado de las entregas</h1>
-<p class="lead">Cómo va cada ejercicio de cada alumno, según el último paso de los correctores. El detalle de lo que falla está en el check de tu repositorio, junto a tu commit.</p>
-<p class="leyenda"><span>✅ entregado y superado</span><span>❌ entregado con fallos</span><span>✏️ sin etiqueta todavía: provisional</span><span>⏳ pendiente de corregir</span><span>· sin empezar</span></p>
-<p id="actualizado" class="note"></p>
+<p class="lead">Cómo va cada ejercicio de cada alumno según la última pasada de los correctores. Lo que falla, y por qué, está en el check de tu repositorio, junto a tu commit.</p>
+
+<div class="resumen" id="resumen"></div>
+
+<p class="leyenda" aria-label="Leyenda">
+<span><i class="c bien">✓</i> superado</span>
+<span><i class="c mal">×</i> con fallos</span>
+<span><i class="c provisional">·</i> provisional, sin etiqueta</span>
+<span><i class="c pendiente"></i> pendiente de corregir</span>
+<span><i class="c sin"></i> sin empezar</span>
+</p>
+
+<div class="matriz"><table id="matriz"></table></div>
+<p id="actualizado" class="leyenda"></p>
 <p id="aviso" class="note warn" hidden>Todavía no hay datos de los correctores.</p>
-<div id="bloques"></div>
 
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../assets/entregas.js"></script>
 <script>
 (() => {
-  const SIMBOLO = { bien: "✅", mal: "❌", provisional: "✏️", pendiente: "⏳", sin: "·" };
+  const SIMBOLO = { bien: "✓", mal: "×", provisional: "·", pendiente: "", sin: "" };
   const TEXTO = { bien: "superado", mal: "con fallos", provisional: "provisional", pendiente: "pendiente de corregir", sin: "sin empezar" };
   const datos = window.ENTREGAS;
   if (!datos || !datos.bloques) { document.getElementById("aviso").hidden = false; return; }
-  const fecha = new Date(datos.actualizado);
-  document.getElementById("actualizado").textContent = "Actualizado el " + fecha.toLocaleString("es-ES",
-    { timeZone: "Europe/Madrid", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) + " (hora de Madrid).";
+
   const el = (tag, props = {}, ...hijos) => {
     const n = Object.assign(document.createElement(tag), props);
     n.append(...hijos);
     return n;
   };
-  const contenedor = document.getElementById("bloques");
-  for (const b of datos.bloques) {
-    const alumnos = Object.entries(b.alumnos);
-    if (!alumnos.length) continue;
-    const cabecera = el("tr", {}, el("th", { textContent: "Alumno" }), ...b.ejercicios.map((e) => el("th", { textContent: e.toUpperCase() })));
-    const filas = alumnos.map(([usuario, estados]) => el("tr", {}, el("td", { textContent: usuario }),
-      ...b.ejercicios.map((e) => el("td", { className: "e", textContent: SIMBOLO[estados[e]] ?? "·",
-        title: `${usuario} · ${e.toUpperCase()}: ${TEXTO[estados[e]] ?? "sin empezar"}` }))));
-    const total = el("tr", { className: "total" }, el("td", { textContent: "Superados" }),
-      ...b.ejercicios.map((e) => el("td", { textContent: `${alumnos.filter(([, s]) => s[e] === "bien").length}/${alumnos.length}` })));
-    const id = b.nombre.toLowerCase().replace(/[^a-z]+/g, "-");
-    contenedor.append(el("h2", { id, textContent: b.nombre }),
-      el("div", { className: "tablero" }, el("table", {}, el("thead", {}, cabecera), el("tbody", {}, ...filas, total))));
+  const bloques = datos.bloques;
+  const alumnos = [...new Set(bloques.flatMap((b) => Object.keys(b.alumnos)))].sort();
+
+  // Resumen por bloque: cuántas casillas están superadas, con una barra de superados y con fallos.
+  for (const b of bloques) {
+    const estados = Object.values(b.alumnos).flatMap((a) => b.ejercicios.map((e) => a[e]));
+    const total = estados.length || 1;
+    const bien = estados.filter((s) => s === "bien").length, mal = estados.filter((s) => s === "mal").length;
+    const al_dia = Object.values(b.alumnos).filter((a) => b.ejercicios.every((e) => a[e] === "bien")).length;
+    document.getElementById("resumen").append(el("div", {},
+      el("b", { textContent: b.nombre }),
+      el("span", { className: "cifra", innerHTML: `${al_dia}<small> de ${alumnos.length} con todo superado</small>` }),
+      el("span", { className: "barra", title: `${bien} superados, ${mal} con fallos de ${total}` },
+        el("i", { className: "b", style: `width:${100 * bien / total}%` }), el("i", { className: "m", style: `width:${100 * mal / total}%` }))));
   }
+
+  // Cabecera de dos filas: el bloque y, debajo, sus ejercicios.
+  const fila1 = el("tr", {}, el("th", { className: "alumno", rowSpan: 2, textContent: "Alumno" }),
+    ...bloques.map((b) => el("th", { colSpan: b.ejercicios.length, className: "sep", textContent: b.nombre })),
+    el("th", { className: "total sep", rowSpan: 2, textContent: "Superados" }));
+  const fila2 = el("tr", {}, ...bloques.flatMap((b) => b.ejercicios.map((e, i) =>
+    el("th", { className: i === 0 ? "sep" : "", textContent: e.slice(1) }))));
+  const cuerpo = alumnos.map((u) => {
+    let superados = 0, total = 0;
+    const celdas = bloques.flatMap((b) => b.ejercicios.map((e, i) => {
+      const s = (b.alumnos[u] || {})[e] || "sin";
+      total++; if (s === "bien") superados++;
+      return el("td", { className: i === 0 ? "sep" : "" },
+        el("i", { className: `c ${s}`, textContent: SIMBOLO[s], title: `${u} · ${b.nombre} ${e.toUpperCase()}: ${TEXTO[s]}` }));
+    }));
+    return el("tr", {}, el("td", { className: "alumno", textContent: u, title: u }), ...celdas,
+      el("td", { className: "total sep", textContent: `${superados}/${total}` }));
+  });
+  document.getElementById("matriz").append(el("thead", {}, fila1, fila2), el("tbody", {}, ...cuerpo));
+
+  const fecha = new Date(datos.actualizado);
+  document.getElementById("actualizado").textContent = "Actualizado el " + fecha.toLocaleString("es-ES",
+    { timeZone: "Europe/Madrid", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) + ", hora de Madrid.";
 })();
 </script>
 <script src="../assets/nav.js" defer></script>
