@@ -91,6 +91,7 @@
     ["Redes y sistemas", "03-redes-y-sistemas/index.html"],
     ["Sistemas comprometidos", "04-sistemas-comprometidos/index.html"],
     ["Aplicaciones web", "05-aplicaciones-web/index.html"],
+    ["Estado de las entregas", "entregas/index.html"],
     ["Glosario", "glosario/index.html"],
   ];
 

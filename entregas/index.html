@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estado de las entregas · Hacking ético</title>
+<link rel="stylesheet" href="../assets/estilo.css">
+<style>
+/* Tabla alumno × ejercicio: la primera columna queda fija al desplazar en horizontal. */
+.tablero { overflow-x: auto; }
+.tablero table { border-collapse: separate; border-spacing: 0; min-width: 100%; }
+.tablero th, .tablero td { text-align: center; padding: 6px 8px; white-space: nowrap; }
+.tablero th:first-child, .tablero td:first-child { position: sticky; left: 0; background: var(--surface); text-align: left; font: 13px var(--f-mono); z-index: 1; }
+.tablero td.e { font-size: 17px; line-height: 1; }
+.tablero tr.total td { font: 600 12px var(--f-mono); color: var(--muted); border-top: 2px solid var(--line); }
+.leyenda { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 15px; }
+#aviso[hidden] { display: none; }
+</style>
+</head>
+<body>
+<main>
+<nav class="top"><a href="../index.html">Hacking ético</a></nav>
+
+<h1>Estado de las entregas</h1>
+<p class="lead">Cómo va cada ejercicio de cada alumno, según el último paso de los correctores. El detalle de lo que falla está en el check de tu repositorio, junto a tu commit.</p>
+<p class="leyenda"><span>✅ entregado y superado</span><span>❌ entregado con fallos</span><span>✏️ sin etiqueta todavía: provisional</span><span>⏳ pendiente de corregir</span><span>· sin empezar</span></p>
+<p id="actualizado" class="note"></p>
+<p id="aviso" class="note warn" hidden>Todavía no hay datos de los correctores.</p>
+<div id="bloques"></div>
+
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../assets/entregas.js"></script>
+<script>
+(() => {
+  const SIMBOLO = { bien: "✅", mal: "❌", provisional: "✏️", pendiente: "⏳", sin: "·" };
+  const TEXTO = { bien: "superado", mal: "con fallos", provisional: "provisional", pendiente: "pendiente de corregir", sin: "sin empezar" };
+  const datos = window.ENTREGAS;
+  if (!datos || !datos.bloques) { document.getElementById("aviso").hidden = false; return; }
+  const fecha = new Date(datos.actualizado);
+  document.getElementById("actualizado").textContent = "Actualizado el " + fecha.toLocaleString("es-ES",
+    { timeZone: "Europe/Madrid", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) + " (hora de Madrid).";
+  const el = (tag, props = {}, ...hijos) => {
+    const n = Object.assign(document.createElement(tag), props);
+    n.append(...hijos);
+    return n;
+  };
+  const contenedor = document.getElementById("bloques");
+  for (const b of datos.bloques) {
+    const alumnos = Object.entries(b.alumnos);
+    if (!alumnos.length) continue;
+    const cabecera = el("tr", {}, el("th", { textContent: "Alumno" }), ...b.ejercicios.map((e) => el("th", { textContent: e.toUpperCase() })));
+    const filas = alumnos.map(([usuario, estados]) => el("tr", {}, el("td", { textContent: usuario }),
+      ...b.ejercicios.map((e) => el("td", { className: "e", textContent: SIMBOLO[estados[e]] ?? "·",
+        title: `${usuario} · ${e.toUpperCase()}: ${TEXTO[estados[e]] ?? "sin empezar"}` }))));
+    const total = el("tr", { className: "total" }, el("td", { textContent: "Superados" }),
+      ...b.ejercicios.map((e) => el("td", { textContent: `${alumnos.filter(([, s]) => s[e] === "bien").length}/${alumnos.length}` })));
+    const id = b.nombre.toLowerCase().replace(/[^a-z]+/g, "-");
+    contenedor.append(el("h2", { id, textContent: b.nombre }),
+      el("div", { className: "tablero" }, el("table", {}, el("thead", {}, cabecera), el("tbody", {}, ...filas, total))));
+  }
+})();
+</script>
+<script src="../assets/nav.js" defer></script>
+</body>
+</html>
