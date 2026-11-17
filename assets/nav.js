@@ -11,6 +11,8 @@
       ["04 · Docker", "00-presentacion/docs/04-docker.html"],
       ["05 · IA: local o en la nube", "00-presentacion/docs/05-ia.html"],
       ["06 · Primer commit", "00-presentacion/docs/06-primer-commit.html"],
+      ["07 · Hackea el ranking", "00-presentacion/docs/07-hackea-el-ranking.html"],
+      ["Hackea el ranking · Solución", "00-presentacion/hackea-el-ranking/solucion.html"],
     ]],
     ["Fundamentos", "01-fundamentos/index.html", [
       ["Temas", "01-fundamentos/index.html#temas", [
@@ -27,10 +29,10 @@
           ["Docker 4 · Compose y seguridad", "01-fundamentos/docs/02-docker/04-compose-y-seguridad.html"],
         ]],
         ["03 · API REST", "01-fundamentos/index.html#03-api-rest", [
-          ["API REST 1 · Cliente, servidor y HTTP", "01-fundamentos/docs/03-api-rest/01-cliente-servidor-y-http.html"],
-          ["API REST 2 · Métodos, códigos y cabeceras", "01-fundamentos/docs/03-api-rest/02-metodos-codigos-y-cabeceras.html"],
-          ["API REST 3 · F12, curl y seguridad", "01-fundamentos/docs/03-api-rest/03-f12-curl-y-seguridad.html"],
-          ["API REST 4 · Hackea el ranking", "01-fundamentos/docs/03-api-rest/04-hackea-el-ranking.html"],
+          ["API 1 · REST es HTTP", "01-fundamentos/docs/03-api-rest/01-rest-es-http.html"],
+          ["API 2 · Diseñar y construir", "01-fundamentos/docs/03-api-rest/02-disenar-y-construir.html"],
+          ["API 3 · Buenas prácticas", "01-fundamentos/docs/03-api-rest/03-buenas-practicas.html"],
+          ["API 4 · Seguridad", "01-fundamentos/docs/03-api-rest/04-seguridad.html"],
         ]],
         ["Ética y seguridad", "01-fundamentos/index.html#etica-y-seguridad", [
           ["Ética, ley y alcance", "01-fundamentos/docs/etica-y-seguridad/01-etica-ley-y-alcance.html"],
@@ -66,7 +68,14 @@
           ["E8 · Auditar un compose", "01-fundamentos/ejercicios/02-docker/e8.html"],
         ]],
         ["03 · API REST", "01-fundamentos/ejercicios/index.html#03-api-rest", [
-          ["Hackea el ranking · Solución", "01-fundamentos/ejercicios/03-api-rest/hackea-el-ranking/solucion.html"],
+          ["E1 · HTTP a mano", "01-fundamentos/ejercicios/03-api-rest/e1.html"],
+          ["E2 · Diseña el contrato", "01-fundamentos/ejercicios/03-api-rest/e2.html"],
+          ["E3 · Primera implementación", "01-fundamentos/ejercicios/03-api-rest/e3.html"],
+          ["E4 · Escribir bien", "01-fundamentos/ejercicios/03-api-rest/e4.html"],
+          ["E5 · Tres lenguajes, una API", "01-fundamentos/ejercicios/03-api-rest/e5.html"],
+          ["E6 · Errores que ayudan", "01-fundamentos/ejercicios/03-api-rest/e6.html"],
+          ["E7 · Listas grandes y escrituras a la vez", "01-fundamentos/ejercicios/03-api-rest/e7.html"],
+          ["E8 · Una API que se defiende", "01-fundamentos/ejercicios/03-api-rest/e8.html"],
         ]],
         ["Empresa con Terraform", "01-fundamentos/ejercicios/index.html#empresa-con-terraform", [
           ["Puesta en marcha del laboratorio", "01-fundamentos/ejercicios/empresa-con-terraform/puesta-en-marcha.html"],
@@ -74,7 +83,7 @@
         ["Mini auditoría", "01-fundamentos/ejercicios/index.html#mini-auditoria"],
       ]],
       ["Casos analizados", "01-fundamentos/casos-analizados/index.html", [
-        ["Hackea el ranking", "01-fundamentos/docs/03-api-rest/04-hackea-el-ranking.html#documentar"],
+        ["Hackea el ranking", "00-presentacion/docs/07-hackea-el-ranking.html#documentar"],
         ["PHP2Shell", "01-fundamentos/casos-analizados/cve-2026-109618-php2shell.html"],
       ]],
     ]],

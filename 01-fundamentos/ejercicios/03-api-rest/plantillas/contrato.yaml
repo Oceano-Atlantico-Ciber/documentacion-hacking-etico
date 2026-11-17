@@ -1,0 +1,336 @@
+# Contrato de referencia de la API de incidencias del curso.
+# Es el mismo para Go, Python y Node: el corrector solo mira lo que responde la API por HTTP.
+# Cada operación indica en qué ejercicio se programa. Hasta el E8 no se pide credencial.
+openapi: 3.1.0
+info:
+  title: API de incidencias
+  version: 1.0.0
+  description: >
+    El equipo de sistemas de la empresa registra aquí las incidencias de los puestos de trabajo.
+    Todas las respuestas con cuerpo son JSON. Los errores, desde el E6, son application/problem+json
+    (RFC 9457). Escucha en el puerto 8000.
+    Desde el E8 todas las rutas salvo /api/v1/salud y POST /api/v1/sesiones piden
+    Authorization: Bearer <token> (si falta o no vale, 401 con WWW-Authenticate: Bearer).
+    Un técnico solo ve y cambia las incidencias cuyo «tecnico» es él (las demás le dan 404),
+    no puede asignar una incidencia a otro (403) y no puede borrar (403); un administrador puede todo.
+    Ninguna respuesta lleva X-Powered-By ni un Server que diga el lenguaje o el framework.
+servers:
+  - url: http://localhost:8000
+paths:
+  /api/v1/salud:
+    get:
+      summary: Comprobar que la API responde (ya viene hecha)
+      responses:
+        "200":
+          description: La API está en marcha
+          content:
+            application/json:
+              schema: { type: object, required: [estado], properties: { estado: { const: ok } } }
+
+  /api/v1/incidencias:
+    get:
+      summary: Listar incidencias, ordenadas por id (E3; paginación y filtros en E7)
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - { name: cursor, in: query, description: El valor de «siguiente» de la página anterior, schema: { type: string } }
+        - { name: estado, in: query, schema: { $ref: "#/components/schemas/Estado" } }
+        - { name: prioridad, in: query, schema: { $ref: "#/components/schemas/Prioridad" } }
+      responses:
+        "200":
+          description: Una página de incidencias
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginaIncidencias" }
+        "400": { $ref: "#/components/responses/Problema" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+    post:
+      summary: Abrir una incidencia (E4)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IncidenciaNueva" }
+      responses:
+        "201":
+          description: Creada. Location dice su ruta y ETag su versión (E7)
+          headers:
+            Location: { schema: { type: string }, example: /api/v1/incidencias/13 }
+            ETag: { schema: { type: string }, example: '"1"' }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Incidencia" }
+        "400": { $ref: "#/components/responses/Problema" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "403": { $ref: "#/components/responses/Problema" }
+        "422": { $ref: "#/components/responses/Problema" }
+
+  /api/v1/incidencias/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    get:
+      summary: Leer una incidencia (E3; ETag y 304 en E7)
+      parameters:
+        - { name: If-None-Match, in: header, schema: { type: string } }
+      responses:
+        "200":
+          description: La incidencia
+          headers:
+            ETag: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Incidencia" }
+        "304": { description: No ha cambiado desde la versión que tienes }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "404": { $ref: "#/components/responses/Problema" }
+    put:
+      summary: Sustituir una incidencia entera (E4; If-Match en E7)
+      parameters:
+        - { name: If-Match, in: header, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IncidenciaCompleta" }
+      responses:
+        "200":
+          description: Sustituida
+          headers:
+            ETag: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Incidencia" }
+        "400": { $ref: "#/components/responses/Problema" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "403": { $ref: "#/components/responses/Problema" }
+        "404": { $ref: "#/components/responses/Problema" }
+        "412": { $ref: "#/components/responses/Problema" }
+        "422": { $ref: "#/components/responses/Problema" }
+    patch:
+      summary: Cambiar algunos campos (E4; If-Match en E7)
+      parameters:
+        - { name: If-Match, in: header, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IncidenciaParcial" }
+      responses:
+        "200":
+          description: Cambiada
+          headers:
+            ETag: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Incidencia" }
+        "400": { $ref: "#/components/responses/Problema" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "403": { $ref: "#/components/responses/Problema" }
+        "404": { $ref: "#/components/responses/Problema" }
+        "412": { $ref: "#/components/responses/Problema" }
+        "422": { $ref: "#/components/responses/Problema" }
+    delete:
+      summary: Borrar una incidencia; en el E8, solo un administrador (E4)
+      responses:
+        "204": { description: Borrada. Sin cuerpo }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "403": { $ref: "#/components/responses/Problema" }
+        "404": { $ref: "#/components/responses/Problema" }
+
+  /api/v1/incidencias/{id}/comentarios:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    get:
+      summary: Comentarios de una incidencia (E3)
+      responses:
+        "200":
+          description: Todos sus comentarios; «siguiente» siempre es null
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginaComentarios" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "404": { $ref: "#/components/responses/Problema" }
+    post:
+      summary: Añadir un comentario (E4)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [texto]
+              properties: { texto: { type: string, minLength: 1, maxLength: 500 } }
+      responses:
+        "201":
+          description: Creado
+          headers:
+            Location: { schema: { type: string }, example: /api/v1/incidencias/3/comentarios/9 }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Comentario" }
+        "400": { $ref: "#/components/responses/Problema" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "404": { $ref: "#/components/responses/Problema" }
+        "422": { $ref: "#/components/responses/Problema" }
+
+  /api/v1/incidencias/{id}/comentarios/{comentario}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+      - { name: comentario, in: path, required: true, schema: { type: integer } }
+    get:
+      summary: Leer un comentario (E4)
+      responses:
+        "200":
+          description: El comentario
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Comentario" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "404": { $ref: "#/components/responses/Problema" }
+
+  /api/v1/sesiones:
+    post:
+      summary: Cambiar usuario y clave por un token (E8)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [usuario, clave]
+              properties: { usuario: { type: string }, clave: { type: string } }
+      responses:
+        "201":
+          description: Sesión abierta
+          content:
+            application/json:
+              schema: { type: object, required: [token], properties: { token: { type: string } } }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "422": { $ref: "#/components/responses/Problema" }
+        "429":
+          description: Cinco claves erróneas para ese usuario en el último minuto
+          headers:
+            Retry-After: { description: Segundos que hay que esperar, schema: { type: integer } }
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+
+  /api/v1/usuarios/yo:
+    get:
+      summary: Quién soy (E8)
+      responses:
+        "200":
+          description: El usuario del token
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Usuario" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+    patch:
+      summary: Cambiar mi nombre; ningún otro campo (E8)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties: { nombre: { type: string } }
+      responses:
+        "200":
+          description: Cambiado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Usuario" }
+        "401": { $ref: "#/components/responses/SinCredencial" }
+        "422": { $ref: "#/components/responses/Problema" }
+
+components:
+  securitySchemes:
+    token: { type: http, scheme: bearer }
+  responses:
+    Problema:
+      description: Error con el formato de RFC 9457
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problema" }
+    SinCredencial:
+      description: Falta el token o no vale (E8). Lleva la cabecera WWW-Authenticate Bearer
+      headers:
+        WWW-Authenticate: { schema: { type: string }, example: Bearer }
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problema" }
+  schemas:
+    Prioridad: { type: string, enum: [baja, media, alta, critica] }
+    Estado: { type: string, enum: [abierta, en-curso, cerrada] }
+    Incidencia:
+      type: object
+      required: [id, titulo, prioridad, estado, tecnico]
+      properties:
+        id: { type: integer }
+        titulo: { type: string, minLength: 1, maxLength: 120 }
+        prioridad: { $ref: "#/components/schemas/Prioridad" }
+        estado: { $ref: "#/components/schemas/Estado" }
+        tecnico: { type: [string, "null"] }
+    IncidenciaNueva:
+      description: estado vale «abierta» y tecnico null si no se envían
+      type: object
+      additionalProperties: false
+      required: [titulo, prioridad]
+      properties:
+        titulo: { type: string, minLength: 1, maxLength: 120 }
+        prioridad: { $ref: "#/components/schemas/Prioridad" }
+        estado: { $ref: "#/components/schemas/Estado" }
+        tecnico: { type: [string, "null"] }
+    IncidenciaCompleta:
+      type: object
+      additionalProperties: false
+      required: [titulo, prioridad, estado, tecnico]
+      properties:
+        titulo: { type: string, minLength: 1, maxLength: 120 }
+        prioridad: { $ref: "#/components/schemas/Prioridad" }
+        estado: { $ref: "#/components/schemas/Estado" }
+        tecnico: { type: [string, "null"] }
+    IncidenciaParcial:
+      type: object
+      additionalProperties: false
+      properties:
+        titulo: { type: string, minLength: 1, maxLength: 120 }
+        prioridad: { $ref: "#/components/schemas/Prioridad" }
+        estado: { $ref: "#/components/schemas/Estado" }
+        tecnico: { type: [string, "null"] }
+    Comentario:
+      type: object
+      required: [id, incidencia, texto]
+      properties:
+        id: { type: integer }
+        incidencia: { type: integer }
+        texto: { type: string }
+    PaginaIncidencias:
+      type: object
+      required: [datos, siguiente]
+      properties:
+        datos: { type: array, items: { $ref: "#/components/schemas/Incidencia" } }
+        siguiente: { type: [string, "null"], description: Cursor de la página siguiente; null si es la última }
+    PaginaComentarios:
+      type: object
+      required: [datos, siguiente]
+      properties:
+        datos: { type: array, items: { $ref: "#/components/schemas/Comentario" } }
+        siguiente: { type: "null" }
+    Usuario:
+      type: object
+      required: [usuario, nombre, rol]
+      properties:
+        usuario: { type: string }
+        nombre: { type: string }
+        rol: { type: string, enum: [admin, tecnico] }
+    Problema:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: { type: string, example: about:blank }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }

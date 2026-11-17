@@ -1,0 +1,32 @@
+# Contrato de la API de incidencias. Complétalo a partir de requisitos.md.
+# Cada ruta nombra un recurso; lo que se hace con él lo dice el método.
+# Cada operación lleva todas sus respuestas, también las de error.
+openapi: 3.1.0
+info:
+  title: API de incidencias
+  version: 1.0.0
+paths:
+  /api/v1/salud:
+    get:
+      summary: Comprobar que la API responde
+      responses:
+        "200":
+          description: La API está en marcha
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estado: { type: string, example: ok }
+
+  # Escribe aquí el resto de rutas.
+
+components:
+  schemas:
+    Incidencia:
+      type: object
+      required: [id, titulo, prioridad, estado, tecnico]
+      properties:
+        id: { type: integer }
+        titulo: { type: string, maxLength: 120 }
+        # Completa prioridad, estado y tecnico.

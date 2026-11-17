@@ -21,7 +21,26 @@
 <a class="card" href="docs/04-docker.html"><b>04 · Docker</b><span>Docker Desktop en Windows y primera imagen de Floci.</span></a>
 <a class="card" href="docs/05-ia.html"><b>05 · IA: local o en la nube</b><span>Ollama o un asistente en la nube, y la regla para usarla.</span></a>
 <a class="card" href="docs/06-primer-commit.html"><b>06 · Primer commit</b><span><code>fundamentos/puesto.txt</code> en tu repositorio.</span></a>
+<a class="card" href="docs/07-hackea-el-ranking.html"><b>07 · Hackea el ranking</b> · criterios c, e, h<span>La práctica del primer día: un minijuego para descubrir que el servidor no debe fiarse de lo que manda el navegador.</span></a>
 </div>
+
+<h2 id="hackea-el-ranking">Hackea el ranking</h2>
+<dl class="ficha">
+<dt>Enunciado</dt><dd><a href="docs/07-hackea-el-ranking.html">Hackea el ranking</a>: los cuatro objetivos y qué entregar</dd>
+<dt>Solución</dt><dd><a href="hackea-el-ranking/solucion.html">Solución de «Hackea el ranking»</a>, reto a reto</dd>
+<dt>Ficheros</dt><dd><a href="hackea-el-ranking/docker-compose.yml"><code>docker-compose.yml</code></a>, <a href="hackea-el-ranking/server/server.py"><code>server/server.py</code></a> y <a href="hackea-el-ranking/web/index.html"><code>web/index.html</code></a></dd>
+<dt>Alcance</dt><dd>Solo la dirección del juego que proyecta el docente, solo durante la clase</dd>
+<dt>Entrega</dt><dd><code>fundamentos/casos-analizados/hackea-el-ranking.md</code>, como explica <a href="docs/07-hackea-el-ranking.html#documentar">De truco a vulnerabilidad</a></dd>
+</dl>
+<p>Se juega desde el navegador, F12, <code>curl</code> y la IA.</p>
+<h3>Levantar el juego (docente)</h3>
+<p>El servidor tiene dos modos: <code>trusted</code>, que acepta la puntuación que manda el navegador, y <code>validated</code>, que lleva la partida en el servidor. Se juega con el primero y se termina desplegando el segundo para ver que los mismos trucos ya no funcionan. Desde <code>00-presentacion/hackea-el-ranking/</code>:</p>
+<pre><code>MODE=trusted docker compose up -d --remove-orphans      # http://IP-DEL-DOCENTE:8080  (?scoreboard para el proyector)
+MODE=validated docker compose up -d --force-recreate --remove-orphans</code></pre>
+<p>El docente abre un túnel con Pinggy desde su equipo; la URL <code>https://….pinggy.link</code> que imprime es la dirección del juego y el alcance de la práctica. Se proyecta con <code>?scoreboard</code> al final.</p>
+<pre><code>ssh -p 443 -R0:localhost:8080 free@a.pinggy.io</code></pre>
+<p class="note">En el plan gratuito el túnel se cierra a los 60 minutos y al reabrirlo cambia la URL: hay que volver a proyectarla. El juego tiene que estar levantado antes de abrir el túnel o la URL responde 502.</p>
+<p>Para repetirlo en casa, levanta el juego en tu equipo desde Git Bash con la primera orden: la dirección pasa a ser <code>http://localhost:8080</code>.</p>
 
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>

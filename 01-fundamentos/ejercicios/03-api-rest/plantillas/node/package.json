@@ -1,0 +1,13 @@
+{
+  "name": "incidencias",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "express": "5.1.0"
+  }
+}

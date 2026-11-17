@@ -1,0 +1,21 @@
+# Peticiones que tu API tiene que rechazar sin romperse. Una por línea:
+#   MÉTODO RUTA | CUERPO | CÓDIGO ESPERADO
+# Todas las respuestas de error son application/problem+json con type, title, status y detail,
+# y ninguna lleva rutas de ficheros, nombres de funciones ni trazas.
+
+POST /api/v1/incidencias | {"titulo": "Sin cerrar" | 400
+POST /api/v1/incidencias | ['titulo', 'baja'] | 400
+POST /api/v1/incidencias | [1, 2, 3] | 422
+POST /api/v1/incidencias | {"titulo": "Falta la prioridad"} | 422
+POST /api/v1/incidencias | {"titulo": "", "prioridad": "baja"} | 422
+POST /api/v1/incidencias | {"titulo": "Prioridad inventada", "prioridad": "urgentisima"} | 422
+POST /api/v1/incidencias | {"titulo": 42, "prioridad": "alta"} | 422
+POST /api/v1/incidencias | {"titulo": "Con un campo de más", "prioridad": "baja", "rol": "admin"} | 422
+POST /api/v1/incidencias | {"titulo": "<121 caracteres>", "prioridad": "baja"} | 422
+PATCH /api/v1/incidencias/1 | {"estado": "olvidada"} | 422
+PATCH /api/v1/incidencias/1 | {"id": 999} | 422
+PUT /api/v1/incidencias/1 | {"titulo": "Solo el título"} | 422
+POST /api/v1/incidencias/1/comentarios | {"texto": ""} | 422
+GET /api/v1/incidencias/abc | | 404
+GET /api/v1/no-existe | | 404
+DELETE /api/v1/incidencias | | 405
