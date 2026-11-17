@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E6 · Un módulo, dos laboratorios · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#04-iac">Ejercicios de Terraform y AWS</a></nav>
+
+<h1>E6 · Un módulo, dos laboratorios</h1>
+<p class="lead">Convierte tu E5 en un módulo y levanta con él dos laboratorios iguales, cada uno en su red. Es la forma en que se reparten los laboratorios a un grupo: una pieza probada, muchas copias.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/04-iac/03-redes-y-servidores.html#modulos">IaC 3 · Módulos</a></dd>
+<dt>Aprendes</dt><dd>Módulos, variables de entrada y salidas de un módulo.</dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/iac/e6/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-iac-e6</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/04-iac/preparar.py e6
+cd fundamentos/iac/e6</code></pre></div>
+<p>Copia tu E5 como punto de partida.</p>
+
+<h2 class="step"><span class="n">2</span>Mueve el laboratorio a un módulo</h2>
+<p>Pasa los recursos a <code>modulos/lab/</code>, con <code>variables.tf</code> para lo que cambia de un laboratorio a otro (al menos el nombre y el rango de la VPC; las subredes se calculan con <code>cidrsubnet</code>) y <code>outputs.tf</code> con lo que necesita quien lo usa. <code>proveedor.tf</code> se queda en la raíz.</p>
+
+<h2 class="step"><span class="n">3</span>Úsalo dos veces</h2>
+<p>En <code>main.tf</code> de la raíz, dos bloques <code>module</code> con nombres y rangos distintos, y una salida con la IP del servidor de cada uno. La raíz no crea ningún recurso por su cuenta.</p>
+<div class="cmd"><pre><code>terraform init
+terraform apply
+terraform output
+aws ec2 describe-vpcs --query "Vpcs[].[CidrBlock,Tags]"
+terraform destroy</code></pre></div>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>No hay ningún módulo en <code>modulos/</code>, o la raíz no lo usa dos veces, o crea VPC, servidores o bases de datos fuera del módulo.</li>
+<li>No hay dos VPC, o no tienen etiquetas <code>Name</code> distintas, o comparten rango.</li>
+<li>Algún laboratorio no cumple lo del E5: tres subredes, servidor con el 80 abierto y nada más, base de datos privada que solo admite al servidor.</li>
+<li><code>destroy</code> falla.</li>
+</ul>
+
+<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/04-iac/pruebas.py e6</code></pre></div>
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add fundamentos/iac
+git commit -m "feat(iac-e6): módulo lab usado dos veces"
+git push</code></pre></div>
+<p>Cuando la fila de E6 de <b>Corrector iac</b> salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e6 -m "E6 resuelto"
+git push origin entrega-fundamentos-iac-e6</code></pre></div>
+
+<nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e5.html">← E5 · Un laboratorio completo</a><a href="e7.html">E7 · Auditar los permisos →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

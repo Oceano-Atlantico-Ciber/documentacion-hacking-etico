@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E4 · Variables y deriva · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#04-iac">Ejercicios de Terraform y AWS</a></nav>
+
+<h1>E4 · Variables y deriva</h1>
+<p class="lead">Saca los nombres del E3 a variables y da salidas útiles. Después, «un compañero» borra a mano la política del lector: tu código lo tiene que detectar y deshacer.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/04-iac/02-terraform.html#variables">IaC 2 · Variables y salidas</a> y <a href="../../docs/04-iac/02-terraform.html#deriva">Deriva</a></dd>
+<dt>Aprendes</dt><dd>Variables, salidas, y que el código es la fuente de verdad de la cuenta.</dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/iac/e4/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-iac-e4</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/04-iac/preparar.py e4
+cd fundamentos/iac/e4</code></pre></div>
+<p>Copia tu E3 (sin estado ni <code>.terraform/</code>) y añade un <code>LEEME.md</code> con la orden del «compañero». Como el estado no se copia, los bloques <code>import</code> del E3 vuelven a hacer falta aquí: déjalos.</p>
+
+<h2 class="step"><span class="n">2</span>Variables y salidas</h2>
+<p>En <code>variables.tf</code>, al menos una variable propia para lo que se repite en los nombres (tu huella, el nombre de la política…), con su <code>description</code> y su <code>default</code>. En <code>outputs.tf</code>, el nombre del bucket y el del usuario.</p>
+<div class="cmd"><pre><code>terraform init
+terraform plan
+terraform apply
+terraform output
+terraform plan</code></pre></div>
+<p>El último plan tiene que decir <code>No changes</code>.</p>
+
+<h2 class="step"><span class="n">3</span>El compañero toca a mano</h2>
+<p>Lanza la orden del <code>LEEME.md</code>, que borra la política <code>lectura-notas</code> del lector. Después:</p>
+<div class="cmd"><pre><code>terraform plan
+terraform apply
+terraform plan</code></pre></div>
+<p>El primer plan descubre lo que ha cambiado; <code>apply</code> lo deja como dice el código.</p>
+
+<h2 class="step"><span class="n">4</span>Explícalo</h2>
+<div class="cmd"><pre><code>code deriva.md</code></pre></div>
+<p>Qué cambió a mano, cómo lo viste en el plan (copia la línea del resumen), qué hiciste y qué tendría que haber hecho el compañero en vez de tocar a mano.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Falta <code>main.tf</code> o <code>deriva.md</code>, o no hay ninguna variable propia.</li>
+<li>Las salidas no dan el nombre del bucket y del usuario.</li>
+<li>Recién aplicado, el plan quiere cambiar algo.</li>
+<li>Después de borrar a mano la política, el plan no lo ve, o <code>apply</code> no la recupera.</li>
+<li><code>deriva.md</code> no nombra la política que desapareció.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/04-iac/pruebas.py e4</code></pre></div>
+
+<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add fundamentos/iac
+git commit -m "feat(iac-e4): variables, salidas y deriva corregida"
+git push</code></pre></div>
+<p>Cuando la fila de E4 de <b>Corrector iac</b> salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e4 -m "E4 resuelto"
+git push origin entrega-fundamentos-iac-e4</code></pre></div>
+
+<nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e3.html">← E3 · Del clic al código</a><a href="e5.html">E5 · Un laboratorio completo →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

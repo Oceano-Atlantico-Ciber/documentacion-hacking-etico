@@ -34,6 +34,12 @@
           ["API 3 · Buenas prácticas", "01-fundamentos/docs/03-api-rest/03-buenas-practicas.html"],
           ["API 4 · Seguridad", "01-fundamentos/docs/03-api-rest/04-seguridad.html"],
         ]],
+        ["04 · Terraform y AWS", "01-fundamentos/index.html#04-iac", [
+          ["IaC 1 · La nube en tu portátil", "01-fundamentos/docs/04-iac/01-la-nube-en-tu-portatil.html"],
+          ["IaC 2 · Terraform", "01-fundamentos/docs/04-iac/02-terraform.html"],
+          ["IaC 3 · Redes y servidores", "01-fundamentos/docs/04-iac/03-redes-y-servidores.html"],
+          ["IaC 4 · Seguridad de la infraestructura", "01-fundamentos/docs/04-iac/04-seguridad-de-la-infraestructura.html"],
+        ]],
         ["Ética y seguridad", "01-fundamentos/index.html#etica-y-seguridad", [
           ["Ética, ley y alcance", "01-fundamentos/docs/etica-y-seguridad/01-etica-ley-y-alcance.html"],
           ["Seguridad, vulnerabilidades y ataques", "01-fundamentos/docs/etica-y-seguridad/02-seguridad-y-vulnerabilidades.html"],
@@ -76,6 +82,16 @@
           ["E6 · Errores que ayudan", "01-fundamentos/ejercicios/03-api-rest/e6.html"],
           ["E7 · Listas grandes y escrituras a la vez", "01-fundamentos/ejercicios/03-api-rest/e7.html"],
           ["E8 · Una API que se defiende", "01-fundamentos/ejercicios/03-api-rest/e8.html"],
+        ]],
+        ["04 · Terraform y AWS", "01-fundamentos/ejercicios/index.html#04-iac", [
+          ["E1 · A mano, una vez", "01-fundamentos/ejercicios/04-iac/e1.html"],
+          ["E2 · Inventario de una cuenta", "01-fundamentos/ejercicios/04-iac/e2.html"],
+          ["E3 · Del clic al código", "01-fundamentos/ejercicios/04-iac/e3.html"],
+          ["E4 · Variables y deriva", "01-fundamentos/ejercicios/04-iac/e4.html"],
+          ["E5 · Un laboratorio completo", "01-fundamentos/ejercicios/04-iac/e5.html"],
+          ["E6 · Un módulo, dos laboratorios", "01-fundamentos/ejercicios/04-iac/e6.html"],
+          ["E7 · Auditar los permisos", "01-fundamentos/ejercicios/04-iac/e7.html"],
+          ["E8 · Corregir en el código", "01-fundamentos/ejercicios/04-iac/e8.html"],
         ]],
         ["Empresa con Terraform", "01-fundamentos/ejercicios/index.html#empresa-con-terraform", [
           ["Puesta en marcha del laboratorio", "01-fundamentos/ejercicios/empresa-con-terraform/puesta-en-marcha.html"],

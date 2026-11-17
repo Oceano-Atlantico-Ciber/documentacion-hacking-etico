@@ -1,0 +1,27 @@
+# Terraform y AWS · La cuenta AWS emulada de toda la unidad (Floci). Solo hace falta Docker Desktop.
+#   docker compose up -d      # la nube, en http://localhost:4566
+#   docker compose down       # parar, conservando lo creado
+#   docker compose down -v    # parar y empezar de cero
+name: iac
+services:
+  floci:
+    image: floci/floci:2.4.0   # versión fija: no cambia a mitad de curso
+    container_name: iac-floci
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      FLOCI_HOSTNAME: localhost
+      FLOCI_DEFAULT_REGION: eu-west-1
+      FLOCI_STORAGE_MODE: persistent
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data
+      # Los permisos de IAM se aplican de verdad: un usuario solo hace lo que dice su política.
+      FLOCI_SERVICES_IAM_ENFORCEMENT_ENABLED: "true"
+      # Servidores (EC2) y bases de datos (RDS) simulados: existen en la API con toda su configuración,
+      # pero no arrancan contenedores. Para aprender Terraform es lo que importa, y el portátil lo agradece.
+      FLOCI_SERVICES_EC2_MOCK: "true"
+      FLOCI_SERVICES_RDS_MOCK: "true"
+    volumes:
+      - floci-data:/app/data
+
+volumes:
+  floci-data:

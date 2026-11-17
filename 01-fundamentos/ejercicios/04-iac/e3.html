@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E3 · Del clic al código · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html#04-iac">Ejercicios de Terraform y AWS</a></nav>
+
+<h1>E3 · Del clic al código</h1>
+<p class="lead">El bucket y el lector del E1 existen, pero solo en tu cuenta y en tu memoria. Descríbelos en Terraform y adóptalos con <code>import</code>, sin borrarlos ni crearlos de nuevo.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../../docs/04-iac/02-terraform.html">IaC 2 · Terraform</a></dd>
+<dt>Aprendes</dt><dd>Recursos, referencias, el ciclo <code>init</code>, <code>plan</code>, <code>apply</code> y los bloques <code>import</code>.</dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/iac/e3/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-iac-e3</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/04-iac/preparar.py e3
+cd fundamentos/iac/e3</code></pre></div>
+<p>Deja <code>proveedor.tf</code>, que apunta a tu Floci, y un <code>LEEME.md</code> con los tres recursos que tienes que adoptar. Tu Floci tiene que seguir teniendo lo del E1: compruébalo con <code>aws s3 ls</code> y <code>aws iam list-users</code>. Si hiciste <code>down -v</code>, vuelve a lanzar las órdenes de <code>e1/ordenes.sh</code>.</p>
+
+<h2 class="step"><span class="n">2</span>Escribe los recursos</h2>
+<div class="cmd"><pre><code>code main.tf</code></pre></div>
+<p>Un <code>aws_s3_bucket</code>, un <code>aws_iam_user</code> y un <code>aws_iam_user_policy</code> con la misma política que <code>e1/politica.json</code>, escrita con <code>jsonencode</code> y con referencias en vez de nombres repetidos. Y un bloque <code>import</code> por cada uno, con el <code>id</code> que dice el <code>LEEME.md</code> (<a href="../../docs/04-iac/02-terraform.html#import">IaC 2 · Adoptar lo que ya existe</a>).</p>
+
+<h2 class="step"><span class="n">3</span>Ajusta hasta que el plan solo importe</h2>
+<div class="cmd"><pre><code>terraform init
+terraform fmt
+terraform plan</code></pre></div>
+<p>El objetivo es <code>Plan: 3 to import, 0 to add, 0 to change, 0 to destroy.</code> Si dice <code>to change</code>, el plan te enseña con <code>~</code> qué atributo de tu código no coincide con la cuenta: corrígelo en el código, no en la cuenta. Si dice <code>to add</code>, algún <code>import</code> no encuentra su recurso.</p>
+
+<h2 class="step"><span class="n">4</span>Aplica y comprueba</h2>
+<div class="cmd"><pre><code>terraform apply
+terraform plan</code></pre></div>
+<p>El segundo plan tiene que decir <code>No changes</code>. El <code>terraform.tfstate</code> que aparece en la carpeta no se sube: el <code>.gitignore</code> de la unidad ya lo deja fuera.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Falta <code>main.tf</code>, o falta alguno de los tres recursos, o no hay ningún bloque <code>import</code>.</li>
+<li>En una cuenta nueva donde se han lanzado tus órdenes del E1, el primer plan no importa, o además añade, cambia o destruye algo.</li>
+<li>Después de <code>apply</code>, el plan todavía quiere cambiar algo.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/04-iac/pruebas.py e3</code></pre></div>
+<p>Como el corrector, lanza tu <code>e1/ordenes.sh</code> en una Floci vacía y después tu Terraform. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>.</p>
+
+<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add fundamentos/iac
+git commit -m "feat(iac-e3): bucket y lector adoptados con import"
+git push</code></pre></div>
+<p>Cuando la fila de E3 de <b>Corrector iac</b> salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e3 -m "E3 resuelto"
+git push origin entrega-fundamentos-iac-e3</code></pre></div>
+
+<nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e2.html">← E2 · Inventario de una cuenta</a><a href="e4.html">E4 · Variables y deriva →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

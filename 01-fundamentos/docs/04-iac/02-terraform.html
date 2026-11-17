@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IaC 2 · Terraform · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Terraform y AWS 2 de 4</p>
+<h1>Terraform</h1>
+<p class="lead">Infraestructura como código: en vez de crear los recursos a mano, escribes en ficheros cómo tiene que quedar la cuenta, y una herramienta hace las llamadas a la API que faltan para llegar ahí. El código se revisa, se versiona con git y se repite igual cuantas veces quieras. Durante el curso, los laboratorios se levantarán así.</p>
+<div class="meta"><span>Antes: <a href="01-la-nube-en-tu-portatil.html">IaC 1 · La nube en tu portátil</a></span><span>Ejercicios: <a href="../../ejercicios/04-iac/e3.html">E3</a> y <a href="../../ejercicios/04-iac/e4.html">E4</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Palabras de este tema</h2>
+<dl class="ficha">
+<dt>Declarativo</dt><dd>Describes el resultado («un bucket llamado así»), no los pasos. Terraform calcula los pasos.</dd>
+<dt>Proveedor</dt><dd>El complemento que sabe hablar con una API concreta: <code>hashicorp/aws</code> para AWS (y para Floci).</dd>
+<dt>Recurso</dt><dd>Un objeto de la cuenta descrito en el código: <code>resource "aws_s3_bucket" "notas" { … }</code>.</dd>
+<dt>Estado</dt><dd>El fichero <code>terraform.tfstate</code>, donde Terraform apunta qué recurso real corresponde a cada bloque del código.</dd>
+<dt>Plan</dt><dd>La lista de cambios que haría Terraform para que la cuenta quede como el código: crear, cambiar, destruir.</dd>
+<dt>Deriva</dt><dd>La diferencia entre el código y la cuenta cuando alguien cambia algo a mano.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>Un fichero de Terraform</h2>
+<p>Terraform lee todos los ficheros <code>.tf</code> de la carpeta en la que lo lanzas, como si fueran uno. El lenguaje se llama HCL y tiene bloques con un tipo, unas etiquetas y unos argumentos. En los ejercicios, <code>proveedor.tf</code> ya viene hecho: dice que se usa el proveedor de AWS y que sus peticiones van a Floci. Tú escribes los recursos:</p>
+<pre><code>resource "aws_s3_bucket" "informes" {          # tipo de recurso y nombre en el código
+  bucket = "informes-1a2b3c4d"                 # nombre en la cuenta
+}
+
+resource "aws_iam_user" "ana" {
+  name = "ana-1a2b3c4d"
+}
+
+resource "aws_iam_user_policy" "lectura" {
+  name = "lectura-informes"
+  user = aws_iam_user.ana.name                 # referencia a otro recurso
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      { Effect = "Allow", Action = "s3:ListBucket", Resource = aws_s3_bucket.informes.arn },
+      { Effect = "Allow", Action = "s3:GetObject",  Resource = "${aws_s3_bucket.informes.arn}/*" },
+    ]
+  })
+}</code></pre>
+<p>Tres ideas en este ejemplo:</p>
+<ul>
+<li>Cada recurso tiene dos nombres: el del código (<code>informes</code>), para referirte a él, y el de la cuenta (<code>informes-1a2b3c4d</code>).</li>
+<li><code>aws_iam_user.ana.name</code> y <code>aws_s3_bucket.informes.arn</code> son <b>referencias</b>. Además de evitar repetir nombres, le dicen a Terraform el orden: la política se crea después del usuario y del bucket.</li>
+<li><code>jsonencode</code> escribe la política en HCL y la convierte a JSON. Es la misma política de <a href="01-la-nube-en-tu-portatil.html#politicas">IaC 1</a>.</li>
+</ul>
+<p>Qué argumentos tiene cada recurso lo dice la documentación del proveedor, en el registro de Terraform: busca «aws_iam_user_policy terraform» y abre la página de <code>registry.terraform.io</code>.</p>
+</section>
+
+<section class="seccion">
+<h2>El ciclo: init, plan, apply</h2>
+<p>Desde la carpeta con los <code>.tf</code>:</p>
+<div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
+<tr><td><code>terraform init</code></td><td>Descarga el proveedor a <code>.terraform/</code>. Una vez por carpeta, o al cambiar de proveedor.</td></tr>
+<tr><td><code>terraform fmt</code></td><td>Ordena el formato de tus ficheros. Pásalo siempre antes de un commit.</td></tr>
+<tr><td><code>terraform validate</code></td><td>Comprueba que el código tiene sentido sin tocar la cuenta.</td></tr>
+<tr><td><code>terraform plan</code></td><td>Compara código, estado y cuenta, y enseña lo que cambiaría: <code>+</code> crear, <code>~</code> cambiar, <code>-</code> destruir.</td></tr>
+<tr><td><code>terraform apply</code></td><td>Enseña el plan, pide confirmación (<code>yes</code>) y hace las llamadas.</td></tr>
+<tr><td><code>terraform output</code></td><td>Muestra las salidas que declara el código.</td></tr>
+<tr><td><code>terraform destroy</code></td><td>Borra todo lo que el estado dice que gestiona este código.</td></tr>
+</tbody></table></div>
+<p>La línea que más importa del plan es la última, por ejemplo <code>Plan: 3 to add, 0 to change, 0 to destroy.</code> Léela siempre antes de escribir <code>yes</code>. Después de un <code>apply</code>, un segundo <code>plan</code> tiene que decir <code>No changes</code>: el código y la cuenta coinciden. Si no, algo en tu código no describe bien lo que existe.</p>
+</section>
+
+<section class="seccion">
+<h2>El estado, y por qué no se sube</h2>
+<p>Terraform guarda en <code>terraform.tfstate</code> qué recurso real es cada bloque, con todos sus atributos. Ahí aparecen también los secretos: contraseñas de bases de datos, claves de acceso que cree tu código. Por eso el <code>.gitignore</code> de la unidad deja fuera el estado, <code>.terraform/</code> y el fichero de bloqueo. En un equipo, el estado vive en un almacén compartido y cifrado; en el curso, en tu carpeta.</p>
+<p class="note">Si borras el estado, Terraform «olvida» lo que creó: el siguiente plan querrá crearlo todo otra vez y chocará con lo que ya existe. Para recuperar recursos que existen sin estado está <code>import</code>.</p>
+</section>
+
+<section class="seccion" id="import">
+<h2>Adoptar lo que ya existe: import</h2>
+<p>Casi nunca se empieza de cero: la cuenta ya tiene cosas creadas a mano. Un bloque <code>import</code> le dice a Terraform que un recurso del código corresponde a uno que ya existe, en vez de crearlo:</p>
+<pre><code>import {
+  to = aws_iam_user.ana          # el bloque del código
+  id = "ana-1a2b3c4d"            # cómo encontrarlo en la cuenta
+}</code></pre>
+<p>Qué es el <code>id</code> lo dice la página de cada recurso, en su sección «Import»: para un bucket, su nombre; para un usuario, su nombre; para una política en línea, <code>usuario:política</code>. Con el bloque en su sitio, el plan dice <code>1 to import</code>. Si además dice <code>to change</code>, tu código no describe el recurso tal como está: ajústalo hasta que el plan solo importe, y entonces aplica. Después, los bloques <code>import</code> pueden quedarse o borrarse; ya no hacen nada.</p>
+</section>
+
+<section class="seccion" id="variables">
+<h2>Variables y salidas</h2>
+<p>Un nombre que se repite en diez sitios es un error esperando a pasar. Las <b>variables</b> son los parámetros del código y las <b>salidas</b> lo que devuelve:</p>
+<pre><code># variables.tf
+variable "huella" {
+  description = "La parte de los nombres que distingue mis recursos"
+  type        = string
+  default     = "1a2b3c4d"
+}
+
+# main.tf
+resource "aws_s3_bucket" "informes" {
+  bucket = "informes-${var.huella}"
+}
+
+# outputs.tf
+output "bucket" {
+  value = aws_s3_bucket.informes.bucket
+}</code></pre>
+<p>Una variable sin <code>default</code> se pide al lanzar el plan, o se pasa con <code>-var huella=…</code> o un fichero <code>.tfvars</code>. Las que llevan secretos se marcan <code>sensitive = true</code> y Terraform no las enseña en pantalla (aunque sí quedan en el estado).</p>
+</section>
+
+<section class="seccion" id="deriva">
+<h2>Deriva: cuando alguien toca a mano</h2>
+<p>Un compañero arregla algo con la CLI, sin pasar por el código. La cuenta ya no es lo que dice el código, y nadie lo ve hasta el siguiente <code>plan</code>, que lo detecta porque pregunta a la API cómo está cada recurso:</p>
+<pre><code>  # aws_iam_user_policy.lectura will be created
+  + resource "aws_iam_user_policy" "lectura" {
+…
+Plan: 1 to add, 0 to change, 0 to destroy.</code></pre>
+<p>El código es la fuente de verdad: un <code>apply</code> deja la cuenta otra vez como dice el código, y el cambio a mano se pierde. Si el cambio era bueno, se hace en el código, con su commit y su revisión. Pasar el plan cada día y avisar si no sale vacío es una forma sencilla de vigilar una cuenta.</p>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="01-la-nube-en-tu-portatil.html">← IaC 1 · La nube en tu portátil</a><a href="03-redes-y-servidores.html">IaC 3 · Redes y servidores →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

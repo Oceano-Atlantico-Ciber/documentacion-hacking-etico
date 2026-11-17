@@ -1,0 +1,9 @@
+# Terraform: lo que se descarga y el estado, que puede contener claves. Nunca se suben.
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+# Claves y salidas sensibles
+*.key
+credenciales*

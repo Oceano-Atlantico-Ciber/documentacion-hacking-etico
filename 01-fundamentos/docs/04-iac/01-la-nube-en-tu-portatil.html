@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IaC 1 · La nube en tu portátil · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos, alcance y herramientas</a></nav>
+<header>
+<p class="eyebrow">Fundamentos, alcance y herramientas · RA1 · Terraform y AWS 1 de 4</p>
+<h1>La nube en tu portátil</h1>
+<p class="lead">Una nube como AWS es un centro de datos que se maneja entero con peticiones HTTP: crear un disco, un usuario o un servidor es mandar una petición firmada a una API. Floci es un programa que responde a esas mismas peticiones dentro de un contenedor. Con él trabajas como en AWS, sin cuenta, sin tarjeta y sin que nada salga de tu equipo.</p>
+<div class="meta"><span>Antes: <a href="../02-docker/04-compose-y-seguridad.html">Docker 4 · Compose y seguridad</a></span><span>Ejercicios: <a href="../../ejercicios/04-iac/e1.html">E1</a> y <a href="../../ejercicios/04-iac/e2.html">E2</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Palabras de este tema</h2>
+<dl class="ficha">
+<dt>Cuenta</dt><dd>El contenedor de todo lo que creas en AWS. Tiene un número de doce cifras y un usuario raíz que lo puede todo.</dd>
+<dt>Región</dt><dd>Un grupo de centros de datos en una zona del mundo, como <code>eu-west-1</code> (Irlanda). Casi todo lo que creas vive en una región.</dd>
+<dt>Servicio</dt><dd>Cada producto de AWS, con su propia API: S3 guarda ficheros, IAM gestiona identidades y permisos, EC2 da servidores, RDS bases de datos.</dd>
+<dt>Clave de acceso</dt><dd>La pareja <code>AccessKeyId</code> y <code>SecretAccessKey</code> con la que un programa firma sus peticiones. Quien la tiene actúa como su dueño.</dd>
+<dt>ARN</dt><dd>El nombre completo de un recurso: <code>arn:aws:s3:::copias-1a2b3c4d</code>, <code>arn:aws:iam::000000000000:user/becario</code>.</dd>
+<dt>Endpoint</dt><dd>La dirección a la que se mandan las peticiones. En AWS es <code>https://s3.eu-west-1.amazonaws.com</code>; con Floci, <code>http://localhost:4566</code>.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>Cuatro servicios para empezar</h2>
+<p>AWS tiene más de doscientos servicios. En esta unidad usas cuatro, los que aparecen en casi cualquier auditoría de una cuenta:</p>
+<div class="tabla"><table><thead><tr><th>Servicio</th><th>Qué guarda</th><th>Lo que mira un auditor</th></tr></thead><tbody>
+<tr><td><b>S3</b></td><td>Ficheros (objetos) dentro de cubos (<i>buckets</i>) con un nombre único.</td><td>Cubos públicos, sin cifrar, con copias o datos personales.</td></tr>
+<tr><td><b>IAM</b></td><td>Usuarios, grupos, roles y las políticas que dicen qué puede hacer cada uno.</td><td>Permisos de más, claves viejas o filtradas, quién puede darse permisos.</td></tr>
+<tr><td><b>EC2</b></td><td>Servidores virtuales y las redes (VPC) y grupos de seguridad que los rodean.</td><td>Puertos abiertos a todo internet, secretos en el arranque.</td></tr>
+<tr><td><b>RDS</b></td><td>Bases de datos gestionadas: PostgreSQL, MySQL…</td><td>Bases accesibles desde fuera, sin cifrar, sin copias.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Floci: una cuenta AWS en un contenedor</h2>
+<p>Floci habla el mismo protocolo que AWS, así que la CLI de AWS y Terraform funcionan con él sin cambiar nada, salvo el endpoint. En el curso lo usamos con tres ajustes, que ya trae el <code>docker-compose.yml</code> que te deja <code>preparar.py</code>:</p>
+<ul>
+<li><b>Versión fija</b>, <code>floci/floci:2.4.0</code>. Con <code>latest</code>, una versión nueva podría cambiar el comportamiento a mitad de curso.</li>
+<li><b>Permisos de IAM aplicados</b> (<code>FLOCI_SERVICES_IAM_ENFORCEMENT_ENABLED</code>). Por defecto Floci deja hacer todo a cualquiera; así, cada usuario solo puede lo que dice su política, como en AWS.</li>
+<li><b>Servidores y bases de datos simulados</b> (<code>FLOCI_SERVICES_EC2_MOCK</code> y <code>FLOCI_SERVICES_RDS_MOCK</code>). Existen en la API con toda su configuración, pero no arrancan contenedores. Para aprender a describirlos con Terraform y revisarlos es lo que importa.</li>
+</ul>
+<p>La clave <code>test</code> / <code>test</code> es la del usuario raíz de la cuenta emulada: puede con todo. Las claves que crees para otros usuarios solo podrán lo que les dé su política.</p>
+<p class="note">Floci emula la API, no la nube entera. Algunos detalles difieren de AWS y se dicen donde importan. Lo que aprendes (los recursos, sus opciones y sus fallos) es el de AWS.</p>
+</section>
+
+<section class="seccion" id="instalar">
+<h2>Prepara tu equipo</h2>
+<p>Docker Desktop ya lo tienes de <a href="../02-docker/01-imagenes-y-contenedores.html">Docker 1</a>. Abre <b>PowerShell</b> e instala la CLI de AWS y Terraform:</p>
+<pre><code>winget install -e --id Amazon.AWSCLI
+winget install -e --id Hashicorp.Terraform</code></pre>
+<p>Cierra Git Bash y vuelve a abrirlo para que encuentre los programas nuevos, y comprueba:</p>
+<pre><code>aws --version
+terraform version</code></pre>
+<p>Ahora dile a la CLI de AWS dónde está tu nube. Estas cuatro órdenes escriben la configuración por defecto en <code>~/.aws/</code>, una sola vez:</p>
+<pre><code>aws configure set aws_access_key_id test
+aws configure set aws_secret_access_key test
+aws configure set region eu-west-1
+aws configure set endpoint_url http://localhost:4566</code></pre>
+<p class="note">Con esta configuración, cada orden <code>aws</code> va a Floci y nunca a AWS de verdad. Si algún día usas una cuenta real, créale otro perfil con <code>--profile</code>.</p>
+</section>
+
+<section class="seccion" id="levantar">
+<h2>Levantar la nube</h2>
+<p>Toda la unidad usa una sola Floci, la de <code>fundamentos/iac/</code> de tu repositorio de entregas. <code>preparar.py</code> deja allí el <code>docker-compose.yml</code> la primera vez que lo lanzas:</p>
+<pre><code>cd fundamentos/iac
+docker compose up -d
+aws sts get-caller-identity</code></pre>
+<p>La última orden pregunta «¿quién soy?». Si responde un JSON con la cuenta (<code>Account</code>) y tu ARN, tu nube funciona. Lo que crees se guarda en un volumen de Docker y sigue ahí tras <code>docker compose down</code>; con <code>docker compose down -v</code> empiezas de cero.</p>
+</section>
+
+<section class="seccion">
+<h2>La CLI de AWS</h2>
+<p>Todas las órdenes tienen la misma forma: <code>aws &lt;servicio&gt; &lt;acción&gt; --opciones</code>. Las acciones son las de la API: <code>create-user</code> llama a <code>CreateUser</code>. Para S3 hay además unas órdenes cortas, <code>aws s3</code>, que se parecen a las de la shell:</p>
+<pre><code>aws s3 mb s3://pruebas-1a2b3c4d                    # crear un bucket
+aws s3 cp informe.txt s3://pruebas-1a2b3c4d/        # subir un fichero
+aws s3 ls s3://pruebas-1a2b3c4d                     # listar
+aws iam create-user --user-name ana                 # crear un usuario
+aws iam list-users                                  # listar los usuarios
+aws iam list-user-policies --user-name ana          # sus políticas en línea</code></pre>
+<p>Las respuestas son JSON. Para quedarte con un dato, <code>--query</code> recorre la respuesta: <code>aws iam list-users --query "Users[].UserName"</code>. Cuando una orden falla, la última línea dice por qué: <code>AccessDenied</code> es un permiso que falta, <code>NoSuchEntity</code> algo que no existe.</p>
+</section>
+
+<section class="seccion" id="politicas">
+<h2>Políticas de IAM</h2>
+<p>Un usuario recién creado no puede hacer nada. Lo que puede hacer lo dicen sus <b>políticas</b>: documentos JSON con una lista de sentencias. Cada sentencia dice si permite o deniega (<code>Effect</code>), qué acciones (<code>Action</code>) y sobre qué recursos (<code>Resource</code>):</p>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    { "Effect": "Allow", "Action": "s3:ListBucket", "Resource": "arn:aws:s3:::informes-1a2b3c4d" },
+    { "Effect": "Allow", "Action": "s3:GetObject",  "Resource": "arn:aws:s3:::informes-1a2b3c4d/*" }
+  ]
+}</code></pre>
+<p>Este usuario puede listar un bucket y leer sus ficheros, y nada más: ni borrarlos, ni ver otros buckets, ni tocar IAM. Fíjate en los dos ARN: el bucket para listarlo, y <code>bucket/*</code> para los objetos de dentro.</p>
+<p>Una política se puede guardar <b>en línea</b>, dentro del usuario (<code>put-user-policy</code>), o como política <b>gestionada</b> aparte que se adjunta a varios (<code>attach-user-policy</code>). La regla que guía todo esto es la del <b>menor privilegio</b>: cada identidad, solo lo que necesita para su trabajo.</p>
+<pre><code>aws iam put-user-policy --user-name ana --policy-name lectura-informes --policy-document file://politica.json
+aws iam create-access-key --user-name ana</code></pre>
+<p class="note"><code>create-access-key</code> enseña el secreto una sola vez. En una cuenta real es una credencial: no la pegues en un chat ni la subas a un repositorio. En <a href="04-seguridad-de-la-infraestructura.html">IaC 4</a> verás qué pasa cuando ocurre.</p>
+</section>
+
+<section class="seccion">
+<h2>Lo que haces a mano no queda en ningún sitio</h2>
+<p>Has creado un bucket, un usuario y su política con cinco órdenes. ¿Cómo sabrá un compañero qué hay en la cuenta y por qué? ¿Cómo lo repites en otra cuenta, o después de un <code>down -v</code>? Guardar las órdenes en un fichero ayuda, pero no dice qué existe ahora: si alguien cambia algo a mano, el fichero ya no cuenta la verdad. Ese problema es el que resuelve Terraform, en el <a href="02-terraform.html">siguiente tema</a>.</p>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="../03-api-rest/04-seguridad.html">← API 4 · Seguridad</a><a href="02-terraform.html">IaC 2 · Terraform →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>
