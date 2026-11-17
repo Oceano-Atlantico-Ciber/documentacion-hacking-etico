@@ -19,7 +19,7 @@
 .barra .m { background: var(--crit); }
 .leyenda { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 14px; align-items: center; }
 .leyenda span { display: inline-flex; gap: 6px; align-items: center; }
-.c { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 5px; font: 700 12px/1 var(--f-mono); }
+.c { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 5px; font: 700 13px/1 var(--f-mono); vertical-align: middle; }
 .c.bien { background: var(--ok); color: var(--surface); }
 .c.mal { background: var(--crit); color: var(--surface); }
 .c.provisional { border: 2px solid var(--warn); color: var(--warn); }
@@ -27,13 +27,13 @@
 .c.sin::after { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--line); }
 .matriz { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
 .matriz table { border-collapse: separate; border-spacing: 0; width: 100%; font-variant-numeric: tabular-nums; }
-.matriz th, .matriz td { padding: 5px 3px; text-align: center; border: 0; }
+.matriz th, .matriz td { padding: 4px 2px; text-align: center; border: 0; vertical-align: middle; }
 .matriz thead th { font: 600 11px var(--f-mono); color: var(--muted); background: var(--surface); }
 .matriz thead tr:first-child th { font: 700 13px var(--f-display); color: var(--ink); padding-top: 12px; }
-.matriz .alumno { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; padding: 5px 14px;
-  font: 13px var(--f-mono); white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
-.matriz .total { padding: 5px 14px; font: 600 13px var(--f-mono); color: var(--muted); white-space: nowrap; }
-.matriz .sep { border-left: 1px solid var(--line); padding-left: 10px; }
+.matriz .alumno { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; padding: 4px 12px;
+  font: 13px var(--f-mono); white-space: nowrap; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+.matriz .total { padding: 4px 12px; font: 600 13px var(--f-mono); color: var(--muted); white-space: nowrap; }
+.matriz .sep { border-left: 1px solid var(--line); padding-left: 8px; }
 .matriz tbody tr:hover td { background: var(--accent-soft); }
 .matriz tbody tr:not(:last-child) td { border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent); }
 #aviso[hidden] { display: none; }
