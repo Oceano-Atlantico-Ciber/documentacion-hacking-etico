@@ -20,6 +20,9 @@ TERRAFORM = "hashicorp/terraform:1.16.7"
 BASE = (FLOCI, AWS, TERRAFORM)
 RED = "iac-comprobar"
 NOMBRE = "iac-comprobar-floci"
+# Lo que Terraform descarga en .terraform/ va a un volumen y no a la carpeta del alumno: el contenedor
+# corre como root y dejaría allí carpetas que el corrector, sin root, no podría borrar.
+DATOS = "iac-comprobar-datos"
 ENDPOINT = f"http://{NOMBRE}:4566"
 REGION = "eu-west-1"
 RAIZ = ("test", "test")  # la clave de administrador de Floci
@@ -101,6 +104,7 @@ class Floci:
     def cerrar() -> None:
         docker("rm", "-f", "-v", NOMBRE)
         docker("network", "rm", RED)
+        docker("volume", "rm", "-f", DATOS)
 
     def aws(self, *args: str, clave: tuple[str, str] = RAIZ, carpeta: Path | None = None) -> Salida:
         """La CLI de AWS contra esta Floci, como administrador o con la clave que se le dé."""
@@ -114,6 +118,7 @@ class Floci:
         """Terraform en la carpeta del alumno, con el proveedor apuntando a esta Floci."""
         return docker("run", "--rm", "--network", RED, "-v", _montaje(carpeta), "-w", "/work",
                       "-v", "iac-comprobar-plugins:/plugins", "-e", "TF_PLUGIN_CACHE_DIR=/plugins",
+                      "-v", f"{DATOS}:/datos", "-e", "TF_DATA_DIR=/datos",
                       "-e", "TF_IN_AUTOMATION=1", "-e", "TF_INPUT=0", "-e", "TF_VAR_floci=" + ENDPOINT,
                       "-e", "AWS_ACCESS_KEY_ID=test", "-e", "AWS_SECRET_ACCESS_KEY=test",
                       "-e", f"AWS_DEFAULT_REGION={REGION}", TERRAFORM, *args, espera=espera)
