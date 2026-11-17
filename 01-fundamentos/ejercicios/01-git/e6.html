@@ -42,7 +42,13 @@ git show --stat git/e6-wip</code></pre></div>
 <li><code>informe.md</code> no tiene el contenido del último paso.</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/01-git/pruebas.py e6</code></pre></div>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+
+<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push -u origin git/e6-wip</code></pre></div>
 <p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E6 salga sin fallos, etiqueta la punta de <code>git/e6-wip</code>:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e6 git/e6-wip -m "E6 resuelto"

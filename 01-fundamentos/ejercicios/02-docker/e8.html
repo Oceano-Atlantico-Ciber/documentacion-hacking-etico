@@ -65,7 +65,13 @@ docker compose down</code></pre></div><p>Trivy sin avisos, el panel responde, la
 </ul>
 
 
-<h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
+<h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
+<p>Antes de subir, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/ejercicios/02-docker/pruebas.py e8</code></pre></div>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
+
+<h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add .
 git commit -m "fix(docker-e8): panel sin puertas abiertas"
 git push</code></pre></div>
