@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API 4 · Seguridad · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+<style>
+.lenguaje [data-leng][hidden] { display: none; }
+.lenguaje { display: grid; gap: 8px; }
+.par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 720px) { .par { grid-template-columns: minmax(0, 1fr); } }
+tr.e8 td:first-child { font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">03 · API REST</a></nav>
+<header>
+<p class="eyebrow">Fundamentos · API 4 de 4</p>
+<h1>Seguridad</h1>
+<p class="lead">La mayoría de los fallos graves en APIs no son errores raros de un lenguaje: son preguntas que el servidor no se hace. ¿Quién eres? ¿Esto es tuyo? ¿Puedes cambiar este campo? ¿Puedes usar esta función? ¿Cuántas veces lo has intentado? Las respuestas son códigos y cabeceras de HTTP, y se escriben igual en Go, en Python y en Node.</p>
+<div class="meta"><span>Antes: <a href="03-buenas-practicas.html">API 3 · Buenas prácticas</a></span><span>Ejercicio: <a href="../ejercicios/e8.html">E8 · Una API que se defiende</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Palabras de este tema</h2>
+<dl class="ficha">
+<dt>Autenticación</dt><dd>Saber quién hace la petición. Si falla: <code>401</code>.</dd>
+<dt>Autorización</dt><dd>Saber si quien la hace puede hacer eso, sobre eso. Si falla: <code>403</code>, o <code>404</code> para no confirmar que existe.</dd>
+<dt>Token</dt><dd>Un texto secreto que el cliente manda en cada petición para demostrar quién es: <code>Authorization: Bearer &lt;token&gt;</code>.</dd>
+<dt>Rol</dt><dd>Lo que un usuario puede hacer en general: aquí, <code>tecnico</code> o <code>admin</code>.</dd>
+<dt>OWASP</dt><dd>Fundación abierta que publica, entre otras cosas, la lista de los diez riesgos más frecuentes en APIs.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>La OWASP API Security Top 10</h2>
+<p>La lista de 2023 resume lo que más falla en APIs reales. Las filas en negrita son las que programarás en el E8; las demás ya las has tratado o se verán en Aplicaciones web.</p>
+<div class="tabla"><table><thead><tr><th>Riesgo</th><th>Qué es</th><th>En el curso</th></tr></thead><tbody>
+<tr class="e8"><td>API1 · BOLA</td><td>Autorización a nivel de objeto: pedir el recurso de otro cambiando el id.</td><td>E8</td></tr>
+<tr class="e8"><td>API2 · Autenticación rota</td><td>Tokens que no se comprueban, claves que se pueden probar sin fin.</td><td>E8</td></tr>
+<tr class="e8"><td>API3 · BOPLA</td><td>Autorización a nivel de propiedad: ver o cambiar campos que no te tocan (asignación masiva).</td><td>E6 y E8</td></tr>
+<tr class="e8"><td>API4 · Consumo sin límite</td><td>Sin límite de peticiones, de tamaño ni de páginas.</td><td>E7 y E8</td></tr>
+<tr class="e8"><td>API5 · BFLA</td><td>Autorización a nivel de función: usar una operación de administrador sin serlo.</td><td>E8</td></tr>
+<tr><td>API6 · Flujos de negocio sensibles</td><td>Automatizar algo que solo debía hacer una persona (comprar todas las entradas).</td><td>Aplicaciones web</td></tr>
+<tr><td>API7 · SSRF</td><td>Hacer que el servidor pida una URL que elige el atacante.</td><td>Aplicaciones web</td></tr>
+<tr><td>API8 · Mala configuración</td><td>Trazas en los errores, cabeceras que delatan la tecnología, CORS abierto.</td><td>E6 y E8</td></tr>
+<tr><td>API9 · Inventario descuidado</td><td>Versiones antiguas o rutas de pruebas que siguen vivas.</td><td>la versión en la ruta, API 2</td></tr>
+<tr><td>API10 · Consumo inseguro de APIs</td><td>Fiarse sin comprobar de lo que devuelve otra API.</td><td>Aplicaciones web</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>¿Quién eres? Autenticación</h2>
+<p>Una API REST no recuerda nada entre peticiones, así que cada una tiene que demostrar quién la envía. En el contrato del curso, el cliente cambia usuario y clave por un token una vez y después lo manda en cada petición:</p>
+<div class="par">
+<figure><figcaption>Abrir sesión</figcaption><pre><code>POST /api/v1/sesiones
+Content-Type: application/json
+
+{"usuario": "lucia", "clave": "…"}
+
+HTTP/1.1 201 Created
+{"token": "9f2c…"}</code></pre></figure>
+<figure><figcaption>Cada petición después</figcaption><pre><code>GET /api/v1/incidencias
+Authorization: Bearer 9f2c…
+
+HTTP/1.1 200 OK
+…</code></pre></figure>
+</div>
+<p>Sin token, o con uno que no existe, la respuesta es <code>401</code> con la cabecera <code>WWW-Authenticate: Bearer</code>, que le dice al cliente cómo autenticarse. Una cabecera inventada como <code>X-User: admin</code> no prueba nada: la escribe el cliente. Solo vale lo que el servidor puede comprobar.</p>
+<p>La comprobación se escribe una vez y se pone delante de todas las rutas que la necesitan:</p>
+<div class="opciones" id="elegir-lenguaje" role="group" aria-label="Lenguaje de los ejemplos">
+<button type="button" data-leng="go" aria-pressed="true">Go</button>
+<button type="button" data-leng="python" aria-pressed="false">Python</button>
+<button type="button" data-leng="node" aria-pressed="false">Node</button>
+</div>
+<div class="lenguaje">
+<div data-leng="go"><pre><code>// Un envoltorio: comprueba el token y pasa el usuario al manejador por el contexto.
+func autenticar(siguiente http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		token, esBearer := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer ")
+		u, existe := usuariosPorToken[token]
+		if !esBearer || !existe {
+			w.Header().Set("WWW-Authenticate", "Bearer")
+			problema(w, http.StatusUnauthorized, "Hace falta un token válido")
+			return
+		}
+		siguiente(w, r.WithContext(context.WithValue(r.Context(), claveUsuario, u)))
+	}
+}
+
+mux.HandleFunc("GET /api/v1/incidencias/{id}", autenticar(leerIncidencia))</code></pre></div>
+<div data-leng="python" hidden><pre><code>from fastapi import Depends, Header
+
+# Una dependencia: FastAPI la ejecuta antes de cada ruta que la pida.
+def usuario_actual(authorization: str | None = Header(default=None)):
+    token = authorization[7:] if authorization and authorization.startswith("Bearer ") else None
+    if token not in usuarios_por_token:
+        raise StarletteHTTPException(401, "Hace falta un token válido",
+                                     headers={"WWW-Authenticate": "Bearer"})
+    return usuarios_por_token[token]
+
+@app.get("/api/v1/incidencias/{id}")
+def leer(id: str, yo: dict = Depends(usuario_actual)):
+    ...</code></pre></div>
+<div data-leng="node" hidden><pre><code>// Un middleware: se ejecuta antes que las rutas que cuelgan de esa ruta.
+const autenticar = (req, res, next) =&gt; {
+  const [tipo, token] = (req.get("Authorization") ?? "").split(" ");
+  const usuario = tipo === "Bearer" &amp;&amp; usuariosPorToken.get(token);
+  if (!usuario) {
+    res.set("WWW-Authenticate", "Bearer");
+    return problema(res, 401, "Hace falta un token válido");
+  }
+  req.usuario = usuario;
+  next();
+};
+
+app.use("/api/v1/incidencias", autenticar);
+app.use("/api/v1/usuarios", autenticar);</code></pre></div>
+</div>
+</section>
+
+<section class="seccion">
+<h2>¿Es tuyo? Autorización por objeto</h2>
+<p>Saber quién eres no basta. Si la ruta es <code>/api/v1/incidencias/7</code>, cualquiera con un token válido puede probar con el 8, el 9 y el 10. Es el fallo número uno de la lista, <b>BOLA</b> (<a href="https://cwe.mitre.org/data/definitions/639.html">CWE-639</a>): el servidor comprueba que la incidencia existe, pero no de quién es.</p>
+<div class="par">
+<figure><figcaption>Solo comprueba que existe</figcaption><pre><code>inc = incidencias.get(id)
+if not inc:
+    return problema(404, "No existe")
+return inc</code></pre></figure>
+<figure><figcaption>Comprueba que es suya</figcaption><pre><code>inc = incidencias.get(id)
+if not inc or (yo["rol"] != "admin"
+               and inc["tecnico"] != yo["usuario"]):
+    return problema(404, "No existe")
+return inc</code></pre></figure>
+</div>
+<p>Un técnico recibe <code>404</code> por la incidencia de otro, igual que por una que no existe: así no confirma ni que existe. La misma comprobación va en la lista (solo las suyas), en <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code> y en los comentarios. Basta con olvidarla en una ruta.</p>
+</section>
+
+<section class="seccion">
+<h2>¿Puedes cambiar ese campo? Asignación masiva</h2>
+<p>Si el servidor copia en el usuario todo lo que llega en el cuerpo, quien sepa cómo se llama el campo del rol se lo cambia (<a href="https://cwe.mitre.org/data/definitions/915.html">CWE-915</a>):</p>
+<pre><code>PATCH /api/v1/usuarios/yo
+Authorization: Bearer &lt;token de lucia&gt;
+
+{"nombre": "Lucía", "rol": "admin"}</code></pre>
+<p>La defensa es la validación de <a href="03-buenas-practicas.html">API 3</a>: una lista de los campos que cada operación acepta. En <code>/api/v1/usuarios/yo</code>, solo <code>nombre</code>; cualquier otro, <code>422</code> y nada cambia. Lo mismo con <code>tecnico</code> en una incidencia: un técnico no puede asignársela a otro, y se le responde <code>403</code>.</p>
+</section>
+
+<section class="seccion">
+<h2>¿Puedes usar esa función? Autorización por función</h2>
+<p>Algunas operaciones son solo de administración: en el contrato del curso, borrar incidencias. Que la web no enseñe el botón no protege nada; la ruta sigue ahí para quien la llame con <code>curl</code>. El servidor comprueba el rol en la propia operación y, si no es <code>admin</code>, responde <code>403</code> (<b>BFLA</b>, <a href="https://cwe.mitre.org/data/definitions/285.html">CWE-285</a>).</p>
+</section>
+
+<section class="seccion">
+<h2>¿Cuántas veces? Limitar</h2>
+<p>Un login que acepta intentos sin fin deja probar claves hasta acertar (<a href="https://cwe.mitre.org/data/definitions/307.html">CWE-307</a>). En el contrato del curso, tras cinco claves erróneas para un usuario en un minuto, la API responde <code>429</code> a ese usuario, aunque la sexta sea buena, con la cabecera <code>Retry-After</code>, que dice los segundos que hay que esperar:</p>
+<pre><code>HTTP/1.1 429 Too Many Requests
+Retry-After: 41
+Content-Type: application/problem+json
+
+{"type": "about:blank", "title": "Too Many Requests", "status": 429,
+ "detail": "Demasiados intentos fallidos"}</code></pre>
+<p>Lo mismo que el máximo de <code>limit</code> en <a href="03-buenas-practicas.html">API 3</a>: cualquier cosa que el cliente pueda pedir sin coste, tiene un límite.</p>
+</section>
+
+<section class="seccion">
+<h2>No regales información</h2>
+<p>Cada dato sobre la tecnología acorta el trabajo de quien ataca: con la versión exacta, busca sus fallos conocidos. Ninguna respuesta debería decirla.</p>
+<div class="tabla"><table><thead><tr><th>Lenguaje</th><th>Qué delata de serie</th><th>Cómo se quita</th></tr></thead><tbody>
+<tr><td>Go</td><td>Nada</td><td>Nada que hacer</td></tr>
+<tr><td>Python, uvicorn</td><td><code>server: uvicorn</code></td><td><code>uvicorn main:app --no-server-header</code> en el <code>ENTRYPOINT</code></td></tr>
+<tr><td>Node, Express</td><td><code>X-Powered-By: Express</code></td><td><code>app.disable("x-powered-by")</code></td></tr>
+</tbody></table></div>
+<p>Y lo de <a href="03-buenas-practicas.html">API 3</a>: ni trazas ni rutas de ficheros en los errores. Las respuestas con datos de un usuario llevan además <code>Cache-Control: no-store</code>.</p>
+</section>
+
+<section class="seccion">
+<h2>Documentar cada control</h2>
+<p>Cada control se documenta con las cuatro preguntas de <a href="../../../01-hacking-etico/01-etica-y-seguridad/temas/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a>, ahora desde el lado de quien construye: dónde estaría el fallo, cuál sería, qué permitiría y cómo lo impide tu código. Es lo que pide <code>controles.md</code> en el E8.</p>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../ejercicios/e8.html">E8 · Una API que se defiende</a>: los cinco controles en las tres APIs, sin romper nada de lo anterior.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pregunta a la IA cómo atacaría tu API, y comprueba cada idea con <code>curl</code> contra la tuya. Lo que funcione es un fallo que corregir; lo que no, explica por qué en <code>controles.md</code>.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Distingues autenticación de autorización, y 401 de 403</li>
+<li>Explicas BOLA, asignación masiva y BFLA con una petición de ejemplo cada uno</li>
+<li>Sabes dónde se pone la comprobación del token en Go, en FastAPI y en Express</li>
+<li>Sabes por qué se responde 404 y no 403 a la incidencia de otro</li>
+<li>Explicas qué hace <code>Retry-After</code> con un 429</li>
+<li>Quitas de tus respuestas lo que delata el lenguaje o el framework</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="03-buenas-practicas.html">← API 3 · Buenas prácticas</a><a href="../../04-iac/temas/01-la-nube-en-tu-portatil.html">IaC 1 · La nube en tu portátil →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script>
+(() => {
+  const botones = [...document.querySelectorAll("#elegir-lenguaje button")];
+  const elegir = (leng) => {
+    for (const b of botones) b.setAttribute("aria-pressed", String(b.dataset.leng === leng));
+    for (const el of document.querySelectorAll(".lenguaje [data-leng]")) el.hidden = el.dataset.leng !== leng;
+    try { localStorage.setItem("api-lenguaje", leng); } catch {}
+  };
+  document.getElementById("elegir-lenguaje").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b) elegir(b.dataset.leng);
+  });
+  let guardado = null;
+  try { guardado = localStorage.getItem("api-lenguaje"); } catch {}
+  elegir(["go", "python", "node"].includes(guardado) ? guardado : "go");
+})();
+</script>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

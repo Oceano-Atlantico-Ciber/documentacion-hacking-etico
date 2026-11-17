@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E7 · Auditar los permisos · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">04 · Terraform y AWS</a></nav>
+
+<h1>E7 · Auditar los permisos</h1>
+<p class="lead">Vuelves a la cuenta de la empresa del E2, ahora para revisar sus permisos de IAM. Lee el código, pregunta a IAM qué puede hacer cada usuario y documenta lo que está mal configurado. No uses la clave de nadie: la simulación basta para demostrar el riesgo.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/04-seguridad-de-la-infraestructura.html">IaC 4 · Seguridad de la infraestructura</a></dd>
+<dt>Aprendes</dt><dd>A auditar IAM leyendo políticas y simulándolas, y a documentar cada hallazgo con su CWE.</dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/iac/e7/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-iac-e7</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e7
+cd fundamentos/iac/e7/empresa
+terraform init
+terraform apply</code></pre></div>
+<p>Deja en <code>empresa/</code> la misma cuenta del E2 y un <code>LEEME.md</code> con los usuarios y buckets que importan. Si la tienes desplegada desde el E2, el plan sale vacío o casi: aplica igualmente.</p>
+
+<h2 class="step"><span class="n">2</span>Lee el código</h2>
+<p>Abre <code>empresa.tf</code> y lee las dos políticas de IAM con la tabla de <a href="../temas/04-seguridad-de-la-infraestructura.html#escalada">IaC 4 · Permisos que dan permisos</a> al lado. Los comentarios cuentan lo que el equipo anterior quería hacer; el código, lo que hace de verdad.</p>
+
+<h2 class="step"><span class="n">3</span>Pregunta a la cuenta</h2>
+<p>Como administrador (tu configuración por defecto), lee lo que hay y simula. El ARN de cada usuario sale en <code>aws iam get-user</code>:</p>
+<div class="cmd"><pre><code>cd ..
+aws iam get-user --user-name becario-&lt;huella&gt;
+aws iam get-user-policy --user-name becario-&lt;huella&gt; --policy-name becario-trabajo
+aws iam list-access-keys --user-name becario-&lt;huella&gt;
+aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --action-names iam:PutUserPolicy iam:AttachUserPolicy --resource-arns &lt;ARN del becario&gt; &gt; simulacion.json
+cat simulacion.json</code></pre></div>
+<p>Mira el <code>EvalDecision</code> de cada acción. Haz lo mismo con el usuario de operaciones y con las acciones de S3 sobre <code>arn:aws:s3:::secretos-&lt;huella&gt;/*</code>, y apunta lo que veas; en <code>simulacion.json</code> queda la del becario.</p>
+
+<h2 class="step"><span class="n">4</span>Escribe la auditoría</h2>
+<div class="cmd"><pre><code>code auditoria.md</code></pre></div>
+<p>Un apartado por hallazgo de IAM, con cuatro respuestas: <b>dónde</b> está (recurso y sentencia de <code>empresa.tf</code>), <b>cuál es el fallo</b> y su CWE, <b>qué riesgo</b> tiene (qué podría hacer alguien con esa identidad, apoyado en la simulación) y <b>cómo se corrige</b> en el código. Al menos: la política del becario, la de operaciones y la clave del becario que acabó en un repositorio público. Si ves otros fallos fuera de IAM, añádelos al final en una lista corta.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Falta <code>auditoria.md</code> o <code>simulacion.json</code>.</li>
+<li><code>simulacion.json</code> no es la salida JSON de <code>simulate-principal-policy</code>, o no muestra <code>iam:PutUserPolicy</code> como <code>allowed</code> para el becario.</li>
+<li><code>auditoria.md</code> no habla de <code>becario-trabajo</code> e <code>iam:PutUserPolicy</code>, de <code>operaciones-todo</code> o de la clave filtrada.</li>
+<li>Falta el CWE-269, o no hay al menos dos CWE distintos.</li>
+<li>No responde a dónde está, qué riesgo tiene y cómo se corrige.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e7</code></pre></div>
+
+<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add fundamentos/iac
+git commit -m "docs(iac-e7): auditoría de los permisos de la empresa"
+git push</code></pre></div>
+<p>Cuando la fila de E7 de <b>Corrector iac</b> salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e7 -m "E7 resuelto"
+git push origin entrega-fundamentos-iac-e7</code></pre></div>
+
+<nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e6.html">← E6 · Un módulo, dos laboratorios</a><a href="e8.html">E8 · Corregir en el código →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

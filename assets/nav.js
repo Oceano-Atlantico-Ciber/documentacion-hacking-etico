@@ -5,110 +5,122 @@
   const ARBOL = [
     ["Inicio", "index.html"],
     ["Presentación", "00-presentacion/index.html", [
-      ["01 · Quién soy", "00-presentacion/docs/01-quien-soy.html"],
-      ["02 · Cómo funciona la asignatura", "00-presentacion/docs/02-como-funciona-la-asignatura.html"],
-      ["03 · Git y GitHub", "00-presentacion/docs/03-git-y-github.html"],
-      ["04 · Docker", "00-presentacion/docs/04-docker.html"],
-      ["05 · IA: local o en la nube", "00-presentacion/docs/05-ia.html"],
-      ["06 · Primer commit", "00-presentacion/docs/06-primer-commit.html"],
-      ["07 · Hackea el ranking", "00-presentacion/docs/07-hackea-el-ranking.html"],
+      ["01 · Quién soy", "00-presentacion/temas/01-quien-soy.html"],
+      ["02 · Cómo funciona la asignatura", "00-presentacion/temas/02-como-funciona-la-asignatura.html"],
+      ["03 · Git y GitHub", "00-presentacion/temas/03-git-y-github.html"],
+      ["04 · Docker", "00-presentacion/temas/04-docker.html"],
+      ["05 · IA: local o en la nube", "00-presentacion/temas/05-ia.html"],
+      ["06 · Primer commit", "00-presentacion/temas/06-primer-commit.html"],
+      ["07 · Hackea el ranking", "00-presentacion/temas/07-hackea-el-ranking.html"],
       ["Hackea el ranking · Solución", "00-presentacion/hackea-el-ranking/solucion.html"],
     ]],
-    ["Fundamentos", "01-fundamentos/index.html", [
-      ["Temas", "01-fundamentos/index.html#temas", [
-        ["01 · Git", "01-fundamentos/index.html#01-git", [
-          ["Git 1 · Modelo y commits", "01-fundamentos/docs/01-git/01-modelo-y-commits.html"],
-          ["Git 2 · Ramas y fusiones", "01-fundamentos/docs/01-git/02-ramas-y-fusiones.html"],
-          ["Git 3 · Remotos y reescribir historia", "01-fundamentos/docs/01-git/03-remotos-y-reescribir-historia.html"],
-          ["Git 4 · Deshacer y seguridad", "01-fundamentos/docs/01-git/04-deshacer-y-seguridad.html"],
+    ["Fundamentos", "00-fundamentos/index.html", [
+      ["01 · Git", "00-fundamentos/01-git/index.html", [
+        ["Temas", "00-fundamentos/01-git/index.html#temas", [
+          ["Git 1 · Modelo y commits", "00-fundamentos/01-git/temas/01-modelo-y-commits.html"],
+          ["Git 2 · Ramas y fusiones", "00-fundamentos/01-git/temas/02-ramas-y-fusiones.html"],
+          ["Git 3 · Remotos y reescribir historia", "00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html"],
+          ["Git 4 · Deshacer y seguridad", "00-fundamentos/01-git/temas/04-deshacer-y-seguridad.html"],
         ]],
-        ["02 · Docker", "01-fundamentos/index.html#02-docker", [
-          ["Docker 1 · Imágenes y contenedores", "01-fundamentos/docs/02-docker/01-imagenes-y-contenedores.html"],
-          ["Docker 2 · Construir imágenes", "01-fundamentos/docs/02-docker/02-construir-imagenes.html"],
-          ["Docker 3 · Datos y redes", "01-fundamentos/docs/02-docker/03-datos-y-redes.html"],
-          ["Docker 4 · Compose y seguridad", "01-fundamentos/docs/02-docker/04-compose-y-seguridad.html"],
-        ]],
-        ["03 · API REST", "01-fundamentos/index.html#03-api-rest", [
-          ["API 1 · REST es HTTP", "01-fundamentos/docs/03-api-rest/01-rest-es-http.html"],
-          ["API 2 · Diseñar y construir", "01-fundamentos/docs/03-api-rest/02-disenar-y-construir.html"],
-          ["API 3 · Buenas prácticas", "01-fundamentos/docs/03-api-rest/03-buenas-practicas.html"],
-          ["API 4 · Seguridad", "01-fundamentos/docs/03-api-rest/04-seguridad.html"],
-        ]],
-        ["04 · Terraform y AWS", "01-fundamentos/index.html#04-iac", [
-          ["IaC 1 · La nube en tu portátil", "01-fundamentos/docs/04-iac/01-la-nube-en-tu-portatil.html"],
-          ["IaC 2 · Terraform", "01-fundamentos/docs/04-iac/02-terraform.html"],
-          ["IaC 3 · Redes y servidores", "01-fundamentos/docs/04-iac/03-redes-y-servidores.html"],
-          ["IaC 4 · Seguridad de la infraestructura", "01-fundamentos/docs/04-iac/04-seguridad-de-la-infraestructura.html"],
-        ]],
-        ["Ética y seguridad", "01-fundamentos/index.html#etica-y-seguridad", [
-          ["Ética, ley y alcance", "01-fundamentos/docs/etica-y-seguridad/01-etica-ley-y-alcance.html"],
-          ["Seguridad, vulnerabilidades y ataques", "01-fundamentos/docs/etica-y-seguridad/02-seguridad-y-vulnerabilidades.html"],
-        ]],
-        ["Empresa con Terraform", "01-fundamentos/index.html#empresa-con-terraform", [
-          ["La empresa en Floci", "01-fundamentos/docs/empresa-con-terraform/01-la-empresa-en-floci.html"],
-        ]],
-        ["Mini auditoría", "01-fundamentos/index.html#mini-auditoria", [
-          ["Fases de un ataque y auditoría vigilada", "01-fundamentos/docs/mini-auditoria/01-fases-y-auditoria.html"],
-          ["Herramientas y darknets", "01-fundamentos/docs/mini-auditoria/02-herramientas-y-darknets.html"],
+        ["Ejercicios", "00-fundamentos/01-git/index.html#ejercicios", [
+          ["E1 · Identidad y commits atómicos", "00-fundamentos/01-git/ejercicios/e1.html"],
+          ["E2 · .gitignore", "00-fundamentos/01-git/ejercicios/e2.html"],
+          ["E3 · Fusiones", "00-fundamentos/01-git/ejercicios/e3.html"],
+          ["E4 · Conflicto", "00-fundamentos/01-git/ejercicios/e4.html"],
+          ["E5 · Rebase", "00-fundamentos/01-git/ejercicios/e5.html"],
+          ["E6 · Rebase interactivo", "00-fundamentos/01-git/ejercicios/e6.html"],
+          ["E7 · Revert", "00-fundamentos/01-git/ejercicios/e7.html"],
+          ["E8 · Secreto filtrado", "00-fundamentos/01-git/ejercicios/e8.html"],
         ]],
       ]],
-      ["Ejercicios", "01-fundamentos/ejercicios/index.html", [
-        ["01 · Git", "01-fundamentos/ejercicios/index.html#01-git", [
-          ["E1 · Identidad y commits atómicos", "01-fundamentos/ejercicios/01-git/e1.html"],
-          ["E2 · .gitignore", "01-fundamentos/ejercicios/01-git/e2.html"],
-          ["E3 · Fusiones", "01-fundamentos/ejercicios/01-git/e3.html"],
-          ["E4 · Conflicto", "01-fundamentos/ejercicios/01-git/e4.html"],
-          ["E5 · Rebase", "01-fundamentos/ejercicios/01-git/e5.html"],
-          ["E6 · Rebase interactivo", "01-fundamentos/ejercicios/01-git/e6.html"],
-          ["E7 · Revert", "01-fundamentos/ejercicios/01-git/e7.html"],
-          ["E8 · Secreto filtrado", "01-fundamentos/ejercicios/01-git/e8.html"],
+      ["02 · Docker", "00-fundamentos/02-docker/index.html", [
+        ["Temas", "00-fundamentos/02-docker/index.html#temas", [
+          ["Docker 1 · Imágenes y contenedores", "00-fundamentos/02-docker/temas/01-imagenes-y-contenedores.html"],
+          ["Docker 2 · Construir imágenes", "00-fundamentos/02-docker/temas/02-construir-imagenes.html"],
+          ["Docker 3 · Datos y redes", "00-fundamentos/02-docker/temas/03-datos-y-redes.html"],
+          ["Docker 4 · Compose y seguridad", "00-fundamentos/02-docker/temas/04-compose-y-seguridad.html"],
         ]],
-        ["02 · Docker", "01-fundamentos/ejercicios/index.html#02-docker", [
-          ["E1 · Ciclo de vida", "01-fundamentos/ejercicios/02-docker/e1.html"],
-          ["E2 · Tu primera imagen", "01-fundamentos/ejercicios/02-docker/e2.html"],
-          ["E3 · Capas, caché y .dockerignore", "01-fundamentos/ejercicios/02-docker/e3.html"],
-          ["E4 · El secreto de la capa", "01-fundamentos/ejercicios/02-docker/e4.html"],
-          ["E5 · Datos que sobreviven", "01-fundamentos/ejercicios/02-docker/e5.html"],
-          ["E6 · Red y puertos", "01-fundamentos/ejercicios/02-docker/e6.html"],
-          ["E7 · Tu primer compose", "01-fundamentos/ejercicios/02-docker/e7.html"],
-          ["E8 · Auditar un compose", "01-fundamentos/ejercicios/02-docker/e8.html"],
+        ["Ejercicios", "00-fundamentos/02-docker/index.html#ejercicios", [
+          ["E1 · Ciclo de vida", "00-fundamentos/02-docker/ejercicios/e1.html"],
+          ["E2 · Tu primera imagen", "00-fundamentos/02-docker/ejercicios/e2.html"],
+          ["E3 · Capas, caché y .dockerignore", "00-fundamentos/02-docker/ejercicios/e3.html"],
+          ["E4 · El secreto de la capa", "00-fundamentos/02-docker/ejercicios/e4.html"],
+          ["E5 · Datos que sobreviven", "00-fundamentos/02-docker/ejercicios/e5.html"],
+          ["E6 · Red y puertos", "00-fundamentos/02-docker/ejercicios/e6.html"],
+          ["E7 · Tu primer compose", "00-fundamentos/02-docker/ejercicios/e7.html"],
+          ["E8 · Auditar un compose", "00-fundamentos/02-docker/ejercicios/e8.html"],
         ]],
-        ["03 · API REST", "01-fundamentos/ejercicios/index.html#03-api-rest", [
-          ["E1 · HTTP a mano", "01-fundamentos/ejercicios/03-api-rest/e1.html"],
-          ["E2 · Diseña el contrato", "01-fundamentos/ejercicios/03-api-rest/e2.html"],
-          ["E3 · Primera implementación", "01-fundamentos/ejercicios/03-api-rest/e3.html"],
-          ["E4 · Escribir bien", "01-fundamentos/ejercicios/03-api-rest/e4.html"],
-          ["E5 · Tres lenguajes, una API", "01-fundamentos/ejercicios/03-api-rest/e5.html"],
-          ["E6 · Errores que ayudan", "01-fundamentos/ejercicios/03-api-rest/e6.html"],
-          ["E7 · Listas grandes y escrituras a la vez", "01-fundamentos/ejercicios/03-api-rest/e7.html"],
-          ["E8 · Una API que se defiende", "01-fundamentos/ejercicios/03-api-rest/e8.html"],
-        ]],
-        ["04 · Terraform y AWS", "01-fundamentos/ejercicios/index.html#04-iac", [
-          ["E1 · A mano, una vez", "01-fundamentos/ejercicios/04-iac/e1.html"],
-          ["E2 · Inventario de una cuenta", "01-fundamentos/ejercicios/04-iac/e2.html"],
-          ["E3 · Del clic al código", "01-fundamentos/ejercicios/04-iac/e3.html"],
-          ["E4 · Variables y deriva", "01-fundamentos/ejercicios/04-iac/e4.html"],
-          ["E5 · Un laboratorio completo", "01-fundamentos/ejercicios/04-iac/e5.html"],
-          ["E6 · Un módulo, dos laboratorios", "01-fundamentos/ejercicios/04-iac/e6.html"],
-          ["E7 · Auditar los permisos", "01-fundamentos/ejercicios/04-iac/e7.html"],
-          ["E8 · Corregir en el código", "01-fundamentos/ejercicios/04-iac/e8.html"],
-        ]],
-        ["Empresa con Terraform", "01-fundamentos/ejercicios/index.html#empresa-con-terraform", [
-          ["Puesta en marcha del laboratorio", "01-fundamentos/ejercicios/empresa-con-terraform/puesta-en-marcha.html"],
-        ]],
-        ["Mini auditoría", "01-fundamentos/ejercicios/index.html#mini-auditoria"],
       ]],
-      ["Casos analizados", "01-fundamentos/casos-analizados/index.html", [
-        ["Hackea el ranking", "00-presentacion/docs/07-hackea-el-ranking.html#documentar"],
-        ["PHP2Shell", "01-fundamentos/casos-analizados/cve-2026-109618-php2shell.html"],
+      ["03 · API REST", "00-fundamentos/03-api-rest/index.html", [
+        ["Temas", "00-fundamentos/03-api-rest/index.html#temas", [
+          ["API 1 · REST es HTTP", "00-fundamentos/03-api-rest/temas/01-rest-es-http.html"],
+          ["API 2 · Diseñar y construir", "00-fundamentos/03-api-rest/temas/02-disenar-y-construir.html"],
+          ["API 3 · Buenas prácticas", "00-fundamentos/03-api-rest/temas/03-buenas-practicas.html"],
+          ["API 4 · Seguridad", "00-fundamentos/03-api-rest/temas/04-seguridad.html"],
+        ]],
+        ["Ejercicios", "00-fundamentos/03-api-rest/index.html#ejercicios", [
+          ["E1 · HTTP a mano", "00-fundamentos/03-api-rest/ejercicios/e1.html"],
+          ["E2 · Diseña el contrato", "00-fundamentos/03-api-rest/ejercicios/e2.html"],
+          ["E3 · Primera implementación", "00-fundamentos/03-api-rest/ejercicios/e3.html"],
+          ["E4 · Escribir bien", "00-fundamentos/03-api-rest/ejercicios/e4.html"],
+          ["E5 · Tres lenguajes, una API", "00-fundamentos/03-api-rest/ejercicios/e5.html"],
+          ["E6 · Errores que ayudan", "00-fundamentos/03-api-rest/ejercicios/e6.html"],
+          ["E7 · Listas grandes y escrituras a la vez", "00-fundamentos/03-api-rest/ejercicios/e7.html"],
+          ["E8 · Una API que se defiende", "00-fundamentos/03-api-rest/ejercicios/e8.html"],
+        ]],
+      ]],
+      ["04 · Terraform y AWS", "00-fundamentos/04-iac/index.html", [
+        ["Temas", "00-fundamentos/04-iac/index.html#temas", [
+          ["IaC 1 · La nube en tu portátil", "00-fundamentos/04-iac/temas/01-la-nube-en-tu-portatil.html"],
+          ["IaC 2 · Terraform", "00-fundamentos/04-iac/temas/02-terraform.html"],
+          ["IaC 3 · Redes y servidores", "00-fundamentos/04-iac/temas/03-redes-y-servidores.html"],
+          ["IaC 4 · Seguridad de la infraestructura", "00-fundamentos/04-iac/temas/04-seguridad-de-la-infraestructura.html"],
+        ]],
+        ["Ejercicios", "00-fundamentos/04-iac/index.html#ejercicios", [
+          ["E1 · A mano, una vez", "00-fundamentos/04-iac/ejercicios/e1.html"],
+          ["E2 · Inventario de una cuenta", "00-fundamentos/04-iac/ejercicios/e2.html"],
+          ["E3 · Del clic al código", "00-fundamentos/04-iac/ejercicios/e3.html"],
+          ["E4 · Variables y deriva", "00-fundamentos/04-iac/ejercicios/e4.html"],
+          ["E5 · Un laboratorio completo", "00-fundamentos/04-iac/ejercicios/e5.html"],
+          ["E6 · Un módulo, dos laboratorios", "00-fundamentos/04-iac/ejercicios/e6.html"],
+          ["E7 · Auditar los permisos", "00-fundamentos/04-iac/ejercicios/e7.html"],
+          ["E8 · Corregir en el código", "00-fundamentos/04-iac/ejercicios/e8.html"],
+        ]],
       ]],
     ]],
-    ["Redes inalámbricas", "02-redes-inalambricas/index.html", [
-      ["Guía del laboratorio", "02-redes-inalambricas/docs/guia-laboratorio.html"],
+    ["RA1 · Hacking ético", "01-hacking-etico/index.html", [
+      ["Ética y seguridad", "01-hacking-etico/01-etica-y-seguridad/index.html", [
+        ["Temas", "01-hacking-etico/01-etica-y-seguridad/index.html#temas", [
+          ["Ética, ley y alcance", "01-hacking-etico/01-etica-y-seguridad/temas/01-etica-ley-y-alcance.html"],
+          ["Seguridad, vulnerabilidades y ataques", "01-hacking-etico/01-etica-y-seguridad/temas/02-seguridad-y-vulnerabilidades.html"],
+        ]],
+      ]],
+      ["Empresa con Terraform", "01-hacking-etico/02-empresa-con-terraform/index.html", [
+        ["Temas", "01-hacking-etico/02-empresa-con-terraform/index.html#temas", [
+          ["La empresa en Floci", "01-hacking-etico/02-empresa-con-terraform/temas/01-la-empresa-en-floci.html"],
+        ]],
+        ["Laboratorio", "01-hacking-etico/02-empresa-con-terraform/index.html#ejercicio", [
+          ["Puesta en marcha del laboratorio", "01-hacking-etico/02-empresa-con-terraform/ejercicios/puesta-en-marcha.html"],
+        ]],
+      ]],
+      ["Mini auditoría", "01-hacking-etico/03-mini-auditoria/index.html", [
+        ["Temas", "01-hacking-etico/03-mini-auditoria/index.html#temas", [
+          ["Fases de un ataque y auditoría vigilada", "01-hacking-etico/03-mini-auditoria/temas/01-fases-y-auditoria.html"],
+          ["Herramientas y darknets", "01-hacking-etico/03-mini-auditoria/temas/02-herramientas-y-darknets.html"],
+        ]],
+        ["Laboratorio", "01-hacking-etico/03-mini-auditoria/index.html#ejercicio"],
+      ]],
+      ["Casos analizados", "01-hacking-etico/casos-analizados/index.html", [
+        ["Hackea el ranking", "00-presentacion/temas/07-hackea-el-ranking.html#documentar"],
+        ["PHP2Shell", "01-hacking-etico/casos-analizados/cve-2026-109618-php2shell.html"],
+      ]],
+    ]],
+    ["RA2 · Redes inalámbricas", "02-redes-inalambricas/index.html", [
+      ["Guía del laboratorio", "02-redes-inalambricas/temas/guia-laboratorio.html"],
       ["Temas", "02-redes-inalambricas/index.html#temas", [
-        ["Tema 1 · Cómo funciona y cómo se protege una Wi-Fi", "02-redes-inalambricas/docs/01-wifi-funciona-y-se-protege.html"],
-        ["Tema 2 · Qué ve y hace un atacante", "02-redes-inalambricas/docs/02-atacante-y-deteccion.html"],
-        ["Tema 3 · Otros inalámbricos e informe", "02-redes-inalambricas/docs/03-otros-inalambricos-e-informe.html"],
+        ["Tema 1 · Cómo funciona y cómo se protege una Wi-Fi", "02-redes-inalambricas/temas/01-wifi-funciona-y-se-protege.html"],
+        ["Tema 2 · Qué ve y hace un atacante", "02-redes-inalambricas/temas/02-atacante-y-deteccion.html"],
+        ["Tema 3 · Otros inalámbricos e informe", "02-redes-inalambricas/temas/03-otros-inalambricos-e-informe.html"],
       ]],
       ["Prácticas", "02-redes-inalambricas/ejercicios/index.html", [
         ["P1 · Modos de la tarjeta y reconocimiento", "02-redes-inalambricas/ejercicios/p1.html"],
@@ -117,9 +129,9 @@
         ["P4 · Informe de auditoría", "02-redes-inalambricas/ejercicios/p4.html"],
       ]],
     ]],
-    ["Redes y sistemas", "03-redes-y-sistemas/index.html"],
-    ["Sistemas comprometidos", "04-sistemas-comprometidos/index.html"],
-    ["Aplicaciones web", "05-aplicaciones-web/index.html"],
+    ["RA3 · Redes y sistemas", "03-redes-y-sistemas/index.html"],
+    ["RA4 · Sistemas comprometidos", "04-sistemas-comprometidos/index.html"],
+    ["RA5 · Aplicaciones web", "05-aplicaciones-web/index.html"],
     ["Estado de las entregas", "entregas/index.html"],
     ["Glosario", "glosario/index.html"],
   ];

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API 3 · Buenas prácticas · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+<style>
+.lenguaje [data-leng][hidden] { display: none; }
+.lenguaje { display: grid; gap: 8px; }
+.par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 720px) { .par { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">03 · API REST</a></nav>
+<header>
+<p class="eyebrow">Fundamentos · API 3 de 4</p>
+<h1>Buenas prácticas</h1>
+<p class="lead">Una API bien hecha se comporta como espera cualquiera que sepa HTTP, sin leer su documentación. Errores con un formato fijo, listas por páginas, caché y cambios que no se pisan: todo se resuelve con códigos y cabeceras de HTTP, igual en Go, en Python y en Node.</p>
+<div class="meta"><span>Antes: <a href="02-disenar-y-construir.html">API 2 · Diseñar y construir</a></span><span>Ejercicios: <a href="../ejercicios/e6.html">E6</a> y <a href="../ejercicios/e7.html">E7</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Palabras de este tema</h2>
+<dl class="ficha">
+<dt>Validar</dt><dd>Comprobar lo que llega antes de usarlo: que es JSON, que tiene los campos que tocan y solo esos, con su tipo y su tamaño.</dd>
+<dt>Problem Details</dt><dd>El formato estándar de los errores de una API (RFC 9457): un JSON con <code>type</code>, <code>title</code>, <code>status</code> y <code>detail</code>.</dd>
+<dt>Paginar</dt><dd>Devolver una lista larga por trozos, con una forma de pedir el siguiente.</dd>
+<dt>Cursor</dt><dd>La marca de dónde se quedó una página. El cliente la devuelve para pedir la siguiente.</dd>
+<dt>ETag</dt><dd>Una etiqueta que identifica la versión actual de un recurso. Si el recurso cambia, cambia.</dd>
+<dt>Petición condicional</dt><dd>Una petición que solo se cumple si el recurso sigue en cierta versión: <code>If-None-Match</code> e <code>If-Match</code>.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>Errores que ayudan</h2>
+<p>Un error tiene dos lectores. El programa cliente necesita un código y un formato fijo para decidir qué hacer; la persona que lo depura necesita una frase que diga qué falló. La <a href="https://www.rfc-editor.org/rfc/rfc9457">RFC 9457</a> define un formato para los dos, con su propio tipo, <code>application/problem+json</code>:</p>
+<pre><code>HTTP/1.1 422 Unprocessable Content
+Content-Type: application/problem+json
+
+{
+  "type": "about:blank",
+  "title": "Datos no válidos",
+  "status": 422,
+  "detail": "prioridad: una de baja, media, alta, critica"
+}</code></pre>
+<div class="tabla"><table><thead><tr><th>Código</th><th>Cuándo</th><th>Ejemplo</th></tr></thead><tbody>
+<tr><td><code>400</code></td><td>La petición no se puede leer</td><td>JSON con una comilla de menos; <code>?limit=diez</code></td></tr>
+<tr><td><code>404</code></td><td>La ruta o el recurso no existen</td><td><code>/api/v1/incidencias/abc</code>, <code>/api/v1/no-existe</code></td></tr>
+<tr><td><code>405</code></td><td>La ruta existe, el método no</td><td><code>DELETE /api/v1/incidencias</code>, con <code>Allow</code></td></tr>
+<tr><td><code>422</code></td><td>Se lee, pero los datos no valen</td><td>falta <code>prioridad</code>; sobra <code>rol</code>; título de 300 caracteres</td></tr>
+<tr><td><code>500</code></td><td>Fallo del servidor</td><td>no debería verse nunca: si se ve, la validación no ha hecho su trabajo</td></tr>
+</tbody></table></div>
+<p class="note warn">Un error nunca lleva trazas, rutas de ficheros ni nombres de funciones. A quien usa bien la API no le sirven, y a quien la ataca le cuentan el lenguaje, el framework y cómo está organizado el código.</p>
+<p>Para que todos los errores salgan así, también los que genera el framework, cada lenguaje tiene su sitio:</p>
+<div class="opciones" id="elegir-lenguaje" role="group" aria-label="Lenguaje de los ejemplos">
+<button type="button" data-leng="go" aria-pressed="true">Go</button>
+<button type="button" data-leng="python" aria-pressed="false">Python</button>
+<button type="button" data-leng="node" aria-pressed="false">Node</button>
+</div>
+<div class="lenguaje">
+<div data-leng="go"><pre><code>func problema(w http.ResponseWriter, codigo int, detalle string) {
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(codigo)
+	json.NewEncoder(w).Encode(map[string]any{
+		"type": "about:blank", "title": http.StatusText(codigo), "status": codigo, "detail": detalle,
+	})
+}
+
+// Un patrón sin método recoge los métodos que no tienen el suyo: el 405.
+mux.HandleFunc("/api/v1/incidencias", func(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Allow", "GET, POST")
+	problema(w, http.StatusMethodNotAllowed, r.Method+" no se admite aquí")
+})
+// Y "/" recoge todo lo que no encaja con nada: el 404.
+mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	problema(w, http.StatusNotFound, "No existe "+r.URL.Path)
+})</code></pre></div>
+<div data-leng="python" hidden><pre><code>from http import HTTPStatus
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+def problema(codigo, detalle, cabeceras=None):
+    return JSONResponse(status_code=codigo, headers=cabeceras, media_type="application/problem+json",
+                        content={"type": "about:blank", "title": HTTPStatus(codigo).phrase,
+                                 "status": codigo, "detail": detalle})
+
+# Los 404 y 405 que genera el propio FastAPI pasan por aquí.
+@app.exception_handler(StarletteHTTPException)
+async def error_http(request, exc):
+    return problema(exc.status_code, str(exc.detail), exc.headers)
+
+# Y su 422 de serie, que trae una lista técnica, también.
+@app.exception_handler(RequestValidationError)
+async def error_validacion(request, exc):
+    return problema(422, "Datos no válidos")</code></pre></div>
+<div data-leng="node" hidden><pre><code>import { STATUS_CODES } from "node:http";
+
+const problema = (res, codigo, detalle) =&gt;
+  res.status(codigo).type("application/problem+json")
+     .json({ type: "about:blank", title: STATUS_CODES[codigo], status: codigo, detail: detalle });
+
+// Después de las rutas de /api/v1/incidencias: cualquier otro método, 405.
+app.all("/api/v1/incidencias", (req, res) =&gt; {
+  res.set("Allow", "GET, POST");
+  problema(res, 405, `${req.method} no se admite aquí`);
+});
+// Al final de todo: lo que no ha encajado, 404; y los errores (JSON roto), 400.
+app.use((req, res) =&gt; problema(res, 404, `No existe ${req.path}`));
+app.use((err, req, res, next) =&gt;
+  problema(res, err.type === "entity.parse.failed" ? 400 : 500, "Petición no válida"));</code></pre></div>
+</div>
+</section>
+
+<section class="seccion">
+<h2>Validar lo que llega</h2>
+<p>Se valida contra una lista de lo permitido, no contra una lista de lo prohibido. Para cada campo del contrato: que esté si es obligatorio, que tenga su tipo, su tamaño y sus valores. Y lo que no está en el contrato se rechaza.</p>
+<div class="par">
+<figure><figcaption>Aceptar lo que venga</figcaption><pre><code>nueva = {**incidencia, **cuerpo}
+# {"estado": "cerrada", "rol": "admin", "id": 1}
+# guarda rol e incluso cambia el id</code></pre></figure>
+<figure><figcaption>Solo lo que dice el contrato</figcaption><pre><code>sobran = set(cuerpo) - {"titulo", "prioridad",
+                        "estado", "tecnico"}
+if sobran:
+    return problema(422, f"Campo desconocido: {sobran.pop()}")</code></pre></figure>
+</div>
+<p>Rechazar los campos desconocidos no es manía: es lo que impide que alguien cambie un dato que no debería tocar, como su propio rol. Se llama <b>asignación masiva</b> y lo verás en <a href="04-seguridad.html">API 4</a>.</p>
+</section>
+
+<section class="seccion">
+<h2>Listas por páginas</h2>
+<p>Devolver 50 000 incidencias de golpe tarda, gasta memoria en los dos lados y deja la API a merced de quien la llame en bucle. Una lista se devuelve por páginas, y la respuesta dice cómo pedir la siguiente:</p>
+<pre><code>GET /api/v1/incidencias?limit=2&amp;estado=abierta
+
+{"datos": [{"id": 4, …}, {"id": 9, …}], "siguiente": "9"}
+
+GET /api/v1/incidencias?limit=2&amp;estado=abierta&amp;cursor=9
+
+{"datos": [{"id": 11, …}], "siguiente": null}</code></pre>
+<ul>
+<li><code>limit</code> tiene un valor por defecto (20) y un máximo (100). Fuera de ese rango, <code>400</code>.</li>
+<li>El <b>cursor</b> marca dónde se quedó la página: aquí, el último id devuelto. La siguiente empieza después. <code>null</code> significa que no hay más.</li>
+<li>Los filtros van en la consulta, con los mismos nombres que los campos. Un valor que no existe, <code>400</code>.</li>
+</ul>
+<p>¿Por qué cursor y no «página 3»? Si mientras recorres la lista alguien borra una incidencia, con números de página te saltas una; con cursor, no.</p>
+</section>
+
+<section class="seccion">
+<h2>Caché: no mandar lo que ya tienes</h2>
+<p>Cada versión de un recurso lleva una etiqueta, el <code>ETag</code>. El cliente la guarda y, la próxima vez, pregunta si sigue valiendo:</p>
+<div class="par">
+<figure><figcaption>Primera vez</figcaption><pre><code>GET /api/v1/incidencias/7
+
+HTTP/1.1 200 OK
+ETag: "3"
+Content-Type: application/json
+
+{"id": 7, "titulo": …}</code></pre></figure>
+<figure><figcaption>La siguiente</figcaption><pre><code>GET /api/v1/incidencias/7
+If-None-Match: "3"
+
+HTTP/1.1 304 Not Modified
+ETag: "3"
+</code></pre></figure>
+</div>
+<p>Un <code>304</code> no lleva cuerpo: el cliente usa lo que ya tenía. En el contrato del curso el ETag es el número de versión de la incidencia entre comillas: empieza en <code>"1"</code> y sube con cada <code>PUT</code> o <code>PATCH</code>. Así las tres APIs del E5 dan el mismo.</p>
+<p>Las respuestas con datos de una persona, en una API con usuarios, llevan además <code>Cache-Control: private</code> o <code>no-store</code>, para que ningún intermediario las guarde y se las dé a otro.</p>
+</section>
+
+<section class="seccion">
+<h2>Cambios que no se pisan</h2>
+<p>Dos técnicos abren la incidencia 7 a la vez. Lucía la cierra; Marcos, que aún ve la versión anterior, le cambia la prioridad con un <code>PUT</code>. Sin más, la API se queda con lo de Marcos y el cierre de Lucía se pierde sin que nadie se entere.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 200" role="img" aria-label="Lucía y Marcos leen la incidencia 7 en la versión 3. Lucía la cambia con If-Match 3 y pasa a la versión 4. Marcos intenta cambiarla con If-Match 3 y recibe 412: tiene que volver a leerla.">
+<defs><marker id="cc-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="10" width="140" height="44" rx="8"/><text class="tit" x="70" y="38" text-anchor="middle">Lucía</text>
+<rect class="caja" x="0" y="140" width="140" height="44" rx="8"/><text class="tit" x="70" y="168" text-anchor="middle">Marcos</text>
+<rect class="caja-acento" x="560" y="70" width="160" height="60" rx="8"/><text class="tit" x="640" y="96" text-anchor="middle">Incidencia 7</text><text class="tenue peq mono" x="640" y="116" text-anchor="middle">"3" → "4"</text>
+<path class="linea" d="M140 32L558 86" marker-end="url(#cc-f)"/><text class="mono peq" x="300" y="44">PATCH If-Match: "3"</text><text class="bien fuerte peq" x="470" y="58">200 · ETag "4"</text>
+<path class="linea" d="M140 162L558 114" marker-end="url(#cc-f)"/><text class="mono peq" x="300" y="170">PUT If-Match: "3"</text><text class="peligro fuerte peq" x="440" y="152">412 · ya va por la "4"</text>
+</svg>
+<figcaption>Con <code>If-Match</code>, el segundo cambio se rechaza y Marcos vuelve a leer antes de decidir.</figcaption>
+</figure>
+<p>La regla es corta: si una escritura trae <code>If-Match</code> y no coincide con el <code>ETag</code> actual, se responde <code>412 Precondition Failed</code> y no se cambia nada. Si coincide, o no trae la cabecera, se hace el cambio y se devuelve el <code>ETag</code> nuevo.</p>
+</section>
+
+<section class="seccion">
+<h2>Práctica</h2>
+<p><a href="../ejercicios/e6.html">E6 · Errores que ayudan</a> y <a href="../ejercicios/e7.html">E7 · Listas grandes y escrituras a la vez</a>, en las tres APIs del E5.</p>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Si la IA te propone un manejador de errores, comprueba con <code>curl -i</code> qué devuelve de verdad ante un JSON roto y una ruta que no existe, en los tres lenguajes. El framework suele tener la última palabra si no se le quita.</p></div>
+</section>
+
+<section class="seccion">
+<h2>Comprobación</h2>
+<ul class="check">
+<li>Distingues un 400 de un 422 y escribes un error en <code>application/problem+json</code></li>
+<li>Sabes dónde se cambian en cada framework los errores que genera él solo</li>
+<li>Validas contra lo que permite el contrato y rechazas lo que sobra</li>
+<li>Recorres una lista paginada con <code>limit</code> y <code>cursor</code> y explicas por qué cursor</li>
+<li>Explicas con un ejemplo para qué sirven <code>If-None-Match</code> y <code>If-Match</code>, y qué responden</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="02-disenar-y-construir.html">← API 2 · Diseñar y construir</a><a href="04-seguridad.html">API 4 · Seguridad →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script>
+(() => {
+  const botones = [...document.querySelectorAll("#elegir-lenguaje button")];
+  const elegir = (leng) => {
+    for (const b of botones) b.setAttribute("aria-pressed", String(b.dataset.leng === leng));
+    for (const el of document.querySelectorAll(".lenguaje [data-leng]")) el.hidden = el.dataset.leng !== leng;
+    try { localStorage.setItem("api-lenguaje", leng); } catch {}
+  };
+  document.getElementById("elegir-lenguaje").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b) elegir(b.dataset.leng);
+  });
+  let guardado = null;
+  try { guardado = localStorage.getItem("api-lenguaje"); } catch {}
+  elegir(["go", "python", "node"].includes(guardado) ? guardado : "go");
+})();
+</script>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

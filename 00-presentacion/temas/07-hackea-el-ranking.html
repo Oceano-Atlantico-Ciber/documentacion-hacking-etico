@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Cómo funciona «Hackea el ranking» · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+<style>
+.shell { max-width: 920px; margin: 0 auto; padding-block: 24px 72px; }
+html{scroll-behavior:smooth}
+a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+button{font:inherit}
+.hero{padding:clamp(32px,6vw,64px) 0 36px;border-bottom:1px solid var(--line)}
+.hero-links{display:flex;gap:10px;flex-wrap:wrap}
+.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 17px;border-radius:8px;text-decoration:none;font-weight:700;border:1px solid var(--accent);background:var(--accent);color:var(--bg)}
+.button.secondary{background:transparent;color:var(--accent)}
+.section{padding:48px 0;border-bottom:1px solid var(--line)}
+.intro{max-width:70ch;color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:26px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.fact strong{display:block;font-size:20px;line-height:1.2;margin-bottom:8px}
+.fact p{margin:0;color:var(--muted);font-size:15px}
+.mode-picker{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 18px}
+.mode-picker button,.step-picker button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 14px;cursor:pointer}
+.mode-picker button[aria-pressed="true"],.step-picker button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.mode-picker button{font-weight:700}
+.mode-picker small{display:block;font-weight:400;font-size:12px}
+.diagram{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr) 34px minmax(0,1fr);align-items:center;gap:8px;margin:20px 0}
+.node{min-height:138px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;align-content:center;gap:7px;transition:border-color .2s,transform .2s}
+.node.is-active{border:2px solid var(--accent);transform:translateY(-2px)}
+.node .tag{font:700 11px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.node b{font-size:21px;line-height:1.15}
+.node span:last-child{font-size:14px;color:var(--muted)}
+.arrow{text-align:center;color:var(--accent);font-size:28px;font-weight:700}
+.step-picker{display:flex;gap:8px;flex-wrap:wrap}
+.step-picker button{font-size:14px}
+.step-detail{background:var(--accent-soft);padding:18px 20px;border-radius:10px;margin-top:14px;min-height:96px}
+.step-detail strong{display:block;font-size:17px;margin-bottom:4px}
+.step-detail p{margin:0}
+.mode-note{color:var(--muted);margin:16px 0 0}
+.activity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:24px}
+.activity{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.activity .number{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px;margin-bottom:12px}
+.activity p{margin:0;color:var(--muted)}
+.activity code{white-space:nowrap}
+.note-list{display:grid;gap:14px;margin:22px 0 0;padding-left:22px}
+.note-list li{padding-left:4px}
+.callout{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:20px;margin-top:24px}
+.callout p:last-child{margin-bottom:0}
+.tabla{overflow-x:auto;margin-top:22px}
+.shell > :is(nav.temas, footer){margin-top:30px}
+@media(max-width:700px){.facts,.activity-grid{grid-template-columns:1fr}.diagram{grid-template-columns:1fr;gap:6px}.node{min-height:unset;padding:16px}.arrow{transform:rotate(90deg);line-height:1}.shell{padding-bottom:50px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.node{transition:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Presentación</a></nav>
+
+<header class="hero">
+<p class="eyebrow">Presentación · Práctica del primer día · Criterios c, e, h</p>
+<h1>Hackea el ranking</h1>
+<p class="lead">Un juego de diez segundos para descubrir una idea clave: lo que muestra o calcula el navegador puede ser distinto de lo que el servidor debería aceptar.</p>
+<div class="hero-links"><a class="button" href="#recorrido">Ver cómo funciona</a><a class="button secondary" href="#trabajo">Qué tengo que hacer</a><a class="button secondary" href="../index.html#hackea-el-ranking">Ficheros del juego</a></div>
+</header>
+
+<main>
+<section class="section" aria-labelledby="objetivo">
+<p class="eyebrow">La misión</p>
+<h2 id="objetivo">Jugar, investigar y explicar</h2>
+<p class="intro">El docente os dará la dirección del juego. Escribid vuestro nombre, pulsad <strong>Start game</strong> y haced clic en <strong>Click</strong> durante diez segundos. <strong>Leaderboard</strong> muestra el ranking y, junto a cada nombre, sus <strong>flags</strong>.</p>
+<div class="callout"><h3>Qué es una flag</h3><p>Una <strong>flag</strong> es la prueba de que has encontrado un fallo. El servidor te la apunta junto a tu nombre en el ranking cuando consigues algo que no debería permitir. No se gana jugando bien: se gana atacando. En el curso usamos siempre la palabra en inglés, como en las competiciones de seguridad (CTF, <em>Capture The Flag</em>).</p></div>
+<p class="intro">El reto son <a href="#objetivos">cuatro objetivos</a>, uno por cada propiedad de la seguridad, y explicar qué comprobación le faltaba al servidor en cada uno.</p>
+<div class="facts" aria-label="Datos esenciales de la práctica">
+  <div class="fact"><strong>10 segundos</strong><p>Dura una partida normal. El marcador conserva la mejor puntuación de cada nombre.</p></div>
+  <div class="fact"><strong>2 herramientas</strong><p>Usaréis el navegador con F12 y la terminal con <code>curl</code>.</p></div>
+  <div class="fact"><strong>1 evidencia</strong><p>Por cada hallazgo, guardad petición, respuesta, cambio observado y explicación.</p></div>
+</div>
+<div class="callout"><h3>Alcance</h3><p>Autorizado: <strong>solo</strong> la dirección del juego que proyecta el docente, <strong>solo</strong> durante la clase. Es un enlace público <code>https://…pinggy.link</code> que apunta al equipo del docente; el resto de ese equipo y del dominio de Pinggy queda fuera. Nada de atacar la red del aula, los equipos de compañeros ni ningún otro servicio. Fuera de esto, lo mismo sería delito.</p><p>Dentro del alcance todo está permitido, también vaciar el ranking: basta con volver a jugar para llenarlo.</p></div>
+</section>
+
+<section class="section" id="objetivos" aria-labelledby="cuatro">
+<p class="eyebrow">Qué hay que conseguir</p>
+<h2 id="cuatro">Cuatro objetivos, uno por propiedad</h2>
+<p class="intro">La seguridad protege cuatro cosas. Cada objetivo rompe una de ellas en el juego; cuando lo consigáis, escribid cuál y por qué.</p>
+<div class="activity-grid">
+  <div class="activity"><span class="number">1</span><h3>Integridad: una puntuación imposible</h3><p>Aparecer en el ranking con más puntos de los que caben en diez segundos. Flags: <strong>Impossible score</strong>, y <strong>No browser</strong> si lo hacéis sin la web.</p></div>
+  <div class="activity"><span class="number">2</span><h3>Confidencialidad: lo que no debíais ver</h3><p>Encontrar en el código que recibe vuestro navegador las rutas que el equipo de desarrollo olvidó quitar. Sin flag: la evidencia es la línea del código.</p></div>
+  <div class="activity"><span class="number">3</span><h3>Autenticidad: hacerse pasar por otro</h3><p>Cambiar la puntuación de otra persona de la clase sin ser ella. Flag: <strong>Changed another player's score</strong>.</p></div>
+  <div class="activity"><span class="number">4</span><h3>Disponibilidad: vaciar el ranking</h3><p>Dejar el marcador en blanco para toda la clase. Flag: <strong>Hidden admin route</strong>. Avisad en voz alta cuando lo hagáis.</p></div>
+</div>
+</section>
+
+<section class="section" id="ataques" aria-labelledby="tipos">
+<p class="eyebrow">Qué buscar</p>
+<h2 id="tipos">Tipos de ataque que funcionan en el juego</h2>
+<p class="intro">Son ataques reales que se ven a diario en aplicaciones web. Antes de la lista, los dos catálogos con los que el mundo de la seguridad les pone nombre y número.</p>
+<div class="facts" aria-label="CWE y CVE">
+  <div class="fact"><strong>CWE · el tipo de fallo</strong><p><em>Common Weakness Enumeration</em>. Un catálogo de <b>tipos</b> de error de programación o de diseño, cada uno con un número. Ejemplo: <code>CWE-639</code> es «dejar que el usuario elija a qué datos accede». Describe una familia de fallos, no un programa concreto.</p></div>
+  <div class="fact"><strong>CVE · un fallo concreto</strong><p><em>Common Vulnerabilities and Exposures</em>. Un número para <b>cada fallo real</b> encontrado en un producto y una versión concretos. Ejemplo: <code>CVE-2021-44228</code> es Log4Shell, en la biblioteca Log4j. Cada CVE dice a qué CWE pertenece.</p></div>
+  <div class="fact"><strong>En el juego</strong><p>Los fallos del juego tienen CWE, porque son tipos de error conocidos. No tienen CVE: el juego no es un producto publicado. Si lo fuera y alguien lo reportase, cada fallo recibiría el suyo.</p></div>
+</div>
+<p class="intro">Entre paréntesis va el nombre con el que encontraréis cada ataque en internet y su CWE.</p>
+<ol class="note-list">
+  <li><strong>Leer el código del cliente</strong> (<em>source code review</em>, CWE-615). Todo lo que la web manda a vuestro navegador se puede leer: el JavaScript, los comentarios, las rutas a las que llama. Si el equipo de desarrollo dejó una nota, la veréis. <em>Objetivo 2.</em></li>
+  <li><strong>Cambiar los datos que envía el navegador</strong> (<em>parameter tampering</em>, CWE-602). El navegador es vuestro: podéis modificar lo que manda antes de que llegue al servidor. Si el servidor no lo comprueba, se lo cree. <em>Objetivo 1.</em></li>
+  <li><strong>Hablar con el servidor sin pasar por la web</strong> (<em>client-side bypass</em>, CWE-602). Los botones de la página solo son una forma de enviar peticiones. Con <code>curl</code> o desde la consola podéis enviar la misma petición, o una distinta, sin jugar. <em>Objetivo 1.</em></li>
+  <li><strong>Falsificar una cabecera</strong> (<em>header spoofing</em>, CWE-290). Las cabeceras de una petición las escribe quien la envía. Si el servidor decide algo por una cabecera, cualquiera puede escribir la que le convenga. <em>Objetivo 1.</em></li>
+  <li><strong>Tocar los datos de otra persona</strong> (<em>IDOR</em>, referencia directa insegura a objetos, CWE-639). Si para cambiar algo basta con saber su nombre, podéis cambiar lo de cualquiera. El servidor tendría que comprobar quién lo pide, no solo qué pide. <em>Objetivo 3.</em></li>
+  <li><strong>Usar una función de administración sin permiso</strong> (<em>broken access control</em>, CWE-306). Una ruta que «nadie conoce» no está protegida: si alguien la encuentra y el servidor no pide credenciales, cualquiera puede usarla. <em>Objetivo 4.</em></li>
+</ol>
+<p class="intro">Cada CWE se puede buscar en <a href="https://cwe.mitre.org/">cwe.mitre.org</a> y cada CVE en <a href="https://www.cve.org/">cve.org</a>.</p>
+<p class="intro">No busquéis inyección SQL ni XSS: este juego no tiene base de datos y escapa los nombres. Llegarán en Aplicaciones web.</p>
+</section>
+
+<section class="section" id="recorrido" aria-labelledby="flujo">
+<p class="eyebrow">Mapa interactivo</p>
+<h2 id="flujo">Qué ocurre al jugar</h2>
+<p class="intro">Selecciona un modo y recorre los pasos. El jueves compararéis ambos comportamientos.</p>
+<div class="mode-picker" role="group" aria-label="Modo del servidor">
+  <button type="button" data-mode="trusted" aria-pressed="true">trusted <small>Primero: el servidor se fía del cliente</small></button>
+  <button type="button" data-mode="validated" aria-pressed="false">validated <small>Después: el servidor lleva la cuenta</small></button>
+</div>
+<div class="diagram" role="img" aria-label="Flujo de una partida: navegador, servidor y ranking">
+  <div class="node is-active" data-node="browser"><span class="tag">Tu equipo</span><b>Navegador</b><span id="browser-caption">Cuenta tus clics durante la partida.</span></div>
+  <span class="arrow" aria-hidden="true">→</span>
+  <div class="node" data-node="server"><span class="tag">Juego</span><b>Servidor</b><span id="server-caption">Recibe la puntuación enviada.</span></div>
+  <span class="arrow" aria-hidden="true">→</span>
+  <div class="node" data-node="ranking"><span class="tag">Resultado</span><b>Ranking</b><span id="ranking-caption">Muestra puntos y flags.</span></div>
+</div>
+<div class="step-picker" role="group" aria-label="Paso del recorrido">
+  <button type="button" data-step="0" aria-pressed="true">1 · Empezar</button>
+  <button type="button" data-step="1" aria-pressed="false">2 · Pulsar</button>
+  <button type="button" data-step="2" aria-pressed="false">3 · Terminar</button>
+  <button type="button" data-step="3" aria-pressed="false">4 · Observar</button>
+</div>
+<div class="step-detail" aria-live="polite"><strong id="step-title">Empieza una partida</strong><p id="step-body">Al pulsar Start game, el navegador pide al servidor que inicie una partida de diez segundos.</p></div>
+<p class="mode-note" id="mode-note">En <code>trusted</code>, el navegador calcula la puntuación y la envía al terminar. Investiga qué riesgos tiene esa decisión.</p>
+</section>
+
+<section class="section" id="trabajo" aria-labelledby="hacer">
+<p class="eyebrow">Tu trabajo</p>
+<h2 id="hacer">Cuatro movimientos, una explicación</h2>
+<div class="activity-grid">
+  <div class="activity"><span class="number">1</span><h3>Juega una partida normal</h3><p>Aprende qué se ve en pantalla y qué cambia en el ranking. Si el docente usa <code>?scoreboard</code> en el proyector, esa vista solo muestra el marcador.</p></div>
+  <div class="activity"><span class="number">2</span><h3>Descubre las rutas</h3><p>En F12 → <strong>Network/Red</strong> → <strong>Fetch/XHR</strong> verás las peticiones normales. Después, en <strong>Ver código fuente</strong>, busca las llamadas a <code>fetch(</code> y los comentarios sobre rutas antiguas.</p></div>
+  <div class="activity"><span class="number">3</span><h3>Formula una hipótesis y pruébala</h3><p>Mira el método y los datos de cada petición. A partir de las pistas, prueba una variación con la consola del navegador o con <code>curl</code> y comprueba el efecto en el ranking.</p></div>
+  <div class="activity"><span class="number">4</span><h3>Explica el resultado</h3><p>Describe qué aceptó el servidor, por qué era posible y qué validación faltaba. El jueves, repite la prueba cuando el docente cambie a <code>validated</code>.</p></div>
+</div>
+<div class="callout"><h3>Primera comprobación útil</h3><p>El endpoint <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Añádelo a la dirección exacta que te haya dado el docente. Un código HTTP <code>200</code> indica que la consulta ha funcionado.</p><pre><code>curl -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre><p>Reemplaza <code>https://DIRECCION-DEL-JUEGO</code> por el enlace de Pinggy que proyecta el docente, sin puerto. Si el enlace cambia durante la clase, usad el nuevo. Lanza <code>curl</code> desde Git Bash, la terminal del curso. Si no sabes qué son un método, una cabecera o un código de estado, lo verás con calma en <a href="../../00-fundamentos/03-api-rest/temas/01-rest-es-http.html">API 1 · REST es HTTP</a>; para el juego basta con copiar la orden.</p></div>
+</section>
+
+<section class="section" aria-labelledby="evidencia">
+<p class="eyebrow">Mientras juegas</p>
+<h2 id="evidencia">Tus notas son parte de la práctica</h2>
+<p class="intro">No basta con alcanzar el primer puesto. Para cada prueba, anota lo necesario para que otra persona pueda entender y reproducir lo ocurrido:</p>
+<ol class="note-list">
+  <li><strong>Hipótesis:</strong> qué querías comprobar.</li>
+  <li><strong>Petición:</strong> método, ruta, cabeceras y datos enviados.</li>
+  <li><strong>Respuesta y efecto:</strong> código HTTP y cambio en el ranking o en las flags.</li>
+  <li><strong>Explicación:</strong> causa del fallo y una corrección concreta.</li>
+</ol>
+</section>
+
+<section class="section" id="documentar" aria-labelledby="vulnerabilidad">
+<p class="eyebrow">Semana 2</p>
+<h2 id="vulnerabilidad">De truco a vulnerabilidad</h2>
+<p class="intro">Repasamos el marcador. Para cada flag respondemos a las cuatro preguntas con las que se documenta cualquier vulnerabilidad:</p>
+<div class="tabla"><table><thead><tr><th>Pregunta</th><th>Ejemplo con el juego</th></tr></thead><tbody>
+<tr><td>¿Dónde está?</td><td>En la ruta de la API que recibe la puntuación.</td></tr>
+<tr><td>¿Cuál es el fallo?</td><td>El servidor se fía de un dato que decide el cliente.</td></tr>
+<tr><td>¿Qué permite?</td><td>Alterar la integridad del ranking.</td></tr>
+<tr><td>¿Cómo se corrige?</td><td>El servidor calcula la puntuación y comprueba quién pide qué.</td></tr>
+</tbody></table></div>
+<p class="intro">Así nacen los catálogos: con estas cuatro respuestas se asigna el <a href="#ataques">CWE</a> de cada flag y, en un producto real, se pide su CVE. Qué propiedad rompe cada truco se ve en <a href="../../01-hacking-etico/01-etica-y-seguridad/temas/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a>.</p>
+<p class="intro">Las respuestas de cada flag, con tus notas de la partida como evidencia, van en <code>fundamentos/casos-analizados/hackea-el-ranking.md</code>, dentro de la entrega del RA1. Es el primero de los <a href="../../01-hacking-etico/casos-analizados/index.html">casos analizados</a>.</p>
+</section>
+</main>
+
+<nav class="temas" aria-label="Temas de la presentación"><a href="06-primer-commit.html">← Primer commit</a><a href="../../00-fundamentos/index.html">Fundamentos →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script>
+(() => {
+  const modes = {
+    trusted: {
+      captions: ["Cuenta tus clics durante la partida.", "Recibe la puntuación enviada.", "Muestra puntos y flags."],
+      note: "En trusted, el navegador calcula la puntuación y la envía al terminar. Investiga qué riesgos tiene esa decisión.",
+      steps: [
+        ["Empieza una partida", "Al pulsar Start game, el navegador pide al servidor que inicie una partida de diez segundos.", "browser"],
+        ["Pulsa durante diez segundos", "El navegador suma cada clic y muestra la cuenta en pantalla. Observa qué parte del cálculo ocurre en tu equipo.", "browser"],
+        ["Termina y envía el resultado", "Al acabar el tiempo, el navegador envía el nombre y la puntuación calculada al servidor.", "server"],
+        ["Consulta el ranking", "El servidor guarda la mejor puntuación y la página consulta /api/leaderboard para mostrar puntos y flags.", "ranking"]
+      ]
+    },
+    validated: {
+      captions: ["Envía cada pulsación.", "Cuenta los clics de la partida.", "Muestra la puntuación calculada."],
+      note: "En validated, el servidor cuenta las pulsaciones de cada partida. Al final compara si tus pruebas anteriores siguen cambiando el ranking.",
+      steps: [
+        ["Empieza una partida", "Start game obtiene un identificador de partida. El servidor registra cuándo empezó.", "server"],
+        ["Pulsa durante diez segundos", "Cada clic se envía al servidor; este mantiene la cuenta de esa partida y limita el ritmo.", "server"],
+        ["Termina la partida", "El navegador pide el cierre de la partida. El servidor devuelve la puntuación que ha contado.", "server"],
+        ["Consulta el ranking", "El ranking muestra el resultado que calculó el servidor. Comprueba si las peticiones de la fase anterior aún tienen efecto.", "ranking"]
+      ]
+    }
+  };
+  let mode = "trusted";
+  let step = 0;
+  const modeButtons = [...document.querySelectorAll("[data-mode]")];
+  const stepButtons = [...document.querySelectorAll("[data-step]")];
+  const nodes = [...document.querySelectorAll("[data-node]")];
+  function render() {
+    const current = modes[mode];
+    modeButtons.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.mode === mode)));
+    stepButtons.forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.step) === step)));
+    ["browser", "server", "ranking"].forEach((name, index) => {
+      document.getElementById(`${name}-caption`).textContent = current.captions[index];
+    });
+    const [title, body, activeNode] = current.steps[step];
+    document.getElementById("step-title").textContent = title;
+    document.getElementById("step-body").textContent = body;
+    document.getElementById("mode-note").textContent = current.note;
+    nodes.forEach(node => node.classList.toggle("is-active", node.dataset.node === activeNode));
+  }
+  modeButtons.forEach(button => button.addEventListener("click", () => { mode = button.dataset.mode; step = 0; render(); }));
+  stepButtons.forEach(button => button.addEventListener("click", () => { step = Number(button.dataset.step); render(); }));
+})();
+</script>
+<script src="../../assets/nav.js" defer></script>
+</body>
+</html>

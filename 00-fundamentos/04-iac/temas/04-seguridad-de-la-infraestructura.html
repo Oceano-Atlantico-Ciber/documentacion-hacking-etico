@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IaC 4 · Seguridad de la infraestructura · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">04 · Terraform y AWS</a></nav>
+<header>
+<p class="eyebrow">Fundamentos · Terraform y AWS 4 de 4</p>
+<h1>Seguridad de la infraestructura</h1>
+<p class="lead">En la nube, la mayoría de los incidentes no empiezan con un exploit: empiezan con una configuración. Un permiso de más, una clave en un repositorio, un puerto abierto a todo el mundo. Como la configuración está escrita en código, se puede auditar leyéndolo, se puede comprobar preguntando a la API y se corrige con un commit.</p>
+<div class="meta"><span>Antes: <a href="03-redes-y-servidores.html">IaC 3 · Redes y servidores</a></span><span>Ejercicios: <a href="../ejercicios/e7.html">E7</a> y <a href="../ejercicios/e8.html">E8</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Palabras de este tema</h2>
+<dl class="ficha">
+<dt>Responsabilidad compartida</dt><dd>AWS protege sus centros de datos y su software; lo que configuras en tu cuenta (permisos, redes, datos) es tuyo.</dd>
+<dt>Menor privilegio</dt><dd>Cada identidad tiene solo los permisos que necesita para su trabajo, sobre los recursos de su trabajo.</dd>
+<dt>Escalada de privilegios</dt><dd>Conseguir más permisos de los que te dieron, por ejemplo usando un permiso para darte otros.</dd>
+<dt>Simulación de políticas</dt><dd>Preguntar a IAM «¿esta identidad podría hacer esto?» sin hacerlo: <code>aws iam simulate-principal-policy</code>.</dd>
+<dt>CWE</dt><dd>El catálogo común de tipos de debilidad. Nombrar el CWE de un hallazgo dice de qué clase de fallo se trata y enlaza con cómo se corrige.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>Cómo decide IAM</h2>
+<p>Cada petición firmada lleva quién la hace, qué acción y sobre qué recurso. IAM junta todas las políticas de esa identidad y decide en este orden:</p>
+<ol>
+<li>Si alguna sentencia <b>deniega</b> explícitamente (<code>"Effect": "Deny"</code>), se deniega. Siempre gana.</li>
+<li>Si alguna sentencia <b>permite</b>, se permite.</li>
+<li>Si ninguna dice nada, se deniega: es la <b>denegación implícita</b>.</li>
+</ol>
+<p>Los comodines amplían una sentencia: <code>"Action": "s3:*"</code> son todas las acciones de S3; <code>"Resource": "*"</code>, todos los recursos; <code>"Action": "*"</code> con <code>"Resource": "*"</code> es administrador de la cuenta. Un comodín casi nunca es lo que alguien necesita para su trabajo.</p>
+</section>
+
+<section class="seccion" id="escalada">
+<h2>Permisos que dan permisos</h2>
+<p>Algunas acciones de IAM no tocan datos, pero cambian quién puede tocarlos. Quien las tiene sobre sí mismo, o sobre alguien con más permisos, puede convertirse en administrador:</p>
+<div class="tabla"><table><thead><tr><th>Acción</th><th>Qué permite si se da de más</th></tr></thead><tbody>
+<tr><td><code>iam:PutUserPolicy</code></td><td>Escribir una política en línea a un usuario. Sobre uno mismo: darse cualquier permiso.</td></tr>
+<tr><td><code>iam:AttachUserPolicy</code></td><td>Adjuntar una política gestionada, como <code>AdministratorAccess</code>.</td></tr>
+<tr><td><code>iam:CreatePolicyVersion</code></td><td>Reescribir una política gestionada que ya tienes adjunta.</td></tr>
+<tr><td><code>iam:CreateAccessKey</code></td><td>Crear claves para otro usuario y actuar como él.</td></tr>
+<tr><td><code>iam:PassRole</code> con <code>ec2:RunInstances</code></td><td>Arrancar un servidor con un rol más poderoso que tú y usar sus permisos.</td></tr>
+</tbody></table></div>
+<p>Es la debilidad <b>CWE-269</b>, gestión incorrecta de privilegios. Suele aparecer con buena intención: «que el becario se ajuste los permisos si le falta algo». El arreglo nunca es vigilar mejor al becario: es quitarle la acción, y que los permisos los dé otra persona, en el código, con revisión.</p>
+</section>
+
+<section class="seccion" id="auditar">
+<h2>Auditar sin explotar</h2>
+<p>Para saber si una identidad puede escalar no hace falta intentarlo con su clave: IAM responde la pregunta. Como administrador de tu cuenta de laboratorio, lees las políticas y las simulas:</p>
+<pre><code>aws iam list-users --query "Users[].UserName"
+aws iam list-user-policies --user-name becario-1a2b3c4d
+aws iam get-user-policy --user-name becario-1a2b3c4d --policy-name becario-trabajo
+aws iam list-access-keys --user-name becario-1a2b3c4d</code></pre>
+<p>Y la simulación, con el ARN del usuario (sale en <code>aws iam get-user</code>), las acciones que te preocupan y el recurso:</p>
+<pre><code>aws iam simulate-principal-policy \
+  --policy-source-arn arn:aws:iam::000000000000:user/becario-1a2b3c4d \
+  --action-names iam:PutUserPolicy s3:GetObject \
+  --resource-arns arn:aws:iam::000000000000:user/becario-1a2b3c4d</code></pre>
+<p>Cada acción sale con su <code>EvalDecision</code>: <code>allowed</code>, <code>implicitDeny</code> o <code>explicitDeny</code>. Un <code>allowed</code> en <code>iam:PutUserPolicy</code> sobre el propio usuario es la prueba del riesgo, sin haber cambiado nada en la cuenta. Así se trabaja en una auditoría: se demuestra con la mínima intervención y se documenta.</p>
+<p class="note">Usar la clave de otra persona, aunque la encuentres publicada, es acceder con una identidad que no es tuya. En un encargo real solo se hace si el <a href="../../../01-hacking-etico/01-etica-y-seguridad/temas/01-etica-ley-y-alcance.html">alcance</a> lo permite por escrito. En esta unidad no hace falta: la simulación basta.</p>
+</section>
+
+<section class="seccion" id="hallazgos">
+<h2>Los fallos de configuración más vistos</h2>
+<div class="tabla"><table><thead><tr><th>Hallazgo</th><th>CWE</th><th>Cómo se corrige en el código</th></tr></thead><tbody>
+<tr><td>Un usuario puede cambiar sus propios permisos</td><td>CWE-269</td><td>Quitar las acciones de IAM de su política.</td></tr>
+<tr><td>Política con <code>Action: "*"</code> o <code>Resource: "*"</code> sin necesidad</td><td>CWE-250, CWE-732</td><td>Escribir solo las acciones y los recursos de su trabajo.</td></tr>
+<tr><td>Clave de acceso publicada en un repositorio</td><td>CWE-798</td><td>Revocarla (borrarla), no solo «dejar de usarla». Si hace falta otra, se crea nueva y no se guarda en el código.</td></tr>
+<tr><td>Contraseña en <code>user_data</code> o en el código</td><td>CWE-312</td><td>Variable <code>sensitive</code> o un gestor de secretos.</td></tr>
+<tr><td>SSH, RDP o la base de datos abiertos a <code>0.0.0.0/0</code></td><td>CWE-284</td><td>Abrir solo a la red de administración, o a otro grupo de seguridad.</td></tr>
+<tr><td>Bucket sin bloqueo de acceso público</td><td>CWE-284</td><td><code>aws_s3_bucket_public_access_block</code> con todo a <code>true</code>.</td></tr>
+</tbody></table></div>
+<p>Muchos de estos fallos los encuentra también un analizador del código, como <b>Trivy</b>, que ya usaste en <a href="../../../01-hacking-etico/02-empresa-con-terraform/temas/01-la-empresa-en-floci.html">La empresa en Floci</a>. El analizador lee el texto; la simulación pregunta a la cuenta. Una auditoría usa los dos.</p>
+</section>
+
+<section class="seccion">
+<h2>Corregir en el código</h2>
+<p>Un permiso quitado a mano vuelve en el siguiente <code>apply</code> (es la <a href="02-terraform.html#deriva">deriva</a> al revés). Por eso la corrección se hace en el <code>.tf</code>, se pasa el plan para ver exactamente qué cambia y se aplica. Corregir no es borrar: el becario tiene que seguir leyendo sus informes y operaciones administrando sus servidores. Después, la misma simulación tiene que dar <code>implicitDeny</code> donde antes daba <code>allowed</code>: esa es la prueba de que el arreglo funciona.</p>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="03-redes-y-servidores.html">← IaC 3 · Redes y servidores</a><a href="../../../01-hacking-etico/01-etica-y-seguridad/temas/01-etica-ley-y-alcance.html">Ética, ley y alcance →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

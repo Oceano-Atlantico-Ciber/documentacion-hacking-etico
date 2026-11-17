@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · API REST · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Fundamentos</a></nav>
+
+<h1>03 · API REST</h1>
+<p class="lead">HTTP en crudo, diseñar un contrato, implementarlo en Go, Python y Node y defenderlo. Cuatro temas y ocho ejercicios.</p>
+
+<h2 id="temas">Temas</h2>
+<div class="cards">
+<a class="card" href="temas/01-rest-es-http.html"><b>API 1 · REST es HTTP</b><span>El mensaje HTTP en crudo, la URL, qué añade REST, JSON, métodos, códigos, cabeceras y curl, con una API simulada.</span></a>
+<a class="card" href="temas/02-disenar-y-construir.html"><b>API 2 · Diseñar y construir</b><span>El contrato en OpenAPI y sus reglas de diseño; la misma API en Go, Python y Node, en Docker y probada desde fuera.</span></a>
+<a class="card" href="temas/03-buenas-practicas.html"><b>API 3 · Buenas prácticas</b><span>Validación y errores en problem+json, paginación con cursor, caché con ETag y cambios que no se pisan con If-Match.</span></a>
+<a class="card" href="temas/04-seguridad.html"><b>API 4 · Seguridad</b><span>La OWASP API Security Top 10: autenticación, BOLA, asignación masiva, BFLA, límites y no delatar la tecnología.</span></a>
+</div>
+
+<h2 id="ejercicios">Ejercicios</h2>
+<p class="note">Antes de empezar: Docker Desktop en marcha y Go, Python y Node instalados, como explica <a href="temas/02-disenar-y-construir.html">API 2</a>.</p>
+<p>Ocho ejercicios en <code>fundamentos/api/</code> de tu repositorio de entregas, todos en <code>main</code>. Cada uno trabaja una buena práctica de HTTP y parte del anterior: en el E3 programas la API de incidencias en el lenguaje que prefieras, en el E5 la escribes en los otros dos y desde ahí sigues con las tres a la vez. Todos empiezan con <code>preparar.py</code>, que escribe los ficheros de partida con datos generados para tu usuario de GitHub. Ejecútalo desde tu repositorio:</p>
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e1</code></pre>
+<p>Desde el E3, cada carpeta de lenguaje trae <code>pruebas.py</code>: las pruebas de caja negra del contrato, que hablan con tu API solo por HTTP. Pásalas antes de etiquetar; el corrector pasa las mismas y alguna más. Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-api-eN</code>, sobre <code>main</code>. El plazo lo anuncia el docente.</p>
+<div class="tabla"><table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Buena práctica</th><th>Tema</th></tr></thead><tbody>
+<tr><td><a href="ejercicios/e1.html">E1</a></td><td>Escribir a mano dos peticiones HTTP, enviarlas y comparar con <code>curl</code>.</td><td>Entender el mensaje</td><td>API 1</td></tr>
+<tr><td><a href="ejercicios/e2.html">E2</a></td><td>Diseñar el contrato OpenAPI de la API de incidencias.</td><td>Recursos, métodos y códigos</td><td>API 2</td></tr>
+<tr><td><a href="ejercicios/e3.html">E3</a></td><td>Las rutas de lectura en el lenguaje que elijas, con su Dockerfile.</td><td>Cumplir el contrato</td><td>API 2</td></tr>
+<tr><td><a href="ejercicios/e4.html">E4</a></td><td>Crear, sustituir, cambiar y borrar.</td><td><code>201</code> y <code>Location</code>, <code>204</code>, <code>405</code> y <code>Allow</code></td><td>API 2</td></tr>
+<tr><td><a href="ejercicios/e5.html">E5</a></td><td>La misma API en los otros dos lenguajes, con respuestas idénticas.</td><td>El lenguaje no se nota</td><td>API 2</td></tr>
+<tr><td><a href="ejercicios/e6.html">E6</a></td><td>Validar la entrada y responder errores en un formato fijo.</td><td><code>problem+json</code>, sin trazas</td><td>API 3</td></tr>
+<tr><td><a href="ejercicios/e7.html">E7</a></td><td>Paginar, filtrar, cachear y evitar escrituras pisadas.</td><td><code>ETag</code>, <code>304</code>, <code>If-Match</code>, <code>412</code></td><td>API 3</td></tr>
+<tr><td><a href="ejercicios/e8.html">E8</a></td><td>Autenticar, autorizar y limitar.</td><td>OWASP API Top 10</td><td>API 4</td></tr>
+</tbody></table></div>
+<p>Ficheros: <a href="ejercicios/preparar.py"><code>preparar.py</code></a>, el <a href="ejercicios/plantillas/contrato.yaml">contrato de referencia</a>, <a href="ejercicios/plantillas/pruebas.py"><code>pruebas.py</code></a> y los esqueletos de <a href="ejercicios/plantillas/go/main.go">Go</a>, <a href="ejercicios/plantillas/python/main.py">Python</a> y <a href="ejercicios/plantillas/node/main.js">Node</a>.</p>
+<p class="note">«Hackea el ranking», la práctica del primer día, está ahora en la <a href="../../00-presentacion/index.html#hackea-el-ranking">Presentación</a>, con sus ficheros y cómo levantar el juego.</p>
+
+
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../assets/nav.js" defer></script>
+</body>
+</html>
