@@ -198,7 +198,7 @@ async def crear(request: Request):
 <p>Un cliente no sabe en qué lenguaje está la API: solo ve lo que responde. Estas costumbres de cada uno hacen que tres APIs «iguales» no lo sean. En el E5 tendrás que igualarlas.</p>
 <div class="tabla"><table><thead><tr><th>Situación</th><th>Go <code>net/http</code></th><th>FastAPI</th><th>Express 5</th><th>Contrato</th></tr></thead><tbody>
 <tr><td>Ruta que no existe</td><td>404 en texto plano</td><td>404 en JSON <code>{"detail": …}</code></td><td>404 en HTML</td><td>404 en JSON</td></tr>
-<tr><td>Método no admitido</td><td>405 con <code>Allow</code>, en texto</td><td>405 con <code>Allow</code>, en JSON</td><td>404</td><td>405 con <code>Allow</code></td></tr>
+<tr><td>Método no admitido</td><td>405 con <code>Allow</code>, en texto</td><td>405 en JSON, con un <code>Allow</code> que solo lista los métodos de una de las rutas</td><td>404</td><td>405 con <code>Allow</code></td></tr>
 <tr><td>Id que no es un número</td><td>lo que hagas tú</td><td>422 si lo declaras <code>int</code></td><td>lo que hagas tú</td><td>404</td></tr>
 <tr><td>JSON roto en el cuerpo</td><td>lo que hagas tú</td><td>422</td><td>400 en HTML</td><td>400</td></tr>
 <tr><td>Cabeceras extra</td><td>ninguna</td><td><code>server: uvicorn</code></td><td><code>X-Powered-By: Express</code></td><td>ninguna que diga la tecnología</td></tr>
