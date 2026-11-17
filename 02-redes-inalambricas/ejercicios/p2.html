@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>P2 · Acceso a red vulnerable · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Redes inalámbricas</a> · <a href="index.html">Prácticas</a></nav>
+
+<h1>P2 · Acceso a red vulnerable</h1>
+<p class="lead">Captura el handshake de la red WPA2 del laboratorio y recupera su contraseña con un diccionario corto. Luego comprueba que contra la WPA3 el mismo ataque no llega a ningún sitio. El objetivo no es «entrar»: es entender por qué una clave débil cae y SAE resiste, para saber defenderlo.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../docs/02-atacante-y-deteccion.html">Tema 2 · Qué ve y hace un atacante</a> y <a href="../docs/01-wifi-funciona-y-se-protege.html#cifrados">Tema 1 · Qué protege cada cifrado</a></dd>
+<dt>Aprendes</dt><dd>A capturar tráfico de ataque (criterio c), a acceder a una red vulnerable (criterio d) y a ver en la práctica el punto débil de WPA2 frente a WPA3 (criterio b).</dd>
+<dt>Trabajas en</dt><dd>La VM del laboratorio; entregas en <code>redes-inalambricas/p2/</code>.</dd>
+<dt>Entrega</dt><dd>Parte de la etiqueta única <code>entrega-redes-inalambricas</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+<p class="note"><b>Solo en tu laboratorio.</b> La clave que vas a romper es una débil puesta a propósito en una red simulada. Hacer esto contra una red real sin autorización es un delito.</p>
+
+<h2 class="step"><span class="n">1</span>Elige la red WPA2 y su canal</h2>
+<p>Partiendo del mapa de la <a href="p1.html">P1</a>, localiza la red <b>WPA2</b> del laboratorio: apunta su <b>BSSID</b>, su <b>canal</b> y qué <b>cliente</b> tiene conectado. Con la interfaz en modo monitor, fija <code>airodump-ng</code> a ese canal y ese BSSID para capturar solo esa red:</p>
+<div class="cmd"><pre><code>sudo airodump-ng -c &lt;canal&gt; --bssid &lt;BSSID&gt; -w wpa2 wlan0mon</code></pre></div>
+<p>Déjalo abierto: aquí es donde caerá el handshake.</p>
+
+<h2 class="step"><span class="n">2</span>Captura el handshake</h2>
+<p>Puedes esperar a que el cliente se conecte solo, o provocarlo con una trama de <b>deauth</b> para que se reconecte. En otra terminal del atacante:</p>
+<div class="cmd"><pre><code>sudo aireplay-ng --deauth 5 -a &lt;BSSID&gt; wlan0mon</code></pre></div>
+<p>Cuando el cliente se reconecte, <code>airodump-ng</code> mostrará arriba a la derecha <b>WPA handshake</b> con el BSSID. Ese es el saludo que necesitas. Córtalo con <kbd>Ctrl+C</kbd>: queda guardado en <code>wpa2-01.cap</code>.</p>
+<p class="note">Fíjate en que el deauth es una acción <b>activa</b>: deja huella. En la <a href="p3.html">P3</a> comprobarás que nzyme la ha registrado. Apúntalo para el informe.</p>
+
+<h2 class="step"><span class="n">3</span>Rompe la clave con un diccionario</h2>
+<p>El ataque es ahora <b>sin conexión</b>: ya no tocas la red. Prueba las contraseñas de un diccionario contra el handshake. El laboratorio trae listas; también sirve una corta que crees tú con la clave débil dentro:</p>
+<div class="cmd"><pre><code>aircrack-ng -w &lt;diccionario&gt; -b &lt;BSSID&gt; wpa2-01.cap</code></pre></div>
+<p>Si la clave está en la lista, <code>aircrack-ng</code> la muestra como <b>KEY FOUND</b>. Apunta cuánto ha tardado y cuántas claves probó: con una lista corta es casi inmediato.</p>
+<p class="note"><b>Pendiente de piloto:</b> confirmar la ruta de los diccionarios incluidos en el laboratorio y el nombre/clave de la red WPA2 débil, para dar al alumno un diccionario corto que la contenga sin desvelar la clave en la guía.</p>
+
+<h2 class="step"><span class="n">4</span>Comprueba que WPA3 resiste</h2>
+<p>Repite el intento contra la red <b>WPA3</b> del laboratorio: localízala, captura lo que puedas y lanza el mismo ataque de diccionario. No funcionará, y esa es la lección. Anota qué pasa exactamente (no hay handshake reutilizable sin conexión; el método de la P2 no aplica a SAE).</p>
+<div class="cmd"><pre><code># mismo procedimiento contra el BSSID de la red WPA3
+sudo airodump-ng -c &lt;canal&gt; --bssid &lt;BSSID-WPA3&gt; -w wpa3 wlan0mon
+# el ataque de diccionario sin conexión no recupera la clave</code></pre></div>
+<p class="note">Si en el laboratorio la red WPA3 está en modo transición (ofrece también WPA2), observa el efecto <b>downgrade</b> del Tema 2 y anótalo: la defensa es ofrecer solo WPA3.</p>
+
+<h2 class="step"><span class="n">5</span>Guarda las evidencias</h2>
+<p>En <code>redes-inalambricas/p2/</code> deja:</p>
+<ul>
+<li><code>handshake.png</code>: captura de <code>airodump-ng</code> mostrando «WPA handshake».</li>
+<li><code>clave-encontrada.png</code>: captura del <b>KEY FOUND</b> de <code>aircrack-ng</code> (no hace falta transcribir la clave).</li>
+<li><code>wpa3.txt</code>: qué intentaste contra WPA3 y por qué no funcionó.</li>
+<li><code>notas.txt</code>: el canal y BSSID de cada red, el tiempo y número de intentos del diccionario, y qué lo habría evitado (clave fuerte, PMF, solo-WPA3).</li>
+</ul>
+<p class="note"><b>Nada de secretos reales en el repositorio.</b> No subas capturas <code>.cap</code> ni diccionarios: solo las evidencias de pantalla y tus notas. La clave recuperada es de una red de juguete, pero acostúmbrate a no publicar credenciales.</p>
+
+<nav class="ejercicios" aria-label="Prácticas de Redes inalámbricas"><a href="p1.html">← P1 · Modos de la tarjeta y reconocimiento</a><a href="p3.html">P3 · Equipo azul con nzyme →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
+</body>
+</html>

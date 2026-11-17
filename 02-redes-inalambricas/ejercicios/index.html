@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prácticas de Redes inalámbricas · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Redes inalámbricas</a></nav>
+
+<h1>Prácticas de Redes inalámbricas</h1>
+<p class="lead">Cuatro prácticas encadenadas sobre el laboratorio Wi-Fi: reconocer, acceder, defender e informar. Todas se hacen dentro de la VM del laboratorio y se entregan en la carpeta <code>redes-inalambricas/</code> de tu repositorio.</p>
+
+<h2>Antes de empezar</h2>
+<p class="note"><b>Monta el laboratorio</b> siguiendo la <a href="../docs/guia-laboratorio.html">Guía del laboratorio</a>: Windows con Hyper-V, una VM Ubuntu Server 24.04, Docker dentro y el laboratorio WiFiChallengeLab-docker levantado. Sin eso, ninguna práctica se puede hacer.</p>
+<p class="note"><b>Solo en tu laboratorio.</b> Todo el trabajo se hace contra las redes simuladas del laboratorio, nunca contra una Wi-Fi real. Capturar o atacar redes de terceros sin autorización es un delito.</p>
+
+<h2>Las prácticas</h2>
+<div class="tabla"><table><thead><tr><th>Práctica</th><th>Qué haces</th><th>Criterios</th><th>Tema</th></tr></thead><tbody>
+<tr><td><a href="p1.html">P1</a></td><td>Modo monitor, barrido del aire e identificación del cifrado de cada red.</td><td>a, b, c</td><td><a href="../docs/01-wifi-funciona-y-se-protege.html">Tema 1</a></td></tr>
+<tr><td><a href="p2.html">P2</a></td><td>Capturar el handshake de la WPA2 débil y romperlo; comprobar que WPA3 resiste.</td><td>b, c, d</td><td><a href="../docs/02-atacante-y-deteccion.html">Tema 2</a></td></tr>
+<tr><td><a href="p3.html">P3</a></td><td>Equipo azul: revisar en nzyme qué se detectó y proponer contramedidas.</td><td>f</td><td><a href="../docs/02-atacante-y-deteccion.html#wids">Tema 2</a></td></tr>
+<tr><td><a href="p4.html">P4</a></td><td>Informe de auditoría con hallazgos y un apartado sobre otros inalámbricos.</td><td>e, g</td><td><a href="../docs/03-otros-inalambricos-e-informe.html">Tema 3</a></td></tr>
+</tbody></table></div>
+<p>Hazlas en orden: cada una parte de lo que guardaste en la anterior, y la P4 reúne las tres en un informe.</p>
+
+<h2 id="entrega">Qué debe haber en tu repositorio al etiquetar</h2>
+<table><thead><tr><th>Ruta</th><th>Contenido</th></tr></thead><tbody>
+<tr><td><code>redes-inalambricas/p1/</code></td><td>Mapa de redes (<code>redes.txt</code>), captura del escaneo y notas del reconocimiento.</td></tr>
+<tr><td><code>redes-inalambricas/p2/</code></td><td>Capturas del handshake y de la clave encontrada, la prueba de WPA3 y notas. Sin <code>.cap</code>, diccionarios ni claves.</td></tr>
+<tr><td><code>redes-inalambricas/p3/</code></td><td>Captura de la alerta de nzyme, la tabla de detección y las contramedidas.</td></tr>
+<tr><td><code>redes-inalambricas/informe.html</code></td><td>El informe de auditoría del bloque (también vale <code>.md</code> o <code>.pdf</code>).</td></tr>
+</tbody></table>
+<p class="note"><b>Nada de secretos en el repositorio:</b> ni capturas de tráfico, ni diccionarios, ni claves. Solo las evidencias de pantalla y el informe. Una sola entrega para todo el bloque: la etiqueta <code>entrega-redes-inalambricas</code> sobre el último commit de <code>main</code>.</p>
+
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../assets/nav.js" defer></script>
+</body>
+</html>

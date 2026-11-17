@@ -103,7 +103,20 @@
         ["PHP2Shell", "01-fundamentos/casos-analizados/cve-2026-109618-php2shell.html"],
       ]],
     ]],
-    ["Redes inalámbricas", "02-redes-inalambricas/index.html"],
+    ["Redes inalámbricas", "02-redes-inalambricas/index.html", [
+      ["Guía del laboratorio", "02-redes-inalambricas/docs/guia-laboratorio.html"],
+      ["Temas", "02-redes-inalambricas/index.html#temas", [
+        ["Tema 1 · Cómo funciona y cómo se protege una Wi-Fi", "02-redes-inalambricas/docs/01-wifi-funciona-y-se-protege.html"],
+        ["Tema 2 · Qué ve y hace un atacante", "02-redes-inalambricas/docs/02-atacante-y-deteccion.html"],
+        ["Tema 3 · Otros inalámbricos e informe", "02-redes-inalambricas/docs/03-otros-inalambricos-e-informe.html"],
+      ]],
+      ["Prácticas", "02-redes-inalambricas/ejercicios/index.html", [
+        ["P1 · Modos de la tarjeta y reconocimiento", "02-redes-inalambricas/ejercicios/p1.html"],
+        ["P2 · Acceso a red vulnerable", "02-redes-inalambricas/ejercicios/p2.html"],
+        ["P3 · Equipo azul con nzyme", "02-redes-inalambricas/ejercicios/p3.html"],
+        ["P4 · Informe de auditoría", "02-redes-inalambricas/ejercicios/p4.html"],
+      ]],
+    ]],
     ["Redes y sistemas", "03-redes-y-sistemas/index.html"],
     ["Sistemas comprometidos", "04-sistemas-comprometidos/index.html"],
     ["Aplicaciones web", "05-aplicaciones-web/index.html"],

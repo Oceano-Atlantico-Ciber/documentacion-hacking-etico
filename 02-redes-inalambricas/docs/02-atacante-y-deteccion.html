@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tema 2 · Qué ve y hace un atacante, y cómo se detecta · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Redes inalámbricas</a></nav>
+<header>
+<p class="eyebrow">Redes inalámbricas · RA2 · Tema 2 de 3</p>
+<h1>Qué ve y hace un atacante, y cómo se detecta</h1>
+<p class="lead">Con una tarjeta en modo monitor, un atacante escucha el aire antes de tocar nada: qué redes hay, qué clientes y en qué canal. De ahí pasa a capturar el handshake de una WPA2 para romper su clave, o a montar un AP falso y echar a los clientes con tramas de deauth. Cada uno de esos movimientos deja huellas, y un detector de intrusiones inalámbricas (WIDS) las registra. Este tema recorre el ataque y, a la vez, cómo lo ve el equipo azul.</p>
+<div class="meta"><span>Antes: <a href="01-wifi-funciona-y-se-protege.html">Tema 1</a></span><span>Prácticas: <a href="../ejercicios/p2.html">P2</a> y <a href="../ejercicios/p3.html">P3</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Palabras de este tema</h2>
+<dl class="ficha">
+<dt>Reconocimiento pasivo</dt><dd>Escuchar sin emitir nada: solo recibir las tramas que ya vuelan. No deja rastro de tráfico propio, pero tampoco provoca nada.</dd>
+<dt>Deauth</dt><dd>Trama de desautenticación. Legítima la usa el AP para echar a un cliente; un atacante la falsifica para desconectar a alguien a voluntad.</dd>
+<dt>Evil twin</dt><dd>Un AP falso que copia el nombre (SSID) de una red legítima para que los clientes se conecten a él por error.</dd>
+<dt>Diccionario</dt><dd>Una lista de contraseñas candidatas que se prueban una a una contra un handshake capturado.</dd>
+<dt>WIDS</dt><dd><i>Wireless Intrusion Detection System</i>: un sistema que escucha el aire para detectar ataques Wi-Fi (deauth masivos, AP sospechosos).</dd>
+<dt>PMKID</dt><dd>Un dato del handshake que algunos AP entregan sin que haga falta un cliente conectado, y que también permite atacar la clave sin conexión.</dd>
+</dl>
+</section>
+
+<section class="seccion" id="reconocimiento">
+<h2>Primero mirar: reconocimiento pasivo</h2>
+<p>El atacante no empieza atacando, empieza escuchando. En modo monitor recoge tres cosas:</p>
+<ul>
+<li><b>Beacons</b> de los AP: nombre, BSSID, canal y cifrado de cada red del entorno. Con esto dibuja el mapa.</li>
+<li><b>Probes</b> de los clientes: un dispositivo va preguntando por sus redes conocidas («¿está aquí <i>CasaDeAna</i>?»). Eso revela redes a las que ese equipo se ha conectado antes, aunque no estén cerca.</li>
+<li><b>Clientes asociados</b> a cada AP: quién está conectado a qué, por sus direcciones MAC.</li>
+</ul>
+<p>Todo esto es pasivo: no se emite nada, así que un WIDS no «ve» el reconocimiento en sí. Cubre el paso previo al ataque (criterio <b>c</b>): detectar redes y capturar tráfico.</p>
+</section>
+
+<section class="seccion" id="handshake">
+<h2>Capturar el handshake y romper la clave</h2>
+<p>Para atacar una WPA2-PSK, el atacante quiere su <b>handshake</b>, el saludo de cuatro mensajes que cliente y AP intercambian al conectarse. Tiene dos formas de conseguirlo:</p>
+<ul>
+<li><b>Esperar</b> a que un cliente se conecte y capturarlo al vuelo (pasivo).</li>
+<li><b>Provocarlo</b>: mandar una trama de <b>deauth</b> a un cliente ya conectado para que se caiga y se reconecte; en esa reconexión captura el handshake. Esto ya es activo, y es lo que un WIDS detecta.</li>
+</ul>
+<p>Con el handshake en la mano, el ataque es <b>sin conexión</b>: ya no toca la red. Prueba contraseñas de un <b>diccionario</b> una tras otra, calculando para cada una si habría producido ese handshake. Si la contraseña de la red está en la lista, la encuentra; si es larga y aleatoria, el diccionario se agota sin dar con ella. Por eso una contraseña débil cae y una fuerte no: el método es el mismo, lo que cambia es si la clave está al alcance de la lista.</p>
+<p class="note">Esta es la lección de seguridad, no el «truco»: el handshake no se puede evitar (es cómo funciona WPA2), así que la única defensa real es que la contraseña no esté en ningún diccionario. En la <a href="../ejercicios/p2.html">P2</a> lo compruebas con una clave débil puesta a propósito y un diccionario corto.</p>
+</section>
+
+<section class="seccion" id="sae">
+<h2>Por qué WPA3/SAE resiste</h2>
+<p>En WPA3, el saludo es <b>SAE</b>. La diferencia clave: cada intento de adivinar la contraseña obliga a hablar con el AP. No hay nada equivalente al handshake de WPA2 que puedas llevarte a casa para probar millones de claves sin conexión. El atacante tendría que lanzar cada prueba contra el AP en vivo, lo que es lentísimo y, encima, ruidoso: un WIDS vería el aluvión de intentos. El ataque de diccionario clásico, el de la P2, simplemente no aplica. Capturar un «handshake» de WPA3 no sirve para romperlo sin conexión.</p>
+<p class="note">Cuidado con el falso triunfo del <b>downgrade</b>: si el AP ofrece WPA2 y WPA3 a la vez (modo transición), el atacante intentará que la víctima use el WPA2 y atacar ese. Que en la P2 WPA3 «resista» significa resistir el ataque sin conexión; la defensa completa incluye ofrecer solo WPA3.</p>
+</section>
+
+<section class="seccion" id="eviltwin">
+<h2>El AP falso (evil twin) y el deauth</h2>
+<p>El otro gran ataque no rompe la clave: engaña al cliente. El atacante crea con su tarjeta en modo AP una red con el <b>mismo nombre</b> que una legítima (<i>evil twin</i>) y, a menudo, echa a los clientes de la buena con tramas de <b>deauth</b> para que se reconecten a la suya. A partir de ahí puede presentar una página de login falsa (<i>portal cautivo</i>) para robar credenciales, o, contra Enterprise, recoger las credenciales EAP si el cliente no valida bien el certificado del servidor.</p>
+<p>Las defensas:</p>
+<ul>
+<li><b>PMF (802.11w)</b> corta el deauth falso: las tramas de gestión van protegidas, así que el atacante no puede desconectar a nadie a su antojo.</li>
+<li><b>Validación del certificado</b> en Enterprise: si el cliente exige el certificado correcto del RADIUS, el evil twin no puede suplantarlo.</li>
+<li><b>Educación y gestión</b>: equipos configurados de forma centralizada que no se conectan a redes abiertas con nombres conocidos.</li>
+</ul>
+</section>
+
+<section class="seccion" id="wids">
+<h2>Cómo lo ve el equipo azul: el WIDS</h2>
+<p>Todo lo <b>activo</b> deja huella en el aire, y un WIDS la recoge. El laboratorio incluye <b>nzyme</b>, que escucha y levanta alertas. Dos típicas:</p>
+<div class="tabla"><table><thead><tr><th>Alerta</th><th>Qué la dispara</th><th>Qué ataque sugiere</th></tr></thead><tbody>
+<tr><td><code>DEAUTH_FLOOD</code></td><td>Una lluvia de tramas de desautenticación.</td><td>Alguien está echando clientes: captura de handshake forzada o evil twin.</td></tr>
+<tr><td><code>BANDIT_CONTACT</code></td><td>Contacto con un dispositivo marcado como sospechoso (un «bandido» conocido).</td><td>Un AP o cliente malicioso está operando cerca.</td></tr>
+</tbody></table></div>
+<p>Esta es la cara defensiva (criterio <b>f</b>, equipo rojo y azul): tras hacer en la <a href="../ejercicios/p1.html">P1</a> y la <a href="../ejercicios/p2.html">P2</a> las acciones de ataque, en la <a href="../ejercicios/p3.html">P3</a> abres nzyme y compruebas qué quedó registrado, y qué contramedidas (PMF, segmentación, solo-WPA3) lo habrían frenado. El reconocimiento pasivo casi no se ve; el deauth y el AP falso, sí. Esa asimetría es una lección en sí misma: lo que hace ruido es detectable, lo silencioso no.</p>
+</section>
+
+<section class="seccion">
+<h2>Notas para el docente</h2>
+<p class="note"><b>Hilo conductor rojo/azul.</b> El tema está montado para dar el ataque y su detección a la vez, no en bloques separados. Cada acción ofensiva (deauth, evil twin) va seguida de cómo la ve el WIDS y de su defensa. Así el alumno no sale con la idea de que atacar es el fin.</p>
+<p class="note"><b>La idea que debe quedar</b> no es «cómo romper una Wi-Fi», sino por qué una clave débil cae y una fuerte (o WPA3) no, y por qué PMF frena el deauth. Si el alumno entiende eso, ha cubierto los criterios c, d y b del lado conceptual.</p>
+<p class="note"><b>Pendiente de piloto.</b> Los nombres exactos de las alertas de nzyme que aparecerán al hacer P1/P2 dependen de la versión del laboratorio y de su configuración; <code>DEAUTH_FLOOD</code> y <code>BANDIT_CONTACT</code> son las documentadas. Conviene confirmar en un piloto qué alertas saltan realmente y ajustar la P3 a lo observado.</p>
+<p class="note"><b>Marco legal.</b> El evil twin y el deauth, fuera de un laboratorio, son ataques contra terceros y constituyen delito. Insiste en que solo se practican contra las redes simuladas del laboratorio propio.</p>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="01-wifi-funciona-y-se-protege.html">← Tema 1 · Cómo funciona una Wi-Fi</a><a href="03-otros-inalambricos-e-informe.html">Tema 3 · Otros inalámbricos e informe →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../assets/nav.js" defer></script>
+</body>
+</html>

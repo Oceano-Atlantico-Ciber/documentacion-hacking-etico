@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía del laboratorio Wi-Fi · Redes inalámbricas · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Redes inalámbricas</a></nav>
+<header>
+<p class="eyebrow">Redes inalámbricas · RA2 · Guía del laboratorio</p>
+<h1>Un laboratorio Wi-Fi sin hardware</h1>
+<p class="lead">Para atacar y defender una red Wi-Fi no hacen falta antenas ni un adaptador especial. Montamos una máquina virtual Ubuntu en Hyper-V y, dentro, el laboratorio <b>WiFiChallengeLab-docker</b>, que inventa radios Wi-Fi por software con el módulo del kernel <code>mac80211_hwsim</code>. Desde esa VM verás redes abiertas, WPA2, WPA3 y Enterprise, capturarás tráfico y lo vigilarás con un detector de intrusiones, todo en tu propio equipo y sin tocar ninguna red real.</p>
+<div class="meta"><span>Prácticas: <a href="../ejercicios/p1.html">P1</a>, <a href="../ejercicios/p2.html">P2</a>, <a href="../ejercicios/p3.html">P3</a> y <a href="../ejercicios/p4.html">P4</a></span><span>Después: <a href="01-wifi-funciona-y-se-protege.html">Tema 1 · Cómo funciona y cómo se protege una Wi-Fi</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Qué vas a montar</h2>
+<p>Dos capas, una dentro de la otra. Tu Windows no se entera de nada de Wi-Fi: solo ejecuta una máquina virtual, y toda la radio vive simulada dentro de ella.</p>
+<div class="tabla"><table><thead><tr><th>Capa</th><th>Qué es</th><th>Para qué</th></tr></thead><tbody>
+<tr><td><b>Windows con Hyper-V</b></td><td>Tu equipo, con el hipervisor de Windows activado.</td><td>Ejecuta la máquina virtual. Nada más.</td></tr>
+<tr><td><b>VM Ubuntu Server 24.04</b></td><td>Un Linux dentro de Hyper-V, con Docker instalado.</td><td>El puesto desde el que trabajas. Aquí vive todo el laboratorio.</td></tr>
+<tr><td><b>WiFiChallengeLab-docker</b></td><td>Contenedores que simulan puntos de acceso y clientes con <code>mac80211_hwsim</code>.</td><td>Las redes Wi-Fi que atacas y defiendes: OPN, WPA2, WPA3 y Enterprise.</td></tr>
+</tbody></table></div>
+<p class="note">El laboratorio levanta sus contenedores con <code>network_mode: host</code>, <code>privileged: true</code> y montando <code>/lib/modules</code> del sistema. Su autor avisa de que <b>solo debe ejecutarse dentro de una VM, nunca en el equipo físico</b>. Por eso montamos primero la VM: la aislamos del resto de tu Windows.</p>
+</section>
+
+<section class="seccion">
+<h2>Requisitos</h2>
+<ul>
+<li><b>Windows con Hyper-V activado.</b> Más abajo tienes cómo comprobarlo y activarlo.</li>
+<li><b>Un procesador con la virtualización activada en la BIOS/UEFI.</b> Suele llamarse <i>Intel VT-x</i> / <i>Virtualization Technology</i> o <i>AMD-V / SVM Mode</i>. En el Administrador de tareas, pestaña <b>Rendimiento → CPU</b>, debe poner «Virtualización: habilitada».</li>
+<li><b>Memoria:</b> unos 8 GB de RAM en el equipo, de los que la VM usará 4 GB.</li>
+<li><b>Disco:</b> unos 30 GB libres para la VM y sus imágenes de contenedor.</li>
+<li><b>La imagen de Ubuntu Server 24.04 LTS</b> (fichero <code>.iso</code>), que descargarás de la web de Ubuntu.</li>
+</ul>
+<p class="note">El laboratorio pide al menos 4 núcleos de CPU y 4 GB de RAM para la VM. Si tu equipo va justo, cierra lo demás mientras trabajas.</p>
+</section>
+
+<section class="seccion" id="hyper-v">
+<h2 class="step"><span class="n">1</span>Activa Hyper-V en Windows</h2>
+<p>Hyper-V es el hipervisor que ya trae Windows; solo hay que encenderlo una vez. Abre <b>PowerShell como administrador</b> (botón derecho sobre el menú de inicio → <i>Terminal (administrador)</i> o <i>Windows PowerShell (administrador)</i>) y ejecuta:</p>
+<pre><code>Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All</code></pre>
+<p>Cuando termine, <b>reinicia el equipo</b> para que el cambio surta efecto. Tras reiniciar, comprueba que el <b>Administrador de Hyper-V</b> aparece en el menú de inicio: esa es la consola desde la que crearás la máquina virtual.</p>
+<p class="note">Si el comando responde que la característica no está disponible o Hyper-V no aparece tras reiniciar, revisa que la virtualización esté activada en la BIOS/UEFI (ver Requisitos) y vuelve a intentarlo. <b>Pendiente de piloto:</b> conviene verificar este paso en el equipo tipo del aula antes de clase.</p>
+</section>
+
+<section class="seccion" id="red-virtual">
+<h2 class="step"><span class="n">2</span>Crea una red virtual para la VM</h2>
+<p>La VM necesita salir a internet para instalar Docker y descargar el laboratorio. En el <b>Administrador de Hyper-V</b>, menú <b>Acción → Administrador de conmutadores virtuales</b>, crea un conmutador de tipo <b>Externo</b> asociado a tu tarjeta de red y dale un nombre, por ejemplo <code>Externo</code>.</p>
+<p class="note">Hyper-V trae un conmutador <b>Default Switch</b> (NAT) que también da internet a la VM y no requiere configurarlo. Puedes usar ese si el Externo te da problemas. La parte Wi-Fi del laboratorio es toda interna y simulada: esta red solo sirve para que la VM descargue paquetes.</p>
+</section>
+
+<section class="seccion" id="crear-vm">
+<h2 class="step"><span class="n">3</span>Crea la máquina virtual</h2>
+<p>En el Administrador de Hyper-V, <b>Acción → Nuevo → Máquina virtual</b>. En el asistente:</p>
+<div class="tabla"><table><thead><tr><th>Paso del asistente</th><th>Qué poner</th></tr></thead><tbody>
+<tr><td>Nombre</td><td><code>wifi-lab</code></td></tr>
+<tr><td>Generación</td><td><b>Generación 2</b></td></tr>
+<tr><td>Memoria de inicio</td><td><b>4096 MB</b>. Desmarca «Usar memoria dinámica» para que la VM tenga sus 4 GB fijos.</td></tr>
+<tr><td>Red</td><td>El conmutador <code>Externo</code> (o <code>Default Switch</code>) del paso 2.</td></tr>
+<tr><td>Disco duro virtual</td><td>Crear uno nuevo de <b>30 GB</b>.</td></tr>
+<tr><td>Opciones de instalación</td><td>Instalar desde un archivo de imagen de arranque: elige la <code>.iso</code> de Ubuntu Server 24.04.</td></tr>
+</tbody></table></div>
+<p>Antes de arrancarla, abre la <b>Configuración</b> de la VM:</p>
+<ul>
+<li>En <b>Procesador</b>, sube el número de procesadores virtuales a <b>4</b>.</li>
+<li>En <b>Seguridad</b>, <b>desactiva el Arranque seguro</b> (o cambia la plantilla a «Microsoft UEFI Certificate Authority»): el instalador de Ubuntu lo necesita en Generación 2.</li>
+</ul>
+<p class="note"><b>Pendiente de piloto:</b> el desactivar el Arranque seguro y la plantilla UEFI pueden variar según la versión de Windows. Conviene comprobar el arranque del instalador de Ubuntu en el equipo del aula.</p>
+</section>
+
+<section class="seccion" id="instalar-ubuntu">
+<h2 class="step"><span class="n">4</span>Instala Ubuntu Server dentro de la VM</h2>
+<p>Arranca <code>wifi-lab</code> y conéctate (doble clic sobre la VM). Sigue el instalador de Ubuntu Server con las opciones por defecto; solo necesitas fijarte en:</p>
+<ul>
+<li><b>Red:</b> debe coger una dirección por DHCP automáticamente. Si no, revisa el conmutador del paso 2.</li>
+<li><b>Instalación:</b> la opción normal (no «minimizada»).</li>
+<li><b>Perfil:</b> crea tu usuario; recuerda el nombre y la contraseña.</li>
+<li><b>SSH:</b> marca «Install OpenSSH server» si quieres conectarte desde Windows con una terminal cómoda (opcional).</li>
+</ul>
+<p>Al terminar, la VM se reinicia y te deja en una consola de texto. Entra con tu usuario y actualiza el sistema:</p>
+<pre><code>sudo apt update &amp;&amp; sudo apt -y upgrade</code></pre>
+</section>
+
+<section class="seccion" id="hwsim">
+<h2 class="step"><span class="n">5</span>Prepara la radio simulada</h2>
+<p>El laboratorio inventa las tarjetas Wi-Fi con el módulo del kernel <code>mac80211_hwsim</code>. En Ubuntu Server ese módulo viene en el paquete de módulos «extra» del kernel. Instálalo y carga el módulo para comprobar que existe:</p>
+<pre><code>sudo apt -y install linux-modules-extra-$(uname -r)
+sudo modprobe mac80211_hwsim
+</code></pre>
+<p>Para ver que ha cargado, pide la lista de interfaces Wi-Fi; deben aparecer varias <code>wlanX</code> simuladas:</p>
+<pre><code>sudo apt -y install iw
+iw dev</code></pre>
+<p class="note">Si <code>modprobe</code> responde «Module not found», es que falta el paquete <code>linux-modules-extra</code> de tu kernel: vuelve a instalarlo con la versión exacta de <code>uname -r</code> y, si acabas de actualizar, reinicia la VM para arrancar con el kernel nuevo. <b>Pendiente de piloto:</b> verificar que <code>linux-modules-extra</code> trae <code>mac80211_hwsim</code> en la imagen concreta de Ubuntu Server 24.04 del aula; el propio laboratorio vuelve a cargar el módulo al levantar los contenedores.</p>
+</section>
+
+<section class="seccion" id="docker">
+<h2 class="step"><span class="n">6</span>Instala Docker</h2>
+<p>El laboratorio son contenedores, así que la VM necesita Docker. La vía oficial para Ubuntu:</p>
+<pre><code>sudo apt -y install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin</code></pre>
+<p>Para usar Docker sin <code>sudo</code>, añade tu usuario al grupo <code>docker</code> y vuelve a entrar en la sesión:</p>
+<pre><code>sudo usermod -aG docker $USER
+exit</code></pre>
+<p>Entra de nuevo y comprueba Docker:</p>
+<pre><code>docker run --rm hello-world</code></pre>
+</section>
+
+<section class="seccion" id="clonar">
+<h2 class="step"><span class="n">7</span>Clona y levanta el laboratorio</h2>
+<p>Descarga el laboratorio con <code>git</code> y levanta sus contenedores con Docker Compose:</p>
+<pre><code>sudo apt -y install git
+git clone https://github.com/r4ulcl/WiFiChallengeLab-docker
+cd WiFiChallengeLab-docker
+docker compose --file docker-compose.yml up -d</code></pre>
+<p>La primera vez descarga varias imágenes y tarda. Cuando termine, comprueba que los contenedores están en marcha:</p>
+<pre><code>docker compose ps</code></pre>
+<p class="note">El aviso vale la pena repetirlo: este <code>docker-compose.yml</code> usa <code>network_mode: host</code> y <code>privileged: true</code> y monta los módulos del kernel. Ejecútalo <b>solo dentro de esta VM</b>, nunca en tu Windows. Dentro de la VM es exactamente para lo que está pensado.</p>
+</section>
+
+<section class="seccion" id="entrar">
+<h2 class="step"><span class="n">8</span>Entra en el puesto del atacante</h2>
+<p>El trabajo con las herramientas Wi-Fi (reconocimiento, captura, ataque) se hace dentro del contenedor del atacante, que ya trae <code>aircrack-ng</code> y las demás herramientas. El atacante tiene las interfaces simuladas <code>wlan0</code> a <code>wlan5</code>. Según la variante del laboratorio, se entra con <code>docker exec</code> en el contenedor o por SSH al puerto que publica; la práctica <a href="../ejercicios/p1.html">P1</a> parte de aquí.</p>
+<p class="note"><b>Pendiente de piloto:</b> fijar en P1 el comando exacto de entrada al atacante (nombre del contenedor para <code>docker exec</code>, o usuario/puerto SSH) tras un montaje real, y confirmar cómo se pone una interfaz en modo monitor (el laboratorio incluye un ayudante <code>/var/aux.sh</code> que prepara una interfaz de monitorización).</p>
+</section>
+
+<section class="seccion" id="nzyme">
+<h2 class="step"><span class="n">9</span>Abre el detector de intrusiones (nzyme)</h2>
+<p>El laboratorio incluye <b>nzyme</b>, un WIDS (sistema de detección de intrusiones inalámbricas) que usarás como «equipo azul» en la <a href="../ejercicios/p3.html">P3</a>. Su panel se abre, <b>dentro de la VM</b>, en el navegador o con <code>curl</code>:</p>
+<pre><code>http://127.0.0.1:22900</code></pre>
+<p>nzyme vigila el tráfico y registra alertas como <code>DEAUTH_FLOOD</code> (una lluvia de tramas de desautenticación) o <code>BANDIT_CONTACT</code> (contacto con un dispositivo marcado como sospechoso). El laboratorio trae scripts para arrancarlo y pararlo (<code>startNzyme.sh</code> / <code>stopNzyme.sh</code>) y uno que vigila el fichero de alertas.</p>
+<p class="note">Ubuntu Server no trae escritorio. Para ver el panel de nzyme tienes dos opciones: instalar un navegador de texto en la VM, o (más cómodo) reenviar el puerto por SSH desde Windows (<code>ssh -L 22900:127.0.0.1:22900 usuario@&lt;ip-de-la-vm&gt;</code>) y abrir <code>http://127.0.0.1:22900</code> en el navegador de Windows. <b>Pendiente de piloto:</b> confirmar la vía de acceso al panel que se usará en clase.</p>
+</section>
+
+<section class="seccion" id="apagar">
+<h2>Parar y volver a empezar</h2>
+<p>Desde la carpeta del laboratorio en la VM:</p>
+<pre><code>docker compose stop     # para el laboratorio sin borrarlo
+docker compose up -d    # vuelve a levantarlo
+docker compose down     # lo detiene y borra los contenedores</code></pre>
+<p>Para apagar la VM entera, desde Ubuntu <code>sudo poweroff</code>, o desde el Administrador de Hyper-V. El laboratorio incluye además un <code>/root/restartWiFi.sh</code> que reinicia la parte Wi-Fi si las radios se quedan en mal estado, y deja un <code>cron</code> que recarga el módulo al arrancar.</p>
+</section>
+
+<section class="seccion">
+<h2>Notas para el docente</h2>
+<p class="note"><b>Antes de impartirlo, haz un piloto completo.</b> Esta guía está escrita a partir de la documentación oficial del laboratorio (su README y el script de aprovisionamiento) y de Hyper-V, pero no se ha probado de principio a fin en el equipo del aula. Todos los pasos marcados «Pendiente de piloto» deben verificarse: activación de Hyper-V, arranque del instalador de Ubuntu en Generación 2 con Arranque seguro desactivado, presencia de <code>mac80211_hwsim</code> en <code>linux-modules-extra</code>, comando exacto de entrada al atacante y vía de acceso al panel de nzyme.</p>
+<p class="note"><b>No se menciona ninguna licencia ni edición de Windows a propósito.</b> El único requisito del sistema operativo es «Windows con Hyper-V activado», con los pasos para activarlo. Si en el aula el hipervisor estuviera bloqueado, resuélvelo por los cauces del centro; la guía no entra en ello.</p>
+<p class="note"><b>Alternativa Vagrant.</b> El laboratorio ofrece también una vía con Vagrant que crea la VM por ti (<code>vagrant up hyper-v_vm --provider=hyperv</code> en consola de administrador, tras editar el Vagrantfile). Es más automática pero añade otra herramienta que instalar y configurar; esta guía elige el montaje manual de la VM por ser más transparente y fácil de depurar en clase. Elige una sola vía y manténla.</p>
+<p class="note"><b>Marco legal y ético.</b> Insiste desde el primer día: todo esto se hace <b>solo dentro de este laboratorio propio</b>. Capturar o atacar redes Wi-Fi de terceros sin autorización es un delito. El laboratorio simulado existe precisamente para practicar sin tocar ninguna red real.</p>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="../index.html">← Redes inalámbricas</a><a href="01-wifi-funciona-y-se-protege.html">Tema 1 · Cómo funciona y cómo se protege una Wi-Fi →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../assets/nav.js" defer></script>
+</body>
+</html>

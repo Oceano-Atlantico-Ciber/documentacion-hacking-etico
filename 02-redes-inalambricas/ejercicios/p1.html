@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>P1 · Modos de la tarjeta y reconocimiento · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Redes inalámbricas</a> · <a href="index.html">Prácticas</a></nav>
+
+<h1>P1 · Modos de la tarjeta y reconocimiento</h1>
+<p class="lead">Pon una interfaz simulada en modo monitor, barre el aire del laboratorio y haz el mapa de lo que hay: qué redes, en qué canal, con qué cifrado y qué clientes. Es el paso previo a cualquier ataque, y aquí lo haces solo escuchando.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../docs/01-wifi-funciona-y-se-protege.html">Tema 1 · Cómo funciona y cómo se protege una Wi-Fi</a></dd>
+<dt>Aprendes</dt><dd>Los modos de la tarjeta (criterio a), a reconocer el cifrado de cada red (criterio b) y a capturar tráfico de reconocimiento (criterio c).</dd>
+<dt>Trabajas en</dt><dd>La VM del laboratorio; entregas en <code>redes-inalambricas/p1/</code> de tu repositorio.</dd>
+<dt>Entrega</dt><dd>Parte de la etiqueta única <code>entrega-redes-inalambricas</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+<p class="note"><b>Solo en tu laboratorio.</b> Todo lo de esta práctica se hace contra las redes simuladas del laboratorio, nunca contra una Wi-Fi real. Escuchar o atacar redes de terceros es ilegal.</p>
+
+<h2 class="step"><span class="n">1</span>Levanta el laboratorio y entra al atacante</h2>
+<p>Con la VM en marcha y el laboratorio levantado como explica la <a href="../docs/guia-laboratorio.html">guía</a>, entra en el puesto del atacante. Desde la carpeta del laboratorio en la VM:</p>
+<div class="cmd"><pre><code>docker compose ps
+# entra en el contenedor del atacante (confirma el nombre con docker compose ps)
+docker compose exec attacker bash</code></pre></div>
+<p class="note"><b>Pendiente de piloto:</b> el nombre exacto del servicio del atacante (<code>attacker</code> u otro) y si se entra por <code>docker exec</code> o por SSH se fijará tras un montaje real. Lo da <code>docker compose ps</code>.</p>
+
+<h2 class="step"><span class="n">2</span>Mira los modos de tu interfaz</h2>
+<p>El atacante tiene varias interfaces simuladas (<code>wlan0</code>–<code>wlan5</code>). Mira su estado y el modo en que están:</p>
+<div class="cmd"><pre><code>iw dev
+iwconfig 2>/dev/null</code></pre></div>
+<p>Por defecto están en modo <b>managed</b> (infraestructura). Vas a pasar una a <b>monitor</b>.</p>
+
+<h2 class="step"><span class="n">3</span>Pon una interfaz en modo monitor</h2>
+<p>Con la suite <code>aircrack-ng</code>, que ya trae el atacante:</p>
+<div class="cmd"><pre><code>sudo airmon-ng start wlan0
+iw dev          # ahora wlan0mon aparece en modo monitor</code></pre></div>
+<p>El laboratorio incluye además un ayudante <code>/var/aux.sh</code> que deja una interfaz de monitorización preparada. Apunta en tus notas qué interfaz has puesto en monitor y con qué comando.</p>
+<p class="note"><b>Pendiente de piloto:</b> confirmar si en este laboratorio se usa <code>airmon-ng</code>, <code>/var/aux.sh</code> o ambos, y el nombre de la interfaz monitor resultante.</p>
+
+<h2 class="step"><span class="n">4</span>Barre el aire y haz el mapa</h2>
+<p><code>airodump-ng</code> salta de canal y lista todas las redes y clientes que oye. Déjalo correr un rato y observa las columnas: <b>BSSID</b>, <b>CH</b> (canal), <b>ENC</b> (cifrado: OPN, WPA2, WPA3), <b>ESSID</b> (nombre):</p>
+<div class="cmd"><pre><code>sudo airodump-ng wlan0mon</code></pre></div>
+<p>Fíjate en que aparecen los cuatro tipos de red del laboratorio: una <b>abierta (OPN)</b>, una <b>WPA2</b>, una <b>WPA3</b> y una <b>Enterprise (MGT)</b>. Debajo salen los clientes asociados a cada una.</p>
+
+<h2 class="step"><span class="n">5</span>Guarda el reconocimiento</h2>
+<p>Vuelve a lanzar <code>airodump-ng</code> escribiendo la salida a fichero, déjalo unos segundos y córtalo con <kbd>Ctrl+C</kbd>:</p>
+<div class="cmd"><pre><code>sudo airodump-ng -w reconocimiento --output-format csv wlan0mon</code></pre></div>
+<p>En <code>redes-inalambricas/p1/</code> de tu repositorio deja:</p>
+<ul>
+<li><code>redes.txt</code>: una tabla tuya con cada red del laboratorio, su canal y su cifrado, sacada de lo que viste. Di cuál es OPN, WPA2, WPA3 y Enterprise.</li>
+<li><code>captura-pantalla.png</code>: una captura de <code>airodump-ng</code> en marcha como evidencia.</li>
+<li><code>notas.txt</code>: qué interfaz pusiste en monitor, con qué comando, y qué clientes viste asociados a cada red.</li>
+</ul>
+<p class="note">Esto es reconocimiento <b>pasivo</b>: solo has escuchado. Guárdalo bien, porque en la <a href="p4.html">P4</a> será la evidencia del primer hallazgo y la base de la metodología del informe.</p>
+
+<h2 class="step"><span class="n">6</span>Piensa como el defensor</h2>
+<p>Antes de pasar a la P2, anota en <code>notas.txt</code>: ¿qué ha podido ver un atacante sin tocar nada? ¿Qué red protege peor a sus usuarios solo por su cifrado? Esa reflexión es la semilla del informe.</p>
+
+<nav class="ejercicios" aria-label="Prácticas de Redes inalámbricas"><span></span><a href="p2.html">P2 · Acceso a red vulnerable →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
+</body>
+</html>
