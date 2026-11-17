@@ -12,19 +12,19 @@
 <header>
 <p class="eyebrow">Redes inalámbricas · RA2 · Guía del laboratorio</p>
 <h1>Un laboratorio Wi-Fi sin hardware</h1>
-<p class="lead">Para atacar y defender una red Wi-Fi no hacen falta antenas ni un adaptador especial. Montamos una máquina virtual Ubuntu en Hyper-V y, dentro, el laboratorio <b>WiFiChallengeLab-docker</b>, que inventa radios Wi-Fi por software con el módulo del kernel <code>mac80211_hwsim</code>. Desde esa VM verás redes abiertas, WPA2, WPA3 y Enterprise, capturarás tráfico y lo vigilarás con un detector de intrusiones, todo en tu propio equipo y sin tocar ninguna red real.</p>
+<p class="lead">Para atacar y defender una red Wi-Fi no hacen falta antenas ni un adaptador especial. Montamos una máquina virtual Ubuntu (en <b>Hyper-V</b> si usas Windows, o en <b>UTM</b> si usas Mac) y, dentro, el laboratorio <b>WiFiChallengeLab-docker</b>, que inventa radios Wi-Fi por software con el módulo del kernel <code>mac80211_hwsim</code>. Desde esa VM verás redes abiertas, WPA2, WPA3 y Enterprise, capturarás tráfico y lo vigilarás con un detector de intrusiones, todo en tu propio equipo y sin tocar ninguna red real.</p>
 <div class="meta"><span>Prácticas: <a href="../ejercicios/p1.html">P1</a>, <a href="../ejercicios/p2.html">P2</a>, <a href="../ejercicios/p3.html">P3</a> y <a href="../ejercicios/p4.html">P4</a></span><span>Después: <a href="01-wifi-funciona-y-se-protege.html">Tema 1 · Cómo funciona y cómo se protege una Wi-Fi</a></span></div>
 </header>
 
 <section class="seccion">
 <h2>Qué vas a montar</h2>
-<p>Dos capas, una dentro de la otra. Tu Windows no se entera de nada de Wi-Fi: solo ejecuta una máquina virtual, y toda la radio vive simulada dentro de ella.</p>
+<p>Dos capas, una dentro de la otra. Tu equipo no se entera de nada de Wi-Fi: solo ejecuta una máquina virtual, y toda la radio vive simulada dentro de ella.</p>
 <div class="tabla"><table><thead><tr><th>Capa</th><th>Qué es</th><th>Para qué</th></tr></thead><tbody>
-<tr><td><b>Windows con Hyper-V</b></td><td>Tu equipo, con el hipervisor de Windows activado.</td><td>Ejecuta la máquina virtual. Nada más.</td></tr>
+<tr><td><b>Windows (Hyper-V) o Mac (UTM)</b></td><td>Tu equipo, con su hipervisor: Hyper-V en Windows, UTM en Mac.</td><td>Ejecuta la máquina virtual. Nada más.</td></tr>
 <tr><td><b>VM Ubuntu Server 24.04</b></td><td>Un Linux dentro de Hyper-V, con Docker instalado.</td><td>El puesto desde el que trabajas. Aquí vive todo el laboratorio.</td></tr>
 <tr><td><b>WiFiChallengeLab-docker</b></td><td>Contenedores que simulan puntos de acceso y clientes con <code>mac80211_hwsim</code>.</td><td>Las redes Wi-Fi que atacas y defiendes: OPN, WPA2, WPA3 y Enterprise.</td></tr>
 </tbody></table></div>
-<p class="note">El laboratorio levanta sus contenedores con <code>network_mode: host</code>, <code>privileged: true</code> y montando <code>/lib/modules</code> del sistema. Su autor avisa de que <b>solo debe ejecutarse dentro de una VM, nunca en el equipo físico</b>. Por eso montamos primero la VM: la aislamos del resto de tu Windows.</p>
+<p class="note">El laboratorio levanta sus contenedores con <code>network_mode: host</code>, <code>privileged: true</code> y montando <code>/lib/modules</code> del sistema. Su autor avisa de que <b>solo debe ejecutarse dentro de una VM, nunca en el equipo físico</b>. Por eso montamos primero la VM: la aislamos del resto de tu equipo.</p>
 </section>
 
 <section class="seccion">
@@ -37,6 +37,12 @@
 <li><b>La imagen de Ubuntu Server 24.04 LTS</b> (fichero <code>.iso</code>), que descargarás de la web de Ubuntu.</li>
 </ul>
 <p class="note">El laboratorio pide al menos 4 núcleos de CPU y 4 GB de RAM para la VM. Si tu equipo va justo, cierra lo demás mientras trabajas.</p>
+<p class="note"><b>¿Windows o Mac?</b> Los requisitos de CPU, memoria y disco son los mismos en los dos. Cambia solo cómo se crea la máquina virtual: en Windows con Hyper-V (<b>Opción A</b>, pasos 1 a 4) y en Mac con UTM (<b>Opción B</b>). A partir del paso 5, todo es idéntico. Sigue solo tu caso.</p>
+</section>
+
+<section class="seccion" id="opcion-windows">
+<h2>Opción A · En Windows, con Hyper-V</h2>
+<p>Pasos 1 a 4. Si usas Mac, sáltatelos y ve a la <a href="#opcion-mac">Opción B</a>.</p>
 </section>
 
 <section class="seccion" id="hyper-v">
@@ -83,6 +89,52 @@
 </ul>
 <p>Al terminar, la VM se reinicia y te deja en una consola de texto. Entra con tu usuario y actualiza el sistema:</p>
 <pre><code>sudo apt update &amp;&amp; sudo apt -y upgrade</code></pre>
+<p>Ya tienes la VM lista. Continúa en <a href="#dentro-vm">Dentro de la VM</a> (paso 5).</p>
+</section>
+
+<section class="seccion" id="opcion-mac">
+<h2>Opción B · En Mac, con UTM</h2>
+<p>En Mac no hay Hyper-V. Usamos <b>UTM</b>, un gestor de máquinas virtuales gratuito y de código abierto. Haz estos cuatro pasos <b>en vez de los pasos 1 a 4</b>; a partir del paso 5 todo es idéntico a Windows.</p>
+</section>
+
+<section class="seccion">
+<h2 class="step"><span class="n">1</span>Instala UTM</h2>
+<p>Descárgalo de su web oficial, <code>mac.getutm.app</code>, o con Homebrew desde la aplicación <b>Terminal</b> del Mac:</p>
+<pre><code>brew install --cask utm</code></pre>
+</section>
+
+<section class="seccion">
+<h2 class="step"><span class="n">2</span>Mira si tu Mac es Intel o Apple Silicon y descarga Ubuntu</h2>
+<p>Abre el menú <b>Apple</b> (arriba a la izquierda) → <b>Acerca de este Mac</b>. Si el chip pone <i>Apple M1/M2/M3…</i> es Apple Silicon; si pone <i>Intel</i>, es Intel. Descarga de la web de Ubuntu la imagen de <b>Ubuntu Server 24.04 LTS</b> que corresponda:</p>
+<ul>
+<li><b>Apple Silicon:</b> la versión <b>ARM64</b>.</li>
+<li><b>Intel:</b> la versión <b>AMD64</b> (la misma <code>.iso</code> que en Windows).</li>
+</ul>
+</section>
+
+<section class="seccion">
+<h2 class="step"><span class="n">3</span>Crea la máquina virtual en UTM</h2>
+<p>En UTM, pulsa <b>+</b> → <b>Virtualizar</b> → <b>Linux</b>. En el asistente:</p>
+<div class="tabla"><table><thead><tr><th>Campo</th><th>Qué poner</th></tr></thead><tbody>
+<tr><td>Imagen de arranque</td><td>La imagen de Ubuntu Server que descargaste.</td></tr>
+<tr><td>Memoria</td><td><b>4096 MB</b>.</td></tr>
+<tr><td>CPU</td><td><b>4</b> núcleos.</td></tr>
+<tr><td>Almacenamiento</td><td><b>30 GB</b>.</td></tr>
+<tr><td>Red</td><td>La que trae por defecto (compartida); da internet a la VM, que es lo único que necesita.</td></tr>
+</tbody></table></div>
+<p>En Apple Silicon, deja marcado <b>Virtualizar</b> (no «Emular»): así la VM va rápida usando el propio chip.</p>
+</section>
+
+<section class="seccion">
+<h2 class="step"><span class="n">4</span>Instala Ubuntu Server dentro de la VM</h2>
+<p>Arranca la VM e instala Ubuntu Server con las opciones por defecto, igual que en el paso 4 de Windows: red por DHCP, crea tu usuario y, si quieres, marca «Install OpenSSH server». Al terminar, entra y actualiza:</p>
+<pre><code>sudo apt update &amp;&amp; sudo apt -y upgrade</code></pre>
+<p class="note"><b>Pendiente de piloto (Apple Silicon).</b> El laboratorio y su módulo <code>mac80211_hwsim</code> nacieron en equipos Intel/x86. En un <b>Mac Intel</b> el camino es el mismo que en Windows. En un <b>Mac con Apple Silicon</b> (ARM) hay que confirmar en un piloto que las imágenes de los contenedores y la radio simulada funcionan; el propio laboratorio documenta una vía con UTM en Apple Silicon en su <a href="https://github.com/r4ulcl/WiFiChallengeLab-docker">README</a>, que conviene seguir si algo falla.</p>
+</section>
+
+<section class="seccion" id="dentro-vm">
+<h2>Dentro de la VM — igual en Windows y en Mac</h2>
+<p>A partir de aquí da igual el sistema que tengas: todo ocurre dentro de la VM Ubuntu, en su terminal.</p>
 </section>
 
 <section class="seccion" id="hwsim">
@@ -146,12 +198,12 @@ docker compose --file docker-compose.yml up -d</code></pre>
 <pre><code>docker compose stop     # para el laboratorio sin borrarlo
 docker compose up -d    # vuelve a levantarlo
 docker compose down     # lo detiene y borra los contenedores</code></pre>
-<p>Para apagar la VM entera, desde Ubuntu <code>sudo poweroff</code>, o desde el Administrador de Hyper-V. El laboratorio incluye además un <code>/root/restartWiFi.sh</code> que reinicia la parte Wi-Fi si las radios se quedan en mal estado, y deja un <code>cron</code> que recarga el módulo al arrancar.</p>
+<p>Para apagar la VM entera, desde Ubuntu <code>sudo poweroff</code>, o desde el Administrador de Hyper-V (Windows) o UTM (Mac). El laboratorio incluye además un <code>/root/restartWiFi.sh</code> que reinicia la parte Wi-Fi si las radios se quedan en mal estado, y deja un <code>cron</code> que recarga el módulo al arrancar.</p>
 </section>
 
 <section class="seccion">
 <h2>Notas para el docente</h2>
-<p class="note"><b>Antes de impartirlo, haz un piloto completo.</b> Esta guía está escrita a partir de la documentación oficial del laboratorio (su README y el script de aprovisionamiento) y de Hyper-V, pero no se ha probado de principio a fin en el equipo del aula. Todos los pasos marcados «Pendiente de piloto» deben verificarse: activación de Hyper-V, arranque del instalador de Ubuntu en Generación 2 con Arranque seguro desactivado, presencia de <code>mac80211_hwsim</code> en <code>linux-modules-extra</code>, comando exacto de entrada al atacante y vía de acceso al panel de nzyme.</p>
+<p class="note"><b>Antes de impartirlo, haz un piloto completo.</b> Esta guía está escrita a partir de la documentación oficial del laboratorio (su README y el script de aprovisionamiento) y de Hyper-V, pero no se ha probado de principio a fin en el equipo del aula. Todos los pasos marcados «Pendiente de piloto» deben verificarse: activación de Hyper-V, arranque del instalador de Ubuntu en Generación 2 con Arranque seguro desactivado, presencia de <code>mac80211_hwsim</code> en <code>linux-modules-extra</code>, comando exacto de entrada al atacante y vía de acceso al panel de nzyme. En <b>Mac</b>, la vía con UTM está documentada para los dos tipos de equipo, pero en <b>Apple Silicon</b> (ARM) hay que confirmar que el laboratorio x86 funciona; en <b>Mac Intel</b> el camino es como en Windows.</p>
 <p class="note"><b>No se menciona ninguna licencia ni edición de Windows a propósito.</b> El único requisito del sistema operativo es «Windows con Hyper-V activado», con los pasos para activarlo. Si en el aula el hipervisor estuviera bloqueado, resuélvelo por los cauces del centro; la guía no entra en ello.</p>
 <p class="note"><b>Alternativa Vagrant.</b> El laboratorio ofrece también una vía con Vagrant que crea la VM por ti (<code>vagrant up hyper-v_vm --provider=hyperv</code> en consola de administrador, tras editar el Vagrantfile). Es más automática pero añade otra herramienta que instalar y configurar; esta guía elige el montaje manual de la VM por ser más transparente y fácil de depurar en clase. Elige una sola vía y manténla.</p>
 <p class="note"><b>Marco legal y ético.</b> Insiste desde el primer día: todo esto se hace <b>solo dentro de este laboratorio propio</b>. Capturar o atacar redes Wi-Fi de terceros sin autorización es un delito. El laboratorio simulado existe precisamente para practicar sin tocar ninguna red real.</p>
