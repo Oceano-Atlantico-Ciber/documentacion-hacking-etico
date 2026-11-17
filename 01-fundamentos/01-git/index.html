@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · Git · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Fundamentos</a></nav>
+
+<h1>01 · Git</h1>
+<p class="lead">Cómo guarda git la historia, ramas y fusiones, remotos y cómo deshacer sin perder nada. Cuatro temas y ocho ejercicios.</p>
+
+<h2 id="temas">Temas</h2>
+<div class="cards">
+<a class="card" href="temas/01-modelo-y-commits.html"><b>Git 1 · Modelo y commits</b><span>Qué guarda git, los cuatro objetos y el commit.</span></a>
+<a class="card" href="temas/02-ramas-y-fusiones.html"><b>Git 2 · Ramas y fusiones</b><span>Ramas como punteros, fast-forward, merge y conflictos.</span></a>
+<a class="card" href="temas/03-remotos-y-reescribir-historia.html"><b>Git 3 · Remotos y reescribir historia</b><span>origin, push y pull, rebase y rebase interactivo.</span></a>
+<a class="card" href="temas/04-deshacer-y-seguridad.html"><b>Git 4 · Deshacer y seguridad</b><span>restore, reset y revert; secretos filtrados y cómo purgarlos.</span></a>
+</div>
+
+<h2 id="ejercicios">Ejercicios</h2>
+<p class="note"><b>Antes de empezar:</b> <a href="../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a> y <a href="../../00-presentacion/temas/06-primer-commit.html">06 · Primer commit</a>.</p>
+<p>Ocho ejercicios en <code>fundamentos/git/</code> de tu repositorio de entregas. Cada uno empieza con <code>preparar.py</code>, que crea los ficheros, ramas y commits de partida a partir de tu usuario de GitHub: tu escenario es distinto del de tus compañeros. Ejecútalo desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/01-git/ejercicios/preparar.py e1</code></pre>
+<p>Antes de etiquetar, compruébalo en tu equipo con <code>pruebas.py</code>: pasa exactamente las mismas comprobaciones que el corrector, sobre lo que ya tienes en commits, y dice qué falla y por qué. Sin el número de ejercicio, los comprueba todos:</p>
+<pre><code>py ../documentacion-hacking-etico/01-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre>
+<p>Cada ejercicio se entrega con su propia <b>etiqueta anotada</b>, <code>entrega-fundamentos-git-eN</code>, sobre el commit donde está resuelto. Qué es una etiqueta y cómo se crea se explica en <a href="temas/01-modelo-y-commits.html#etiquetas">Git 1</a>, antes del primer ejercicio. Cada ejercicio tiene su página con los pasos, cómo comprobarlo y qué mira el corrector. Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores.</p>
+<p class="note"><b>Cuenta la etiqueta tal como esté al cerrar el plazo</b>, que es el del bloque: jueves 5 de noviembre a las 23:59. Si el corrector marca fallos, se puede mover (<a href="temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>). Moverla después de la fecha límite deja la entrega fuera de plazo. Antes de etiquetar, sube tu trabajo y mira el resultado provisional: en GitHub, junto al último commit de <code>main</code>, aparece el check <b>Corrector git</b> con una fila por ejercicio. Se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando tu ejercicio salga sin fallos, etiqueta.</p>
+<table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Etiqueta sobre</th></tr></thead><tbody>
+<tr><td><a href="ejercicios/e1.html">E1</a></td><td>Tres commits, uno por fichero, con mensajes Conventional Commits y tu identidad.</td><td><code>main</code></td></tr>
+<tr><td><a href="ejercicios/e2.html">E2</a></td><td>Un <code>.gitignore</code> que deja fuera lo que no debe subirse.</td><td><code>main</code></td></tr>
+<tr><td><a href="ejercicios/e3.html">E3</a></td><td>Un merge fast-forward y otro con commit de merge.</td><td><code>main</code></td></tr>
+<tr><td><a href="ejercicios/e4.html">E4</a></td><td>Un conflicto resuelto según una regla.</td><td><code>main</code></td></tr>
+<tr><td><a href="ejercicios/e5.html">E5</a></td><td>Un rebase de una rama sobre <code>main</code>.</td><td><code>git/e5-feature</code></td></tr>
+<tr><td><a href="ejercicios/e6.html">E6</a></td><td>Cuatro commits a medias fundidos en uno con rebase interactivo.</td><td><code>git/e6-wip</code></td></tr>
+<tr><td><a href="ejercicios/e7.html">E7</a></td><td>Deshacer un commit ya publicado sin reescribir la historia.</td><td><code>main</code></td></tr>
+<tr><td><a href="ejercicios/e8.html">E8</a></td><td>Encontrar una clave filtrada en la historia y purgarla.</td><td><code>git/e8-app</code></td></tr>
+</tbody></table>
+
+<h3>Cómo se valora</h3>
+<ul>
+<li>Cada ejercicio vale lo mismo y se corrige de forma automática desde su etiqueta: estructura del historial (padres de los merges, commits por rama, conflicto real) y contenido de los ficheros.</li>
+<li>Las fechas de los commits no cuentan: se corrige cada etiqueta tal como esté al cierre del bloque.</li>
+</ul>
+
+
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../assets/nav.js" defer></script>
+</body>
+</html>

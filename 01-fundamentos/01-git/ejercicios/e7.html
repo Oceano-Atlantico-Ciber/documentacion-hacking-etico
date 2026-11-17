@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E7 · Revert · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">01 · Git</a></nav>
+
+<h1>E7 · Revert</h1>
+<p class="lead">Un commit con un error ya está en GitHub. Deshazlo sin reescribir la historia que otros pueden tener.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/git/e7/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e7</code> sobre <code>main</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-fundamentos/01-git/ejercicios/preparar.py e7</code></pre></div>
+<p>Añade tres commits a <code>main</code>. El segundo activa por error el modo depuración del servidor en <code>config.ini</code>.</p>
+
+<h2 class="step"><span class="n">2</span>Publica <code>main</code></h2>
+<div class="cmd"><pre><code>git push</code></pre></div><p>Desde ahora el commit erróneo es público: ya no se puede reescribir.</p>
+
+<h2 class="step"><span class="n">3</span>Revierte el commit erróneo</h2>
+<div class="cmd"><pre><code>git log --oneline -4
+git revert &lt;sha-del-commit-erróneo&gt;</code></pre></div><p>Git crea un commit nuevo que aplica el cambio inverso. Guarda el mensaje que propone.</p>
+
+<h2 class="step"><span class="n">4</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>git log --oneline -5
+git show HEAD</code></pre></div>
+<p>Siguen los tres commits y encima hay uno <code>Revert "…"</code> que devuelve <code>debug = false</code>.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>El commit erróneo o el siguiente han desaparecido de la historia (<code>reset</code>, <code>rebase</code>…).</li>
+<li>No hay un commit que deshaga exactamente el erróneo. Hazlo con <code>git revert</code>.</li>
+<li><code>config.ini</code> no queda como antes del error.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/01-git/ejercicios/pruebas.py e7</code></pre></div>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+
+<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E7 salga sin fallos, etiqueta:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e7 -m "E7 resuelto"
+git push origin entrega-fundamentos-git-e7</code></pre></div>
+<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e7 -m "E7 resuelto"
+git push --force origin entrega-fundamentos-git-e7</code></pre></div>
+<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de git"><a href="e6.html">← E6 · Rebase interactivo</a><a href="e8.html">E8 · Secreto filtrado →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

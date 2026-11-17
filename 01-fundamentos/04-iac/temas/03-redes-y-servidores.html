@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IaC 3 · Redes y servidores · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">04 · Terraform y AWS</a></nav>
+<header>
+<p class="eyebrow">Fundamentos · Terraform y AWS 3 de 4</p>
+<h1>Redes y servidores</h1>
+<p class="lead">Un laboratorio típico tiene una red propia, un servidor que se ve desde fuera y una base de datos que solo ve ese servidor. En AWS cada pieza es un recurso, y la seguridad de la red no la da un cortafuegos aparte: está escrita en los propios recursos. Aquí aprendes a escribirlos y a empaquetarlos en un módulo para levantar tantos laboratorios iguales como quieras.</p>
+<div class="meta"><span>Antes: <a href="02-terraform.html">IaC 2 · Terraform</a></span><span>Ejercicios: <a href="../ejercicios/e5.html">E5</a> y <a href="../ejercicios/e6.html">E6</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Palabras de este tema</h2>
+<dl class="ficha">
+<dt>VPC</dt><dd>Una red privada tuya dentro de la región, con un rango de direcciones como <code>10.0.0.0/16</code>.</dd>
+<dt>Subred</dt><dd>Un trozo de la VPC dentro de una zona de disponibilidad (un centro de datos), como <code>10.0.1.0/24</code> en <code>eu-west-1a</code>.</dd>
+<dt>Pública y privada</dt><dd>Una subred es pública si su tráfico sale a internet por una puerta de enlace; privada si no.</dd>
+<dt>Grupo de seguridad</dt><dd>El cortafuegos de cada servidor o base de datos: reglas de entrada (<code>ingress</code>) y de salida (<code>egress</code>).</dd>
+<dt>AMI</dt><dd>La imagen de disco con la que arranca un servidor EC2: un Ubuntu, un Debian…</dd>
+<dt>Módulo</dt><dd>Una carpeta de Terraform que se usa como una pieza, con sus variables de entrada y sus salidas.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>La forma de un laboratorio</h2>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 230" role="img" aria-label="Una VPC 10.0.0.0/16 con una subred pública donde está el servidor web, que admite el puerto 80 desde internet, y dos subredes privadas en dos zonas donde está la base de datos, que solo admite el puerto 5432 desde el grupo del servidor web.">
+<defs><marker id="rs-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="150" y="10" width="560" height="210" rx="10"/><text class="tit" x="170" y="34">VPC · 10.0.0.0/16</text>
+<rect class="caja-acento" x="170" y="50" width="220" height="150" rx="8"/><text class="tit" x="280" y="74" text-anchor="middle">Subred pública</text><text class="tenue peq mono" x="280" y="94" text-anchor="middle">10.0.1.0/24 · eu-west-1a</text>
+<rect class="caja-ok" x="200" y="110" width="160" height="70" rx="8"/><text class="tit" x="280" y="138" text-anchor="middle">Servidor web</text><text class="tenue peq" x="280" y="160" text-anchor="middle">grupo web: 80 desde 0.0.0.0/0</text>
+<rect class="caja" x="420" y="50" width="270" height="150" rx="8"/><text class="tit" x="555" y="74" text-anchor="middle">Dos subredes privadas</text><text class="tenue peq mono" x="555" y="94" text-anchor="middle">10.0.2.0/24 · 10.0.3.0/24 · 1a y 1b</text>
+<rect class="caja-ok" x="465" y="110" width="180" height="70" rx="8"/><text class="tit" x="555" y="138" text-anchor="middle">Base de datos RDS</text><text class="tenue peq" x="555" y="160" text-anchor="middle">grupo db: 5432 desde el grupo web</text>
+<text class="tit" x="20" y="140">Internet</text>
+<path class="linea" d="M90 135H198" marker-end="url(#rs-f)"/><text class="tenue peq" x="140" y="125" text-anchor="middle">:80</text>
+<path class="linea" d="M360 145H463" marker-end="url(#rs-f)"/><text class="tenue peq" x="412" y="135" text-anchor="middle">:5432</text>
+</svg>
+<figcaption>La base de datos necesita un grupo de subredes con al menos dos zonas: es una exigencia de RDS, para poder mover la base a otra zona si una cae.</figcaption>
+</figure>
+</section>
+
+<section class="seccion">
+<h2>Red: VPC y subredes</h2>
+<pre><code>resource "aws_vpc" "lab" {
+  cidr_block = "10.0.0.0/16"
+  tags       = { Name = "lab-1a2b3c4d" }
+}
+
+resource "aws_subnet" "publica" {
+  vpc_id                  = aws_vpc.lab.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "eu-west-1a"
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "privada_a" {
+  vpc_id            = aws_vpc.lab.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "eu-west-1a"
+}</code></pre>
+<p>La etiqueta <code>Name</code> es la que muestra la consola de AWS y la que usarás para encontrar tus recursos con la CLI. <code>cidrsubnet("10.0.0.0/16", 8, 1)</code> calcula <code>10.0.1.0/24</code>: útil cuando el rango de la VPC es una variable. En AWS real, para que la subred pública salga a internet hacen falta además una puerta de enlace (<code>aws_internet_gateway</code>) y una tabla de rutas; en esta unidad no las necesitas.</p>
+</section>
+
+<section class="seccion" id="grupos">
+<h2>Grupos de seguridad</h2>
+<p>Un grupo de seguridad deniega todo lo que no permite. Cada regla de entrada dice un protocolo, un rango de puertos y desde dónde: un rango de direcciones o <b>otro grupo de seguridad</b>. Esto último es lo más útil: «la base de datos admite el 5432 desde los servidores que lleven el grupo web», sin escribir ninguna IP.</p>
+<pre><code>resource "aws_security_group" "web" {
+  name   = "web"
+  vpc_id = aws_vpc.lab.id
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]          # desde cualquier sitio
+  }
+}
+
+resource "aws_security_group" "db" {
+  name   = "db"
+  vpc_id = aws_vpc.lab.id
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web.id]   # solo desde el grupo web
+  }
+}</code></pre>
+<p>Los grupos recuerdan las conexiones: si entra una petición al 80, su respuesta sale aunque no haya regla de salida. Lo que más se ve en auditorías es <code>0.0.0.0/0</code> en puertos de administración: SSH (22), escritorio remoto (3389) o la propia base de datos.</p>
+</section>
+
+<section class="seccion">
+<h2>Servidores y bases de datos</h2>
+<pre><code>resource "aws_instance" "web" {
+  ami                    = "ami-ubuntu2204"
+  instance_type          = "t3.micro"
+  subnet_id              = aws_subnet.publica.id
+  vpc_security_group_ids = [aws_security_group.web.id]
+  user_data              = &lt;&lt;-SH
+    #!/bin/sh
+    echo "Hola" &gt; /usr/share/nginx/html/index.html
+  SH
+}
+
+resource "aws_db_subnet_group" "db" {
+  name       = "lab-db"
+  subnet_ids = [aws_subnet.privada_a.id, aws_subnet.privada_b.id]
+}
+
+resource "aws_db_instance" "db" {
+  identifier             = "lab-db"
+  engine                 = "postgres"
+  engine_version         = "16"
+  instance_class         = "db.t3.micro"
+  allocated_storage      = 20
+  username               = "lab"
+  password               = var.clave_db
+  db_subnet_group_name   = aws_db_subnet_group.db.name
+  vpc_security_group_ids = [aws_security_group.db.id]
+  publicly_accessible    = false
+  skip_final_snapshot    = true
+}</code></pre>
+<p><code>user_data</code> es un script que el servidor ejecuta al arrancar la primera vez: así se instala y configura sin entrar en él. Lo puede leer cualquiera con permiso para describir la instancia, así que <b>nunca lleva contraseñas</b>. <code>publicly_accessible = false</code> impide que la base de datos tenga una dirección pública. <code>ami-ubuntu2204</code> es un nombre de imagen que entiende Floci; en AWS real las AMI tienen identificadores como <code>ami-0abc…</code> distintos en cada región.</p>
+<p class="note">En la Floci del curso, los servidores y bases de datos están simulados: <code>terraform apply</code> los crea con toda su configuración y la CLI los describe, pero no arranca ningún Ubuntu ni ningún PostgreSQL. Por eso los compruebas con <code>aws ec2 describe-instances</code> y <code>aws rds describe-db-instances</code>, no entrando en ellos.</p>
+<p>Para revisar lo que has creado:</p>
+<pre><code>aws ec2 describe-vpcs --query "Vpcs[].[VpcId,CidrBlock]"
+aws ec2 describe-security-groups --filters Name=vpc-id,Values=vpc-… --query "SecurityGroups[].[GroupName,IpPermissions]"
+aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceId,PrivateIpAddress]"
+aws rds describe-db-instances --query "DBInstances[].[DBInstanceIdentifier,PubliclyAccessible]"</code></pre>
+</section>
+
+<section class="seccion" id="modulos">
+<h2>Módulos: el mismo laboratorio, muchas veces</h2>
+<p>Si el laboratorio funciona, quieres otro igual para el compañero, o uno por grupo. Copiar la carpeta duplica también los errores. Un <b>módulo</b> es la carpeta del laboratorio con variables para lo que cambia, y se usa desde otra carpeta, la raíz:</p>
+<pre><code>e6/
+├── proveedor.tf
+├── main.tf                 # la raíz: usa el módulo dos veces
+└── modulos/lab/
+    ├── variables.tf        # nombre, cidr…
+    ├── main.tf             # la VPC, las subredes, los grupos, el servidor y la base
+    └── outputs.tf          # lo que devuelve: la IP del servidor…</code></pre>
+<pre><code># main.tf de la raíz
+module "uno" {
+  source = "./modulos/lab"
+  nombre = "lab-uno"
+  cidr   = "10.1.0.0/16"
+}
+
+module "dos" {
+  source = "./modulos/lab"
+  nombre = "lab-dos"
+  cidr   = "10.2.0.0/16"
+}
+
+output "ip_uno" {
+  value = module.uno.ip_web
+}</code></pre>
+<p>Dentro del módulo todo lo que cambia viene de <code>var.</code>; fuera solo se ven sus salidas. Tras añadir o cambiar un <code>module</code>, hay que repetir <code>terraform init</code>. Así se levantarán los laboratorios de los bloques siguientes: un módulo probado, un <code>apply</code>.</p>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="02-terraform.html">← IaC 2 · Terraform</a><a href="04-seguridad-de-la-infraestructura.html">IaC 4 · Seguridad de la infraestructura →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

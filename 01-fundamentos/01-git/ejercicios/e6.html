@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E6 · Rebase interactivo · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">01 · Git</a></nav>
+
+<h1>E6 · Rebase interactivo</h1>
+<p class="lead">Cuatro commits a medias no cuentan nada. Fúndelos en uno que se lea de un vistazo.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/git/e6/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e6</code> sobre <code>git/e6-wip</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-fundamentos/01-git/ejercicios/preparar.py e6</code></pre></div>
+<p>Crea <code>git/e6-wip</code> con cuatro commits <code>wip(e6): paso N</code> que van escribiendo <code>informe.md</code>.</p>
+
+<h2 class="step"><span class="n">2</span>Abre el rebase interactivo</h2>
+<div class="cmd"><pre><code>git switch git/e6-wip
+git rebase -i HEAD~4</code></pre></div><p>En el editor, deja <code>pick</code> en la primera línea y cambia las otras tres a <code>squash</code> (o <code>fixup</code>). Guarda y cierra la pestaña.</p>
+
+<h2 class="step"><span class="n">3</span>Escribe el mensaje</h2>
+<p>Git te pide el mensaje del commit resultante. Borra todo y deja exactamente:</p><div class="cmd"><pre><code>docs(e6): informe de alcance</code></pre></div>
+
+<h2 class="step"><span class="n">4</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>git log --oneline main..git/e6-wip
+git show --stat git/e6-wip</code></pre></div>
+<p>Una sola línea, con el mensaje exacto, que solo crea <code>informe.md</code>. Si ya habías subido la rama, usa <code>git push --force-with-lease</code>.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>El último commit no se llama exactamente <code>docs(e6): informe de alcance</code>.</li>
+<li>Quedan commits <code>wip</code> en la historia.</li>
+<li>No queda un único commit que cree <code>informe.md</code> y nada más.</li>
+<li><code>informe.md</code> no tiene el contenido del último paso.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/01-git/ejercicios/pruebas.py e6</code></pre></div>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+
+<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git push -u origin git/e6-wip</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E6 salga sin fallos, etiqueta la punta de <code>git/e6-wip</code>:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e6 git/e6-wip -m "E6 resuelto"
+git push origin entrega-fundamentos-git-e6</code></pre></div>
+<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e6 git/e6-wip -m "E6 resuelto"
+git push --force origin entrega-fundamentos-git-e6</code></pre></div>
+<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de git"><a href="e5.html">← E5 · Rebase</a><a href="e7.html">E7 · Revert →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E6 · Errores que ayudan · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">03 · API REST</a></nav>
+
+<h1>E6 · Errores que ayudan</h1>
+<p class="lead">Haz que tus tres APIs validen lo que reciben y respondan todos los errores en el mismo formato, sin dejar escapar nada de cómo están hechas.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/03-buenas-practicas.html">API 3 · Buenas prácticas</a></dd>
+<dt>Aprendes</dt><dd>A validar contra el contrato y a controlar los errores que el framework genera solo.</dd>
+<dt>Buena práctica</dt><dd><code>400</code> frente a <code>422</code>, <code>application/problem+json</code>, ninguna traza.</dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/api/e6/</code>, con sus tres carpetas de lenguaje</dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e6</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/03-api-rest/ejercicios/preparar.py e6
+cd fundamentos/api/e6</code></pre></div>
+<p>Copia tu E5 a <code>e6/</code> y añade <code>casos.txt</code>: las peticiones que tus APIs tienen que rechazar, con el código que toca a cada una.</p>
+
+<h2 class="step"><span class="n">2</span>Antes de tocar nada, mira qué responden hoy</h2>
+<p>Con las tres APIs arrancadas como en el E5, prueba a mano unos cuantos casos y fíjate en el código, el <code>Content-Type</code> y el cuerpo:</p>
+<div class="cmd"><pre><code>curl -i -X POST http://localhost:8001/api/v1/incidencias -H 'Content-Type: application/json' --data '{"titulo": "Sin cerrar"'
+curl -i http://localhost:8003/api/v1/no-existe</code></pre></div>
+<p>Apunta lo que delata cada una: es justo lo que tienes que cambiar.</p>
+
+<h2 class="step"><span class="n">3</span>Valida y uniforma los errores</h2>
+<ul>
+<li>Un <code>problema</code> por lenguaje, como en <a href="../temas/03-buenas-practicas.html">API 3</a>, y todos los errores pasan por él: también el <code>404</code> de una ruta que no existe y el <code>405</code>.</li>
+<li><code>400</code> si el cuerpo no es JSON; <code>422</code> si es JSON pero no vale: no es un objeto, falta un campo obligatorio, sobra un campo que el contrato no tiene, un tipo no cuadra, el título está vacío o pasa de 120 caracteres, la prioridad o el estado no son de la lista, o un comentario está vacío o pasa de 500.</li>
+<li>Ningún caso acaba en <code>500</code>, ni lleva trazas, rutas de ficheros o nombres de funciones.</li>
+</ul>
+
+<h2 class="step"><span class="n">4</span>Pruébalo en las tres</h2>
+<div class="cmd"><pre><code>py go/pruebas.py e6 http://localhost:8001
+py python/pruebas.py e6 http://localhost:8002
+py node/pruebas.py e6 http://localhost:8003</code></pre></div>
+<p>Cada orden pasa también las pruebas del E3 y el E4: validar no puede romper lo que ya funcionaba. Reinicia los contenedores entre una pasada y otra.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Algún caso de <code>casos.txt</code>, u otro parecido, no da su código en <code>application/problem+json</code> con <code>type</code>, <code>title</code>, <code>status</code> y <code>detail</code>.</li>
+<li>Algún error filtra una traza, una ruta de fichero o el nombre de una función.</li>
+<li>Deja de pasar alguna prueba del E3 o el E4, o las tres APIs dejan de responder igual.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "feat(api-e6): validación y errores problem+json"
+git push
+git tag -a entrega-fundamentos-api-e6 -m "E6 resuelto"
+git push origin entrega-fundamentos-api-e6</code></pre></div>
+
+<nav class="ejercicios" aria-label="Ejercicios de API REST"><a href="e5.html">← E5 · Tres lenguajes, una API</a><a href="e7.html">E7 · Listas grandes y escrituras a la vez →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

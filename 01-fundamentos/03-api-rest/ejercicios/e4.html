@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E4 · Escribir bien · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">03 · API REST</a></nav>
+
+<h1>E4 · Escribir bien</h1>
+<p class="lead">Añade a tu API crear, sustituir, cambiar y borrar, con los códigos y las cabeceras que cualquier cliente HTTP espera.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/01-rest-es-http.html">API 1</a> (métodos, idempotencia, códigos) y <a href="../temas/02-disenar-y-construir.html">API 2</a></dd>
+<dt>Aprendes</dt><dd>A responder cada escritura como manda HTTP, no como sale de serie.</dd>
+<dt>Buena práctica</dt><dd><code>201</code> con <code>Location</code>, <code>204</code> sin cuerpo, <code>405</code> con <code>Allow</code>, idempotencia.</dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/api/e4/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e4</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/03-api-rest/ejercicios/preparar.py e4
+cd fundamentos/api/e4</code></pre></div>
+<p>Copia tu E3 a <code>e4/</code>: sigues sobre tu propio código. Si usas Python o Node, vuelve a instalar las dependencias en la carpeta nueva.</p>
+
+<h2 class="step"><span class="n">2</span>Programa las escrituras</h2>
+<div class="tabla"><table><thead><tr><th>Petición</th><th>Responde</th></tr></thead><tbody>
+<tr><td><code>POST /api/v1/incidencias</code></td><td><code>201</code>, la incidencia creada y <code>Location: /api/v1/incidencias/{id}</code>. Si no llegan, <code>estado</code> es <code>abierta</code> y <code>tecnico</code>, <code>null</code>. Sin <code>titulo</code> o <code>prioridad</code>: <code>400</code> o <code>422</code>.</td></tr>
+<tr><td><code>PUT /api/v1/incidencias/{id}</code></td><td><code>200</code> y la incidencia sustituida entera. Si falta alguno de los cuatro campos: <code>400</code> o <code>422</code>.</td></tr>
+<tr><td><code>PATCH /api/v1/incidencias/{id}</code></td><td><code>200</code> con solo los campos enviados cambiados.</td></tr>
+<tr><td><code>DELETE /api/v1/incidencias/{id}</code></td><td><code>204</code> sin cuerpo. Después, esa incidencia da <code>404</code>.</td></tr>
+<tr><td><code>POST /api/v1/incidencias/{id}/comentarios</code></td><td><code>201</code>, el comentario con su <code>incidencia</code> y <code>Location</code> hacia él.</td></tr>
+<tr><td><code>GET /api/v1/incidencias/{id}/comentarios/{comentario}</code></td><td><code>200</code> con el comentario, o <code>404</code>.</td></tr>
+<tr><td>Un método que la ruta no tiene</td><td><code>405</code> y <code>Allow</code> con los que sí: <code>GET, POST</code> en la colección; <code>GET, PUT, PATCH, DELETE</code> en un elemento.</td></tr>
+</tbody></table></div>
+<p>Los ids nuevos nunca reutilizan uno existente ni uno borrado. Si a <code>Allow</code> se le añade <code>HEAD</code>, como hacen Go y FastAPI con las rutas <code>GET</code>, no pasa nada.</p>
+
+<h2 class="step"><span class="n">3</span>Pruébalo</h2>
+<div class="cmd"><pre><code>py pruebas.py e4 http://localhost:8000</code></pre></div>
+<p>Pasa también las del E3. Las pruebas crean y borran: reinicia la API antes de repetirlas. Cuando salgan todas en ✓, construye la imagen y pásalas contra el contenedor, como en el E3.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Alguna prueba de <code>py pruebas.py e4</code> sale en ✗ contra la imagen.</li>
+<li>Falla alguna de las que no ves: un id borrado reutilizado, un <code>PUT</code> que acepta la mitad de los campos, un <code>DELETE</code> con cuerpo.</li>
+</ul>
+
+<h2 class="step"><span class="n">4</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add .
+git commit -m "feat(api-e4): escrituras de la API de incidencias"
+git push
+git tag -a entrega-fundamentos-api-e4 -m "E4 resuelto"
+git push origin entrega-fundamentos-api-e4</code></pre></div>
+
+<nav class="ejercicios" aria-label="Ejercicios de API REST"><a href="e3.html">← E3 · Primera implementación</a><a href="e5.html">E5 · Tres lenguajes, una API →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

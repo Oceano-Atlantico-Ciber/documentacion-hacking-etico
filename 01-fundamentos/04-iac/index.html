@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · Terraform y AWS · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Fundamentos</a></nav>
+
+<h1>04 · Terraform y AWS</h1>
+<p class="lead">AWS como una API, Terraform, redes y servidores, y auditar permisos sin explotar nada. Cuatro temas y ocho ejercicios en Floci.</p>
+
+<h2 id="temas">Temas</h2>
+<div class="cards">
+<a class="card" href="temas/01-la-nube-en-tu-portatil.html"><b>IaC 1 · La nube en tu portátil</b><span>AWS como una API, S3, IAM, EC2 y RDS, Floci en Docker, la CLI de AWS y las políticas de IAM.</span></a>
+<a class="card" href="temas/02-terraform.html"><b>IaC 2 · Terraform</b><span>Infraestructura como código: recursos, init, plan y apply, el estado, import, variables, salidas y deriva.</span></a>
+<a class="card" href="temas/03-redes-y-servidores.html"><b>IaC 3 · Redes y servidores</b><span>VPC, subredes, grupos de seguridad, EC2 con user_data, RDS privada y módulos para repetir laboratorios.</span></a>
+<a class="card" href="temas/04-seguridad-de-la-infraestructura.html"><b>IaC 4 · Seguridad de la infraestructura</b><span>Cómo decide IAM, permisos que dan permisos, auditar simulando sin explotar y corregir en el código.</span></a>
+</div>
+
+<h2 id="ejercicios">Ejercicios</h2>
+<p class="note">Antes de empezar: Docker Desktop en marcha, y la CLI de AWS y Terraform instalados y configurados como explica <a href="temas/01-la-nube-en-tu-portatil.html#instalar">IaC 1</a>.</p>
+<p>Ocho ejercicios en <code>fundamentos/iac/</code> de tu repositorio de entregas, todos en <code>main</code>. Son ejemplos pequeños para aprender, no los laboratorios de los bloques siguientes. Todo se despliega en una sola Floci, la cuenta AWS emulada de <code>fundamentos/iac/docker-compose.yml</code>, y se comprueba con la CLI. Cada ejercicio empieza con <code>preparar.py</code>, que escribe los ficheros de partida con nombres generados para tu usuario de GitHub:</p>
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-fundamentos/04-iac/ejercicios/preparar.py e1</code></pre>
+<p>Antes de etiquetar, <code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, en una Floci nueva y vacía: <code>py ../documentacion-hacking-etico/01-fundamentos/04-iac/ejercicios/pruebas.py e1</code>. Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-iac-eN</code>, sobre <code>main</code>. El plazo lo anuncia el docente.</p>
+<div class="tabla"><table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Aprendes</th><th>Tema</th></tr></thead><tbody>
+<tr><td><a href="ejercicios/e1.html">E1</a></td><td>Un bucket y un usuario de solo lectura, a mano con la CLI.</td><td>S3, IAM y políticas</td><td>IaC 1</td></tr>
+<tr><td><a href="ejercicios/e2.html">E2</a></td><td>Inventariar la cuenta de una empresa ficticia.</td><td>Recorrer una cuenta</td><td>IaC 1</td></tr>
+<tr><td><a href="ejercicios/e3.html">E3</a></td><td>Pasar lo del E1 a Terraform sin recrearlo.</td><td>Recursos e <code>import</code></td><td>IaC 2</td></tr>
+<tr><td><a href="ejercicios/e4.html">E4</a></td><td>Variables y salidas; detectar y deshacer un cambio a mano.</td><td>Deriva</td><td>IaC 2</td></tr>
+<tr><td><a href="ejercicios/e5.html">E5</a></td><td>Una red con un servidor web y una base de datos privada.</td><td>VPC, grupos, EC2 y RDS</td><td>IaC 3</td></tr>
+<tr><td><a href="ejercicios/e6.html">E6</a></td><td>El E5 como módulo, usado dos veces.</td><td>Módulos</td><td>IaC 3</td></tr>
+<tr><td><a href="ejercicios/e7.html">E7</a></td><td>Auditar los permisos de IAM de la empresa simulándolos.</td><td>Escalada de privilegios, CWE</td><td>IaC 4</td></tr>
+<tr><td><a href="ejercicios/e8.html">E8</a></td><td>Corregir esos permisos en el código y comprobarlo.</td><td>Menor privilegio</td><td>IaC 4</td></tr>
+</tbody></table></div>
+<p>Ficheros: <a href="ejercicios/preparar.py"><code>preparar.py</code></a>, <a href="ejercicios/pruebas.py"><code>pruebas.py</code></a>, el <a href="ejercicios/plantillas/docker-compose.yml"><code>docker-compose.yml</code></a> de Floci y el <a href="ejercicios/plantillas/proveedor.tf"><code>proveedor.tf</code></a>.</p>
+
+
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../assets/nav.js" defer></script>
+</body>
+</html>
