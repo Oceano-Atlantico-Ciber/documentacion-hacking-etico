@@ -1,6 +1,6 @@
 // Índice lateral con el árbol de todo el sitio. Cada página lo carga con una ruta relativa
 // (<script src="../assets/nav.js" defer>), así que funciona igual en Pages que abriendo el repo
-// descargado. Su aspecto está en estilo.css. Para añadir una página, añade su nodo a ARBOL: [título, ruta desde la raíz, hijos].
+// descargado. Su aspecto está en estilo.css. Recuerda las ramas abiertas, el scroll y si la barra está plegada. Para añadir una página, añade su nodo a ARBOL: [título, ruta desde la raíz, hijos].
 (() => {
   const ARBOL = [
     ["Inicio", "index.html"],
@@ -100,6 +100,7 @@
       enlaces.push(a);
       if (hijos) {
         const details = document.createElement("details");
+        details.dataset.ruta = ruta;
         const summary = document.createElement("summary");
         summary.append(a);
         details.append(summary, lista(hijos));
@@ -129,11 +130,49 @@
   boton.addEventListener("click", () => abrir(boton.getAttribute("aria-expanded") === "false"));
   document.addEventListener("keydown", (e) => e.key === "Escape" && abrir(false));
   document.addEventListener("click", (e) => !nav.contains(e.target) && e.target !== boton && abrir(false));
+  // En el cajón, un enlace lo cierra (importa con las anclas de la misma página, que no recargan).
+  nav.addEventListener("click", (e) => e.target.closest("a") && abrir(false));
 
-  document.body.append(nav, boton);
+  // Lo que se recuerda: ramas abiertas y scroll del índice durante la pestaña (sessionStorage),
+  // y si la barra está plegada, también entre visitas (localStorage). Sin almacenamiento, el
+  // índice funciona igual pero sin recordar nada.
+  const leer = (almacen, clave) => { try { return window[almacen].getItem(clave); } catch { return null; } };
+  const escribir = (almacen, clave, valor) => { try { window[almacen].setItem(clave, valor); } catch {} };
+
+  // Plegar la barra fija (solo se ve con pantalla ancha; en estrecha el índice ya es un cajón).
+  const plegar = document.createElement("button");
+  plegar.id = "arbol-plegar";
+  plegar.type = "button";
+  plegar.setAttribute("aria-controls", nav.id);
+  const plegado = (si) => {
+    document.documentElement.classList.toggle("arbol-plegado", si);
+    plegar.textContent = si ? "»" : "«";
+    plegar.title = si ? "Desplegar el índice" : "Plegar el índice";
+    plegar.setAttribute("aria-label", plegar.title);
+    plegar.setAttribute("aria-expanded", String(!si));
+  };
+  plegado(leer("localStorage", "arbol-plegado") === "1");
+  plegar.addEventListener("click", () => {
+    const si = !document.documentElement.classList.contains("arbol-plegado");
+    plegado(si);
+    escribir("localStorage", "arbol-plegado", si ? "1" : "0");
+  });
+
+  document.body.append(nav, plegar, boton);
+
+  let abiertas = [];
+  try { abiertas = JSON.parse(leer("sessionStorage", "arbol-abiertas")) ?? []; } catch {}
+  for (const d of nav.querySelectorAll("details")) if (abiertas.includes(d.dataset.ruta)) d.open = true;
+  nav.scrollTop = Number(leer("sessionStorage", "arbol-scroll")) || 0;
+  nav.addEventListener("toggle", () => escribir("sessionStorage", "arbol-abiertas",
+    JSON.stringify([...nav.querySelectorAll("details[open]")].map((d) => d.dataset.ruta))), true);
+  addEventListener("pagehide", () => escribir("sessionStorage", "arbol-scroll", String(nav.scrollTop)));
+  // Las transiciones se activan después de colocar todo, para que nada se anime al cargar.
+  requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add("arbol-listo")));
 
   // Marca el enlace de la página actual: el de su ancla si lo hay, si no el de la página sin
-  // ancla. Abre sus ramas y lo deja a la vista. Se repite al navegar entre anclas.
+  // ancla. Abre sus ramas y, solo si el scroll recuperado lo deja fuera de la vista, lo centra.
+  // Se repite al navegar entre anclas.
   const marcar = () => {
     const aqui = new URL(location.href);
     const candidatos = enlaces.filter((a) => pagina(new URL(a.href)) === pagina(aqui));

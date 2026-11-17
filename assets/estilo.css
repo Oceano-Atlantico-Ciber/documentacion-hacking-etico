@@ -155,7 +155,9 @@ svg.diagrama { width: 100%; min-width: 540px; max-width: 760px; height: auto; di
 .panel label.casilla { display: flex; gap: 8px; align-items: center; color: var(--ink); }
 
 /* Índice lateral (lo monta nav.js). Fija sus propios valores para que el estilo de una página no lo altere. */
-#arbol { position: fixed; inset: 0 auto 0 0; width: 280px; overflow-y: auto; z-index: 20; padding: 20px 14px 40px;
+/* Barra fija desde 1024 px (un portátil de 1366 px con el escalado al 125 % de Windows deja 1093 px).
+   La flecha de cada sección es su propia zona de 28 px: el título navega, la flecha despliega. */
+#arbol { position: fixed; inset: 0 auto 0 0; width: 260px; overflow-y: auto; z-index: 20; padding: 20px 14px 40px;
   background: var(--surface); border-right: 1px solid var(--line); font: 15px/1.35 var(--f-body); }
 #arbol ul { list-style: none; margin: 0; padding: 0 0 0 14px; display: grid; gap: 1px; }
 #arbol > ul { padding: 0; }
@@ -166,18 +168,40 @@ svg.diagrama { width: 100%; min-width: 540px; max-width: 760px; height: auto; di
 #arbol summary { display: flex; align-items: center; gap: 0; padding: 0; cursor: pointer; list-style: none; font-weight: 400; color: var(--muted); }
 #arbol summary::-webkit-details-marker { display: none; }
 #arbol summary::after { content: none; }
-#arbol summary::before { content: "▸"; width: 12px; flex: none; transition: transform .15s; }
+#arbol summary::before { content: "▸"; width: 28px; height: 30px; display: grid; place-items: center; flex: none;
+  border-radius: 6px; transition: transform .15s; }
+#arbol summary:hover::before { background: var(--bg); }
 #arbol details[open] > summary::before { transform: rotate(90deg); }
 #arbol summary a { flex: 1; }
-#arbol-boton { position: fixed; right: 16px; bottom: 16px; z-index: 21; padding: 10px 16px; border-radius: 999px;
-  border: 0; background: var(--accent); color: var(--bg); font: 600 14px var(--f-body); cursor: pointer; }
-@media (min-width: 1200px) {
-  body { margin-left: 280px; }
+/* Las hojas no tienen flecha: se desplazan su ancho para que los títulos de un nivel queden en columna. */
+#arbol li > a { margin-left: 28px; }
+:is(#arbol-boton, #arbol-plegar) { position: fixed; z-index: 21; cursor: pointer; }
+:is(#arbol-boton, #arbol-plegar):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#arbol-boton { top: 12px; left: max(12px, env(safe-area-inset-left, 0px)); padding: 10px 16px; border-radius: 999px;
+  border: 0; background: var(--accent); color: var(--bg); font: 600 14px var(--f-body); box-shadow: 0 2px 8px rgb(0 0 0 / .15); }
+#arbol-boton::before { content: "☰ "; }
+#arbol-plegar { display: none; top: 10px; left: 208px; width: 34px; height: 34px; place-items: center; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 700 16px/1 var(--f-body); }
+#arbol-plegar:hover { background: var(--bg); }
+@media (min-width: 1024px) {
+  body { margin-left: 260px; }
+  #arbol { padding-top: 52px; }
   #arbol-boton { display: none; }
+  #arbol-plegar { display: grid; }
+  /* Plegada queda una franja de 48 px con el botón para desplegarla. */
+  .arbol-plegado body { margin-left: 48px; }
+  .arbol-plegado #arbol { transform: translateX(-212px); overflow: hidden; }
+  .arbol-plegado #arbol > ul { visibility: hidden; }
+  .arbol-plegado #arbol-plegar { left: 7px; }
+  .arbol-listo body { transition: margin-left .2s; }
+  .arbol-listo :is(#arbol, #arbol-plegar) { transition: transform .2s, left .2s; }
 }
-@media (max-width: 1199px) {
-  #arbol { width: min(320px, 85vw); transform: translateX(-100%); visibility: hidden;
+@media (max-width: 1023px) {
+  body { padding-top: 40px; }
+  /* El botón queda encima del cajón abierto (sirve para cerrarlo): la lista empieza debajo. */
+  #arbol { width: min(320px, 85vw); padding-top: 64px; transform: translateX(-100%); visibility: hidden;
     transition: transform .2s, visibility .2s; box-shadow: 0 0 24px rgb(0 0 0 / .2); }
   .arbol-abierto #arbol { transform: none; visibility: visible; }
 }
-@media print { #arbol, #arbol-boton { display: none; } body { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { #arbol, #arbol-plegar, #arbol summary::before, body { transition: none !important; } }
+@media print { #arbol, #arbol-boton, #arbol-plegar { display: none; } body { margin-left: 0; padding-top: 0; } }
