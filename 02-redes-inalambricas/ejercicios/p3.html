@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>P3 · Equipo azul con nzyme · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Redes inalámbricas</a> · <a href="index.html">Prácticas</a></nav>
+
+<h1>P3 · Equipo azul con nzyme</h1>
+<p class="lead">Cambia de bando. Abre el detector de intrusiones del laboratorio, nzyme, y mira qué quedó registrado de lo que hiciste en la P1 y la P2. Verás que lo activo (el deauth) salta y lo pasivo (el reconocimiento) casi no se ve. A partir de ahí, propones las contramedidas que lo habrían frenado.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../docs/02-atacante-y-deteccion.html#wids">Tema 2 · Cómo lo ve el equipo azul: el WIDS</a></dd>
+<dt>Aprendes</dt><dd>Técnicas de equipo rojo y azul (criterio f): a leer las alertas de un WIDS y a proponer defensas.</dd>
+<dt>Trabajas en</dt><dd>La VM del laboratorio; entregas en <code>redes-inalambricas/p3/</code>.</dd>
+<dt>Entrega</dt><dd>Parte de la etiqueta única <code>entrega-redes-inalambricas</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Abre el panel de nzyme</h2>
+<p>Con el laboratorio en marcha, nzyme escucha dentro de la VM. Su panel está en:</p>
+<div class="cmd"><pre><code>http://127.0.0.1:22900</code></pre></div>
+<p>Si trabajas desde Windows sin escritorio en la VM, reenvía el puerto por SSH y ábrelo en tu navegador, como explica la <a href="../docs/guia-laboratorio.html#nzyme">guía</a>. El laboratorio trae <code>startNzyme.sh</code> / <code>stopNzyme.sh</code> para arrancarlo y pararlo.</p>
+<p class="note"><b>Pendiente de piloto:</b> confirmar credenciales de acceso al panel y la vía exacta (navegador en la VM o reenvío por SSH) que se usará en clase.</p>
+
+<h2 class="step"><span class="n">2</span>Reproduce un ataque mientras miras</h2>
+<p>Para ver saltar una alerta en vivo, vuelve al atacante y lanza otra vez un <b>deauth</b> como en la P2, mientras tienes el panel de nzyme delante:</p>
+<div class="cmd"><pre><code>sudo aireplay-ng --deauth 10 -a &lt;BSSID&gt; wlan0mon</code></pre></div>
+<p>En nzyme debería aparecer una alerta de tipo <code>DEAUTH_FLOOD</code>. El laboratorio también vigila el fichero de alertas con un script (<code>/var/nzyme-alerts.sh</code> sobre <code>nzyme-logs/logs/alerts.log</code>), donde verás entradas como <code>DEAUTH_FLOOD</code> o <code>BANDIT_CONTACT</code>.</p>
+
+<h2 class="step"><span class="n">3</span>Revisa qué se detectó de la P1 y la P2</h2>
+<p>Recorre el panel y el log de alertas y anota, para cada cosa que hiciste:</p>
+<div class="tabla"><table><thead><tr><th>Acción tuya</th><th>¿La vio nzyme?</th><th>Por qué</th></tr></thead><tbody>
+<tr><td>Reconocimiento pasivo (P1)</td><td>Casi nada</td><td>Solo escuchaste; no emitiste tráfico.</td></tr>
+<tr><td>Deauth para el handshake (P2)</td><td>Sí (<code>DEAUTH_FLOOD</code>)</td><td>Es una acción activa y ruidosa.</td></tr>
+<tr><td>Ataque de diccionario (P2)</td><td>No</td><td>Fue sin conexión, fuera del alcance de la radio.</td></tr>
+</tbody></table></div>
+<p>Esa asimetría es el hallazgo del equipo azul: lo que hace ruido se detecta; lo silencioso, no. Guárdalo.</p>
+
+<h2 class="step"><span class="n">4</span>Propón contramedidas</h2>
+<p>Para cada ataque que detectaste (o que no), escribe qué lo habría frenado o detectado antes. Al menos:</p>
+<ul>
+<li><b>PMF (802.11w)</b>: con tramas de gestión protegidas, el deauth falso de la P2 no funcionaría.</li>
+<li><b>WPA3 / solo-WPA3</b>: cierra el ataque de diccionario de la P2 y evita el downgrade.</li>
+<li><b>Segmentación y monitorización</b>: una red de invitados separada y un WIDS vigilando reducen el daño y acortan el tiempo de detección.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Guarda las evidencias</h2>
+<p>En <code>redes-inalambricas/p3/</code> deja:</p>
+<ul>
+<li><code>alerta-deauth.png</code>: captura de la alerta <code>DEAUTH_FLOOD</code> en nzyme.</li>
+<li><code>deteccion.txt</code>: la tabla de qué se detectó y qué no, con tu explicación.</li>
+<li><code>contramedidas.txt</code>: tus defensas propuestas, una por ataque, concretas.</li>
+</ul>
+<p class="note">Lo de esta práctica es el núcleo del apartado de defensa del informe de la <a href="p4.html">P4</a>: ahí cada contramedida se convierte en una recomendación priorizada.</p>
+
+<nav class="ejercicios" aria-label="Prácticas de Redes inalámbricas"><a href="p2.html">← P2 · Acceso a red vulnerable</a><a href="p4.html">P4 · Informe de auditoría →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
+</body>
+</html>

@@ -12,17 +12,46 @@
 
 <h1>Redes inalámbricas</h1>
 <p class="lead"><b>RA2</b> · Ataca y defiende en entornos de prueba, comunicaciones inalámbricas consiguiendo acceso a redes para demostrar sus vulnerabilidades.</p>
+
+<h2>Cómo trabajamos este bloque</h2>
+<p>Todo sobre un <b>laboratorio Wi-Fi sin hardware</b>: una máquina virtual Ubuntu Server en Hyper-V y, dentro, el laboratorio <b>WiFiChallengeLab-docker</b>, que inventa las radios Wi-Fi por software con <code>mac80211_hwsim</code>. No se compra ni se usa ningún adaptador físico. Desde esa VM verás redes abiertas, WPA2, WPA3 y Enterprise, capturarás tráfico, intentarás acceder a la red vulnerable y vigilarás todo con un detector de intrusiones. Enfoque de <b>equipo rojo y azul</b>: se ataca para entender la debilidad y poder defenderla, siempre dentro del laboratorio propio y nunca contra redes de terceros.</p>
+
+<h2>Empieza por la guía</h2>
+<div class="cards"><a class="card" href="docs/guia-laboratorio.html"><b>Guía del laboratorio</b><span>Activar Hyper-V, crear la VM Ubuntu Server 24.04, instalar Docker y levantar el laboratorio Wi-Fi. Requisitos y acceso a nzyme.</span></a></div>
+
+<h2 id="temas">Temas</h2>
+<div class="cards">
+<a class="card" href="docs/01-wifi-funciona-y-se-protege.html"><b>Tema 1 · Cómo funciona y cómo se protege una Wi-Fi</b> · criterios a, b<span>Bandas y canales, modos de la tarjeta, cifrados (abierta/OWE, WPA2-PSK, WPA3-SAE, Enterprise), PMF y dónde falla cada uno.</span></a>
+<a class="card" href="docs/02-atacante-y-deteccion.html"><b>Tema 2 · Qué ve y hace un atacante, y cómo se detecta</b> · criterios c, d, f<span>Reconocimiento pasivo, captura del handshake, por qué cae una clave débil y resiste SAE, evil twin y deauth, y la detección con un WIDS.</span></a>
+<a class="card" href="docs/03-otros-inalambricos-e-informe.html"><b>Tema 3 · Otros inalámbricos e informe</b> · criterios e, g<span>Bluetooth/BLE, Zigbee/Thread/Matter y RFID/NFC a nivel conceptual, y cómo se redacta un informe de auditoría.</span></a>
+</div>
+
+<h2>Prácticas</h2>
+<div class="cards">
+<a class="card" href="ejercicios/p1.html"><b>P1 · Modos de la tarjeta y reconocimiento</b> · criterios a, b, c<span>Modo monitor, barrido del aire e identificación del cifrado de cada red del laboratorio.</span></a>
+<a class="card" href="ejercicios/p2.html"><b>P2 · Acceso a red vulnerable</b> · criterios b, c, d<span>Capturar y romper el handshake de la WPA2 débil; comprobar que WPA3 resiste.</span></a>
+<a class="card" href="ejercicios/p3.html"><b>P3 · Equipo azul con nzyme</b> · criterio f<span>Revisar en el WIDS qué se detectó de P1 y P2 y proponer contramedidas.</span></a>
+<a class="card" href="ejercicios/p4.html"><b>P4 · Informe de auditoría</b> · criterios e, g<span>Hallazgos, riesgo y recomendaciones, más un apartado sobre otros inalámbricos.</span></a>
+</div>
+<p>Índice y qué entregar: <a href="ejercicios/index.html">Prácticas de Redes inalámbricas</a>.</p>
+
+<h2>Criterios de evaluación</h2>
+<ol type="a">
+<li>Configurar los distintos modos de funcionamiento de las tarjetas de red inalámbricas. <i>(Tema 1, P1)</i></li>
+<li>Describir las técnicas de encriptación de las redes inalámbricas y sus puntos vulnerables. <i>(Tema 1, P1, P2)</i></li>
+<li>Detectar redes inalámbricas y capturar tráfico de red como paso previo a su ataque. <i>(Tema 2, P1, P2)</i></li>
+<li>Acceder a redes inalámbricas vulnerables. <i>(Tema 2, P2)</i></li>
+<li>Caracterizar otros sistemas de comunicación inalámbricos y sus vulnerabilidades. <i>(Tema 3, P4)</i></li>
+<li>Utilizar técnicas de «Equipo Rojo y Azul». <i>(Tema 2, P3)</i></li>
+<li>Realizar informes sobre las vulnerabilidades detectadas. <i>(Tema 3, P4)</i></li>
+</ol>
+
 <h2>Contenidos básicos</h2>
 <h3>Ataque y defensa en entorno de pruebas de las comunicaciones inalámbricas</h3>
 <ul><li>Comunicación inalámbrica.</li><li>Modo infraestructura, ad-hoc y monitor.</li><li>Análisis y recolección de datos en redes inalámbricas.</li><li>Técnicas de ataques y exploración de redes inalámbricas.</li><li>Ataques a otros sistemas inalámbricos.</li><li>Realización de informes de auditoría y presentación de resultados.</li></ul>
-<h2>En Floci</h2>
-<p>Floci emula los servicios de AWS, no la radio Wi-Fi. Trabajamos con capturas de la red inalámbrica de la empresa ficticia, guardadas en su S3 emulado, y las analizamos con tshark. Los modos de la tarjeta (infraestructura, ad-hoc, monitor) se ven en demostración con un adaptador físico.</p>
 
-<h2>Entrega</h2>
-<p>Una sola entrega para todo el bloque: la etiqueta <code>entrega-redes-inalambricas</code> con todas sus prácticas, en la carpeta <code>redes-inalambricas/</code> de tu repositorio.</p>
-
-<h2>Temas</h2>
-<p>Se irá publicando a medida que avancemos.</p>
+<h2 id="entrega">Entrega</h2>
+<p>Una sola entrega para todo el bloque: la etiqueta <code>entrega-redes-inalambricas</code> con todas sus prácticas, en la carpeta <code>redes-inalambricas/</code> de tu repositorio, sobre el último commit de <code>main</code>. Qué debe haber en cada carpeta está en la <a href="ejercicios/index.html#entrega">tabla de entrega</a>. El informe de la <a href="ejercicios/p4.html">P4</a> es el producto principal; lo corrige el docente (este bloque no tiene corrector automático).</p>
 
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
