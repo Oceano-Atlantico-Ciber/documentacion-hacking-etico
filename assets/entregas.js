@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-17T20:39+00:00",
+ "actualizado": "2026-11-17T21:44+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -334,6 +334,171 @@ window.ENTREGAS = {
   },
   {
    "nombre": "API REST",
+   "ejercicios": [
+    "e1",
+    "e2",
+    "e3",
+    "e4",
+    "e5",
+    "e6",
+    "e7",
+    "e8"
+   ],
+   "alumnos": {
+    "adrian47gg": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "agracia90": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "alfaro-cmd": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "dayx33": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "hugocampos646": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "igormillan": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "jancand": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "juanadiego": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "lord999w": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "manuelciordiamartinez-glitch": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "pabloba1710": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "robertoespiago-jpg": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "rubenalondiaz2-hash": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "umbreon0197": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    },
+    "vladukrisp-ctrl": {
+     "e1": "sin",
+     "e2": "sin",
+     "e3": "sin",
+     "e4": "sin",
+     "e5": "sin",
+     "e6": "sin",
+     "e7": "sin",
+     "e8": "sin"
+    }
+   }
+  },
+  {
+   "nombre": "Terraform y AWS",
    "ejercicios": [
     "e1",
     "e2",
