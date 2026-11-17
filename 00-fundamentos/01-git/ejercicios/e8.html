@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E8 · Secreto filtrado · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">01 · Git</a></nav>
+
+<h1>E8 · Secreto filtrado</h1>
+<p class="lead">Alguien subió una clave de API y luego la borró. Encuéntrala en la historia, púrgala y comprueba qué queda en GitHub.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a></dd>
+<dt>Trabajas en</dt><dd><code>fundamentos/git/e8/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e8</code> sobre <code>git/e8-app</code></dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e8</code></pre></div>
+<p>Crea <code>git/e8-app</code>. En uno de sus commits alguien subió un <code>.env</code> con una clave de API, y en otro lo borró.</p>
+
+<h2 class="step"><span class="n">2</span>Sube la rama tal cual</h2>
+<div class="cmd"><pre><code>git push -u origin git/e8-app</code></pre></div><p>Así simulas la filtración real: la clave ya está en GitHub. Sin este paso el ejercicio no se puede superar.</p>
+
+<h2 class="step"><span class="n">3</span>Encuentra el commit que la introdujo</h2>
+<div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app</code></pre></div><p>Salen dos commits: el que añade la clave (líneas con <code>+</code>) y el que la borra (<code>−</code>). Apunta el SHA <b>completo</b>, de 40 caracteres, del que la añade.</p>
+
+<h2 class="step"><span class="n">4</span>Purga el <code>.env</code> de toda la rama</h2>
+<p><code>git-filter-repo</code> ya lo tienes instalado desde <a href="../../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a>. Se lanza como módulo de Python, que funciona aunque su carpeta no esté en el PATH; es la misma herramienta que <code>git filter-repo</code>:</p><div class="cmd"><pre><code>py -m git_filter_repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div><p>Reescribe todos los commits de la rama sin ese fichero. Los SHA cambian.</p>
+<p class="note">Desde aquí, <code>git status</code> dirá que tu rama y <code>origin/git/e8-app</code> han divergido y te sugerirá <code>git pull</code>. <b>No lo hagas</b>: traería de vuelta los commits con la clave. Lo correcto es el push forzado del paso 7.</p>
+
+<h2 class="step"><span class="n">5</span>Guarda tu hallazgo</h2>
+<div class="cmd"><pre><code>git switch git/e8-app
+code fundamentos/git/e8/hallazgo.txt</code></pre></div><p>Escribe en él el SHA del paso 3 en una línea, guarda y haz commit:</p><div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt
+git commit -m "docs(e8): commit que filtró la clave"</code></pre></div>
+
+<h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app
+git ls-tree -r --name-only git/e8-app fundamentos/git/e8</code></pre></div>
+<p>La primera orden no debe mostrar nada, y en la carpeta no debe haber <code>.env</code>.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Falta alguno de los commits originales de la rama: purga el fichero, no los commits.</li>
+<li>La clave sigue en la historia de la rama.</li>
+<li><code>hallazgo.txt</code> no contiene el SHA completo, o ese commit sigue en la rama.</li>
+<li>Ese SHA no es el commit que subió la clave a GitHub, por ejemplo porque purgaste antes de subir.</li>
+</ul>
+
+<h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
+<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e8</code></pre></div>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+
+<h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git push --force-with-lease origin git/e8-app</code></pre></div>
+<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E8 salga sin fallos, etiqueta la punta de <code>git/e8-app</code>:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e8 git/e8-app -m "E8 resuelto"
+git push origin entrega-fundamentos-git-e8</code></pre></div>
+<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e8 git/e8-app -m "E8 resuelto"
+git push --force origin entrega-fundamentos-git-e8</code></pre></div>
+<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
+
+<h2 class="step"><span class="n">9</span>Mira qué queda en GitHub</h2>
+<p>Abre <code>https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;/commit/&lt;SHA&gt;</code>. ¿Sigue ahí la clave? ¿Qué habría que hacer con ella en un caso real?</p><p>Esta pregunta no se entrega: la comentamos en clase.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de git"><a href="e7.html">← E7 · Revert</a><span></span></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>
