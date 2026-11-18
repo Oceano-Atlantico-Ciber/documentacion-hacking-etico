@@ -37,11 +37,18 @@
 <section class="seccion">
 <h2>Primero, el contrato</h2>
 <p>Antes de escribir una línea de código se decide qué rutas tendrá la API, qué hará cada método y qué responderá en cada caso, también en los errores. Así el equipo que hace la web, el que hace la app y el que hace la API pueden trabajar a la vez, y cualquier cambio se discute sobre el contrato y no sobre el código.</p>
-<p>El contrato se escribe en <b>OpenAPI</b>. Esta es una operación del contrato del curso:</p>
-<pre><code>paths:
+<p>El contrato se escribe en <b>OpenAPI</b>. Este es un contrato completo con una sola operación, sacada del contrato del curso. Arriba van la versión de OpenAPI (<code>openapi</code>), el nombre y la versión de la API (<code>info</code>) y dónde escucha (<code>servers</code>); en <code>paths</code>, las rutas con sus métodos y respuestas; y en <code>components</code>, los esquemas a los que apuntan los <code>$ref</code>:</p>
+<pre><code>openapi: 3.1.0
+info:
+  title: API de incidencias
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+paths:
   /api/v1/incidencias/{id}:
     get:
       summary: Leer una incidencia
+      operationId: leerIncidencia
       parameters:
         - { name: id, in: path, required: true, schema: { type: integer } }
       responses:
@@ -51,8 +58,30 @@
             application/json:
               schema: { $ref: "#/components/schemas/Incidencia" }
         "404":
-          description: No existe</code></pre>
-<p>Para verlo como documentación, pega el fichero en <a href="https://editor.swagger.io/">editor.swagger.io</a> o instala en VS Code la extensión <b>OpenAPI (Swagger) Editor</b>. Las dos señalan los errores de formato.</p>
+          description: No existe
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+components:
+  schemas:
+    Incidencia:
+      type: object
+      required: [id, titulo, prioridad, estado, tecnico]
+      properties:
+        id: { type: integer }
+        titulo: { type: string, minLength: 1, maxLength: 120 }
+        prioridad: { type: string, enum: [baja, media, alta, critica] }
+        estado: { type: string, enum: [abierta, en-curso, cerrada] }
+        tecnico: { type: [string, "null"] }
+    Problema:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: { type: string, example: about:blank }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }</code></pre>
+<p>Para verlo como documentación, cópialo entero y pégalo en <a href="https://editor.swagger.io/">editor.swagger.io</a> o instala en VS Code la extensión <b>OpenAPI (Swagger) Editor</b>. Las dos señalan los errores de formato.</p>
 <h3>Reglas de diseño</h3>
 <p>Son las que siguen las guías públicas de empresas con cientos de APIs, como las de Zalando y Microsoft, y las que comprueba el corrector del E2:</p>
 <div class="tabla"><table><thead><tr><th>Regla</th><th>Bien</th><th>Mal</th></tr></thead><tbody>
