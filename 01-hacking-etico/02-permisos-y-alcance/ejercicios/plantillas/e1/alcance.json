@@ -1,0 +1,12 @@
+{
+  "cliente": "",
+  "autoriza": "",
+  "tipo": "",
+  "dentro": [],
+  "fuera": [],
+  "inicio": "",
+  "fin": "",
+  "horario": {"desde": "", "hasta": ""},
+  "prohibido": [],
+  "emergencia": {"nombre": "", "telefono": ""}
+}

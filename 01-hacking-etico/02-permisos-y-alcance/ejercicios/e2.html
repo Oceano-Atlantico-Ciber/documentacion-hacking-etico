@@ -11,7 +11,7 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">02 · Permisos y alcance</a></nav>
 
 <h1>U2·E2 · Un alcance con fallos</h1>
-<p class="lead">Otro auditor dejó firmado este alcance. Tiene doce cláusulas y seis de ellas, si se trabaja así, meten en problemas al auditor, al cliente o a terceros. Encuéntralas.</p>
+<p class="lead">Otro auditor dejó firmado un alcance de doce cláusulas. Seis de ellas, si se trabaja así, meten en problemas al auditor, al cliente o a terceros, y cada una por un motivo distinto. Encuéntralas y di de qué tipo es cada fallo.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/02-autorizacion-y-alcance.html">2.2 · Autorización y alcance</a></dd>
 <dt>Criterio</dt><dd>c</dd>
@@ -24,40 +24,28 @@
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u2-e2
 code ra1/u2-e2/fallos.md</code></pre></div>
+<p>Las cláusulas están en <code>fallos.md</code>, numeradas en un orden distinto para cada alumno.</p>
 
-<h2 class="step"><span class="n">2</span>Lee el alcance</h2>
-<div class="panel">
-<p><b>Alcance del test de intrusión de Transportes Atlántico SL</b></p>
-<ul class="clausulas">
-<li><b>C1 · Cliente.</b> Transportes Atlántico SL, con sede en Vigo.</li>
-<li><b>C2 · Autorización.</b> La prueba la autoriza el becario del departamento de sistemas, que lo comentó de palabra en una reunión.</li>
-<li><b>C3 · Objetivos.</b> La red de la empresa, la web y lo que el auditor vaya encontrando conectado a ellas.</li>
-<li><b>C4 · Exclusiones.</b> No se prueba la centralita telefónica, <code>10.0.5.20</code>.</li>
-<li><b>C5 · Fechas.</b> La prueba durará unas dos semanas, a partir de cuando el auditor tenga hueco.</li>
-<li><b>C6 · Técnicas permitidas.</b> Escaneo de puertos, búsqueda de vulnerabilidades y explotación sin modificar ni borrar datos.</li>
-<li><b>C7 · Disponibilidad.</b> Para medir la resistencia de la web, se lanzará una denegación de servicio un martes a mediodía.</li>
-<li><b>C8 · Datos.</b> Como prueba de acceso, el auditor descargará la base de datos de clientes completa a su portátil.</li>
-<li><b>C9 · Emergencias.</b> Ana Pérez, responsable de sistemas, en el 600 111 222, disponible las 24 horas durante la prueba.</li>
-<li><b>C10 · Proveedor.</b> La web está en un servidor que alquila a HostingCo. No hace falta avisarles.</li>
-<li><b>C11 · Confidencialidad.</b> El informe se entrega cifrado y solo a la dirección.</li>
-<li><b>C12 · Firma.</b> Firman el auditor y el director general, el 10/01/2027.</li>
-</ul>
-</div>
-
-<h2 class="step"><span class="n">3</span>Marca y explica</h2>
-<p>En <code>fallos.md</code>, cada cláusula lleva sí o no en <b>Fallo</b>. En las que tengan fallo, explica en <b>Por qué</b> qué riesgo crea y cómo tendría que estar escrita.</p>
+<h2 class="step"><span class="n">2</span>Clasifica cada cláusula</h2>
+<p>En la columna <b>Fallo</b>, «no» si la cláusula está bien, o el tipo de fallo tal cual:</p>
+<div class="tabla"><table><thead><tr><th>Tipo</th><th>El fallo está en…</th></tr></thead><tbody>
+<tr><td><code>autorización</code></td><td>quién autoriza o cómo.</td></tr>
+<tr><td><code>objetivos</code></td><td>qué se puede probar.</td></tr>
+<tr><td><code>fechas</code></td><td>cuándo.</td></tr>
+<tr><td><code>técnicas</code></td><td>cómo se prueba.</td></tr>
+<tr><td><code>datos</code></td><td>qué se hace con los datos que aparezcan.</td></tr>
+<tr><td><code>terceros</code></td><td>algo que no es del cliente.</td></tr>
+</tbody></table></div>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>Falta una cláusula, o en Fallo no pone sí o no.</li>
-<li>No has marcado exactamente seis, o alguna marcada no tiene su porqué.</li>
-<li>Hay cláusulas mal clasificadas. Solo dice cuántas, no cuáles.</li>
+<li>Falta una cláusula, o un valor no es «no» ni un tipo de la lista.</li>
+<li>No has marcado exactamente seis, o repites un tipo.</li>
+<li>Hay cláusulas mal clasificadas. Dice cuántas, no cuáles.</li>
 </ul>
 
-<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
-<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e2</code></pre></div>
-
-<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add ra1/u2-e2
+<h2 class="step"><span class="n">3</span>Pruébalo, sube y etiqueta</h2>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e2
+git add ra1/u2-e2
 git commit -m "docs(ra1-u2-e2): fallos del alcance de Transportes Atlántico"
 git push
 git tag -a entrega-ra1-u2-e2 -m "U2·E2 resuelto"

@@ -2,14 +2,13 @@
 
 Nunca se usa el docker-compose.yml del alumno: se monta un laboratorio propio, con la web de la plantilla, y
 del repositorio solo se toma suricata/local.rules. El recorrido repite los pasos del enunciado: primero
-portada, robots.txt y /admin/; después, la visita a /copias/. La regla del alumno tiene que saltar solo con
-la segunda parte.
+portada, robots.txt y /admin/; después, la visita al directorio de copias de su escenario
+(/copias-<huella>/). La regla del alumno tiene que saltar solo con la segunda parte.
 """
 
 from __future__ import annotations
 
 import json
-import shutil
 import subprocess
 import tempfile
 import time
@@ -41,7 +40,6 @@ services:
     profiles: [herramientas]
 """
 PRIMERA = ("/", "/robots.txt", "/admin/")
-SEGUNDA = ("/copias/",)
 
 
 def _docker(*args: str, cwd: Path | None = None, espera: int = 300) -> subprocess.CompletedProcess:
@@ -90,14 +88,16 @@ def _visitar(carpeta: Path, rutas: tuple[str, ...]) -> None:
             raise Fallo(f"el laboratorio de comprobación no responde ({r.stderr.strip()[-200:]}); avisa al docente")
 
 
-def comprobar(reglas: str) -> list[str]:
-    """Los fallos de la regla del alumno en un laboratorio nuevo; [] si salta justo con la visita a /copias/."""
+def comprobar(reglas: str, usuario: str) -> list[str]:
+    """Los fallos de la regla del alumno en un laboratorio nuevo; [] si salta justo con la visita a sus copias."""
     if not disponible():
         raise Fallo("Docker no responde: arranca Docker Desktop y vuelve a probar")
-    plantilla = p.plantilla("u4-e2")
+    ruta = p.u4_e2_ruta(usuario)
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
         carpeta = Path(tmp)
-        shutil.copytree(plantilla / "web", carpeta / "web")
+        for nombre, contenido in p.u4_e2_web(usuario).items():
+            (carpeta / nombre).parent.mkdir(parents=True, exist_ok=True)
+            (carpeta / nombre).write_text(contenido, encoding="utf-8", newline="\n")
         (carpeta / "salidas").mkdir()
         (carpeta / "local.rules").write_text(reglas, encoding="utf-8", newline="\n")
         (carpeta / "docker-compose.yml").write_text(COMPOSE.format(proyecto=PROYECTO), encoding="utf-8")
@@ -122,13 +122,13 @@ def comprobar(reglas: str) -> list[str]:
                 raise Fallo("Suricata no anota las visitas de la primera parte: ¿has borrado o cambiado las reglas de la plantilla?")
             propias = lambda: [a for a in _alertas(eve) if a["alert"]["signature_id"] >= 1000100]  # noqa: E731
             antes = len(propias())
-            _visitar(carpeta, SEGUNDA)
+            _visitar(carpeta, (ruta,))
             _esperar(lambda: len(propias()) > antes, 45)
             fallos = []
             if antes:
                 fallos.append("tu regla salta también con la portada, robots.txt o /admin/: hazla más precisa")
             if len(propias()) == antes:
-                fallos.append("tu regla no salta al visitar /copias/")
+                fallos.append(f"tu regla no salta al visitar {ruta}")
             return fallos
         finally:
             cerrar()

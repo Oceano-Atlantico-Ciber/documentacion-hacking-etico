@@ -11,11 +11,11 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">02 · Permisos y alcance</a></nav>
 
 <h1>U2·E1 · El alcance de la clínica</h1>
-<p class="lead">Una clínica dental te contrata para un test de intrusión. Te cuenta lo que tiene y lo que le preocupa; tú lo conviertes en un alcance que se pueda firmar.</p>
+<p class="lead">Una clínica dental te contrata para un test de intrusión. Conviertes lo que cuenta en un <code>alcance.json</code> tan preciso que un programa puede decir, para cualquier dirección y cualquier hora, si la prueba está permitida.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-tipos-de-auditoria.html">2.1 · Tipos de auditoría</a> y <a href="../temas/02-autorizacion-y-alcance.html">2.2 · Autorización y alcance</a></dd>
 <dt>Criterio</dt><dd>c</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u2-e1/alcance.md</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u2-e1/alcance.json</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u2-e1</code> sobre <code>main</code></dd>
 <dt>Plazo</dt><dd>Lo anuncia el docente</dd>
 </dl>
@@ -23,41 +23,43 @@
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u2-e1
-code ra1/u2-e1/alcance.md</code></pre></div>
+cd ra1/u2-e1
+code LEEME.md alcance.json</code></pre></div>
+<p><code>LEEME.md</code> es tu encargo: las direcciones, las fechas y el horario son distintos para cada alumno.</p>
 
-<h2 class="step"><span class="n">2</span>Lee el encargo</h2>
-<div class="panel">
-<p><b>Clínica Sonrisa SL</b> tiene una consulta con ocho empleados. Su gerente, <b>Marta Ruiz</b>, firma el contrato.</p>
-<ul>
-<li>Quieren que se pruebe su web pública, <code>www.clinica-sonrisa.test</code> (<code>203.0.113.10</code>), y el portal donde los pacientes piden cita, <code>citas.clinica-sonrisa.test</code> (<code>203.0.113.11</code>). Para el portal te dan una cuenta de paciente de prueba; no te dan el código ni acceso de administración.</li>
-<li>También quieren que se revise la red de la consulta, <code>192.168.50.0/24</code>, con un portátil conectado en la sala de espera.</li>
-<li>El correo lo tienen en Microsoft 365. En la red de la consulta está el datáfono del banco, <code>192.168.50.200</code>, que no es suyo.</li>
-<li>No quieren que nada se caiga, que se engañe al personal con correos o llamadas, ni que se cambie o borre ningún dato de pacientes.</li>
-<li>La prueba será del 1 al 12 de febrero de 2027, de 20:00 a 07:00, cuando la consulta está cerrada.</li>
-<li>Si algo falla, hay que llamar a su técnico informático externo, Luis Gil, en el 600 000 000, a cualquier hora.</li>
-<li>Quieren un informe con los fallos y cómo corregirlos, entregado a la gerente en mano.</li>
-</ul>
-</div>
+<h2 class="step"><span class="n">2</span>Escribe el alcance</h2>
+<div class="tabla"><table><thead><tr><th>Campo</th><th>Qué va</th></tr></thead><tbody>
+<tr><td><code>cliente</code>, <code>autoriza</code></td><td>La empresa, y nombre y cargo de quien firma.</td></tr>
+<tr><td><code>tipo</code></td><td><code>caja negra</code>, <code>caja gris</code> o <code>caja blanca</code>, según lo que te dan.</td></tr>
+<tr><td><code>dentro</code></td><td>Lista de direcciones y redes que se pueden probar, como <code>"203.0.113.10"</code> o <code>"192.168.1.0/24"</code>.</td></tr>
+<tr><td><code>fuera</code></td><td>Lista de direcciones que no se tocan aunque estén dentro de una red de <code>dentro</code>.</td></tr>
+<tr><td><code>inicio</code>, <code>fin</code></td><td>Primera y última noche de la prueba, como <code>"2027-02-01"</code>.</td></tr>
+<tr><td><code>horario</code></td><td><code>desde</code> y <code>hasta</code> como <code>"20:00"</code>. Si cruza la medianoche, la madrugada cuenta como parte de la noche anterior.</td></tr>
+<tr><td><code>prohibido</code></td><td>Valores de esta lista, tal cual: <code>denegación de servicio</code>, <code>ingeniería social</code>, <code>modificar datos</code>, <code>borrar datos</code>, <code>escaneo</code>, <code>explotación</code>.</td></tr>
+<tr><td><code>emergencia</code></td><td><code>nombre</code> y <code>telefono</code> del contacto de emergencia.</td></tr>
+</tbody></table></div>
+<p>El correo en Microsoft 365 no tiene dirección en tu encargo: no lo pongas en <code>dentro</code>.</p>
 
-<h2 class="step"><span class="n">3</span>Escribe el alcance</h2>
-<p>Rellena cada campo de <code>alcance.md</code> con tus palabras. Las fechas, como <code>dd/mm/aaaa</code>. En <b>Tipo de prueba</b>, caja negra, gris o blanca. En <b>Datos personales</b>, qué harás si ves datos de pacientes. Piensa sobre todo en qué queda fuera aunque esté cerca de lo que sí entra.</p>
+<h2 class="step"><span class="n">3</span>Pregúntale a tu alcance</h2>
+<div class="cmd"><pre><code>py en_alcance.py 203.0.113.10 "2027-02-03 23:30"
+py en_alcance.py 203.0.113.10 "2027-02-03 12:00"</code></pre></div>
+<p>Cambia las direcciones y las fechas por las de tu encargo y prueba los casos difíciles: el datáfono, la madrugada de la última noche, la noche antes de empezar. El corrector hace lo mismo con nueve preguntas que no ves.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>Falta un campo o está vacío, o las fechas no son <code>dd/mm/aaaa</code> o terminan antes de empezar.</li>
-<li>El tipo de prueba no es una de las tres cajas.</li>
-<li>Un campo no recoge lo que pide el cliente. Dice qué campo, no qué falta.</li>
+<li><code>alcance.json</code> no es JSON válido, o falta un campo o no tiene el formato de la tabla.</li>
+<li>Alguna de sus preguntas (una dirección y un momento) sale distinta de lo que permite el encargo. Dice cuántas y pone un ejemplo.</li>
+<li>El tipo, lo prohibido, quién autoriza o el contacto de emergencia no son los del encargo.</li>
 </ul>
 
-<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
-<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e1</code></pre></div>
-
-<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add ra1/u2-e1
+<h2 class="step"><span class="n">4</span>Pruébalo, sube y etiqueta</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e1
+git add ra1/u2-e1
 git commit -m "docs(ra1-u2-e1): alcance del test de intrusión de la clínica"
 git push
 git tag -a entrega-ra1-u2-e1 -m "U2·E1 resuelto"
 git push origin entrega-ra1-u2-e1</code></pre></div>
-<p>Etiqueta cuando la fila de U2·E1 de <b>Corrector ra1</b> salga sin fallos.</p>
+<p><code>pruebas.py</code> ya hace las nueve preguntas; lo que no comprueba es el tipo y lo prohibido, que van con clave. Etiqueta cuando la fila de U2·E1 de <b>Corrector ra1</b> salga sin fallos.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="../temas/02-autorizacion-y-alcance.html">← 2.2 · Autorización y alcance</a><a href="e2.html">U2·E2 · Un alcance con fallos →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

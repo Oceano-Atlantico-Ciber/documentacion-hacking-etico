@@ -96,7 +96,7 @@
         ]],
         ["Ejercicios", "01-hacking-etico/01-que-es-el-hacking-etico/index.html#ejercicios", [
           ["U1·E1 · ¿Hacking ético o delito?", "01-hacking-etico/01-que-es-el-hacking-etico/ejercicios/e1.html"],
-          ["U1·E2 · Qué permite cada web", "01-hacking-etico/01-que-es-el-hacking-etico/ejercicios/e2.html"],
+          ["U1·E2 · El security.txt de la empresa", "01-hacking-etico/01-que-es-el-hacking-etico/ejercicios/e2.html"],
         ]],
       ]],
       ["02 · Permisos y alcance", "01-hacking-etico/02-permisos-y-alcance/index.html", [
@@ -121,7 +121,7 @@
           ["Ejemplo resuelto · PHP2Shell", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/php2shell.html"],
           ["U3·E1 · Ficha de Hackea el ranking", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/e1.html"],
           ["U3·E2 · Ficha de un CVE real", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/e2.html"],
-          ["U3·E3 · Las fases de un incidente", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/e3.html"],
+          ["U3·E3 · El registro de un incidente", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/e3.html"],
         ]],
       ]],
       ["04 · Herramientas y monitorización", "01-hacking-etico/04-herramientas-y-monitorizacion/index.html", [

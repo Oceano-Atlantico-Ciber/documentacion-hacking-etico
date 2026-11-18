@@ -42,27 +42,27 @@ docker compose run --rm auditor -sV 172.28.0.20</code></pre></div>
 <div class="cmd"><pre><code>docker compose run --rm curl -i http://172.28.0.20/
 docker compose run --rm curl -i http://172.28.0.20/robots.txt
 docker compose run --rm curl -i http://172.28.0.20/admin/
-docker compose run --rm curl -i http://172.28.0.20/copias/</code></pre></div>
+docker compose run --rm curl -i http://172.28.0.20/&lt;lo-que-diga-robots.txt&gt;/</code></pre></div>
 
 <h2 class="step"><span class="n">3</span>Mira qué ha visto el sensor</h2>
 <div class="cmd"><pre><code>py etiquetar.py &gt; alertas.txt
 cat alertas.txt</code></pre></div>
-<p><code>etiquetar.py</code> resume las alertas de <code>salidas/suricata/eve.json</code> por fase y por origen. Compáralo con lo que hiciste: la visita a <code>/copias/</code>, que expone copias de seguridad de la empresa, no tiene ninguna alerta propia. Las reglas están en <code>suricata/local.rules</code>; léelas para ver por qué.</p>
+<p><code>etiquetar.py</code> resume las alertas de <code>salidas/suricata/eve.json</code> por fase y por origen. Compáralo con lo que hiciste: la visita al directorio de copias que aparece en <code>robots.txt</code>, que expone copias de seguridad de la empresa, no tiene ninguna alerta propia. Su nombre es distinto para cada alumno. Las reglas están en <code>suricata/local.rules</code>; léelas para ver por qué.</p>
 
 <h2 class="step"><span class="n">4</span>Escribe tu regla</h2>
-<p>Añade al final de <code>suricata/local.rules</code> una regla que salte cuando alguien pida <code>/copias/</code>, y solo entonces. Copia la de <code>/admin</code> como punto de partida, cambia lo que haga falta y usa un <code>sid</code> desde <code>1000100</code>. Pon la fase al principio del mensaje para que <code>etiquetar.py</code> la cuente bien.</p>
+<p>Añade al final de <code>suricata/local.rules</code> una regla que salte cuando alguien pida tu directorio de copias, y solo entonces. Copia la de <code>/admin</code> como punto de partida, cambia lo que haga falta y usa un <code>sid</code> desde <code>1000100</code>. Pon la fase al principio del mensaje para que <code>etiquetar.py</code> la cuente bien.</p>
 <div class="cmd"><pre><code>docker compose restart suricata
-docker compose run --rm curl -i http://172.28.0.20/copias/
+docker compose run --rm curl -i http://172.28.0.20/&lt;lo-que-diga-robots.txt&gt;/
 py etiquetar.py &gt; alertas.txt
 cat alertas.txt</code></pre></div>
 <p>Comprueba que tu alerta aparece. Si Suricata no arranca, <code>docker compose logs suricata</code> dice qué línea no entiende.</p>
 <p class="ia">Si pides la regla a la IA, comprueba cada palabra clave en la <a href="https://docs.suricata.io/en/suricata-7.0.0/rules/intro.html">documentación de reglas de Suricata 7</a> y pruébala antes de darla por buena.</p>
-<p>El corrector levanta su propio laboratorio con tu <code>local.rules</code>, repite la portada, <code>robots.txt</code> y <code>/admin/</code>, y después pide <code>/copias/</code>. Marca fallo si:</p>
+<p>El corrector levanta su propio laboratorio con tu <code>local.rules</code>, repite la portada, <code>robots.txt</code> y <code>/admin/</code>, y después pide tu directorio de copias. Marca fallo si:</p>
 <ul class="falla">
 <li>Falta <code>suricata/local.rules</code> o <code>alertas.txt</code>, o <code>alertas.txt</code> no es la salida de <code>etiquetar.py</code>.</li>
 <li>Has borrado reglas de la plantilla, o no hay ninguna regla tuya con <code>sid</code> desde <code>1000100</code>.</li>
 <li>Suricata no acepta el fichero.</li>
-<li>Tu regla no salta al pedir <code>/copias/</code>, o salta también con lo demás.</li>
+<li>Tu regla no salta al pedir tu directorio de copias, o salta también con lo demás.</li>
 </ul>
 
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>

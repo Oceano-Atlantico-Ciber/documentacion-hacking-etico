@@ -1,0 +1,12 @@
+{
+  "cve": "{cve}",
+  "producto": "",
+  "cwe": "",
+  "cvss": {"version": "3.1", "nota": 0.0, "vector": ""},
+  "fecha_kev": "",
+  "propiedades": [],
+  "versiones_afectadas": "",
+  "version_corregida": "",
+  "defensa": "",
+  "fuentes": []
+}

@@ -1,26 +1,32 @@
 """Comprobaciones públicas de cada ejercicio del RA1, en el orden de «El corrector marca fallo si» de cada enunciado.
 
 Cada una recibe el caso (una copia del repositorio del alumno) y produce sus fallos uno a uno; lanza Fallo
-cuando lo entregado no permite seguir. Las respuestas con clave no se comprueban aquí: lo hace el corrector.
+cuando lo entregado no permite seguir. Lo esperado sale del escenario de cada alumno en preparar.py. Nada
+depende de webs externas. Las respuestas con clave (figuras, tipos de fallo, CWE, CVE, técnicas…) las
+compara el corrector, que guarda la clave en el repositorio privado del docente.
 """
 
 from __future__ import annotations
 
+import importlib.util
+import ipaddress
+import json
 import re
+from datetime import datetime, timedelta, timezone
 from typing import Callable, Iterator
 
-from . import red
-from .base import Caso, Fallo, campos, fecha, normal, palabras, tabla, vacio
+import preparar as p
+
+from .base import Caso, Fallo, normal, palabras, tabla, vacio
 
 Comprobacion = Callable[[Caso], Iterator[str]]
 
 FIGURAS = {"hacking etico", "hacktivismo", "ciberdelito"}
 ARTICULOS = {"ninguno", "197 bis", "197 ter", "264", "264 bis"}
-SI_NO = {"si", "no"}
+TIPOS_FALLO = {"no", "autorizacion", "objetivos", "fechas", "tecnicas", "datos", "terceros"}
 PROPIEDADES = {"confidencialidad", "integridad", "disponibilidad", "autenticidad"}
-TIPOS = {"diseno", "configuracion", "software", "humana"}
-FASES = {"reconocimiento", "escaneo", "obtener acceso", "mantener acceso", "borrar huellas"}
 CAJAS = {"caja negra", "caja gris", "caja blanca"}
+PROHIBIDO = {"denegacion de servicio", "ingenieria social", "modificar datos", "borrar datos", "escaneo", "explotacion"}
 
 # Herramientas que se aceptan en cada familia (en minúsculas y sin tildes; basta con que aparezcan en el nombre).
 # Es la misma tabla que «Herramientas por familia» en el tema 4.1.
@@ -36,7 +42,7 @@ CATALOGO: dict[str, tuple[str, ...]] = {
     "registro de la nube": ("cloudtrail", "guardduty", "security hub", "auditoria de microsoft 365", "purview",
                             "azure monitor", "defender for cloud"),
     "analizador de codigo": ("trivy", "semgrep", "sonarqube", "checkov", "dependabot", "codeql", "snyk"),
-    "soc gestionado": (),  # cualquier proveedor: se valora el porqué
+    "soc gestionado": (),  # cualquier proveedor
 }
 
 DARKNETS = {
@@ -44,7 +50,6 @@ DARKNETS = {
     "direcciones": {".onion", ".i2p", "direccion bitcoin o .bit", "claves usk@, ssk@ o chk@"},
     "como funciona": {"enrutamiento cebolla", "enrutamiento ajo", "p2p con bittorrent", "almacen distribuido"},
 }
-REDES = ("tor", "i2p", "zeronet", "freenet")
 
 
 def _filas(filas: list[dict[str, str]], columna: str, ids: list[str], fichero: str) -> dict[str, dict[str, str]]:
@@ -56,203 +61,230 @@ def _filas(filas: list[dict[str, str]], columna: str, ids: list[str], fichero: s
             raise Fallo(f"{fichero}: la fila {f[columna]} está repetida")
         por_id[clave] = f
     if faltan := [i for i in ids if normal(i) not in por_id]:
-        raise Fallo(f"{fichero}: faltan las filas {', '.join(faltan)}; no borres filas de la plantilla")
+        raise Fallo(f"{fichero}: faltan las filas {', '.join(faltan)}; no borres ni cambies filas de la plantilla")
+    if sobran := [f[columna] for k, f in por_id.items() if k not in {normal(i) for i in ids}]:
+        raise Fallo(f"{fichero}: sobran las filas {', '.join(sobran)}")
     return {normal(i): por_id[normal(i)] for i in ids}
 
 
-def _de(valor: str, permitidos: set[str]) -> bool:
-    return normal(valor) in permitidos
+def _json(c: Caso, nombre: str) -> dict:
+    try:
+        datos = json.loads(c.leer(nombre))
+    except json.JSONDecodeError as e:
+        raise Fallo(f"{nombre} no es JSON válido (línea {e.lineno}): {e.msg}")
+    if not isinstance(datos, dict):
+        raise Fallo(f"{nombre} tiene que ser un objeto JSON, como la plantilla")
+    return datos
+
+
+def _texto(valor: object) -> str:
+    return valor.strip() if isinstance(valor, str) else ""
 
 
 # --- U1 · Qué es el hacking ético -------------------------------------------------------------
 
 def u1_e1(c: Caso) -> Iterator[str]:
     fichero = "casos.md"
-    filas = _filas(tabla(c.leer(fichero), fichero, "Caso", "Figura", "Delito", "Artículo", "Por qué"),
-                   "caso", [str(n) for n in range(1, 11)], fichero)
+    filas = _filas(tabla(c.leer(fichero), fichero, "Caso", "Figura", "Artículo"), "caso",
+                   p.u1_e1_casos(c.usuario), fichero)
     for n, f in filas.items():
-        figura, delito, articulo = normal(f["figura"]), normal(f["delito"]), normal(f["articulo"])
-        if not (figura or delito or articulo):
-            yield f"caso {n}: sin rellenar"
+        figura, articulo = normal(f["figura"]), normal(f["articulo"])
+        if not (figura or articulo):
+            yield f"{n.upper()}: sin rellenar"
             continue
         if figura not in FIGURAS:
-            yield f"caso {n}: «{f['figura']}» no es una de las figuras de la lista"
-        if delito not in SI_NO:
-            yield f"caso {n}: en Delito va sí o no"
+            yield f"{n.upper()}: «{f['figura']}» no es una de las figuras de la lista"
         if articulo not in ARTICULOS:
-            yield f"caso {n}: «{f['articulo']}» no es uno de los artículos de la lista"
-        if figura == "hacking etico" and (delito == "si" or articulo != "ninguno"):
-            yield f"caso {n}: si es hacking ético no es delito ni tiene artículo"
-        if delito == "si" and articulo == "ninguno" or delito == "no" and articulo not in ("ninguno", ""):
-            yield f"caso {n}: el artículo no cuadra con la columna Delito"
-        if palabras(f["por que"]) < 4:
-            yield f"caso {n}: falta el porqué (una frase tuya)"
+            yield f"{n.upper()}: «{f['articulo']}» no es uno de los artículos de la lista"
+        elif figura == "hacking etico" and articulo != "ninguno":
+            yield f"{n.upper()}: si es hacking ético no hay artículo que aplicar"
+
+
+def security_txt(texto: str) -> dict[str, list[str]]:
+    campos: dict[str, list[str]] = {}
+    for linea in texto.splitlines():
+        linea = linea.strip()
+        if not linea or linea.startswith("#"):
+            continue
+        if ":" not in linea:
+            raise Fallo(f"security.txt: «{linea[:40]}» no es una línea Campo: valor")
+        nombre, valor = linea.split(":", 1)
+        campos.setdefault(nombre.strip().lower(), []).append(valor.strip())
+    return campos
 
 
 def u1_e2(c: Caso) -> Iterator[str]:
-    fichero = "seguridad.md"
-    texto = c.leer(fichero)
-    filas = [f for f in tabla(texto, fichero, "Dominio", "Contact", "Expires", "Policy") if not vacio(f["dominio"])]
-    dominios = [normal(f["dominio"]).removeprefix("https://").removeprefix("www.").strip("/") for f in filas]
-    if len(set(dominios)) < 3:
-        yield "hacen falta tres dominios distintos en la tabla de security.txt"
-    for f, dominio in zip(filas, dominios):
-        if not re.fullmatch(r"[a-z0-9-]+(\.[a-z0-9-]+)+", dominio):
-            yield f"«{f['dominio']}» no es un dominio: escribe solo el nombre, como github.com"
-            continue
-        datos = red.security_txt(dominio) or red.security_txt("www." + dominio)
-        if datos is None:
-            yield f"{dominio} no tiene security.txt (o no se ha podido descargar): elige otro dominio"
-            continue
-        contactos = {normal(x).removeprefix("mailto:").rstrip("/") for x in datos["contact"]}
-        if normal(f["contact"]).removeprefix("mailto:").rstrip("/") not in contactos:
-            yield f"{dominio}: el Contact no coincide con ninguno de su security.txt; si el fichero ha cambiado, actualízalo"
-        if not re.match(r"\d{4}-\d{2}-\d{2}", f["expires"].strip()) and not (normal(f["expires"]) == "no tiene" and "expires" not in datos):
-            yield f"{dominio}: en Expires va la fecha tal como aparece (empieza por aaaa-mm-dd)"
-        politicas = {normal(x).rstrip("/") for x in datos.get("policy", [])}
-        politica = normal(f["policy"]).rstrip("/")
-        if (politicas and politica not in politicas) or (not politicas and politica != "no tiene"):
-            yield f"{dominio}: Policy no coincide con su security.txt (si no tiene, escribe «no tiene»)"
-    programas = [f for f in tabla(texto, fichero, "Programa", "Enlace", "Permite", "Prohíbe") if not vacio(f["programa"])]
-    if not programas:
-        yield "falta el programa de recompensas en la segunda tabla"
-    for f in programas:
-        if not f["enlace"].strip().startswith("https://"):
-            yield f"{f['programa']}: el enlace tiene que empezar por https://"
-        if palabras(f["permite"]) < 4 or palabras(f["prohibe"]) < 4:
-            yield f"{f['programa']}: resume con tus palabras qué permite y qué prohíbe"
+    d = p.u1_e2_datos(c.usuario)
+    campos = security_txt(c.leer("web/.well-known/security.txt"))
+    for campo, esperado in (("contact", d["contacto"]), ("policy", d["politica"]), ("canonical", d["canonica"])):
+        valores = campos.get(campo, [])
+        if esperado not in valores:
+            yield f"security.txt: falta {campo.capitalize()}: {esperado}"
+    if "es" not in [x.strip().lower() for v in campos.get("preferred-languages", []) for x in v.split(",")]:
+        yield "security.txt: falta Preferred-Languages con es"
+    expira = campos.get("expires", [])
+    if len(expira) != 1:
+        yield "security.txt: tiene que haber un solo Expires (RFC 9116)"
+    else:
+        try:
+            fecha = datetime.fromisoformat(expira[0].replace("Z", "+00:00").replace("z", "+00:00"))
+        except ValueError:
+            fecha = None
+        ahora = datetime.now(timezone.utc)
+        if fecha is None or fecha.tzinfo is None:
+            yield "security.txt: Expires va en formato RFC 3339 con zona, como 2027-10-31T23:59:59Z"
+        elif not ahora < fecha <= ahora + timedelta(days=366):
+            yield "security.txt: Expires tiene que ser una fecha futura de dentro de menos de un año"
+    if conocidos := set(campos) - {"contact", "expires", "encryption", "acknowledgments", "preferred-languages",
+                                   "canonical", "policy", "hiring", "csaf"}:
+        yield f"security.txt: campos que no son de RFC 9116: {', '.join(sorted(conocidos))}"
 
 
 # --- U2 · Permisos y alcance ------------------------------------------------------------------
 
-ALCANCE = ("Cliente", "Autoriza", "Dentro del alcance", "Fuera del alcance", "Tipo de prueba", "Permitido",
-           "Prohibido", "Inicio", "Fin", "Horario", "Contacto de emergencia", "Entregable", "Datos personales")
+def _en_alcance():
+    ruta = p.plantilla("u2-e1") / "en_alcance.py"
+    spec = importlib.util.spec_from_file_location("en_alcance", ruta)
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo.permitido
+
+
+def u2_e1_pruebas(usuario: str) -> list[tuple[str, str, bool, str]]:
+    """Las preguntas del corrector: dirección, momento, respuesta esperada y qué se pregunta."""
+    e = p.u2_e1_encargo(usuario)
+    red = ipaddress.ip_network(e["red"])
+    inicio, fin = datetime.fromisoformat(e["inicio"]), datetime.fromisoformat(e["fin"])
+    h_desde = e["desde"]
+    noche = lambda dia, hora: (dia.replace(hour=int(hora[:2]), minute=int(hora[3:]))).strftime("%Y-%m-%d %H:%M")  # noqa: E731
+    madrugada = lambda dia: (dia + timedelta(days=1)).replace(hour=3).strftime("%Y-%m-%d %H:%M")  # noqa: E731
+    otro_equipo = str(red.network_address + 37)
+    return [
+        (e["web"], noche(inicio, h_desde), True, "la web la primera noche"),
+        (e["citas"], madrugada(inicio + timedelta(days=2)), True, "el portal de citas de madrugada"),
+        (otro_equipo, noche(inicio + timedelta(days=5), "23:30"), True, "un equipo de la red de la consulta"),
+        (e["datafono"], noche(inicio + timedelta(days=5), "23:30"), False, "el datáfono"),
+        (e["otra"], noche(inicio + timedelta(days=5), "23:30"), False, "una dirección que no es de la clínica"),
+        (e["web"], (inicio + timedelta(days=3)).replace(hour=12).strftime("%Y-%m-%d %H:%M"), False, "la web a mediodía"),
+        (e["web"], noche(inicio - timedelta(days=1), "23:30"), False, "la noche antes de empezar"),
+        (e["web"], madrugada(fin), True, "la madrugada de la última noche"),
+        (e["web"], noche(fin + timedelta(days=1), "23:30"), False, "la noche después de terminar"),
+    ]
 
 
 def u2_e1(c: Caso) -> Iterator[str]:
-    fichero = "alcance.md"
-    valores = campos(c.leer(fichero), fichero)
-    if faltan := [x for x in ALCANCE if normal(x) not in valores]:
-        raise Fallo(f"{fichero}: faltan los campos {', '.join(faltan)}; no cambies la primera columna")
-    for x in ALCANCE:
-        if vacio(valores[normal(x)]):
-            yield f"{fichero}: el campo {x} está vacío"
-    inicio, fin = fecha(valores[normal("Inicio")]), fecha(valores[normal("Fin")])
-    if not inicio or not fin:
-        yield f"{fichero}: Inicio y Fin van como dd/mm/aaaa"
-    elif fin < inicio:
-        yield f"{fichero}: la fecha de fin es anterior a la de inicio"
-    if not _de(valores[normal("Tipo de prueba")], CAJAS):
-        yield f"{fichero}: en Tipo de prueba va caja negra, caja gris o caja blanca"
+    a = _json(c, "alcance.json")
+    for campo in ("cliente", "autoriza", "tipo", "inicio", "fin"):
+        if not _texto(a.get(campo)):
+            yield f"alcance.json: falta {campo}"
+    if normal(_texto(a.get("tipo"))) not in CAJAS:
+        yield "alcance.json: tipo es caja negra, caja gris o caja blanca"
+    for campo in ("dentro", "fuera", "prohibido"):
+        if not isinstance(a.get(campo), list) or not a[campo] or not all(isinstance(x, str) for x in a[campo]):
+            raise Fallo(f"alcance.json: {campo} tiene que ser una lista de textos, no vacía")
+    for x in a["dentro"] + a["fuera"]:
+        try:
+            ipaddress.ip_network(x.strip(), strict=False)
+        except ValueError:
+            raise Fallo(f"alcance.json: «{x}» no es una dirección IP ni una red (como 10.0.0.0/24)")
+    if malos := [x for x in a["prohibido"] if normal(x) not in PROHIBIDO]:
+        yield f"alcance.json: en prohibido van valores de la lista del enunciado; sobran {', '.join(malos)}"
+    for campo, formato in (("inicio", "%Y-%m-%d"), ("fin", "%Y-%m-%d")):
+        try:
+            datetime.strptime(_texto(a.get(campo)), formato)
+        except ValueError:
+            raise Fallo(f"alcance.json: {campo} va como aaaa-mm-dd")
+    horario = a.get("horario") or {}
+    try:
+        for k in ("desde", "hasta"):
+            datetime.strptime(_texto(horario.get(k)), "%H:%M")
+    except ValueError:
+        raise Fallo("alcance.json: horario.desde y horario.hasta van como hh:mm")
+    emergencia = a.get("emergencia") or {}
+    if not (_texto(emergencia.get("nombre")) and _texto(emergencia.get("telefono"))):
+        yield "alcance.json: falta el nombre o el teléfono de emergencia"
+    permitido = _en_alcance()
+    mal = [que for ip, momento, esperado, que in u2_e1_pruebas(c.usuario)
+           if permitido(a, ip, datetime.fromisoformat(momento)) != esperado]
+    if mal:
+        yield f"con tu alcance.json, {len(mal)} de {len(u2_e1_pruebas(c.usuario))} preguntas del corrector salen mal; por ejemplo, {mal[0]}"
 
 
 def u2_e2(c: Caso) -> Iterator[str]:
     fichero = "fallos.md"
-    filas = _filas(tabla(c.leer(fichero), fichero, "Cláusula", "Fallo", "Por qué"), "clausula",
+    filas = _filas(tabla(c.leer(fichero), fichero, "Cláusula", "Fallo"), "clausula",
                    [f"C{n}" for n in range(1, 13)], fichero)
-    marcadas = 0
+    tipos = []
     for n, f in filas.items():
-        if not _de(f["fallo"], SI_NO):
-            yield f"{n.upper()}: en Fallo va sí o no"
-        elif normal(f["fallo"]) == "si":
-            marcadas += 1
-            if palabras(f["por que"]) < 4:
-                yield f"{n.upper()}: explica el riesgo de esa cláusula"
-    if marcadas != 6:
-        yield f"hay seis cláusulas con fallo y has marcado {marcadas}"
+        valor = normal(f["fallo"])
+        if valor not in TIPOS_FALLO:
+            yield f"{n.upper()}: en Fallo va «no» o un tipo de la lista"
+        elif valor != "no":
+            tipos.append(valor)
+    if len(tipos) != 6:
+        yield f"hay seis cláusulas con fallo y has marcado {len(tipos)}"
+    elif len(set(tipos)) != 6:
+        yield "cada uno de los seis fallos es de un tipo distinto"
 
 
 # --- U3 · Vulnerabilidades y ataques ----------------------------------------------------------
 
 def u3_e1(c: Caso) -> Iterator[str]:
     fichero = "ranking.md"
-    filas = _filas(tabla(c.leer(fichero), fichero, "Reto", "CWE", "Propiedad", "Tipo", "Corrección"), "reto",
+    filas = _filas(tabla(c.leer(fichero), fichero, "Reto", "CWE", "Propiedad"), "reto",
                    [str(n) for n in range(1, 7)], fichero)
     for n, f in filas.items():
-        if not (f["cwe"] or f["propiedad"] or f["tipo"]):
-            yield f"reto {n}: sin rellenar"
-            continue
         if not re.fullmatch(r"cwe-\d+", normal(f["cwe"])):
             yield f"reto {n}: el CWE va como CWE-123"
-        if not _de(f["propiedad"], PROPIEDADES):
+        if normal(f["propiedad"]) not in PROPIEDADES:
             yield f"reto {n}: la propiedad es confidencialidad, integridad, disponibilidad o autenticidad"
-        if not _de(f["tipo"], TIPOS):
-            yield f"reto {n}: el tipo es diseño, configuración, software o humana"
-        if palabras(f["correccion"]) < 4:
-            yield f"reto {n}: falta cómo se corrige"
-
-
-FICHA = ("CVE", "Producto", "Tipo", "CWE", "Nota CVSS", "Versión CVSS", "Vector CVSS", "Fecha en KEV",
-         "Versiones afectadas", "Versión corregida", "Propiedades", "Explotación", "Defensa", "Fuentes")
-EJEMPLOS = {"CVE-2026-109618", "CVE-2026-109619"}
 
 
 def u3_e2(c: Caso) -> Iterator[str]:
-    fichero = "ficha.md"
-    valores = campos(c.leer(fichero), fichero)
-    if faltan := [x for x in FICHA if normal(x) not in valores]:
-        raise Fallo(f"{fichero}: faltan los campos {', '.join(faltan)}; no cambies la primera columna")
-    v = {x: valores[normal(x)].strip() for x in FICHA}
-    for x in FICHA:
-        if vacio(v[x]):
-            yield f"{fichero}: el campo {x} está vacío"
-    cve = v["CVE"].upper()
-    if not re.fullmatch(r"CVE-\d{4}-\d{4,}", cve):
-        raise Fallo(f"{fichero}: el CVE va como CVE-2024-1234")
-    if cve in EJEMPLOS:
-        raise Fallo("PHP2Shell es el ejemplo resuelto: elige otro CVE del catálogo KEV")
-    entrada = red.kev().get(cve)
-    if entrada is None:
-        raise Fallo(f"{cve} no está en el catálogo CISA KEV: elige uno que sí esté")
-    if v["Fecha en KEV"] != entrada["dateAdded"]:
-        yield f"Fecha en KEV: no coincide con la del catálogo (formato aaaa-mm-dd)"
-    producto = normal(v["Producto"])
-    if normal(entrada["product"]) not in producto and normal(entrada["vendorProject"]) not in producto:
-        yield "Producto: no coincide con el fabricante ni con el producto del catálogo"
-    ficha = red.nvd(cve)
-    if ficha is None:
-        raise Fallo(f"NVD no tiene {cve} todavía: elige otro CVE")
-    conocidos = red.cwes(ficha) | {x.upper() for x in entrada.get("cwes") or []}
-    if v["CWE"].upper() not in conocidos:
-        yield f"CWE: {v['CWE']} no es el que dan NVD o CISA para {cve}" if conocidos else "CWE: no coincide"
-    notas = red.notas(ficha)
-    if not notas:
-        raise Fallo(f"NVD aún no ha puesto nota CVSS a {cve}: elige otro CVE")
-    try:
-        nota = float(v["Nota CVSS"].replace(",", "."))
-    except ValueError:
-        nota = -1.0
-    version = v["Versión CVSS"].removeprefix("CVSS").removeprefix("cvss").strip()
-    iguales = [n for n in notas if n["nota"] == nota and n["version"] == version]
-    if not iguales:
-        yield "Nota CVSS y Versión CVSS: no coinciden con ninguna de las notas que da NVD"
-    elif not any(normal(n["vector"]) == normal(v["Vector CVSS"]) for n in iguales):
-        yield "Vector CVSS: no coincide con el de esa nota en NVD"
-    if not _de(v["Tipo"], TIPOS):
-        yield "Tipo: es diseño, configuración, software o humana"
-    propiedades = {x for x in re.split(r"\s*(?:,|;|\by\b)\s*", normal(v["Propiedades"])) if x}
-    if not propiedades or not propiedades <= PROPIEDADES:
-        yield "Propiedades: una o varias de confidencialidad, integridad, disponibilidad y autenticidad, separadas por comas"
-    if "nvd.nist.gov" not in v["Fuentes"] and "cve.org" not in v["Fuentes"]:
-        yield "Fuentes: falta la ficha oficial (nvd.nist.gov o cve.org)"
-    if palabras(v["Defensa"]) < 6:
-        yield "Defensa: separa lo que corrige el fallo de lo que solo reduce el riesgo"
+    f = _json(c, "ficha.json")
+    if _texto(f.get("cve")) != p.u3_e2_cve(c.usuario):
+        raise Fallo(f"ficha.json: tu CVE es {p.u3_e2_cve(c.usuario)}; no lo cambies")
+    for campo in ("producto", "versiones_afectadas", "version_corregida", "defensa"):
+        if not _texto(f.get(campo)):
+            yield f"ficha.json: falta {campo}"
+    if not re.fullmatch(r"CWE-\d+", _texto(f.get("cwe"))):
+        yield "ficha.json: cwe va como CWE-123"
+    cvss = f.get("cvss") or {}
+    if _texto(cvss.get("version")) != "3.1":
+        yield "ficha.json: cvss.version es 3.1: usa la nota de CVSS 3.1 de NVD"
+    if not isinstance(cvss.get("nota"), (int, float)) or not 0 < cvss["nota"] <= 10:
+        yield "ficha.json: cvss.nota es un número entre 0 y 10, sin comillas"
+    if not _texto(cvss.get("vector")).startswith("CVSS:3.1/"):
+        yield "ficha.json: cvss.vector es la cadena completa, empezando por CVSS:3.1/"
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", _texto(f.get("fecha_kev"))):
+        yield "ficha.json: fecha_kev va como aaaa-mm-dd"
+    props = f.get("propiedades")
+    if not isinstance(props, list) or not props or not all(normal(str(x)) in PROPIEDADES for x in props):
+        yield "ficha.json: propiedades es una lista con una o varias de las cuatro propiedades"
+    fuentes = f.get("fuentes")
+    if not isinstance(fuentes, list) or not any("nvd.nist.gov" in str(x) or "cve.org" in str(x) for x in fuentes):
+        yield "ficha.json: en fuentes falta la ficha oficial (nvd.nist.gov o cve.org)"
+    if palabras(_texto(f.get("defensa"))) < 6:
+        yield "ficha.json: en defensa separa lo que corrige el fallo de lo que solo reduce el riesgo"
 
 
 def u3_e3(c: Caso) -> Iterator[str]:
-    fichero = "incidente.md"
-    filas = _filas(tabla(c.leer(fichero), fichero, "Paso", "Fase", "Técnica", "Por qué"), "paso",
-                   [f"P{n}" for n in range(1, 8)], fichero)
-    for n, f in filas.items():
-        if not (f["fase"] or f["tecnica"]):
-            yield f"{n.upper()}: sin rellenar"
-            continue
-        if not _de(f["fase"], FASES):
-            yield f"{n.upper()}: la fase es una de las cinco del tema"
-        if not re.fullmatch(r"T\d{4}(\.\d{3})?", f["tecnica"].strip().upper()):
-            yield f"{n.upper()}: la técnica va como T1234 o T1234.001"
-        if palabras(f["por que"]) < 4:
-            yield f"{n.upper()}: falta el porqué"
+    r = _json(c, "respuestas.json")
+    inc = p.u3_e3_incidente(c.usuario)
+    esperado = {"ip_atacante": inc["atacante"], "intentos_fallidos": inc["fallidos"], "primer_acceso": inc["acceso"],
+                "cuenta_usada": inc["victima"], "cuenta_creada": inc["creado"], "servicio_instalado": inc["servicio"],
+                "registro_borrado": inc["borrado"]}
+    for campo, valor in esperado.items():
+        dado = r.get(campo)
+        if isinstance(valor, int):
+            if dado != valor:
+                yield f"respuestas.json: {campo} no coincide con el registro (es un número, sin comillas)"
+        elif normal(str(dado or "")) != normal(valor):
+            yield f"respuestas.json: {campo} no coincide con el registro"
+    tecnicas = r.get("tecnicas") or {}
+    for evento in ("5152", "4625", "4720", "7045", "1102"):
+        if not re.fullmatch(r"T\d{4}(\.\d{3})?", _texto(tecnicas.get(evento)).upper()):
+            yield f"respuestas.json: la técnica del evento {evento} va como T1234 o T1234.001"
 
 
 # --- U4 · Herramientas y monitorización -------------------------------------------------------
@@ -264,6 +296,8 @@ def u4_e1(c: Caso) -> Iterator[str]:
     por_org: dict[str, int] = {}
     for f in filas:
         org, familia, herramienta = normal(f["organizacion"]), normal(f["familia"]), normal(f["herramienta"])
+        if not (familia or herramienta):
+            continue
         if org not in ("a", "b", "c"):
             yield f"«{f['organizacion']}» no es A, B o C"
             continue
@@ -291,7 +325,7 @@ def u4_e2(c: Caso) -> Iterator[str]:
     alertas = c.leer("alertas.txt")
     if "FASE" not in alertas or "ORIGEN" not in alertas:
         yield "alertas.txt no es la salida de etiquetar.py"
-    yield from suricata.comprobar(reglas)
+    yield from suricata.comprobar(reglas, c.usuario)
 
 
 def u4_e3(c: Caso) -> Iterator[str]:
@@ -300,7 +334,7 @@ def u4_e3(c: Caso) -> Iterator[str]:
                    ["Tor", "I2P", "ZeroNet", "Freenet"], fichero)
     for red_, f in filas.items():
         for columna, permitidos in DARKNETS.items():
-            if not _de(f[columna], permitidos):
+            if normal(f[columna]) not in permitidos:
                 yield f"{red_}: «{f[columna]}» no es uno de los valores de la lista de {columna}"
 
 

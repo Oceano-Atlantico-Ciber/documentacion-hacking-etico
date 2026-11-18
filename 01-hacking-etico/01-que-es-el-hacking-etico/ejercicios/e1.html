@@ -11,7 +11,7 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">01 · Qué es el hacking ético</a></nav>
 
 <h1>U1·E1 · ¿Hacking ético o delito?</h1>
-<p class="lead">Diez situaciones. Para cada una decides si es hacking ético, hacktivismo o ciberdelito, si es delito y qué artículo del Código Penal se aplica.</p>
+<p class="lead">Ocho situaciones, distintas para cada alumno. Para cada una decides si es hacking ético, hacktivismo o ciberdelito, y qué artículo del Código Penal se aplica.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-terminologia.html">1.1 · Terminología</a> y <a href="../temas/02-etica-y-ley.html">1.2 · Ética y ley</a></dd>
 <dt>Criterios</dt><dd>a, b</dd>
@@ -24,36 +24,22 @@
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1
 code ra1/u1-e1/casos.md</code></pre></div>
+<p><code>preparar.py</code> elige tus ocho casos de un banco de veinte y los escribe al principio de <code>casos.md</code>, con la tabla vacía debajo.</p>
 
-<h2 class="step"><span class="n">2</span>Lee los casos</h2>
-<ol>
-<li>Una consultora firma un contrato con una cadena de gimnasios para probar la seguridad de su web durante dos semanas. Escanea y prueba solo las direcciones del contrato y entrega un informe.</li>
-<li>Un estudiante adivina la contraseña del correo de su expareja, entra y lee sus mensajes.</li>
-<li>Un colectivo deja sin servicio la web de un ministerio durante una tarde, con miles de peticiones, como protesta por una ley.</li>
-<li>Una investigadora encuentra un fallo en una aplicación de una empresa que tiene un programa de recompensas. Sigue sus reglas, lo comunica por el canal del programa y no lo publica.</li>
-<li>Alguien vende en un foro un programa que graba lo que se teclea en un ordenador ajeno y envía las contraseñas a quien lo compra.</li>
-<li>Un administrador de sistemas, el día que lo despiden, borra la base de datos de clientes de la empresa.</li>
-<li>Un auditor contratado para probar la web de una tienda ve que el servidor de correo de su proveedor parece vulnerable y entra para comprobarlo. Ese servidor no estaba en el contrato.</li>
-<li>Un grupo, por motivos políticos, entra sin permiso en el servidor web de una empresa y cambia la portada por un mensaje de protesta.</li>
-<li>En una cafetería, alguien captura el tráfico de la wifi para leer los mensajes de los demás clientes.</li>
-<li>La responsable de informática de un instituto, con la autorización firmada del director, escanea la red del centro para ver qué equipos tienen servicios sin actualizar.</li>
-</ol>
-
-<h2 class="step"><span class="n">3</span>Rellena la tabla</h2>
-<p>En <code>casos.md</code>, una fila por caso con los valores de las listas escritos tal cual. <b>Figura</b>: hacking ético, hacktivismo o ciberdelito. <b>Delito</b>: sí o no. <b>Artículo</b>: ninguno, 197 bis, 197 ter, 264 o 264 bis. En <b>Por qué</b>, una frase tuya. Si dudas entre dos artículos, quédate con el que describe lo principal que se hizo.</p>
+<h2 class="step"><span class="n">2</span>Clasifica cada caso</h2>
+<p>En cada fila, un valor de cada lista escrito tal cual. <b>Figura</b>: hacking ético, hacktivismo o ciberdelito. <b>Artículo</b>: ninguno, 197 bis, 197 ter, 264 o 264 bis. El hacktivismo sin permiso también es delito, así que lleva su artículo. Si dudas entre dos artículos, quédate con el que describe lo principal que se hizo.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>Falta una fila, o un valor no es de su lista.</li>
-<li>Algo no cuadra: hacking ético con artículo, o delito sin artículo.</li>
-<li>Falta el porqué.</li>
-<li>Hay casos cuya figura o artículo no coinciden con la clave. Solo dice cuántos, no cuáles.</li>
+<li>Falta o sobra una fila, o cambias los códigos de los casos.</li>
+<li>Un valor no es de su lista, o un caso de hacking ético lleva artículo.</li>
+<li>Hay casos cuya figura o artículo no coinciden con la clave. Dice cuántos, no cuáles.</li>
 </ul>
 
-<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">3</span>Pruébalo en tu equipo</h2>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e1</code></pre></div>
 <p>Comprueba el formato. La comparación con la clave solo la hace el corrector.</p>
 
-<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<h2 class="step"><span class="n">4</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add ra1/u1-e1
 git commit -m "docs(ra1-u1-e1): casos clasificados"
 git push</code></pre></div>
@@ -61,7 +47,7 @@ git push</code></pre></div>
 <div class="cmd"><pre><code>git tag -a entrega-ra1-u1-e1 -m "U1·E1 resuelto"
 git push origin entrega-ra1-u1-e1</code></pre></div>
 
-<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="../temas/02-etica-y-ley.html">← 1.2 · Ética y ley</a><a href="e2.html">U1·E2 · Qué permite cada web →</a></nav>
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="../temas/02-etica-y-ley.html">← 1.2 · Ética y ley</a><a href="e2.html">U1·E2 · El security.txt de la empresa →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../../../assets/nav.js" defer></script>

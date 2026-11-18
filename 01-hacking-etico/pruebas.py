@@ -10,9 +10,9 @@ Se evalúa lo mismo que evaluará el corrector: lo que hay en la etiqueta entreg
 y, si no, lo que hay en main. Lo que no tienes en un commit no cuenta. Se trabaja sobre una copia, así que tu
 carpeta no cambia.
 
-Comprueba el formato y lo que se puede contrastar con fuentes públicas. En los ejercicios con clave (casos,
-cláusulas, retos, fases…) tus respuestas las compara el corrector: aquí no se dice si son las correctas.
-El U4·E2 necesita Docker Desktop en marcha; los demás, solo conexión a Internet.
+Comprueba el formato y todo lo que sale de tu escenario (direcciones, fechas, registros, rutas). Lo que va con
+clave (figuras, tipos de fallo, CWE, datos del CVE, técnicas…) lo compara el corrector: aquí no se dice si es
+lo correcto. El U4·E2 necesita Docker Desktop en marcha; los demás, nada más que Python.
 """
 
 from __future__ import annotations
