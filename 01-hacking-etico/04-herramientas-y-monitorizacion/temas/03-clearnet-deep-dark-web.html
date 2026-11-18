@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.3 · ClearNet, Deep Web y Dark Web · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">04 · Herramientas y monitorización</a></nav>
+<header>
+<p class="eyebrow">RA1 · Herramientas y monitorización · Tema 3 de 3 · Criterio a</p>
+<h1>ClearNet, Deep Web y Dark Web</h1>
+<p class="lead">La web que encuentra un buscador es una parte pequeña de lo que hay. Las tres capas se confunden a menudo, y no son lo mismo: la mayor parte de lo que no aparece en un buscador es simplemente privado, no oscuro.</p>
+<div class="meta"><span>Antes: <a href="02-monitorizacion-segun-organizacion.html">4.2 · Monitorización según la organización</a></span><span>Ejercicio: <a href="../ejercicios/e3.html">U4·E3</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Las tres capas</h2>
+<dl class="ficha">
+<dt>ClearNet</dt><dd>Lo que indexan los buscadores y cualquiera puede abrir con un navegador normal: periódicos, tiendas, esta documentación.</dd>
+<dt>Deep Web</dt><dd>Lo que no indexan los buscadores porque está detrás de un usuario o no se enlaza: tu correo, la intranet del instituto, la banca online, una base de datos. Es la capa más grande, y es legal y cotidiana.</dd>
+<dt>Dark Web</dt><dd>Sitios que solo se alcanzan con un programa especial, que esconde quién publica y quién visita. Hay mercados ilegales y foros de delincuentes, y también periodistas, activistas en países con censura y versiones .onion de medios como la BBC.</dd>
+<dt>Darknet</dt><dd>Cada una de las redes que forman la Dark Web: Tor, I2P, ZeroNet, Freenet. Funcionan por encima de Internet.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>Las cuatro darknets del currículo</h2>
+<div class="tabla"><table><thead><tr><th>Red</th><th>Cómo funciona</th><th>Cómo se accede</th><th>Direcciones</th></tr></thead><tbody>
+<tr><td><b>Tor</b></td><td><b>Enrutamiento cebolla</b>: el tráfico va cifrado en capas por tres nodos voluntarios; cada nodo solo conoce el anterior y el siguiente.</td><td>Tor Browser.</td><td>Servicios ocultos acabados en <code>.onion</code>. Tor también sirve para navegar por la ClearNet de forma anónima.</td></tr>
+<tr><td><b>I2P</b></td><td><b>Enrutamiento ajo</b>: agrupa varios mensajes en un mismo paquete cifrado y usa túneles distintos para ida y vuelta. Pensada para servicios dentro de la propia red.</td><td>Un router I2P (el oficial en Java o i2pd).</td><td>Sitios acabados en <code>.i2p</code>.</td></tr>
+<tr><td><b>ZeroNet</b></td><td>Webs repartidas <b>P2P con BitTorrent</b>: cada visitante guarda una copia y la sirve a otros. Firmadas con claves como las de Bitcoin. El proyecto original no se mantiene desde 2022.</td><td>El cliente de ZeroNet.</td><td>Una dirección Bitcoin o un nombre <code>.bit</code>.</td></tr>
+<tr><td><b>Freenet</b></td><td>Un <b>almacén distribuido</b>: los ficheros se trocean, se cifran y se reparten entre los nodos. Desde 2023 la red clásica se llama <b>Hyphanet</b>.</td><td>Un nodo de Hyphanet.</td><td>Claves como <code>USK@</code>, <code>SSK@</code> o <code>CHK@</code>.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Por qué le importa a quien defiende</h2>
+<ul>
+<li>Las credenciales y los datos robados se venden en foros de la Dark Web. Hay servicios de <b>vigilancia de filtraciones</b> que avisan si aparecen los de tu empresa.</li>
+<li>Los grupos de ransomware publican ahí los datos de las víctimas que no pagan.</li>
+<li>El tráfico Tor de un equipo de la empresa que no debería usarlo es una alerta que un IDS puede dar.</li>
+</ul>
+<p class="note">En el curso esto se explica, no se visita. Usar Tor es legal; lo que se compra, se descarga o se hace dentro sigue sometido a la ley, y en muchas páginas de la Dark Web hay contenido delictivo y malware.</p>
+</section>
+
+<section class="seccion check">
+<h2>Comprobación</h2>
+<ul>
+<li>Sabes poner un ejemplo de Deep Web que usas cada día.</li>
+<li>Sabes en qué se diferencian el enrutamiento cebolla y el almacén distribuido.</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="02-monitorizacion-segun-organizacion.html">← 4.2 · Monitorización según la organización</a><a href="../ejercicios/e1.html">U4·E1 · Elige su monitorización →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

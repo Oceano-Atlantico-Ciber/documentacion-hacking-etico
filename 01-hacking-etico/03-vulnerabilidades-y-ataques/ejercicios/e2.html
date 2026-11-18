@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>U3·E2 · Ficha de un CVE real · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
+
+<h1>U3·E2 · Ficha de un CVE real</h1>
+<p class="lead">Eliges una vulnerabilidad que se está explotando de verdad, consultas sus datos oficiales desde PowerShell y la documentas con la ficha del curso.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/03-tipos-de-vulnerabilidades.html#cvss">3.3 · CVSS y KEV</a> y <a href="../temas/05-documentar-una-vulnerabilidad.html#ficha">3.5 · La ficha</a></dd>
+<dt>Ejemplo resuelto</dt><dd><a href="php2shell.html">PHP2Shell</a></dd>
+<dt>Criterios</dt><dd>d, f, h</dd>
+<dt>Trabajas en</dt><dd><code>ra1/u3-e2/ficha.md</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-ra1-u3-e2</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e2
+code ra1/u3-e2/ficha.md</code></pre></div>
+
+<h2 class="step"><span class="n">2</span>Elige un CVE del catálogo KEV</h2>
+<p>Abre el <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">catálogo CISA KEV</a> y elige una vulnerabilidad de un producto que conozcas: un navegador, un sistema operativo, un router, un servidor web. Mejor si es de los últimos dos años. También puedes listar las últimas añadidas desde PowerShell:</p>
+<div class="cmd"><pre><code>$kev = Invoke-RestMethod https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+$kev.vulnerabilities | Sort-Object dateAdded -Descending | Select-Object -First 20 cveID, vendorProject, product, dateAdded</code></pre></div>
+<p>Los dos bloques de órdenes de este ejercicio son de PowerShell. Apunta de su fila el producto y la fecha en que se añadió (<code>dateAdded</code>, como <code>aaaa-mm-dd</code>).</p>
+
+<h2 class="step"><span class="n">3</span>Consulta NVD</h2>
+<div class="cmd"><pre><code>$cve = "CVE-2024-3400"   # el tuyo
+$r = Invoke-RestMethod "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$cve"
+$r.vulnerabilities[0].cve.metrics | Format-List
+$r.vulnerabilities[0].cve.weaknesses.description
+$r.vulnerabilities[0].cve.descriptions | Where-Object lang -eq en</code></pre></div>
+<p>En <code>metrics</code> verás una o varias notas (<code>cvssMetricV31</code>, <code>cvssMetricV40</code>…). Elige una y copia su <code>baseScore</code>, su versión y su <code>vectorString</code> tal cual. Si NVD aún no le ha puesto nota, elige otro CVE. Las versiones afectadas y la corregida las encontrarás en el aviso del fabricante, enlazado en la ficha de NVD.</p>
+
+<h2 class="step"><span class="n">4</span>Rellena la ficha</h2>
+<p>Cada campo de <code>ficha.md</code> con los datos y tus palabras. <b>Propiedades</b>, separadas por comas. En <b>Defensa</b>, separa lo que corrige el fallo de lo que solo reduce el riesgo. En <b>Fuentes</b>, al menos la ficha de NVD o de cve.org. Termina explicando por qué tiene esa nota con las letras del vector.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Falta un campo o está vacío, o el CVE es PHP2Shell.</li>
+<li>El CVE no está en CISA KEV, o la fecha en KEV o el producto no coinciden con el catálogo.</li>
+<li>El CWE no es el que dan NVD o CISA para ese CVE.</li>
+<li>La nota, su versión o su vector no coinciden con ninguna de las notas de NVD.</li>
+<li>El tipo o las propiedades no son de la lista, o falta la fuente oficial.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e2</code></pre></div>
+<p>Este ejercicio lo comprueban las pruebas igual que el corrector: consultan KEV y NVD en ese momento.</p>
+
+<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add ra1/u3-e2
+git commit -m "docs(ra1-u3-e2): ficha de un CVE del catálogo KEV"
+git push
+git tag -a entrega-ra1-u3-e2 -m "U3·E2 resuelto"
+git push origin entrega-ra1-u3-e2</code></pre></div>
+
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U3·E1 · Ficha de Hackea el ranking</a><a href="e3.html">U3·E3 · Las fases de un incidente →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

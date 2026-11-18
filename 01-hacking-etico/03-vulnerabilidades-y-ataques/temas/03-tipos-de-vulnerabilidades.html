@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.3 · Tipos de vulnerabilidades · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
+<header>
+<p class="eyebrow">RA1 · Vulnerabilidades y ataques · Tema 3 de 5 · Criterios f y h</p>
+<h1>Tipos de vulnerabilidades</h1>
+<p class="lead">Un fallo se clasifica por dónde nace, porque eso dice cómo se corrige. Después se mide: cómo de grave es y si alguien lo está aprovechando ya.</p>
+<div class="meta"><span>Antes: <a href="02-fases-de-un-ataque.html">3.2 · Fases de un ataque</a></span><span>Ejercicios: <a href="../ejercicios/e1.html">U3·E1</a> y <a href="../ejercicios/e2.html">U3·E2</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Dónde nace el fallo</h2>
+<div class="tabla"><table><thead><tr><th>Tipo</th><th>Qué es</th><th>Ejemplo</th><th>Cómo se corrige</th></tr></thead><tbody>
+<tr><td><b>De diseño</b></td><td>La idea está mal, aunque el código haga exactamente lo que se pensó.</td><td>Hackea el ranking se fiaba de la puntuación que calculaba el navegador.</td><td>Cambiando cómo funciona. Un parche no basta.</td></tr>
+<tr><td><b>De configuración</b></td><td>El software está bien, pero se ha montado mal.</td><td>Un bucket público, una contraseña por defecto, un puerto abierto a todo Internet.</td><td>Cambiando la configuración. Los analizadores como Trivy las encuentran leyendo el código de la infraestructura.</td></tr>
+<tr><td><b>De software</b></td><td>Un error de programación en una versión concreta de un producto.</td><td>PHP2Shell en el motor de PHP; Log4Shell en Log4j.</td><td>Actualizando a la versión corregida. Suelen tener CVE.</td></tr>
+<tr><td><b>Humanas</b></td><td>El fallo está en lo que hace una persona.</td><td>Reutilizar contraseñas, abrir un adjunto, contar algo por teléfono.</td><td>Formación, procedimientos y medidas técnicas que no dependan solo de la persona, como el segundo factor.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Las listas de referencia</h2>
+<ul>
+<li><a href="https://owasp.org/Top10/">OWASP Top 10</a>: los diez riesgos más frecuentes en aplicaciones web. El primero, desde 2021, es el <b>control de acceso roto</b>: usuarios que llegan a datos o acciones que no son suyos. Lo trabajarás en RA5.</li>
+<li><a href="https://cwe.mitre.org/top25/">CWE Top 25</a>: los tipos de debilidad más peligrosos del año, sacados de los CVE publicados. Siempre aparecen la inyección SQL (CWE-89), el cross-site scripting (CWE-79) y la falta de autenticación en funciones críticas (CWE-306).</li>
+</ul>
+</section>
+
+<section class="seccion" id="cvss">
+<h2>Cómo de grave: CVSS</h2>
+<p>La nota CVSS va de 0 a 10: <b>baja</b> hasta 3,9; <b>media</b> hasta 6,9; <b>alta</b> hasta 8,9; <b>crítica</b> desde 9,0. Lo importante es el <b>vector</b>, la cadena que explica de dónde sale la nota. El de Log4Shell, en CVSS 3.1:</p>
+<pre><code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H     → 10,0</code></pre>
+<div class="tabla"><table><thead><tr><th>Letra</th><th>Pregunta</th><th>Aquí</th></tr></thead><tbody>
+<tr><td><code>AV</code></td><td>¿Desde dónde se ataca? Red, red adyacente, local o físico.</td><td><code>N</code>: desde Internet.</td></tr>
+<tr><td><code>AC</code></td><td>¿Es difícil? Baja o alta complejidad.</td><td><code>L</code>: fácil.</td></tr>
+<tr><td><code>PR</code></td><td>¿Hacen falta privilegios?</td><td><code>N</code>: ninguno.</td></tr>
+<tr><td><code>UI</code></td><td>¿Tiene que hacer algo la víctima?</td><td><code>N</code>: nada.</td></tr>
+<tr><td><code>S</code></td><td>¿Afecta a más sistemas que el vulnerable?</td><td><code>C</code>: sí, cambia de ámbito.</td></tr>
+<tr><td><code>C</code> <code>I</code> <code>A</code></td><td>Impacto en confidencialidad, integridad y disponibilidad.</td><td><code>H</code>: alto en las tres.</td></tr>
+</tbody></table></div>
+<p>CVSS 4.0, la versión actual, separa el impacto en el sistema vulnerable (<code>VC</code>, <code>VI</code>, <code>VA</code>) del impacto en otros sistemas (<code>SC</code>, <code>SI</code>, <code>SA</code>) y añade <code>AT</code>, condiciones previas del ataque. En NVD verás las dos versiones según el CVE.</p>
+</section>
+
+<section class="seccion" id="kev">
+<h2>¿Lo están aprovechando ya?</h2>
+<p>La nota dice cómo de grave sería, no si está pasando. Para priorizar se usan otras dos fuentes:</p>
+<ul>
+<li><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA KEV</a>: el catálogo de vulnerabilidades que se sabe que se están explotando. Si un CVE está en KEV, se parchea antes que cualquier otro.</li>
+<li><a href="https://www.first.org/epss/">EPSS</a>: la probabilidad de que un CVE se explote en los próximos 30 días, calculada con datos reales.</li>
+</ul>
+<p>La ficha de cada CVE está en <a href="https://nvd.nist.gov/">NVD</a>. Se puede pedir también por su API desde PowerShell, que es lo que harás en el U3·E2:</p>
+<pre><code>$r = Invoke-RestMethod "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228"
+$r.vulnerabilities[0].cve.metrics.cvssMetricV31.cvssData
+$r.vulnerabilities[0].cve.weaknesses.description</code></pre>
+</section>
+
+<section class="seccion check">
+<h2>Comprobación</h2>
+<ul>
+<li>Sabes de qué tipo es una contraseña por defecto que nadie cambió, y cómo se corrige.</li>
+<li>Sabes leer un vector CVSS y decir qué letra lo hace más grave.</li>
+<li>Sabes por qué un CVE con nota 7 que está en KEV va antes que uno con nota 9 que no lo está.</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="02-fases-de-un-ataque.html">← 3.2 · Fases de un ataque</a><a href="04-tipos-de-ataques.html">3.4 · Tipos de ataques →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.4 · Tipos de ataques · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
+<header>
+<p class="eyebrow">RA1 · Vulnerabilidades y ataques · Tema 4 de 5 · Criterio g</p>
+<h1>Tipos de ataques</h1>
+<p class="lead">Un mismo ataque se puede clasificar de dos formas: por lo que rompe y por el camino que sigue. Las dos ayudan: la primera dice el daño, la segunda dónde poner la defensa.</p>
+<div class="meta"><span>Antes: <a href="03-tipos-de-vulnerabilidades.html">3.3 · Tipos de vulnerabilidades</a></span><span>Ejercicio: <a href="../ejercicios/e3.html">U3·E3</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Por la propiedad que rompen</h2>
+<div class="tabla"><table><thead><tr><th>Propiedad</th><th>Tipo de ataque</th><th>Ejemplos</th></tr></thead><tbody>
+<tr><td>Confidencialidad</td><td><b>Interceptación</b>: leer lo que no debes.</td><td>Capturar tráfico sin cifrar, robar una base de datos.</td></tr>
+<tr><td>Integridad</td><td><b>Modificación</b>: cambiar lo que no debes.</td><td>Alterar una transferencia, cambiar la portada de una web.</td></tr>
+<tr><td>Disponibilidad</td><td><b>Interrupción</b>: que deje de funcionar.</td><td>Denegación de servicio, ransomware, borrar datos.</td></tr>
+<tr><td>Autenticidad</td><td><b>Suplantación</b>: hacerse pasar por otro.</td><td>Robar una sesión, un correo que finge venir del director.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Por el camino que siguen</h2>
+<dl class="ficha">
+<dt>Red</dt><dd>Escaneos, interceptación y manipulación del tráfico (hombre en el medio), fuerza bruta contra servicios expuestos. Los ves en RA3.</dd>
+<dt>Web</dt><dd>Inyección SQL, cross-site scripting, control de acceso roto, subida de ficheros. Los ves en RA5.</dd>
+<dt>Ingeniería social</dt><dd>Engañar a una persona: phishing por correo, smishing por SMS, vishing por teléfono, un USB olvidado en el aparcamiento.</dd>
+<dt>Malware</dt><dd>Programas maliciosos: troyanos, ransomware, keyloggers, programas de acceso remoto (RAT). Los ves en RA4.</dd>
+<dt>Denegación de servicio</dt><dd>Saturar un servicio para que no responda. Si llega desde miles de equipos a la vez, es distribuida (DDoS).</dd>
+<dt>Contraseñas</dt><dd>Fuerza bruta, diccionario, reutilizar contraseñas filtradas de otra web (credential stuffing).</dd>
+<dt>Cadena de suministro</dt><dd>Atacar a un proveedor para llegar a sus clientes: una librería de código con una puerta trasera, una actualización envenenada.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>Ataque y vulnerabilidad no son lo mismo</h2>
+<p>La vulnerabilidad es el fallo; el ataque es lo que alguien hace con él. Una misma vulnerabilidad (una contraseña débil) permite varios ataques (entrar en el correo, mandar phishing desde él), y un mismo ataque (phishing) puede aprovechar varias vulnerabilidades (un empleado sin formación, un correo sin filtro, un equipo sin parchear).</p>
+</section>
+
+<section class="seccion check">
+<h2>Comprobación</h2>
+<ul>
+<li>Sabes clasificar un ransomware por la propiedad que rompe y por su camino de entrada más habitual.</li>
+<li>Sabes poner un ejemplo de ataque a la cadena de suministro.</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="03-tipos-de-vulnerabilidades.html">← 3.3 · Tipos de vulnerabilidades</a><a href="05-documentar-una-vulnerabilidad.html">3.5 · Documentar una vulnerabilidad →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>U2·E2 · Un alcance con fallos · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">02 · Permisos y alcance</a></nav>
+
+<h1>U2·E2 · Un alcance con fallos</h1>
+<p class="lead">Otro auditor dejó firmado este alcance. Tiene doce cláusulas y seis de ellas, si se trabaja así, meten en problemas al auditor, al cliente o a terceros. Encuéntralas.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/02-autorizacion-y-alcance.html">2.2 · Autorización y alcance</a></dd>
+<dt>Criterio</dt><dd>c</dd>
+<dt>Trabajas en</dt><dd><code>ra1/u2-e2/fallos.md</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-ra1-u2-e2</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u2-e2
+code ra1/u2-e2/fallos.md</code></pre></div>
+
+<h2 class="step"><span class="n">2</span>Lee el alcance</h2>
+<div class="panel">
+<p><b>Alcance del test de intrusión de Transportes Atlántico SL</b></p>
+<ul class="clausulas">
+<li><b>C1 · Cliente.</b> Transportes Atlántico SL, con sede en Vigo.</li>
+<li><b>C2 · Autorización.</b> La prueba la autoriza el becario del departamento de sistemas, que lo comentó de palabra en una reunión.</li>
+<li><b>C3 · Objetivos.</b> La red de la empresa, la web y lo que el auditor vaya encontrando conectado a ellas.</li>
+<li><b>C4 · Exclusiones.</b> No se prueba la centralita telefónica, <code>10.0.5.20</code>.</li>
+<li><b>C5 · Fechas.</b> La prueba durará unas dos semanas, a partir de cuando el auditor tenga hueco.</li>
+<li><b>C6 · Técnicas permitidas.</b> Escaneo de puertos, búsqueda de vulnerabilidades y explotación sin modificar ni borrar datos.</li>
+<li><b>C7 · Disponibilidad.</b> Para medir la resistencia de la web, se lanzará una denegación de servicio un martes a mediodía.</li>
+<li><b>C8 · Datos.</b> Como prueba de acceso, el auditor descargará la base de datos de clientes completa a su portátil.</li>
+<li><b>C9 · Emergencias.</b> Ana Pérez, responsable de sistemas, en el 600 111 222, disponible las 24 horas durante la prueba.</li>
+<li><b>C10 · Proveedor.</b> La web está en un servidor que alquila a HostingCo. No hace falta avisarles.</li>
+<li><b>C11 · Confidencialidad.</b> El informe se entrega cifrado y solo a la dirección.</li>
+<li><b>C12 · Firma.</b> Firman el auditor y el director general, el 10/01/2027.</li>
+</ul>
+</div>
+
+<h2 class="step"><span class="n">3</span>Marca y explica</h2>
+<p>En <code>fallos.md</code>, cada cláusula lleva sí o no en <b>Fallo</b>. En las que tengan fallo, explica en <b>Por qué</b> qué riesgo crea y cómo tendría que estar escrita.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Falta una cláusula, o en Fallo no pone sí o no.</li>
+<li>No has marcado exactamente seis, o alguna marcada no tiene su porqué.</li>
+<li>Hay cláusulas mal clasificadas. Solo dice cuántas, no cuáles.</li>
+</ul>
+
+<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e2</code></pre></div>
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add ra1/u2-e2
+git commit -m "docs(ra1-u2-e2): fallos del alcance de Transportes Atlántico"
+git push
+git tag -a entrega-ra1-u2-e2 -m "U2·E2 resuelto"
+git push origin entrega-ra1-u2-e2</code></pre></div>
+<p>Etiqueta cuando la fila de U2·E2 de <b>Corrector ra1</b> salga sin fallos.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U2·E1 · El alcance de la clínica</a><a href="../../03-vulnerabilidades-y-ataques/index.html">03 · Vulnerabilidades y ataques →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

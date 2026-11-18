@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>U3·E3 · Las fases de un incidente · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
+
+<h1>U3·E3 · Las fases de un incidente</h1>
+<p class="lead">Lees el relato de un incidente, como los que publican los equipos de respuesta, y colocas cada paso del atacante en su fase y en su técnica de MITRE ATT&amp;CK.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/02-fases-de-un-ataque.html">3.2 · Fases de un ataque</a> y <a href="../temas/04-tipos-de-ataques.html">3.4 · Tipos de ataques</a></dd>
+<dt>Criterios</dt><dd>e, g</dd>
+<dt>Trabajas en</dt><dd><code>ra1/u3-e3/incidente.md</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-ra1-u3-e3</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e3
+code ra1/u3-e3/incidente.md</code></pre></div>
+
+<h2 class="step"><span class="n">2</span>Lee el incidente</h2>
+<div class="panel">
+<p><b>Ferretería Norte</b>, una empresa de 30 empleados, encontró un lunes todos sus servidores cifrados y una nota pidiendo un rescate. La investigación reconstruyó lo que pasó en las semanas anteriores:</p>
+<ul>
+<li><b>P1.</b> El atacante buscó en LinkedIn los nombres y cargos de los empleados de administración.</li>
+<li><b>P2.</b> Buscó la empresa en Shodan, sin conectarse a ella, y vio qué servicios publicaba su dirección IP.</li>
+<li><b>P3.</b> Lanzó un escaneo de puertos contra esa IP y confirmó que el escritorio remoto (RDP, puerto 3389) estaba abierto a Internet.</li>
+<li><b>P4.</b> Probó contraseñas habituales contra el RDP con los nombres de P1 hasta que una funcionó.</li>
+<li><b>P5.</b> Ya dentro, creó un usuario local de administración llamado <code>soporte2</code>.</li>
+<li><b>P6.</b> Instaló AnyDesk para poder volver aunque cambiaran la contraseña.</li>
+<li><b>P7.</b> Antes de cifrar los servidores, borró los registros de eventos de Windows.</li>
+</ul>
+</div>
+
+<h2 class="step"><span class="n">3</span>Coloca cada paso</h2>
+<p>En <code>incidente.md</code>, cada paso lleva su <b>Fase</b> (una de las cinco del tema 3.2) y su <b>Técnica</b> de ATT&amp;CK, como <code>T1234</code> o <code>T1234.001</code>. Busca la técnica en <a href="https://attack.mitre.org/">attack.mitre.org</a>: si usas la IA, comprueba en la web que el identificador existe y describe lo que pasó. Termina contando qué habría detectado dos de los pasos.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>Falta un paso, la fase no es una de las cinco o la técnica no tiene el formato.</li>
+<li>Falta el porqué.</li>
+<li>Hay pasos cuya fase o técnica no coinciden con la clave. Solo dice cuántos. Se aceptan las técnicas y subtécnicas que encajan con cada paso.</li>
+</ul>
+
+<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e3</code></pre></div>
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add ra1/u3-e3
+git commit -m "docs(ra1-u3-e3): fases y técnicas del incidente de Ferretería Norte"
+git push
+git tag -a entrega-ra1-u3-e3 -m "U3·E3 resuelto"
+git push origin entrega-ra1-u3-e3</code></pre></div>
+
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e2.html">← U3·E2 · Ficha de un CVE real</a><a href="../../04-herramientas-y-monitorizacion/index.html">04 · Herramientas y monitorización →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

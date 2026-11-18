@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.1 · Terminología · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">01 · Qué es el hacking ético</a></nav>
+<header>
+<p class="eyebrow">RA1 · Qué es el hacking ético · Tema 1 de 2 · Criterio a</p>
+<h1>Terminología</h1>
+<p class="lead">Las palabras que vas a oír en todo el curso. No son sinónimos: cada una dice quién actúa, con qué permiso y para qué.</p>
+<div class="meta"><span>Ejercicio: <a href="../ejercicios/e1.html">U1·E1</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Quién hace qué</h2>
+<div class="tabla"><table><thead><tr><th>Término</th><th>Qué lo define</th></tr></thead><tbody>
+<tr><td><b>Hacking</b></td><td>Entender un sistema a fondo para hacerle hacer cosas para las que no fue pensado. La palabra no dice si es legal o no.</td></tr>
+<tr><td><b>Hacking ético</b></td><td>Lo mismo, con permiso por escrito, dentro de un alcance y para que se corrija lo que se encuentre.</td></tr>
+<tr><td><b>Test de intrusión</b> (pentest)</td><td>Un encargo concreto de hacking ético: objetivos, fechas, reglas y un informe al final. Intenta entrar de verdad, con cuidado de no romper nada.</td></tr>
+<tr><td><b>Análisis de vulnerabilidades</b></td><td>Buscar fallos conocidos, normalmente con un escáner, sin intentar aprovecharlos. Más rápido y más superficial que un test de intrusión.</td></tr>
+<tr><td><b>Red team</b></td><td>Un equipo que imita a un atacante real durante semanas, con un objetivo (por ejemplo, llegar a las nóminas) y sin avisar a quien defiende. El <b>blue team</b> es el que defiende.</td></tr>
+<tr><td><b>Bug bounty</b></td><td>Un programa público en el que una empresa invita a buscar fallos en sus sistemas y paga por cada uno, con unas reglas que hay que cumplir.</td></tr>
+<tr><td><b>Hacktivismo</b></td><td>Ataques con motivación política o social. Sin permiso es delito, por buena que sea la causa.</td></tr>
+<tr><td><b>Ciberdelito</b></td><td>Acceder, interceptar, alterar o interrumpir sistemas ajenos sin autorización. Lo ves con detalle en <a href="02-etica-y-ley.html">1.2 · Ética y ley</a>.</td></tr>
+</tbody></table></div>
+<p>Los sombreros son la forma informal de decir lo mismo: <b>white hat</b> trabaja con permiso, <b>black hat</b> sin permiso y para su beneficio, y <b>grey hat</b> entra sin permiso «para avisar». El gris también es delito.</p>
+</section>
+
+<section class="seccion">
+<h2>De qué se habla</h2>
+<dl class="ficha">
+<dt>Activo</dt><dd>Lo que tiene valor y se protege: datos de clientes, un servidor, la web de la tienda, la reputación.</dd>
+<dt>Vulnerabilidad</dt><dd>Un fallo que permite hacer algo que no se debería. La contraseña por defecto de un router es una vulnerabilidad.</dd>
+<dt>Amenaza</dt><dd>Quién o qué podría aprovechar ese fallo: un atacante, un empleado descontento, un ransomware.</dd>
+<dt>Riesgo</dt><dd>Probabilidad de que la amenaza aproveche la vulnerabilidad, por el impacto que tendría. Sin activo valioso o sin amenaza, el riesgo baja.</dd>
+<dt>Exploit</dt><dd>El código o la técnica que aprovecha una vulnerabilidad concreta.</dd>
+<dt>Payload</dt><dd>Lo que hace el exploit una vez dentro: abrir una consola, crear un usuario, cifrar ficheros.</dd>
+<dt>Día cero (0-day)</dt><dd>Una vulnerabilidad que el fabricante aún no conoce o no ha corregido. Nadie ha tenido «ningún día» para parchearla.</dd>
+<dt>Vector de ataque</dt><dd>El camino por el que llega el ataque: un correo, un puerto abierto, un USB, una web.</dd>
+<dt>Superficie de ataque</dt><dd>La suma de todo lo que un atacante puede tocar desde fuera. Cerrar servicios que no se usan la reduce.</dd>
+</dl>
+</section>
+
+<section class="seccion">
+<h2>Los tres catálogos</h2>
+<div class="tabla"><table><thead><tr><th>Sigla</th><th>Qué es</th><th>Ejemplo</th></tr></thead><tbody>
+<tr><td><b>CVE</b></td><td>El número de un fallo concreto en un producto concreto. Lo asigna una autoridad (CNA) y es público.</td><td>CVE-2021-44228, Log4Shell en Apache Log4j.</td></tr>
+<tr><td><b>CWE</b></td><td>El tipo de debilidad, sin producto. Sirve para aprender y para buscar cómo se corrige.</td><td>CWE-89, inyección SQL.</td></tr>
+<tr><td><b>CVSS</b></td><td>La nota de gravedad de un CVE, de 0 a 10, con un vector que explica de dónde sale.</td><td>10.0 para Log4Shell.</td></tr>
+</tbody></table></div>
+<p>Un fallo de un programa hecho en clase no tiene CVE, pero sí CWE. En <a href="../../03-vulnerabilidades-y-ataques/temas/03-tipos-de-vulnerabilidades.html">3.3 · Tipos de vulnerabilidades</a> se leen las notas CVSS letra a letra.</p>
+</section>
+
+<section class="seccion check">
+<h2>Comprobación</h2>
+<ul>
+<li>Sabes explicar la diferencia entre test de intrusión, análisis de vulnerabilidades y red team.</li>
+<li>Distingues vulnerabilidad, amenaza y riesgo con un ejemplo tuyo.</li>
+<li>Sabes qué dice un CVE que no dice un CWE.</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="../index.html">← 01 · Qué es el hacking ético</a><a href="02-etica-y-ley.html">1.2 · Ética y ley →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

@@ -70,7 +70,7 @@
 <h2>Del fichero al laboratorio</h2>
 <p>En vez de una orden <code>docker run</code> por contenedor, con sus <code>-v</code>, <code>-p</code> y <code>--network</code>, se escribe una vez qué <b>servicios</b>, <b>redes</b> y <b>volúmenes</b> hay. <code>docker compose up -d</code> crea lo que falte y arranca todo.</p>
 <figure>
-<svg class="diagrama" viewBox="0 0 720 286" role="img" aria-label="El docker-compose.yml de Empresa con Terraform declara los servicios floci y terraform, la red lab y el volumen floci-data; docker compose los crea">
+<svg class="diagrama" viewBox="0 0 720 286" role="img" aria-label="Un docker-compose.yml de laboratorio con Floci y Terraform declara los servicios floci y terraform, la red lab y el volumen floci-data; docker compose los crea">
 <defs><marker id="cmp-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
 <rect class="caja" x="0" y="0" width="300" height="286" rx="8"/>
 <text class="mono" x="16" y="24">services:</text>
@@ -94,10 +94,10 @@
 <rect class="caja-ok" x="550" y="210" width="150" height="56" rx="8"/><text class="tit" x="625" y="234" text-anchor="middle">./terraform</text><text class="tenue peq" x="625" y="252" text-anchor="middle">tu carpeta</text>
 <path class="linea" d="M451 96V208M625 96V208"/>
 </svg>
-<figcaption>Es el compose de Empresa con Terraform, recortado. Cada bloque del fichero es una de las piezas que ya conoces.</figcaption>
+<figcaption>Es un compose de laboratorio con Floci y Terraform, recortado. Cada bloque del fichero es una de las piezas que ya conoces.</figcaption>
 </figure>
 <div class="tabla"><table><thead><tr><th>Clave</th><th>Equivale a</th><th>Tema</th></tr></thead><tbody>
-<tr><td><code>name: fundamentos-mini-auditoria</code></td><td>Nombre del proyecto; prefijo de sus contenedores, redes y volúmenes.</td><td>—</td></tr>
+<tr><td><code>name: empresa-lab</code></td><td>Nombre del proyecto; prefijo de sus contenedores, redes y volúmenes.</td><td>—</td></tr>
 <tr><td><code>image:</code> / <code>build: ./carpeta</code></td><td>La imagen que se descarga, o el <code>Dockerfile</code> que se construye.</td><td>1 y 2</td></tr>
 <tr><td><code>container_name: floci</code></td><td><code>--name floci</code></td><td>1</td></tr>
 <tr><td><code>entrypoint:</code> / <code>command:</code></td><td>Sustituyen al <code>ENTRYPOINT</code> y al <code>CMD</code> de la imagen.</td><td>2</td></tr>
@@ -145,7 +145,7 @@
 <h2>Perfiles</h2>
 <p>Un servicio con <code>profiles:</code> no se arranca con <code>up</code>. Así el laboratorio separa lo que debe estar siempre en marcha de las herramientas que se lanzan cuando hacen falta.</p>
 <figure>
-<svg class="diagrama" viewBox="0 0 720 176" role="img" aria-label="En la Mini auditoría, up levanta floci, web, datos y suricata; terraform, auditor, curl y aws están en el perfil herramientas y solo se lanzan con run">
+<svg class="diagrama" viewBox="0 0 720 176" role="img" aria-label="En este laboratorio de ejemplo, up levanta floci, web, datos y suricata; terraform, auditor, curl y aws están en el perfil herramientas y solo se lanzan con run">
 <rect class="caja-ok" x="0" y="0" width="340" height="176" rx="10"/><text class="tit" x="16" y="26">Sin perfil</text><text class="tenue peq mono" x="16" y="44">docker compose up -d</text>
 <rect class="caja" x="16" y="60" width="148" height="44" rx="8"/><text class="mono" x="90" y="87" text-anchor="middle">floci</text>
 <rect class="caja" x="176" y="60" width="148" height="44" rx="8"/><text class="mono" x="250" y="87" text-anchor="middle">web</text>
@@ -166,7 +166,7 @@
 <p>Un compose puede leer valores de fuera con <code>${VARIABLE}</code>. Docker las busca en tu entorno y en un fichero <code>.env</code> junto al compose. Así la contraseña no se escribe en un fichero que se sube a git.</p>
 <div class="tabla"><table><thead><tr><th>Forma</th><th>Si la variable no existe</th></tr></thead><tbody>
 <tr><td><code>${POSTGRES_PASSWORD}</code></td><td>Queda vacía, y Docker solo avisa.</td></tr>
-<tr><td><code>${POSTGRES_PASSWORD:-cambiar-en-clase}</code></td><td>Usa el valor por defecto. Es lo que hace la Mini auditoría.</td></tr>
+<tr><td><code>${POSTGRES_PASSWORD:-cambiar-en-clase}</code></td><td>Usa el valor por defecto. Es lo que hace este laboratorio de ejemplo.</td></tr>
 <tr><td><code>${POSTGRES_PASSWORD:?falta en .env}</code></td><td>Se niega a arrancar con ese mensaje. Lo más seguro para un secreto.</td></tr>
 </tbody></table></div>
 <pre><code># .env: junto al compose; ya está en el .gitignore de tu repositorio
@@ -182,12 +182,12 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 </section>
 
 <section class="seccion">
-<h2>El mapa de la Mini auditoría</h2>
-<p>Con todo lo anterior ya se lee el laboratorio de la Mini auditoría: una red con subred fija, cada servidor de la empresa en su IP, el sensor pegado a la web y el auditor entrando en la misma red.</p>
+<h2>El mapa de un laboratorio</h2>
+<p>Con todo lo anterior ya se lee un laboratorio completo de la empresa ficticia: una red con subred fija, cada servidor de la empresa en su IP, el sensor pegado a la web y el auditor entrando en la misma red.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 276" role="img" aria-label="Red 172.28.0.0/24: floci en .10, web en .20 con suricata pegado, datos en .30; auditor, curl y aws con IP dinámica; solo floci publica el puerto 4566">
 <defs><marker id="mapa-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
-<rect class="linea discontinua" x="0" y="0" width="720" height="210" rx="10"/><text class="tenue peq mono" x="16" y="22">lab-mini-auditoria · 172.28.0.0/24</text>
+<rect class="linea discontinua" x="0" y="0" width="720" height="210" rx="10"/><text class="tenue peq mono" x="16" y="22">lab-empresa · 172.28.0.0/24</text>
 <rect class="caja-acento" x="24" y="40" width="200" height="56" rx="8"/><text class="tit" x="40" y="64">floci</text><text class="mono tenue peq" x="40" y="82">172.28.0.10 · nube</text>
 <rect class="caja-acento" x="260" y="40" width="200" height="56" rx="8"/><text class="tit" x="276" y="64">web</text><text class="mono tenue peq" x="276" y="82">172.28.0.20 · nginx</text>
 <rect class="caja-acento" x="496" y="40" width="200" height="56" rx="8"/><text class="tit" x="512" y="64">datos</text><text class="mono tenue peq" x="512" y="82">172.28.0.30 · postgres</text>
@@ -253,7 +253,7 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 <ul class="check">
 <li>Sabes traducir cada clave de un compose a la opción de <code>docker run</code> que sustituye</li>
 <li>Sabes cuándo usar <code>up -d</code>, <code>run --rm</code> y <code>exec</code></li>
-<li>Sabes leer el compose de la Mini auditoría y dibujar su mapa</li>
+<li>Sabes leer el compose de un laboratorio y dibujar su mapa</li>
 <li>Sabes señalar las líneas peligrosas de un compose y cómo cerrarlas</li>
 <li>E7 y E8 superados en el check <b>Corrector docker</b> y con su etiqueta</li>
 </ul>

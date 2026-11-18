@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.1 · Tipos de auditoría · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">02 · Permisos y alcance</a></nav>
+<header>
+<p class="eyebrow">RA1 · Permisos y alcance · Tema 1 de 2 · Criterio c</p>
+<h1>Tipos de auditoría</h1>
+<p class="lead">Antes de firmar nada, cliente y auditor acuerdan qué tipo de prueba se hace. Cada tipo responde a una pregunta distinta y tiene un coste distinto.</p>
+<div class="meta"><span>Antes: <a href="../../01-que-es-el-hacking-etico/temas/02-etica-y-ley.html">1.2 · Ética y ley</a></span><span>Ejercicio: <a href="../ejercicios/e1.html">U2·E1</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Cuánto sabe el auditor</h2>
+<div class="tabla"><table><thead><tr><th>Tipo</th><th>Qué recibe el auditor</th><th>Qué responde</th><th>Ejemplo del curso</th></tr></thead><tbody>
+<tr><td><b>Caja negra</b></td><td>Nada más que el objetivo: una dirección o un nombre.</td><td>¿Qué puede hacer un atacante de fuera que no sabe nada?</td><td>Hackea el ranking: solo veíais lo que enseñaba el navegador.</td></tr>
+<tr><td><b>Caja gris</b></td><td>Algo de información: una cuenta de usuario normal, un esquema de la red.</td><td>¿Qué puede hacer un cliente o un empleado sin privilegios?</td><td>Probar una web con un usuario de prueba que da la empresa.</td></tr>
+<tr><td><b>Caja blanca</b></td><td>Todo: código, configuración, documentación, cuentas de administración.</td><td>¿Qué fallos hay, encuentre o no el camino un atacante?</td><td>Leer el Terraform de la empresa en <a href="../../../00-fundamentos/04-iac/index.html">Terraform y AWS</a>.</td></tr>
+</tbody></table></div>
+<p>La caja negra se parece más a un ataque real, pero gasta horas en descubrir lo que el cliente ya sabe. La caja blanca encuentra más fallos en menos tiempo. La gris es la más habitual.</p>
+</section>
+
+<section class="seccion">
+<h2>Desde dónde se prueba</h2>
+<ul>
+<li><b>Externa</b>: desde Internet, como cualquiera. Prueba lo que la empresa expone: webs, correo, VPN.</li>
+<li><b>Interna</b>: desde dentro de la red, como un empleado o un equipo ya infectado. Suele encontrar mucho más, porque las redes internas se protegen menos.</li>
+</ul>
+</section>
+
+<section class="seccion">
+<h2>Qué tipo de encargo</h2>
+<div class="tabla"><table><thead><tr><th>Encargo</th><th>Cómo se hace</th><th>Cuándo tiene sentido</th></tr></thead><tbody>
+<tr><td><b>Análisis de vulnerabilidades</b></td><td>Escáneres automáticos que buscan fallos conocidos. No se explota nada.</td><td>A menudo, por ejemplo cada mes. Es barato.</td></tr>
+<tr><td><b>Test de intrusión</b></td><td>Una persona intenta entrar de verdad, encadena fallos y demuestra el impacto.</td><td>Una o dos veces al año, o antes de publicar algo nuevo.</td></tr>
+<tr><td><b>Red team</b></td><td>Simula un atacante concreto durante semanas, sin avisar al equipo que defiende.</td><td>Organizaciones grandes que ya tienen un equipo de defensa y quieren ponerlo a prueba.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion check">
+<h2>Comprobación</h2>
+<ul>
+<li>Sabes qué tipo de caja es una prueba en la que te dan un usuario normal y nada más.</li>
+<li>Sabes por qué una pyme pequeña empezaría por un análisis de vulnerabilidades y no por un red team.</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="../index.html">← 02 · Permisos y alcance</a><a href="02-autorizacion-y-alcance.html">2.2 · Autorización y alcance →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

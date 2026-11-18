@@ -1,0 +1,45 @@
+# Laboratorio del U4·E2: el servidor web de la empresa ficticia con un sensor Suricata pegado a él,
+# y tu puesto de auditor en la misma red. Se lanza desde ra1/u4-e2/ de tu repositorio de entregas.
+#   docker compose up -d                                     # web y Suricata
+#   docker compose run --rm auditor -sn 172.28.0.0/24        # nmap desde tu puesto
+#   docker compose run --rm curl -i http://172.28.0.20/      # curl contra la web
+#   docker compose restart suricata                          # tras cambiar suricata/local.rules
+#   docker compose down                                      # al terminar
+name: ra1-suricata
+services:
+  web:
+    image: nginx:1.27-alpine
+    container_name: ra1-web
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+    networks:
+      lab:
+        ipv4_address: 172.28.0.20
+
+  suricata:
+    image: jasonish/suricata:7.0
+    container_name: ra1-suricata
+    network_mode: "service:web"          # ve exactamente el tráfico que llega al servidor web
+    cap_add: [NET_ADMIN, NET_RAW, SYS_NICE]
+    command: -i eth0 -S /etc/suricata/rules/local.rules -l /var/log/suricata
+    volumes:
+      - ./suricata/local.rules:/etc/suricata/rules/local.rules:ro
+      - ./salidas/suricata:/var/log/suricata
+    depends_on: [web]
+
+  auditor:
+    image: instrumentisto/nmap:7.95
+    networks: [lab]
+    profiles: [herramientas]
+
+  curl:
+    image: curlimages/curl:8.11.1
+    networks: [lab]
+    profiles: [herramientas]
+
+networks:
+  lab:
+    name: lab-ra1-suricata
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>U1·E2 · Qué permite cada web · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">01 · Qué es el hacking ético</a></nav>
+
+<h1>U1·E2 · Qué permite cada web</h1>
+<p class="lead">Muchas empresas publican cómo quieren que les avisen de un fallo y qué está permitido probar. Lees esas políticas con PowerShell, sin probar nada contra nadie.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/02-etica-y-ley.html#divulgacion">1.2 · Ética y ley · Divulgación responsable</a></dd>
+<dt>Criterio</dt><dd>b</dd>
+<dt>Trabajas en</dt><dd><code>ra1/u1-e2/seguridad.md</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-ra1-u1-e2</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e2
+code ra1/u1-e2/seguridad.md</code></pre></div>
+
+<h2 class="step"><span class="n">2</span>Lee tres security.txt</h2>
+<p>En PowerShell, descarga el fichero de una web. Pedir un fichero público que la propia web publica para esto no es ninguna prueba de seguridad:</p>
+<div class="cmd"><pre><code>(Invoke-WebRequest https://github.com/.well-known/security.txt).Content</code></pre></div>
+<p>Repite con otras webs hasta tener tres que lo tengan. Algunas que lo publican: <code>github.com</code>, <code>google.com</code>, <code>cloudflare.com</code>, <code>gitlab.com</code>, <code>mozilla.org</code>. Si una no lo tiene, PowerShell da un error 404: prueba otra.</p>
+<p>Copia a la primera tabla de <code>seguridad.md</code> el dominio (solo el nombre, como <code>github.com</code>) y los campos <code>Contact</code>, <code>Expires</code> y <code>Policy</code> tal como aparecen. Si tiene varios <code>Contact</code>, copia uno. Si un campo no está, escribe «no tiene».</p>
+
+<h2 class="step"><span class="n">3</span>Lee un programa de recompensas</h2>
+<p>Abre la política de uno de esos ficheros (el enlace de <code>Policy</code>) o la de otro programa de bug bounty. En la segunda tabla, resume con tus palabras qué permite probar y qué prohíbe. Busca sobre todo qué dicen de las denegaciones de servicio, de los datos de otros usuarios y de la ingeniería social.</p>
+<p>Termina con dos o tres frases en «Qué he aprendido».</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li>No hay tres dominios distintos, o alguno no tiene <code>security.txt</code>.</li>
+<li><code>Contact</code> o <code>Policy</code> no coinciden con el fichero de la web, o <code>Expires</code> no es una fecha. El corrector descarga los mismos ficheros: si la web lo cambia entre tanto, actualízalo.</li>
+<li>Falta el programa de recompensas, su enlace <code>https://</code>, o qué permite y qué prohíbe.</li>
+</ul>
+
+<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e2</code></pre></div>
+
+<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<div class="cmd"><pre><code>git add ra1/u1-e2
+git commit -m "docs(ra1-u1-e2): políticas de seguridad de tres webs"
+git push
+git tag -a entrega-ra1-u1-e2 -m "U1·E2 resuelto"
+git push origin entrega-ra1-u1-e2</code></pre></div>
+<p>Etiqueta cuando la fila de U1·E2 de <b>Corrector ra1</b> salga sin fallos.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U1·E1 · ¿Hacking ético o delito?</a><a href="../../02-permisos-y-alcance/index.html">02 · Permisos y alcance →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

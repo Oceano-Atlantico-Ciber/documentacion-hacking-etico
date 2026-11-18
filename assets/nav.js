@@ -89,31 +89,54 @@
       ]],
     ]],
     ["RA1 · Hacking ético", "01-hacking-etico/index.html", [
-      ["Ética y seguridad", "01-hacking-etico/01-etica-y-seguridad/index.html", [
-        ["Temas", "01-hacking-etico/01-etica-y-seguridad/index.html#temas", [
-          ["Ética, ley y alcance", "01-hacking-etico/01-etica-y-seguridad/temas/01-etica-ley-y-alcance.html"],
-          ["Seguridad, vulnerabilidades y ataques", "01-hacking-etico/01-etica-y-seguridad/temas/02-seguridad-y-vulnerabilidades.html"],
+      ["01 · Qué es el hacking ético", "01-hacking-etico/01-que-es-el-hacking-etico/index.html", [
+        ["Temas", "01-hacking-etico/01-que-es-el-hacking-etico/index.html#temas", [
+          ["1.1 · Terminología", "01-hacking-etico/01-que-es-el-hacking-etico/temas/01-terminologia.html"],
+          ["1.2 · Ética y ley", "01-hacking-etico/01-que-es-el-hacking-etico/temas/02-etica-y-ley.html"],
+        ]],
+        ["Ejercicios", "01-hacking-etico/01-que-es-el-hacking-etico/index.html#ejercicios", [
+          ["U1·E1 · ¿Hacking ético o delito?", "01-hacking-etico/01-que-es-el-hacking-etico/ejercicios/e1.html"],
+          ["U1·E2 · Qué permite cada web", "01-hacking-etico/01-que-es-el-hacking-etico/ejercicios/e2.html"],
         ]],
       ]],
-      ["Empresa con Terraform", "01-hacking-etico/02-empresa-con-terraform/index.html", [
-        ["Temas", "01-hacking-etico/02-empresa-con-terraform/index.html#temas", [
-          ["La empresa en Floci", "01-hacking-etico/02-empresa-con-terraform/temas/01-la-empresa-en-floci.html"],
+      ["02 · Permisos y alcance", "01-hacking-etico/02-permisos-y-alcance/index.html", [
+        ["Temas", "01-hacking-etico/02-permisos-y-alcance/index.html#temas", [
+          ["2.1 · Tipos de auditoría", "01-hacking-etico/02-permisos-y-alcance/temas/01-tipos-de-auditoria.html"],
+          ["2.2 · Autorización y alcance", "01-hacking-etico/02-permisos-y-alcance/temas/02-autorizacion-y-alcance.html"],
         ]],
-        ["Laboratorio", "01-hacking-etico/02-empresa-con-terraform/index.html#ejercicio", [
-          ["Puesta en marcha del laboratorio", "01-hacking-etico/02-empresa-con-terraform/ejercicios/puesta-en-marcha.html"],
+        ["Ejercicios", "01-hacking-etico/02-permisos-y-alcance/index.html#ejercicios", [
+          ["U2·E1 · El alcance de la clínica", "01-hacking-etico/02-permisos-y-alcance/ejercicios/e1.html"],
+          ["U2·E2 · Un alcance con fallos", "01-hacking-etico/02-permisos-y-alcance/ejercicios/e2.html"],
         ]],
       ]],
-      ["Mini auditoría", "01-hacking-etico/03-mini-auditoria/index.html", [
-        ["Temas", "01-hacking-etico/03-mini-auditoria/index.html#temas", [
-          ["Fases de un ataque y auditoría vigilada", "01-hacking-etico/03-mini-auditoria/temas/01-fases-y-auditoria.html"],
-          ["Herramientas y darknets", "01-hacking-etico/03-mini-auditoria/temas/02-herramientas-y-darknets.html"],
+      ["03 · Vulnerabilidades y ataques", "01-hacking-etico/03-vulnerabilidades-y-ataques/index.html", [
+        ["Temas", "01-hacking-etico/03-vulnerabilidades-y-ataques/index.html#temas", [
+          ["3.1 · Las propiedades de la seguridad", "01-hacking-etico/03-vulnerabilidades-y-ataques/temas/01-propiedades.html"],
+          ["3.2 · Fases de un ataque", "01-hacking-etico/03-vulnerabilidades-y-ataques/temas/02-fases-de-un-ataque.html"],
+          ["3.3 · Tipos de vulnerabilidades", "01-hacking-etico/03-vulnerabilidades-y-ataques/temas/03-tipos-de-vulnerabilidades.html"],
+          ["3.4 · Tipos de ataques", "01-hacking-etico/03-vulnerabilidades-y-ataques/temas/04-tipos-de-ataques.html"],
+          ["3.5 · Documentar una vulnerabilidad", "01-hacking-etico/03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html"],
         ]],
-        ["Laboratorio", "01-hacking-etico/03-mini-auditoria/index.html#ejercicio"],
+        ["Ejercicios", "01-hacking-etico/03-vulnerabilidades-y-ataques/index.html#ejercicios", [
+          ["Ejemplo resuelto · PHP2Shell", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/php2shell.html"],
+          ["U3·E1 · Ficha de Hackea el ranking", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/e1.html"],
+          ["U3·E2 · Ficha de un CVE real", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/e2.html"],
+          ["U3·E3 · Las fases de un incidente", "01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/e3.html"],
+        ]],
       ]],
-      ["Casos analizados", "01-hacking-etico/casos-analizados/index.html", [
-        ["Hackea el ranking", "00-presentacion/temas/07-hackea-el-ranking.html#documentar"],
-        ["PHP2Shell", "01-hacking-etico/casos-analizados/cve-2026-109618-php2shell.html"],
+      ["04 · Herramientas y monitorización", "01-hacking-etico/04-herramientas-y-monitorizacion/index.html", [
+        ["Temas", "01-hacking-etico/04-herramientas-y-monitorizacion/index.html#temas", [
+          ["4.1 · Clasificación de herramientas", "01-hacking-etico/04-herramientas-y-monitorizacion/temas/01-clasificacion-de-herramientas.html"],
+          ["4.2 · Monitorización según la organización", "01-hacking-etico/04-herramientas-y-monitorizacion/temas/02-monitorizacion-segun-organizacion.html"],
+          ["4.3 · ClearNet, Deep Web y Dark Web", "01-hacking-etico/04-herramientas-y-monitorizacion/temas/03-clearnet-deep-dark-web.html"],
+        ]],
+        ["Ejercicios", "01-hacking-etico/04-herramientas-y-monitorizacion/index.html#ejercicios", [
+          ["U4·E1 · Elige su monitorización", "01-hacking-etico/04-herramientas-y-monitorizacion/ejercicios/e1.html"],
+          ["U4·E2 · Un sensor vigilando la web", "01-hacking-etico/04-herramientas-y-monitorizacion/ejercicios/e2.html"],
+          ["U4·E3 · Cuatro darknets", "01-hacking-etico/04-herramientas-y-monitorizacion/ejercicios/e3.html"],
+        ]],
       ]],
+      ["Entrega del RA1", "01-hacking-etico/index.html#entrega"],
     ]],
     ["RA2 · Redes inalámbricas", "02-redes-inalambricas/index.html", [
       ["Guía del laboratorio", "02-redes-inalambricas/temas/guia-laboratorio.html"],

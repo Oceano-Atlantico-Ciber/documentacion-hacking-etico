@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.2 · Monitorización según la organización · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">04 · Herramientas y monitorización</a></nav>
+<header>
+<p class="eyebrow">RA1 · Herramientas y monitorización · Tema 2 de 3 · Criterio i</p>
+<h1>Monitorización según la organización</h1>
+<p class="lead">Una tienda con tres ordenadores no vigila igual que un banco. La herramienta correcta es la que alguien va a mirar: una alerta que nadie lee no protege a nadie.</p>
+<div class="meta"><span>Antes: <a href="01-clasificacion-de-herramientas.html">4.1 · Clasificación de herramientas</a></span><span>Ejercicio: <a href="../ejercicios/e1.html">U4·E1</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Las cuatro preguntas</h2>
+<ol>
+<li><b>¿Qué hay que proteger?</b> Datos de salud, pagos o servicios públicos piden más que un catálogo de productos.</li>
+<li><b>¿Dónde está?</b> En equipos propios, en la nube, en servicios como Microsoft 365. Cada sitio se vigila con herramientas distintas.</li>
+<li><b>¿Quién mira las alertas?</b> Sin nadie de sistemas, la herramienta tiene que funcionar sola o con un servicio externo.</li>
+<li><b>¿Qué obliga la ley?</b> El sector público aplica el Esquema Nacional de Seguridad (ENS); los sectores esenciales y muchas empresas medianas, la directiva europea NIS2.</li>
+</ol>
+</section>
+
+<section class="seccion">
+<h2>De pequeña a grande</h2>
+<div class="tabla"><table><thead><tr><th>Organización</th><th>Lo habitual</th><th>Lo que no tiene sentido</th></tr></thead><tbody>
+<tr><td><b>Autónomo o microempresa</b>, sin informático</td><td>El antivirus/EDR que trae el sistema bien configurado, el cortafuegos del router y los avisos de seguridad del correo en la nube.</td><td>Un SIEM o un IDS que nadie va a mirar.</td></tr>
+<tr><td><b>Pyme</b> con alguien de sistemas a tiempo parcial</td><td>EDR gestionado desde una consola, cortafuegos con registro y un escáner de vulnerabilidades de vez en cuando.</td><td>Montar un SOC propio.</td></tr>
+<tr><td><b>Empresa mediana</b> con equipo de sistemas</td><td>Todo lo anterior y un SIEM que junte los registros, o un SOC gestionado que lo vigile.</td><td>Herramientas sueltas sin nadie que relacione sus alertas.</td></tr>
+<tr><td><b>Empresa en la nube</b> con desarrollo propio</td><td>El registro de la nube (CloudTrail, GuardDuty), analizadores de código en cada cambio y EDR en los equipos.</td><td>Vigilar solo la red de la oficina cuando el negocio está en AWS.</td></tr>
+<tr><td><b>Grande o sector regulado</b></td><td>SOC propio o contratado 24 horas, SIEM, IDS/IPS, EDR en todo, red team periódico.</td><td>Depender de que alguien mire una consola en horario de oficina.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion">
+<h2>Ayuda que no cuesta dinero</h2>
+<ul>
+<li><a href="https://www.incibe.es/empresas">INCIBE</a> tiene guías y la línea de ayuda <b>017</b> para empresas y ciudadanos.</li>
+<li>Las administraciones públicas pueden apoyarse en el <a href="https://www.ccn-cert.cni.es/">CCN-CERT</a> y en sus herramientas.</li>
+<li>Muchas herramientas de la tabla del tema 4.1 son libres: Wazuh, Suricata, OpenVAS, Trivy. Lo que cuestan es el tiempo de quien las mantiene.</li>
+</ul>
+</section>
+
+<section class="seccion check">
+<h2>Comprobación</h2>
+<ul>
+<li>Sabes explicar por qué un SIEM puede ser un error en una empresa de cinco personas.</li>
+<li>Sabes qué familia de herramientas falta si una empresa tiene todo su negocio en AWS y solo vigila la oficina.</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="01-clasificacion-de-herramientas.html">← 4.1 · Clasificación de herramientas</a><a href="03-clearnet-deep-dark-web.html">4.3 · ClearNet, Deep Web y Dark Web →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>
