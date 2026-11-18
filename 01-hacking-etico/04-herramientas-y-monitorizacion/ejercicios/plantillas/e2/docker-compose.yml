@@ -21,9 +21,9 @@ services:
     container_name: ra1-suricata
     network_mode: "service:web"          # ve exactamente el tráfico que llega al servidor web
     cap_add: [NET_ADMIN, NET_RAW, SYS_NICE]
-    command: -i eth0 -S /etc/suricata/rules/local.rules -l /var/log/suricata
+    command: -i eth0 -S /reglas/local.rules -l /var/log/suricata
     volumes:
-      - ./suricata/local.rules:/etc/suricata/rules/local.rules:ro
+      - ./suricata/local.rules:/reglas/local.rules:ro
       - ./salidas/suricata:/var/log/suricata
     depends_on: [web]
 

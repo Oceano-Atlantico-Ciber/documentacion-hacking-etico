@@ -30,9 +30,9 @@ services:
     image: jasonish/suricata:7.0
     network_mode: "service:web"
     cap_add: [NET_ADMIN, NET_RAW, SYS_NICE]
-    command: -i eth0 -S /etc/suricata/rules/local.rules -l /var/log/suricata
+    command: -i eth0 -S /reglas/local.rules -l /var/log/suricata
     volumes:
-      - ./local.rules:/etc/suricata/rules/local.rules:ro
+      - ./local.rules:/reglas/local.rules:ro
       - ./salidas:/var/log/suricata
     depends_on: [web]
   curl:
