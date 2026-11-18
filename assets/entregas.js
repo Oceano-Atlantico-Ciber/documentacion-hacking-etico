@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-18T10:15+00:00",
+ "actualizado": "2026-11-18T18:32+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -126,14 +126,14 @@ window.ENTREGAS = {
      "e8": "bien"
     },
     "robertoespiago-jpg": {
-     "e1": "sin",
-     "e2": "sin",
-     "e3": "sin",
-     "e4": "sin",
-     "e5": "sin",
-     "e6": "sin",
-     "e7": "sin",
-     "e8": "sin"
+     "e1": "bien",
+     "e2": "bien",
+     "e3": "bien",
+     "e4": "bien",
+     "e5": "bien",
+     "e6": "bien",
+     "e7": "bien",
+     "e8": "bien"
     },
     "rubenalondiaz2-hash": {
      "e1": "bien",
