@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.2 · Autorización y alcance · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">02 · Permisos y alcance</a></nav>
+<header>
+<p class="eyebrow">RA1 · Permisos y alcance · Tema 2 de 2 · Criterio c</p>
+<h1>Autorización y alcance</h1>
+<p class="lead">Lo que convierte un ataque en una auditoría es un papel firmado. Ese papel dice quién autoriza, qué se puede tocar, cómo, cuándo y qué pasa si algo se tuerce. Todo lo que no está escrito, no está permitido.</p>
+<div class="meta"><span>Antes: <a href="01-tipos-de-auditoria.html">2.1 · Tipos de auditoría</a></span><span>Ejercicios: <a href="../ejercicios/e1.html">U2·E1</a> y <a href="../ejercicios/e2.html">U2·E2</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Los documentos</h2>
+<dl class="ficha">
+<dt>Contrato</dt><dd>El acuerdo comercial: qué se hace, cuánto cuesta, confidencialidad y responsabilidad si algo falla. Incluye el tratamiento de datos personales.</dd>
+<dt>Carta de autorización</dt><dd>Una página firmada por alguien con poder para autorizar (gerencia o dirección, no el técnico de turno) que dice que el auditor puede probar esos sistemas en esas fechas. Se lleva encima: es lo que se enseña si alguien pregunta.</dd>
+<dt>Alcance</dt><dd>La lista exacta de lo que entra y lo que no: direcciones IP, dominios, aplicaciones, oficinas.</dd>
+<dt>Reglas del encargo</dt><dd>Cómo se puede probar: técnicas permitidas y prohibidas, horario, qué hacer con lo que se encuentre. En inglés, <i>rules of engagement</i>.</dd>
+</dl>
+</section>
+
+<section class="seccion" id="campos">
+<h2>Qué tiene que decir el alcance</h2>
+<div class="tabla"><table><thead><tr><th>Campo</th><th>Bien escrito</th><th>Mal escrito</th></tr></thead><tbody>
+<tr><td>Autoriza</td><td>Nombre y cargo de quien puede autorizar, con su firma.</td><td>«Juan, de informática, por WhatsApp».</td></tr>
+<tr><td>Dentro del alcance</td><td>Direcciones y dominios concretos: <code>203.0.113.10</code>, <code>www.ejemplo.test</code>.</td><td>«Todos los sistemas de la empresa».</td></tr>
+<tr><td>Fuera del alcance</td><td>Lo que no se toca aunque esté cerca: lo de proveedores, lo que no es del cliente.</td><td>Nada, o «lo que el auditor considere».</td></tr>
+<tr><td>Técnicas</td><td>Lo permitido (escaneo, explotación sin modificar datos) y lo prohibido (denegación de servicio, ingeniería social…).</td><td>«Cualquier técnica necesaria».</td></tr>
+<tr><td>Fechas y horario</td><td>Inicio, fin y franja horaria, para no afectar al negocio.</td><td>«Cuando le venga bien al auditor».</td></tr>
+<tr><td>Contacto de emergencia</td><td>Una persona localizable durante toda la prueba, por si algo se cae.</td><td>El correo general de la empresa.</td></tr>
+<tr><td>Datos personales</td><td>Se demuestran sin copiarlos y se borran al terminar.</td><td>«Se copian como prueba».</td></tr>
+<tr><td>Entregable</td><td>Qué informe se entrega, a quién y cómo.</td><td>Nada.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion" id="terceros">
+<h2>Lo que no es del cliente</h2>
+<p>El cliente solo puede autorizar lo que es suyo. Si su web está en un hosting, su correo en Microsoft 365 o sus servidores en AWS, una parte es del proveedor:</p>
+<ul>
+<li>Los grandes proveedores de nube publican qué se puede probar sin pedirles permiso. Por ejemplo, la <a href="https://aws.amazon.com/security/penetration-testing/">política de pruebas de AWS</a> permite probar tus propias instancias, pero prohíbe la denegación de servicio sin su aprobación.</li>
+<li>Un hosting pequeño o un proveedor de servicios gestionados tiene que dar su permiso por escrito.</li>
+<li>Lo que comparte infraestructura con otros clientes (un servidor de correo, una red compartida) suele quedar fuera.</li>
+</ul>
+</section>
+
+<section class="seccion">
+<h2>En el curso</h2>
+<p>Todo lo que hagáis en el curso cabe en un alcance: vuestro propio equipo, los contenedores de los laboratorios y, en clase, la dirección que proyecte el docente durante la práctica. Nada más. Ni la red del instituto ni las webs de otros.</p>
+</section>
+
+<section class="seccion check">
+<h2>Comprobación</h2>
+<ul>
+<li>Sabes qué campos tiene que tener un alcance y por qué cada uno.</li>
+<li>Sabes qué parte de una web alojada en la nube puede autorizar el cliente y qué parte no.</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="01-tipos-de-auditoria.html">← 2.1 · Tipos de auditoría</a><a href="../ejercicios/e1.html">U2·E1 · El alcance de la clínica →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

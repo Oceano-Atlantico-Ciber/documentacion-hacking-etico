@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.5 · Documentar una vulnerabilidad · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
+<header>
+<p class="eyebrow">RA1 · Vulnerabilidades y ataques · Tema 5 de 5 · Criterio h</p>
+<h1>Documentar una vulnerabilidad</h1>
+<p class="lead">Un fallo que no se documenta bien no se corrige. Todos los fallos del curso, los del juego del primer día y los de productos reales, se describen con la misma ficha.</p>
+<div class="meta"><span>Antes: <a href="04-tipos-de-ataques.html">3.4 · Tipos de ataques</a></span><span>Ejemplo resuelto: <a href="../ejercicios/php2shell.html">PHP2Shell</a></span><span>Ejercicios: <a href="../ejercicios/e1.html">U3·E1</a> y <a href="../ejercicios/e2.html">U3·E2</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Las cuatro preguntas</h2>
+<p>Antes de la ficha, cualquier hallazgo responde a cuatro preguntas. Con el juego de la presentación:</p>
+<div class="tabla"><table><thead><tr><th>Pregunta</th><th>Ejemplo con Hackea el ranking</th></tr></thead><tbody>
+<tr><td>¿Dónde está?</td><td>En la ruta de la API que recibe la puntuación.</td></tr>
+<tr><td>¿Cuál es el fallo?</td><td>El servidor se fía de un dato que decide el cliente.</td></tr>
+<tr><td>¿Qué permite?</td><td>Alterar la integridad del ranking.</td></tr>
+<tr><td>¿Cómo se corrige?</td><td>El servidor calcula la puntuación y comprueba quién pide qué.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="seccion" id="ficha">
+<h2>La ficha</h2>
+<div class="tabla"><table><thead><tr><th>Campo</th><th>Qué va</th></tr></thead><tbody>
+<tr><td>Identificación</td><td>El CVE, el producto y el componente afectado. Un fallo sin CVE, como los del juego, se identifica por su CWE.</td></tr>
+<tr><td>Tipo</td><td>De diseño, de configuración, de software o humana, y qué ataque permite.</td></tr>
+<tr><td>Gravedad</td><td>La nota CVSS, su versión y su vector, y por qué tiene ese valor.</td></tr>
+<tr><td>Impacto</td><td>Qué propiedades rompe: confidencialidad, integridad, disponibilidad, autenticidad.</td></tr>
+<tr><td>Versiones</td><td>Las afectadas y la primera corregida.</td></tr>
+<tr><td>Explotación</td><td>Si hay ataques reales, desde cuándo y quién lo dice. Si está en CISA KEV, la fecha.</td></tr>
+<tr><td>Defensa</td><td>Separando lo que corrige el fallo (actualizar, cambiar el diseño) de lo que solo reduce el riesgo mientras tanto (un cortafuegos, desactivar una función).</td></tr>
+<tr><td>Fuentes</td><td>Las oficiales primero (el fabricante, NVD, CISA), distinguiendo lo confirmado de lo que no.</td></tr>
+</tbody></table></div>
+<p>En un informe de auditoría, cada hallazgo lleva además la evidencia (qué se hizo y qué respondió el sistema) y la recomendación. Lo practicarás en los informes de RA2 en adelante.</p>
+</section>
+
+<section class="seccion ia">
+<h2>La IA y las fichas</h2>
+<p>Una IA rellena una ficha en segundos, y a menudo se inventa la nota o el CWE. Úsala para entender el fallo y comprueba cada dato en NVD o en el catálogo de CISA. El corrector del U3·E2 compara tus datos con esas fuentes.</p>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="04-tipos-de-ataques.html">← 3.4 · Tipos de ataques</a><a href="../ejercicios/e1.html">U3·E1 · Ficha de Hackea el ranking →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>

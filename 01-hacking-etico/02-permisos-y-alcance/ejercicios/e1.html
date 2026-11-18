@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>U2·E1 · El alcance de la clínica · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">02 · Permisos y alcance</a></nav>
+
+<h1>U2·E1 · El alcance de la clínica</h1>
+<p class="lead">Una clínica dental te contrata para un test de intrusión. Conviertes lo que cuenta en un <code>alcance.json</code> tan preciso que un programa puede decir, para cualquier dirección y cualquier hora, si la prueba está permitida.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/01-tipos-de-auditoria.html">2.1 · Tipos de auditoría</a> y <a href="../temas/02-autorizacion-y-alcance.html">2.2 · Autorización y alcance</a></dd>
+<dt>Criterio</dt><dd>c</dd>
+<dt>Trabajas en</dt><dd><code>ra1/u2-e1/alcance.json</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-ra1-u2-e1</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u2-e1
+cd ra1/u2-e1
+code LEEME.md alcance.json</code></pre></div>
+<p><code>LEEME.md</code> es tu encargo: las direcciones, las fechas y el horario son distintos para cada alumno.</p>
+
+<h2 class="step"><span class="n">2</span>Escribe el alcance</h2>
+<div class="tabla"><table><thead><tr><th>Campo</th><th>Qué va</th></tr></thead><tbody>
+<tr><td><code>cliente</code>, <code>autoriza</code></td><td>La empresa, y nombre y cargo de quien firma.</td></tr>
+<tr><td><code>tipo</code></td><td><code>caja negra</code>, <code>caja gris</code> o <code>caja blanca</code>, según lo que te dan.</td></tr>
+<tr><td><code>dentro</code></td><td>Lista de direcciones y redes que se pueden probar, como <code>"203.0.113.10"</code> o <code>"192.168.1.0/24"</code>.</td></tr>
+<tr><td><code>fuera</code></td><td>Lista de direcciones que no se tocan aunque estén dentro de una red de <code>dentro</code>.</td></tr>
+<tr><td><code>inicio</code>, <code>fin</code></td><td>Primera y última noche de la prueba, como <code>"2027-02-01"</code>.</td></tr>
+<tr><td><code>horario</code></td><td><code>desde</code> y <code>hasta</code> como <code>"20:00"</code>. Si cruza la medianoche, la madrugada cuenta como parte de la noche anterior.</td></tr>
+<tr><td><code>prohibido</code></td><td>Valores de esta lista, tal cual: <code>denegación de servicio</code>, <code>ingeniería social</code>, <code>modificar datos</code>, <code>borrar datos</code>, <code>escaneo</code>, <code>explotación</code>.</td></tr>
+<tr><td><code>emergencia</code></td><td><code>nombre</code> y <code>telefono</code> del contacto de emergencia.</td></tr>
+</tbody></table></div>
+<p>El correo en Microsoft 365 no tiene dirección en tu encargo: no lo pongas en <code>dentro</code>.</p>
+
+<h2 class="step"><span class="n">3</span>Pregúntale a tu alcance</h2>
+<div class="cmd"><pre><code>py en_alcance.py 203.0.113.10 "2027-02-03 23:30"
+py en_alcance.py 203.0.113.10 "2027-02-03 12:00"</code></pre></div>
+<p>Cambia las direcciones y las fechas por las de tu encargo y prueba los casos difíciles: el datáfono, la madrugada de la última noche, la noche antes de empezar. El corrector hace lo mismo con nueve preguntas que no ves.</p>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li><code>alcance.json</code> no es JSON válido, o falta un campo o no tiene el formato de la tabla.</li>
+<li>Alguna de sus preguntas (una dirección y un momento) sale distinta de lo que permite el encargo. Dice cuántas y pone un ejemplo.</li>
+<li>El tipo, lo prohibido, quién autoriza o el contacto de emergencia no son los del encargo.</li>
+</ul>
+
+<h2 class="step"><span class="n">4</span>Pruébalo, sube y etiqueta</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e1
+git add ra1/u2-e1
+git commit -m "docs(ra1-u2-e1): alcance del test de intrusión de la clínica"
+git push
+git tag -a entrega-ra1-u2-e1 -m "U2·E1 resuelto"
+git push origin entrega-ra1-u2-e1</code></pre></div>
+<p><code>pruebas.py</code> ya hace las nueve preguntas; lo que no comprueba es el tipo y lo prohibido, que van con clave. Etiqueta cuando la fila de U2·E1 de <b>Corrector ra1</b> salga sin fallos.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="../temas/02-autorizacion-y-alcance.html">← 2.2 · Autorización y alcance</a><a href="e2.html">U2·E2 · Un alcance con fallos →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

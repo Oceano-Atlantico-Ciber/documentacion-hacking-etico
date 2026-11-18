@@ -1,0 +1,16 @@
+{
+  "ip_atacante": "",
+  "intentos_fallidos": 0,
+  "primer_acceso": "",
+  "cuenta_usada": "",
+  "cuenta_creada": "",
+  "servicio_instalado": "",
+  "registro_borrado": "",
+  "tecnicas": {
+    "5152": "",
+    "4625": "",
+    "4720": "",
+    "7045": "",
+    "1102": ""
+  }
+}

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>U4·E2 · Un sensor vigilando la web · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">04 · Herramientas y monitorización</a></nav>
+
+<h1>U4·E2 · Un sensor vigilando la web</h1>
+<p class="lead">El servidor web de una empresa ficticia tiene pegado un sensor Suricata. Haces una pequeña auditoría desde tu puesto, miras qué ha visto el sensor y escribes una regla para lo que se le escapó.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/01-clasificacion-de-herramientas.html">4.1 · Clasificación de herramientas</a> y <a href="../../03-vulnerabilidades-y-ataques/temas/02-fases-de-un-ataque.html">3.2 · Fases de un ataque</a></dd>
+<dt>Criterios</dt><dd>a, i</dd>
+<dt>Trabajas en</dt><dd><code>ra1/u4-e2/</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-ra1-u4-e2</code> sobre <code>main</code></dd>
+<dt>Necesitas</dt><dd>Docker Desktop en marcha</dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el laboratorio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u4-e2
+cd ra1/u4-e2
+docker compose up -d
+docker compose logs suricata</code></pre></div>
+<p>Espera a ver <code>Engine started</code> en el registro de Suricata. El laboratorio es tuyo y está solo en tu equipo: es tu alcance.</p>
+<div class="tabla"><table><thead><tr><th>Contenedor</th><th>Dirección</th><th>Qué es</th></tr></thead><tbody>
+<tr><td><code>web</code></td><td><code>172.28.0.20</code></td><td>El servidor web de la empresa. Suricata escucha pegado a él.</td></tr>
+<tr><td><code>auditor</code></td><td>dinámica</td><td>Tu puesto: nmap dentro de la misma red.</td></tr>
+<tr><td><code>curl</code></td><td>dinámica</td><td>curl dentro de la misma red, para pedir páginas.</td></tr>
+</tbody></table></div>
+
+<h2 class="step"><span class="n">2</span>Haz la auditoría</h2>
+<p>Reconocimiento y escaneo de la red y del servidor:</p>
+<div class="cmd"><pre><code>docker compose run --rm auditor -sn 172.28.0.0/24
+docker compose run --rm auditor -sV 172.28.0.20</code></pre></div>
+<p>Mira la web: la portada, lo que pide no indexar y lo que aparezca allí.</p>
+<div class="cmd"><pre><code>docker compose run --rm curl -i http://172.28.0.20/
+docker compose run --rm curl -i http://172.28.0.20/robots.txt
+docker compose run --rm curl -i http://172.28.0.20/admin/
+docker compose run --rm curl -i http://172.28.0.20/&lt;lo-que-diga-robots.txt&gt;/</code></pre></div>
+
+<h2 class="step"><span class="n">3</span>Mira qué ha visto el sensor</h2>
+<div class="cmd"><pre><code>py etiquetar.py &gt; alertas.txt
+cat alertas.txt</code></pre></div>
+<p><code>etiquetar.py</code> resume las alertas de <code>salidas/suricata/eve.json</code> por fase y por origen. Compáralo con lo que hiciste: la visita al directorio de copias que aparece en <code>robots.txt</code>, que expone copias de seguridad de la empresa, no tiene ninguna alerta propia. Su nombre es distinto para cada alumno. Las reglas están en <code>suricata/local.rules</code>; léelas para ver por qué.</p>
+
+<h2 class="step"><span class="n">4</span>Escribe tu regla</h2>
+<p>Añade al final de <code>suricata/local.rules</code> una regla que salte cuando alguien pida tu directorio de copias, y solo entonces. Copia la de <code>/admin</code> como punto de partida, cambia lo que haga falta y usa un <code>sid</code> desde <code>1000100</code>. Pon la fase al principio del mensaje para que <code>etiquetar.py</code> la cuente bien.</p>
+<div class="cmd"><pre><code>docker compose restart suricata
+docker compose run --rm curl -i http://172.28.0.20/&lt;lo-que-diga-robots.txt&gt;/
+py etiquetar.py &gt; alertas.txt
+cat alertas.txt</code></pre></div>
+<p>Comprueba que tu alerta aparece. Si Suricata no arranca, <code>docker compose logs suricata</code> dice qué línea no entiende.</p>
+<p class="ia">Si pides la regla a la IA, comprueba cada palabra clave en la <a href="https://docs.suricata.io/en/suricata-7.0.0/rules/intro.html">documentación de reglas de Suricata 7</a> y pruébala antes de darla por buena.</p>
+<p>El corrector levanta su propio laboratorio con tu <code>local.rules</code>, repite la portada, <code>robots.txt</code> y <code>/admin/</code>, y después pide tu directorio de copias. Marca fallo si:</p>
+<ul class="falla">
+<li>Falta <code>suricata/local.rules</code> o <code>alertas.txt</code>, o <code>alertas.txt</code> no es la salida de <code>etiquetar.py</code>.</li>
+<li>Has borrado reglas de la plantilla, o no hay ninguna regla tuya con <code>sid</code> desde <code>1000100</code>.</li>
+<li>Suricata no acepta el fichero.</li>
+<li>Tu regla no salta al pedir tu directorio de copias, o salta también con lo demás.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e2</code></pre></div>
+<p>Monta un laboratorio aparte, igual que el del corrector, y lo quita al terminar. Tarda un par de minutos.</p>
+
+<h2 class="step"><span class="n">6</span>Sube, etiqueta y apaga</h2>
+<div class="cmd"><pre><code>git add ra1/u4-e2
+git commit -m "feat(ra1-u4-e2): regla de Suricata para las copias expuestas"
+git push
+git tag -a entrega-ra1-u4-e2 -m "U4·E2 resuelto"
+git push origin entrega-ra1-u4-e2
+cd ra1/u4-e2
+docker compose down</code></pre></div>
+<p>Lo que escribe Suricata en <code>salidas/</code> no se sube: ya lo excluye el <code>.gitignore</code> de la plantilla.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U4·E1 · Elige su monitorización</a><a href="e3.html">U4·E3 · Cuatro darknets →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

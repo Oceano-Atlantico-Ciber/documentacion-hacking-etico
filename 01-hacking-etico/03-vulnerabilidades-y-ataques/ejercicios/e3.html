@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>U3·E3 · El registro de un incidente · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<main>
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
+
+<h1>U3·E3 · El registro de un incidente</h1>
+<p class="lead">Una ferretería encontró sus servidores cifrados un lunes. Tienes el registro de eventos del servidor del fin de semana: con PowerShell reconstruyes qué hizo el atacante, fase a fase, y pones a cada paso su técnica de MITRE ATT&amp;CK.</p>
+<dl class="ficha">
+<dt>Teoría</dt><dd><a href="../temas/02-fases-de-un-ataque.html">3.2 · Fases de un ataque</a> y <a href="../temas/04-tipos-de-ataques.html">3.4 · Tipos de ataques</a></dd>
+<dt>Criterios</dt><dd>e, g</dd>
+<dt>Trabajas en</dt><dd><code>ra1/u3-e3/respuestas.json</code></dd>
+<dt>Etiqueta</dt><dd><code>entrega-ra1-u3-e3</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Lo anuncia el docente</dd>
+</dl>
+
+<h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e3
+cd ra1/u3-e3
+code respuestas.json</code></pre></div>
+<p><code>registro.csv</code> es distinto para cada alumno: otro atacante, otras cuentas, otras horas.</p>
+
+<h2 class="step"><span class="n">2</span>Los eventos que importan</h2>
+<div class="tabla"><table><thead><tr><th>Id</th><th>Qué registra</th></tr></thead><tbody>
+<tr><td><code>5152</code> / <code>5156</code></td><td>El cortafuegos bloquea o permite una conexión.</td></tr>
+<tr><td><code>4625</code> / <code>4624</code></td><td>Un inicio de sesión falla o funciona. Tipo 10 es escritorio remoto.</td></tr>
+<tr><td><code>4720</code> / <code>4732</code></td><td>Se crea una cuenta / se añade a un grupo.</td></tr>
+<tr><td><code>7045</code></td><td>Se instala un servicio.</td></tr>
+<tr><td><code>1102</code></td><td>Alguien borra el registro de auditoría.</td></tr>
+</tbody></table></div>
+
+<h2 class="step"><span class="n">3</span>Investiga con PowerShell</h2>
+<div class="cmd"><pre><code>$r = Import-Csv registro.csv
+$r | Group-Object Id | Sort-Object Count -Descending
+$r | Where-Object Id -eq 5152 | Group-Object Ip | Sort-Object Count -Descending
+$r | Where-Object { $_.Id -eq 4625 -and $_.Ip -eq "&lt;ip&gt;" } | Measure-Object
+$r | Where-Object { $_.Ip -eq "&lt;ip&gt;" -or $_.Id -in 4720,7045,1102 } | Format-Table</code></pre></div>
+<p>En el día normal también hay ruido: contraseñas mal escritas de los empleados y algún escaneo suelto de Internet. Busca la dirección que escanea muchos puertos seguidos y sigue sus pasos.</p>
+
+<h2 class="step"><span class="n">4</span>Rellena las respuestas</h2>
+<div class="tabla"><table><thead><tr><th>Campo</th><th>Qué va</th></tr></thead><tbody>
+<tr><td><code>ip_atacante</code></td><td>La dirección desde la que se escaneó y se entró.</td></tr>
+<tr><td><code>intentos_fallidos</code></td><td>Cuántos <code>4625</code> hay desde esa dirección. Un número, sin comillas.</td></tr>
+<tr><td><code>primer_acceso</code></td><td>Fecha y hora del <code>4624</code> del atacante, tal como aparece: <code>aaaa-mm-dd hh:mm:ss</code>.</td></tr>
+<tr><td><code>cuenta_usada</code>, <code>cuenta_creada</code></td><td>La cuenta con la que entró y la que creó.</td></tr>
+<tr><td><code>servicio_instalado</code></td><td>El programa de acceso remoto que instaló.</td></tr>
+<tr><td><code>registro_borrado</code></td><td>Fecha y hora del <code>1102</code>.</td></tr>
+<tr><td><code>tecnicas</code></td><td>Para cada evento, su técnica de <a href="https://attack.mitre.org/">ATT&amp;CK</a> como <code>T1234</code> o <code>T1234.001</code>.</td></tr>
+</tbody></table></div>
+<p>El corrector marca fallo si:</p>
+<ul class="falla">
+<li><code>respuestas.json</code> no es JSON válido.</li>
+<li>Un dato no coincide con tu registro: la dirección, la cuenta, la hora, el número de intentos.</li>
+<li>Una técnica no tiene el formato, o hay técnicas que no coinciden con la clave. De estas dice cuántas, no cuáles.</li>
+</ul>
+
+<h2 class="step"><span class="n">5</span>Pruébalo, sube y etiqueta</h2>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e3
+git add ra1/u3-e3
+git commit -m "docs(ra1-u3-e3): análisis del registro del incidente"
+git push
+git tag -a entrega-ra1-u3-e3 -m "U3·E3 resuelto"
+git push origin entrega-ra1-u3-e3</code></pre></div>
+<p><code>pruebas.py</code> ya comprueba los datos del registro; las técnicas las compara el corrector.</p>
+
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e2.html">← U3·E2 · Ficha de un CVE real</a><a href="../../04-herramientas-y-monitorizacion/index.html">04 · Herramientas y monitorización →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</main>
+<script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
+</body>
+</html>

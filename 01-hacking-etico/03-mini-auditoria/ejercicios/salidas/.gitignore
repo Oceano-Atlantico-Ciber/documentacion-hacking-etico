@@ -1,3 +1,0 @@
-# Lo que escribe Suricata no se versiona; la carpeta sí, para que exista al montarla.
-*
-!.gitignore

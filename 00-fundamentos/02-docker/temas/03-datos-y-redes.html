@@ -128,14 +128,14 @@ docker port web          # 80/tcp -&gt; 127.0.0.1:8080</code></pre>
 docker run -d --name web --network lab nginx:1.27-alpine
 docker run --rm --network lab curlimages/curl:8.11.1 -s http://web/    # llega por el nombre
 docker network inspect lab     # quién está conectado y con qué IP</code></pre>
-<p>Una red puede tener una subred fija y cada contenedor una IP fija. La Mini auditoría lo hace para que el mapa de la empresa no cambie entre alumnos: la web siempre es <code>172.28.0.20</code>.</p>
+<p>Una red puede tener una subred fija y cada contenedor una IP fija. Los laboratorios de la empresa ficticia lo hacen para que el mapa de la empresa no cambie entre alumnos: la web siempre es <code>172.28.0.20</code>.</p>
 <pre><code>docker network create --subnet 172.28.0.0/24 lab-mini
 docker run -d --name web --network lab-mini --ip 172.28.0.20 nginx:1.27-alpine</code></pre>
 </section>
 
 <section class="seccion">
 <h2>Compartir la red de otro contenedor</h2>
-<p>Un sensor de red tiene que ver el tráfico que llega a un servidor. Para eso no se conecta a la red como uno más: se mete <b>dentro de la red del servidor</b>. Comparten tarjeta de red, IP y puertos, así que el sensor ve exactamente lo que ve el servidor. En la Mini auditoría, Suricata lo hace con la web.</p>
+<p>Un sensor de red tiene que ver el tráfico que llega a un servidor. Para eso no se conecta a la red como uno más: se mete <b>dentro de la red del servidor</b>. Comparten tarjeta de red, IP y puertos, así que el sensor ve exactamente lo que ve el servidor. En el laboratorio de Suricata del RA1 (U4·E2), Suricata lo hace con la web.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 190" role="img" aria-label="nmap envía tráfico a 172.28.0.20; web y suricata comparten la misma tarjeta de red, así que suricata ve cada paquete que recibe web">
 <defs><marker id="sen-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -176,7 +176,7 @@ docker run -d --name sensor --network container:web …   # en compose: network_
 <li>Sabes elegir entre volumen y bind mount, y para qué sirve <code>:ro</code></li>
 <li>Sabes qué significa cada parte de <code>-p 127.0.0.1:8080:80</code> y quién puede llegar sin la dirección</li>
 <li>Sabes por qué <code>http://floci:4566</code> funciona dentro de la red <code>lab</code></li>
-<li>Sabes por qué Suricata ve el tráfico de la web en la Mini auditoría</li>
+<li>Sabes por qué Suricata ve el tráfico de la web en el laboratorio del U4·E2</li>
 <li>E5 y E6 superados en el check <b>Corrector docker</b> y con su etiqueta</li>
 </ul>
 </section>

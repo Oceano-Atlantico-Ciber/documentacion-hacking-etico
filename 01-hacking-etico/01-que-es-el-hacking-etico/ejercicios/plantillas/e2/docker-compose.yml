@@ -1,0 +1,9 @@
+# Web de la empresa ficticia del U1·E2: sirve la carpeta web/ en http://localhost:8081
+name: ra1-security-txt
+services:
+  web:
+    image: nginx:1.27-alpine
+    ports:
+      - "8081:80"
+    volumes:
+      - ./web:/usr/share/nginx/html:ro

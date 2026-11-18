@@ -12,55 +12,61 @@
 
 <h1>Hacking ético, alcance y monitorización</h1>
 <p class="lead"><b>RA1</b> · Determina herramientas de monitorización para detectar vulnerabilidades aplicando técnicas de hacking ético.</p>
-<h2>Contenidos básicos</h2>
-<h3>Determinación de las herramientas de monitorización para detectar vulnerabilidades</h3>
-<ul><li>Elementos esenciales del hacking ético.</li><li>Diferencias entre hacking, hacking ético, tests de penetración y hacktivismo.</li><li>Recolección de permisos y autorizaciones previos a un test de intrusión.</li><li>Fases del hacking.</li><li>Auditorías de caja negra y de caja blanca.</li><li>Documentación de vulnerabilidades.</li><li>Clasificación de herramientas de seguridad y hacking.</li><li>ClearNet, Deep Web, Dark Web, Darknets. Conocimiento, diferencias y herramientas de acceso: Tor, ZeroNet, FreeNet.</li></ul>
-<h2>Criterios de evaluación</h2>
-<ol type="a">
-<li>Terminología esencial del hacking ético.</li>
-<li>Conceptos éticos y legales que separan el hacking del ciberdelito.</li>
-<li>Alcance y condiciones de un test de intrusión.</li>
-<li>Elementos de la seguridad: confidencialidad, autenticidad, integridad y disponibilidad.</li>
-<li>Fases de un ataque.</li>
-<li>Tipos de vulnerabilidades.</li>
-<li>Tipos de ataques.</li>
-<li>Identificación y caracterización de vulnerabilidades.</li>
-<li>Herramientas de monitorización según el tipo de organización.</li>
-</ol>
-
-<h2>Itinerario</h2>
-<p>Antes de este bloque: la <a href="../00-presentacion/index.html">Presentación</a> y las unidades de git y Docker de <a href="../00-fundamentos/index.html">Fundamentos</a>.</p>
-<table><thead><tr><th>Semana</th><th>Temas</th><th>Criterios</th></tr></thead><tbody>
-<tr><td>3 · 4 y 5 nov</td><td>El minijuego <a href="../00-presentacion/temas/07-hackea-el-ranking.html">Hackea el ranking</a>, con <a href="../00-presentacion/temas/07-hackea-el-ranking.html#documentar">de truco a vulnerabilidad</a>. <a href="01-etica-y-seguridad/temas/01-etica-ley-y-alcance.html">Ética, ley y alcance</a>, <a href="01-etica-y-seguridad/temas/02-seguridad-y-vulnerabilidades.html">Seguridad, vulnerabilidades y ataques</a>, <a href="02-empresa-con-terraform/temas/01-la-empresa-en-floci.html">La empresa en Floci</a>, <a href="03-mini-auditoria/temas/01-fases-y-auditoria.html">Fases de un ataque y auditoría vigilada</a> y <a href="03-mini-auditoria/temas/02-herramientas-y-darknets.html">Herramientas y darknets</a>. Entrega del bloque.</td><td>a, b, c, d, e, f, g, h, i</td></tr>
-</tbody></table>
 
 <h2 id="unidades">Unidades</h2>
-<p>Cada unidad tiene su carpeta con <code>temas/</code>, la teoría, y, si tiene laboratorio, <code>ejercicios/</code> con sus ficheros.</p>
+<p>Cuatro unidades, una por cada bloque de contenidos del currículo. Cada una tiene sus temas y sus ejercicios.</p>
 <div class="cards">
-<a class="card" href="01-etica-y-seguridad/index.html"><b>Ética y seguridad</b> · criterios b, c, d, f, g, h<span>Ética, ley y alcance; seguridad, vulnerabilidades y ataques.</span></a>
-<a class="card" href="02-empresa-con-terraform/index.html"><b>Empresa con Terraform</b> · criterios c, h<span>La empresa ficticia en Floci: Terraform con fallos corregido con Trivy y desplegado.</span></a>
-<a class="card" href="03-mini-auditoria/index.html"><b>Mini auditoría</b> · criterios a, e, h, i<span>Fases de un ataque con Suricata vigilando, herramientas y darknets.</span></a>
-<a class="card" href="casos-analizados/index.html"><b>Casos analizados</b> · criterios b, d, e, f, g, h<span>Fallos documentados con la misma ficha: los del juego Hackea el ranking, de la Presentación, y PHP2Shell (CVE-2026-109618/19).</span></a>
+<a class="card" href="01-que-es-el-hacking-etico/index.html"><b>01 · Qué es el hacking ético</b><span>Terminología, Código Penal, datos personales y divulgación responsable. Criterios a y b.</span></a>
+<a class="card" href="02-permisos-y-alcance/index.html"><b>02 · Permisos y alcance</b><span>Caja negra, gris y blanca; autorización, alcance y reglas de un test de intrusión. Criterio c.</span></a>
+<a class="card" href="03-vulnerabilidades-y-ataques/index.html"><b>03 · Vulnerabilidades y ataques</b><span>Propiedades de la seguridad, fases de un ataque, tipos de vulnerabilidades y ataques, y cómo documentarlas. Criterios d a h.</span></a>
+<a class="card" href="04-herramientas-y-monitorizacion/index.html"><b>04 · Herramientas y monitorización</b><span>Familias de herramientas, monitorización según la organización, Suricata y darknets. Criterios a e i.</span></a>
 </div>
 
-<h2>En Floci</h2>
-<p>La empresa ficticia del curso vive en una cuenta AWS emulada con Floci. En este bloque la desplegamos con Terraform corrigiendo sus fallos de configuración, hacemos su primer inventario y la vigilamos con Suricata.</p>
+<h2 id="criterios">Criterios de evaluación</h2>
+<div class="tabla"><table><thead><tr><th></th><th>Criterio (texto del BOE)</th><th>Unidad</th><th>Ejercicios</th></tr></thead><tbody>
+<tr><td>a</td><td>Se ha definido la terminología esencial del hacking ético.</td><td>01, 04</td><td>U1·E1, U4·E2, U4·E3</td></tr>
+<tr><td>b</td><td>Se han identificado los conceptos éticos y legales frente al ciberdelito.</td><td>01</td><td>U1·E1, U1·E2</td></tr>
+<tr><td>c</td><td>Se ha definido el alcance y condiciones de un test de intrusión.</td><td>02</td><td>U2·E1, U2·E2</td></tr>
+<tr><td>d</td><td>Se han identificado los elementos esenciales de seguridad: confidencialidad, autenticidad, integridad y disponibilidad.</td><td>03</td><td>U3·E1, U3·E2</td></tr>
+<tr><td>e</td><td>Se han identificado las fases de un ataque seguidas por un atacante.</td><td>03</td><td>U3·E3</td></tr>
+<tr><td>f</td><td>Se han analizado y definido los tipos vulnerabilidades.</td><td>03</td><td>U3·E1, U3·E2</td></tr>
+<tr><td>g</td><td>Se han analizado y definido los tipos de ataque.</td><td>03</td><td>U3·E3</td></tr>
+<tr><td>h</td><td>Se han determinado y caracterizado las diferentes vulnerabilidades existentes.</td><td>03</td><td>U3·E1, U3·E2</td></tr>
+<tr><td>i</td><td>Se han determinado las herramientas de monitorización disponibles en el mercado adecuadas en función del tipo de organización.</td><td>04</td><td>U4·E1, U4·E2</td></tr>
+</tbody></table></div>
 
-<h2 id="repositorio">Qué debe haber en tu repositorio al poner la etiqueta</h2>
-<p>El trabajo de este bloque va en la carpeta <code>fundamentos/</code> de tu repositorio de entregas, junto a los ejercicios de <a href="../00-fundamentos/index.html#repositorio">Fundamentos</a>.</p>
-<table><thead><tr><th>Ruta</th><th>Contenido</th><th>Tema</th></tr></thead><tbody>
-<tr><td><code>fundamentos/puesto.txt</code></td><td>Salida de <code>git --version</code>, <code>py --version</code> y <code>docker compose version</code>, y una respuesta de tu IA.</td><td><a href="../00-presentacion/temas/06-primer-commit.html">Primer commit</a></td></tr>
-<tr><td><code>fundamentos/alcance.html</code></td><td>La plantilla de alcance rellena para la empresa ficticia.</td><td><a href="01-etica-y-seguridad/temas/01-etica-ley-y-alcance.html">Ética, ley y alcance</a></td></tr>
-<tr><td><code>fundamentos/terraform/</code></td><td>El Terraform corregido (sin <code>.terraform/</code> ni <code>tfstate</code>).</td><td><a href="02-empresa-con-terraform/temas/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
-<tr><td><code>fundamentos/trivy-antes.txt</code>, <code>fundamentos/trivy-despues.txt</code></td><td>Salida de Trivy antes y después de corregir. La segunda sin avisos altos ni críticos.</td><td><a href="02-empresa-con-terraform/temas/01-la-empresa-en-floci.html">La empresa en Floci</a></td></tr>
-<tr><td><code>fundamentos/inventario/red.txt</code>, <code>fundamentos/inventario/nube.txt</code></td><td>Salida de nmap sobre la red del laboratorio y de la CLI de AWS sobre la cuenta emulada.</td><td><a href="03-mini-auditoria/temas/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
-<tr><td><code>fundamentos/alertas/resumen.txt</code>, <code>fundamentos/mini-auditoria/suricata/local.rules</code></td><td>Salida de <code>etiquetar.py</code> y el fichero de reglas con al menos una regla tuya.</td><td><a href="03-mini-auditoria/temas/01-fases-y-auditoria.html">Fases y auditoría</a></td></tr>
-<tr><td><code>fundamentos/casos-analizados/</code></td><td>Un Markdown por caso: <code>hackea-el-ranking.md</code> y <code>cve-2026-109618-php2shell.md</code>.</td><td><a href="casos-analizados/index.html#entrega">Casos analizados</a></td></tr>
-</tbody></table>
-<p class="note">Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>. El <code>.gitignore</code> de la plantilla ya excluye el estado de Terraform y las capturas.</p>
+<h2>Contenidos básicos</h2>
+<h3>Determinación de las herramientas de monitorización para detectar vulnerabilidades</h3>
+<ul>
+<li>Elementos esenciales del hacking ético. → <a href="01-que-es-el-hacking-etico/temas/01-terminologia.html">1.1</a></li>
+<li>Diferencias entre hacking, hacking ético, tests de penetración y hacktivismo. → <a href="01-que-es-el-hacking-etico/temas/01-terminologia.html">1.1</a> y <a href="01-que-es-el-hacking-etico/temas/02-etica-y-ley.html">1.2</a></li>
+<li>Recolección de permisos y autorizaciones previos a un test de intrusión. → <a href="02-permisos-y-alcance/temas/02-autorizacion-y-alcance.html">2.2</a></li>
+<li>Fases del hacking. → <a href="03-vulnerabilidades-y-ataques/temas/02-fases-de-un-ataque.html">3.2</a></li>
+<li>Auditorías de caja negra y de caja blanca. → <a href="02-permisos-y-alcance/temas/01-tipos-de-auditoria.html">2.1</a></li>
+<li>Documentación de vulnerabilidades. → <a href="03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html">3.5</a></li>
+<li>Clasificación de herramientas de seguridad y hacking. → <a href="04-herramientas-y-monitorizacion/temas/01-clasificacion-de-herramientas.html">4.1</a></li>
+<li>ClearNet, Deep Web, Dark Web, Darknets. Conocimiento, diferencias y herramientas de acceso: Tor, ZeroNet, FreeNet. → <a href="04-herramientas-y-monitorizacion/temas/03-clearnet-deep-dark-web.html">4.3</a></li>
+</ul>
 
 <h2 id="entrega">Entrega</h2>
-<p>Una sola entrega para todo el bloque: la etiqueta <code>entrega-fundamentos</code> antes del jueves 5 de noviembre a las 23:59, sobre el último commit de <code>main</code>. Lo que hay que dejar en <code>fundamentos/</code> está en la <a href="#repositorio">tabla de arriba</a>. La etiqueta se crea y se sube como las de los ejercicios de git (<a href="../00-fundamentos/01-git/temas/01-modelo-y-commits.html#etiquetas">Git 1</a>).</p>
+<p>Diez ejercicios en la carpeta <code>ra1/</code> de tu repositorio de entregas, todos en <code>main</code>. Antes de empezar: la Presentación y las unidades de git y Docker de Fundamentos. Cada ejercicio empieza con <code>preparar.py</code>, que deja su plantilla en <code>ra1/&lt;ejercicio&gt;/</code>:</p>
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1</code></pre>
+<p>Cada alumno tiene su propio escenario: casos, direcciones, fechas, registros y rutas salen de su usuario de GitHub. Antes de etiquetar, <code>pruebas.py</code> pasa las mismas comprobaciones públicas que el corrector: <code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e1</code>. Las respuestas con clave (casos, cláusulas, retos, fases…) solo las compara el corrector, y dice cuántas fallan, no cuáles. El resultado sale como check <b>Corrector ra1</b> en tu último commit de <code>main</code>.</p>
+<p>Cada ejercicio se entrega con su etiqueta anotada sobre <code>main</code>. Si corriges algo después, mueve la etiqueta (<code>git tag -fa</code> y <code>git push --force origin &lt;etiqueta&gt;</code>). El plazo lo anuncia el docente.</p>
+<div class="tabla"><table><thead><tr><th>Ejercicio</th><th>Carpeta</th><th>Etiqueta</th><th>Necesita</th></tr></thead><tbody>
+<tr><td><a href="01-que-es-el-hacking-etico/ejercicios/e1.html">U1·E1 · ¿Hacking ético o delito?</a></td><td><code>ra1/u1-e1/</code></td><td><code>entrega-ra1-u1-e1</code></td><td></td></tr>
+<tr><td><a href="01-que-es-el-hacking-etico/ejercicios/e2.html">U1·E2 · El security.txt de la empresa</a></td><td><code>ra1/u1-e2/</code></td><td><code>entrega-ra1-u1-e2</code></td><td>Docker Desktop</td></tr>
+<tr><td><a href="02-permisos-y-alcance/ejercicios/e1.html">U2·E1 · El alcance de la clínica</a></td><td><code>ra1/u2-e1/</code></td><td><code>entrega-ra1-u2-e1</code></td><td></td></tr>
+<tr><td><a href="02-permisos-y-alcance/ejercicios/e2.html">U2·E2 · Un alcance con fallos</a></td><td><code>ra1/u2-e2/</code></td><td><code>entrega-ra1-u2-e2</code></td><td></td></tr>
+<tr><td><a href="03-vulnerabilidades-y-ataques/ejercicios/e1.html">U3·E1 · Ficha de Hackea el ranking</a></td><td><code>ra1/u3-e1/</code></td><td><code>entrega-ra1-u3-e1</code></td><td></td></tr>
+<tr><td><a href="03-vulnerabilidades-y-ataques/ejercicios/e2.html">U3·E2 · Ficha de un CVE real</a></td><td><code>ra1/u3-e2/</code></td><td><code>entrega-ra1-u3-e2</code></td><td>Internet para consultar</td></tr>
+<tr><td><a href="03-vulnerabilidades-y-ataques/ejercicios/e3.html">U3·E3 · El registro de un incidente</a></td><td><code>ra1/u3-e3/</code></td><td><code>entrega-ra1-u3-e3</code></td><td></td></tr>
+<tr><td><a href="04-herramientas-y-monitorizacion/ejercicios/e1.html">U4·E1 · Elige su monitorización</a></td><td><code>ra1/u4-e1/</code></td><td><code>entrega-ra1-u4-e1</code></td><td></td></tr>
+<tr><td><a href="04-herramientas-y-monitorizacion/ejercicios/e2.html">U4·E2 · Un sensor vigilando la web</a></td><td><code>ra1/u4-e2/</code></td><td><code>entrega-ra1-u4-e2</code></td><td>Docker Desktop</td></tr>
+<tr><td><a href="04-herramientas-y-monitorizacion/ejercicios/e3.html">U4·E3 · Cuatro darknets</a></td><td><code>ra1/u4-e3/</code></td><td><code>entrega-ra1-u4-e3</code></td><td></td></tr>
+</tbody></table></div>
+<p>Ficheros: <a href="preparar.py"><code>preparar.py</code></a> y <a href="pruebas.py"><code>pruebas.py</code></a>. Nada de secretos en el repositorio: ni contraseñas, ni claves, ni ficheros <code>.env</code>.</p>
 
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>

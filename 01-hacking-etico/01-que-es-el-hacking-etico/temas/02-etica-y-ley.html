@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2 · Ética y ley · Hacking ético</title>
+<link rel="stylesheet" href="../../../assets/estilo.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">01 · Qué es el hacking ético</a></nav>
+<header>
+<p class="eyebrow">RA1 · Qué es el hacking ético · Tema 2 de 2 · Criterio b</p>
+<h1>Ética y ley</h1>
+<p class="lead">La técnica de un auditor y la de un delincuente pueden ser la misma. Lo que cambia es el permiso, el alcance y lo que se hace con lo encontrado. Sin autorización, una buena intención no te protege.</p>
+<div class="meta"><span>Antes: <a href="01-terminologia.html">1.1 · Terminología</a></span><span>Ejercicios: <a href="../ejercicios/e1.html">U1·E1</a> y <a href="../ejercicios/e2.html">U1·E2</a></span></div>
+</header>
+
+<section class="seccion">
+<h2>Lo que dice el Código Penal</h2>
+<p>Estos son los artículos que más aparecen en los casos de informática. El texto completo está en el <a href="https://www.boe.es/buscar/act.php?id=BOE-A-1995-25444">Código Penal consolidado del BOE</a>.</p>
+<div class="tabla"><table><thead><tr><th>Artículo</th><th>Qué castiga</th><th>Ejemplo</th></tr></thead><tbody>
+<tr><td><b>197 bis</b></td><td>Acceder sin autorización a un sistema saltándose sus medidas de seguridad, o quedarse dentro contra la voluntad del dueño. También interceptar transmisiones de datos que no son públicas.</td><td>Entrar en el correo de otra persona adivinando su contraseña. Leer el tráfico de una wifi ajena.</td></tr>
+<tr><td><b>197 ter</b></td><td>Fabricar, conseguir o pasar a otros programas o contraseñas pensados para cometer esos accesos o interceptaciones.</td><td>Vender un keylogger en un foro. Publicar contraseñas robadas.</td></tr>
+<tr><td><b>264</b></td><td>Borrar, dañar, alterar o hacer inaccesibles datos o programas ajenos, cuando el resultado es grave.</td><td>Borrar la base de datos de clientes. Cifrar ficheros con ransomware.</td></tr>
+<tr><td><b>264 bis</b></td><td>Obstaculizar o interrumpir el funcionamiento de un sistema ajeno.</td><td>Tumbar una web con una denegación de servicio.</td></tr>
+</tbody></table></div>
+<p>Hay más: el <b>197</b> castiga apoderarse de mensajes o datos privados para descubrir secretos, y el <b>264 ter</b> fabricar herramientas para los daños del 264 y 264 bis. Para el curso bastan los cuatro de la tabla.</p>
+<p class="note">«Solo quería avisarles» no es una defensa. Entrar sin permiso para demostrar un fallo sigue siendo un acceso sin autorización. Lo que te protege es la autorización por escrito: lo ves en <a href="../../02-permisos-y-alcance/index.html">02 · Permisos y alcance</a>.</p>
+</section>
+
+<section class="seccion">
+<h2>Los datos personales que encuentres</h2>
+<p>En casi cualquier auditoría aparecen datos de personas: clientes, empleados, pacientes. El <b>RGPD</b> y la <b>Ley Orgánica 3/2018</b> siguen aplicando aunque el acceso esté autorizado:</p>
+<ul>
+<li>Se demuestra el acceso con lo mínimo: el nombre de la tabla y cuántas filas tiene, no una copia de la tabla.</li>
+<li>No se copian datos personales a tu equipo. Si hace falta una evidencia, se anonimiza.</li>
+<li>El contrato del encargo dice qué se hace con los datos y cuándo se borra lo que quede. El auditor actúa como <b>encargado del tratamiento</b>.</li>
+</ul>
+</section>
+
+<section class="seccion" id="divulgacion">
+<h2>Divulgación responsable</h2>
+<p>Si encuentras un fallo en algo que no es tuyo, por ejemplo usando una aplicación con normalidad, lo ético es avisar sin aprovecharlo:</p>
+<ol>
+<li>Buscas cómo quiere el dueño que le avisen. Muchas webs lo publican en <code>/.well-known/security.txt</code>, un fichero estándar (RFC 9116) con el contacto y la política.</li>
+<li>Avisas con lo justo para reproducirlo, sin publicar nada.</li>
+<li>Das un plazo razonable para corregirlo; 90 días es la costumbre más extendida.</li>
+<li>Si no responden, en España puede coordinarlo <a href="https://www.incibe.es/incibe-cert">INCIBE-CERT</a>.</li>
+</ol>
+<p>Un <b>programa de recompensas</b> (bug bounty) va más allá: la empresa te autoriza de antemano a buscar fallos dentro de unas reglas. Fuera de esas reglas, vuelves a no tener permiso.</p>
+</section>
+
+<section class="seccion">
+<h2>El código ético del auditor</h2>
+<ul>
+<li>Nada se toca sin autorización por escrito de quien puede darla.</li>
+<li>No se sale del alcance, aunque lo de al lado parezca más interesante.</li>
+<li>Mínima intervención: demostrar sin romper, sin borrar y sin copiar más de lo necesario.</li>
+<li>Confidencialidad: lo encontrado solo lo conoce el cliente.</li>
+<li>Se informa de todo lo encontrado, también de lo que deja mal a quien contrató.</li>
+</ul>
+</section>
+
+<section class="seccion check">
+<h2>Comprobación</h2>
+<ul>
+<li>Sabes qué artículo se aplica a un acceso, a una interceptación, a un borrado y a una denegación de servicio.</li>
+<li>Sabes qué hacer si encuentras un fallo en una web que no es tuya.</li>
+</ul>
+</section>
+
+<nav class="temas" aria-label="Temas de la unidad"><a href="01-terminologia.html">← 1.1 · Terminología</a><a href="../ejercicios/e1.html">U1·E1 · ¿Hacking ético o delito? →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../../assets/nav.js" defer></script>
+</body>
+</html>
