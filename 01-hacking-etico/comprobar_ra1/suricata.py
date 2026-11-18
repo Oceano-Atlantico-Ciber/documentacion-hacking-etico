@@ -99,6 +99,7 @@ def comprobar(reglas: str, usuario: str) -> list[str]:
             (carpeta / nombre).parent.mkdir(parents=True, exist_ok=True)
             (carpeta / nombre).write_text(contenido, encoding="utf-8", newline="\n")
         (carpeta / "salidas").mkdir()
+        (carpeta / "salidas").chmod(0o777)  # Suricata escribe con su propio usuario dentro del contenedor
         (carpeta / "local.rules").write_text(reglas, encoding="utf-8", newline="\n")
         (carpeta / "docker-compose.yml").write_text(COMPOSE.format(proyecto=PROYECTO), encoding="utf-8")
         cerrar()
@@ -110,15 +111,21 @@ def comprobar(reglas: str, usuario: str) -> list[str]:
             r = _docker("compose", "up", "-d", "web", "suricata", cwd=carpeta, espera=600)
             if r.returncode:
                 raise Fallo(f"no arranca el laboratorio de comprobación ({r.stderr.strip()[-200:]}); avisa al docente")
-            registro = carpeta / "salidas" / "suricata.log"
-            arrancado = lambda: ("Engine started" in _docker("compose", "logs", "suricata", cwd=carpeta).stdout  # noqa: E731
-                                 or (registro.exists() and "Engine started" in registro.read_text(errors="replace")))
-            if not _esperar(arrancado, 120):
-                raise Fallo("Suricata no termina de arrancar en el laboratorio de comprobación; avisa al docente")
             eve = carpeta / "salidas" / "eve.json"
+            con_curl = lambda: sum(a["alert"]["signature_id"] == 1000004 for a in _alertas(eve))  # noqa: E731
+            # Listo cuando una petición con curl deja su alerta de la plantilla (sid 1000004): no depende del texto del registro.
+            limite = time.monotonic() + 150
+            while not con_curl() and time.monotonic() < limite:
+                _visitar(carpeta, ("/",))
+                _esperar(con_curl, 5)
+            if not con_curl():
+                registro = _docker("compose", "logs", "--tail", "8", "suricata", cwd=carpeta)
+                ultimas = " | ".join(l.strip() for l in (registro.stdout + registro.stderr).splitlines()[-4:])
+                raise Fallo(f"Suricata no anota nada en el laboratorio de comprobación ({ultimas[-300:]}); avisa al docente")
+            base = con_curl()
             _visitar(carpeta, PRIMERA)
             # Las reglas de la plantilla saltan con curl: cuando están las tres, Suricata ya ha procesado esa parte.
-            if not _esperar(lambda: sum(a["alert"]["signature_id"] == 1000004 for a in _alertas(eve)) >= len(PRIMERA), 60):
+            if not _esperar(lambda: con_curl() >= base + len(PRIMERA), 60):
                 raise Fallo("Suricata no anota las visitas de la primera parte: ¿has borrado o cambiado las reglas de la plantilla?")
             propias = lambda: [a for a in _alertas(eve) if a["alert"]["signature_id"] >= 1000100]  # noqa: E731
             antes = len(propias())
