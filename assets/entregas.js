@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-17T21:44+00:00",
+ "actualizado": "2026-11-18T10:15+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -659,6 +659,203 @@ window.ENTREGAS = {
      "e6": "sin",
      "e7": "sin",
      "e8": "sin"
+    }
+   }
+  },
+  {
+   "nombre": "RA1 · Hacking ético",
+   "ejercicios": [
+    "u1-e1",
+    "u1-e2",
+    "u2-e1",
+    "u2-e2",
+    "u3-e1",
+    "u3-e2",
+    "u3-e3",
+    "u4-e1",
+    "u4-e2",
+    "u4-e3"
+   ],
+   "alumnos": {
+    "adrian47gg": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "agracia90": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "alfaro-cmd": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "dayx33": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "hugocampos646": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "igormillan": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "jancand": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "juanadiego": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "lord999w": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "manuelciordiamartinez-glitch": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "pabloba1710": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "robertoespiago-jpg": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "rubenalondiaz2-hash": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "umbreon0197": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
+    },
+    "vladukrisp-ctrl": {
+     "u1-e1": "sin",
+     "u1-e2": "sin",
+     "u2-e1": "sin",
+     "u2-e2": "sin",
+     "u3-e1": "sin",
+     "u3-e2": "sin",
+     "u3-e3": "sin",
+     "u4-e1": "sin",
+     "u4-e2": "sin",
+     "u4-e3": "sin"
     }
    }
   }
