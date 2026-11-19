@@ -237,7 +237,10 @@ def e3(caso: Caso) -> Iterator[str]:
     if busca.salida.strip():
         yield f".env o notas/ están dentro de la imagen: {', '.join(busca.salida.split())}. Exclúyelos en .dockerignore"
     app = caso.carpeta / "app.py"
-    app.write_text(app.read_text(encoding="utf-8") + "\n# cambio de un comentario, del corrector\n", encoding="utf-8")
+    # Un comentario que nunca se ha construido: si fuera siempre el mismo, la caché de BuildKit de una
+    # comprobación anterior (otro alumno, o pruebas.py en tu equipo) haría pasar por CACHED un Dockerfile mal ordenado.
+    app.write_text(app.read_text(encoding="utf-8") + f"\n# cambio de un comentario, del corrector {secrets.token_hex(8)}\n",
+                   encoding="utf-8")
     progreso = _construir(caso, "corrector-e3")
     pasos = re.findall(r"^#(\d+) \[[^\]]*\] RUN .*pip install", progreso, re.MULTILINE)
     if not pasos or not all(re.search(rf"^#{n} CACHED$", progreso, re.MULTILINE) for n in pasos):

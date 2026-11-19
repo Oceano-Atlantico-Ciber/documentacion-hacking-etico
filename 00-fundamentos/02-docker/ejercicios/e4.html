@@ -115,7 +115,11 @@ rm -r capas2 e4-2.tar</code></pre></div>
 
 
 <h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
-<p>Antes de subir, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p>Primero guarda tu trabajo en un commit, desde la raíz de tu repositorio: las pruebas solo ven lo que está en commits.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git add .
+git commit -m "fix(docker-e4): la clave ya no entra en ninguna capa"</code></pre></div>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e4</code></pre></div>
@@ -125,9 +129,7 @@ python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/prueb
 <p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add .
-git commit -m "fix(docker-e4): la clave ya no entra en ninguna capa"
-git push</code></pre></div>
+<div class="cmd"><pre><code>git push</code></pre></div>
 <p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E4 salga sin fallos, etiqueta:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e4 -m "E4 resuelto"
 git push origin entrega-fundamentos-docker-e4</code></pre></div>

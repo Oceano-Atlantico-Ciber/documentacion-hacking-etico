@@ -59,7 +59,7 @@ docker compose down</code></pre></div>
 <p>El <code>curl</code> imprime el <code>docker-compose.yml</code> entero, con <code>admin123</code> dentro. Cualquiera que llegue a tu puerto 80, también desde la wifi del aula, lee el propio compose con sus contraseñas. Es tu primer hallazgo. Si <code>up</code> dice que el puerto 80 ya está en uso, otro programa de tu equipo lo ocupa: sáltate el <code>curl</code> y anota el hallazgo leyendo el compose.</p>
 
 <h2 class="step"><span class="n">3</span>Pasa Trivy al Dockerfile</h2>
-<p>Trivy revisa la configuración de la carpeta, que se monta en solo lectura en <code>/work</code>:</p>
+<p>Trivy revisa la configuración de la carpeta, que se monta en solo lectura en <code>/work</code>. Si al principio salen líneas <code>ERROR [rego]</code>, son avisos internos de Trivy y no cuentan: lo que importa es el resumen <code>Failures</code> y cada aviso <code>AVD-…</code> que lista debajo.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker run --rm -v "${PWD}:/work:ro" aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -119,7 +119,11 @@ docker compose down</code></pre></div>
 
 
 <h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
-<p>Antes de subir, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p>Primero guarda tu trabajo en un commit, desde la raíz de tu repositorio: las pruebas solo ven lo que está en commits.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git add .
+git commit -m "fix(docker-e8): panel sin puertas abiertas"</code></pre></div>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e8</code></pre></div>
@@ -129,9 +133,7 @@ python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/prueb
 <p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add .
-git commit -m "fix(docker-e8): panel sin puertas abiertas"
-git push</code></pre></div>
+<div class="cmd"><pre><code>git push</code></pre></div>
 <p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector docker</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección. Cuando la fila de E8 salga sin fallos, etiqueta:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-docker-e8 -m "E8 resuelto"
 git push origin entrega-fundamentos-docker-e8</code></pre></div>
