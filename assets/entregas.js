@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-19T22:19+00:00",
+ "actualizado": "2026-11-19T22:22+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -700,7 +700,13 @@ window.ENTREGAS = {
     "vladukrisp-ctrl": {
      "e8": [
       {
-       "resumen": "controles.md no documenta todos los controles con su CWE: faltan CWE-285"
+       "resumen": "Faltan controles por documentar",
+       "arreglo": "En controles.md, cada control con su CWE: BOLA CWE-639, asignación masiva CWE-915, permisos por rol (BFLA) CWE-285 y límite de intentos CWE-307.",
+       "obtenido": "controles.md documenta cada control con su CWE: faltan CWE-285",
+       "pruebas": [
+        "controles.md documenta cada control con su CWE"
+       ],
+       "enlace": "https://oceano-atlantico-ciber.github.io/documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/e8.html#paso-5"
       }
      ]
     }
