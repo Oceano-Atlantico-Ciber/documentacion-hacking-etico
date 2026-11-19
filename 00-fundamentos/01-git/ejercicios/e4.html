@@ -18,48 +18,157 @@
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e4</code> sobre <code>main</code></dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p><code>main</code> con las ramas <code>git/e4-a</code> y <code>git/e4-b</code> integradas, y el conflicto entre ellas resuelto <b>dentro del merge</b>:</p>
+<ul>
+<li>Un commit de merge que une las dos ramas: es el que guarda la resolución del conflicto.</li>
+<li>Los commits <code>feat(e4): puerto encontrado por A</code> y <code>feat(e4): puerto encontrado por B</code>, una vez cada uno.</li>
+<li><code>fundamentos/git/e4/puertos.txt</code> según la regla: todas las líneas de las dos ramas, una por puerto, ordenadas por número de puerto de menor a mayor y sin marcadores de conflicto.</li>
+<li>La etiqueta anotada <code>entrega-fundamentos-git-e4</code> sobre <code>main</code>, subida a GitHub.</li>
+</ul>
+<p>Así se ve una entrega correcta (tus SHA y tus puertos serán otros):</p>
+<pre><code>git log --oneline --graph -4
+*   8b9c0d1 (HEAD -&gt; main, tag: entrega-fundamentos-git-e4, origin/main) Merge branch 'git/e4-b'
+|\
+| * 5e6f7a8 (git/e4-b) feat(e4): puerto encontrado por B
+* | 3c4d5e6 (git/e4-a) feat(e4): puerto encontrado por A
+|/
+* 1f2a3b4 feat(e4): inventario de puertos
+
+git show HEAD:fundamentos/git/e4/puertos.txt
+21 ftp
+143 imap
+445 smb
+3306 mysql
+3389 rdp</code></pre>
+
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material, vuelve a <code>main</code> y mira que no tengas nada a medias. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git -C ../documentacion-hacking-etico pull
+git switch main
+git status</code></pre></div>
+<p><code>git status</code> tiene que terminar en <code>nothing to commit, working tree clean</code>. Si lista ficheros, termina o descarta antes lo que tengas a medias: <code>preparar.py</code> no sigue con cambios pendientes. Después, crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e4</code></pre></div>
-<p>Añade a <code>main</code> el inventario <code>fundamentos/git/e4/puertos.txt</code> y crea <code>git/e4-a</code> y <code>git/e4-b</code>: cada auditor ha encontrado un puerto más. Compara con <code>git diff main git/e4-a</code>, que enseña qué cambia de un commit a otro.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e4</code></pre></div>
+<pre><code>e4 preparado para &lt;tu-usuario&gt; en fundamentos/git/e4/. Sigue el enunciado.</code></pre>
+<p>Añade a <code>main</code> el inventario <code>fundamentos/git/e4/puertos.txt</code> y crea <code>git/e4-a</code> y <code>git/e4-b</code>: cada auditor ha añadido un puerto al final del mismo fichero. Mira qué añade cada uno:</p>
+<div class="cmd"><pre><code>git diff main git/e4-a
+git diff main git/e4-b</code></pre></div>
+<pre><code>diff --git a/fundamentos/git/e4/puertos.txt b/fundamentos/git/e4/puertos.txt
+…
+ 143 imap
+ 445 smb
+ 3306 mysql
++3389 rdp
+diff --git a/fundamentos/git/e4/puertos.txt b/fundamentos/git/e4/puertos.txt
+…
+ 143 imap
+ 445 smb
+ 3306 mysql
++21 ftp</code></pre>
+<p>La primera salida es la de <code>git/e4-a</code> y la segunda, la de <code>git/e4-b</code>. Las líneas con <code>+</code> son las que añade cada rama: las dos al final del fichero, así que van a chocar. Haz los pasos 2 a 6 seguidos, sin otros commits en <code>main</code> entre medias.</p>
 
 <h2 class="step"><span class="n">2</span>Fusiona la primera rama</h2>
-<div class="cmd"><pre><code>git merge git/e4-a</code></pre></div><p>Entra con fast-forward, como en E3: <code>main</code> no se había movido.</p>
+<div class="cmd"><pre><code>git merge git/e4-a</code></pre></div>
+<pre><code>Updating 1f2a3b4..3c4d5e6
+Fast-forward
+ fundamentos/git/e4/puertos.txt | 1 +</code></pre>
+<p>Entra con fast-forward, como en E3: <code>main</code> no se había movido.</p>
 
 <h2 class="step"><span class="n">3</span>Fusiona la segunda</h2>
 <div class="cmd"><pre><code>git merge git/e4-b
-git status</code></pre></div><p>Esta da conflicto: <code>puertos.txt</code> aparece como <i>both modified</i> y tiene marcadores <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code> y <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>.</p>
+git status</code></pre></div>
+<pre><code>Auto-merging fundamentos/git/e4/puertos.txt
+CONFLICT (content): Merge conflict in fundamentos/git/e4/puertos.txt
+Automatic merge failed; fix conflicts and then commit the result.
+…
+Unmerged paths:
+        both modified:   fundamentos/git/e4/puertos.txt</code></pre>
+<p>Esta da conflicto: las dos ramas cambiaron el mismo sitio del fichero. El merge queda a medias hasta que lo resuelvas. Si te lías, <code>git merge --abort</code> lo cancela y vuelves al principio de este paso.</p>
 
 <h2 class="step"><span class="n">4</span>Resuelve con la regla</h2>
-<p class="note"><b>Regla:</b> el inventario final tiene todas las líneas de las dos ramas, una por puerto, ordenadas por número de puerto y sin marcadores de conflicto.</p>
-<p>Edita el fichero y termina el merge:</p>
-<div class="cmd"><pre><code>git add fundamentos/git/e4/puertos.txt
-git commit</code></pre></div>
-<p>No lo arregles con un commit aparte ni copiando el fichero: el corrector busca el merge que resolvió el conflicto.</p>
+<p class="note"><b>Regla:</b> el inventario final tiene todas las líneas de las dos ramas, una por puerto, ordenadas por número de puerto de menor a mayor (como números: 21 va antes que 143), aunque tengas que mover líneas que ya estaban, y sin marcadores de conflicto.</p>
+<p>Abre el fichero:</p>
+<div class="cmd"><pre><code>code fundamentos/git/e4/puertos.txt</code></pre></div>
+<pre><code>143 imap
+445 smb
+3306 mysql
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+3389 rdp
+=======
+21 ftp
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; git/e4-b</code></pre>
+<p>Entre <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> y <code>=======</code> está lo de tu <code>main</code> (la rama A); entre <code>=======</code> y <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>, lo de la rama B. Edita el fichero a mano:</p>
+<ol>
+<li>Borra las tres líneas de marcadores: <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code>, <code>=======</code> y <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; git/e4-b</code>.</li>
+<li>Deja las dos líneas de puertos, la de A y la de B.</li>
+<li>Ordena todas las líneas por número de puerto, aunque tengas que mover líneas que ya estaban: en el ejemplo, <code>21 ftp</code> sube por encima de <code>143 imap</code>. Con los puertos del ejemplo queda como en <a href="#que-entregas">Qué entregas</a>.</li>
+</ol>
+<p>Guarda con <b>Ctrl+S</b> (<b>Cmd+S</b> en macOS) y cierra la pestaña.</p>
 
-<h2 class="step"><span class="n">5</span>Comprueba antes de subir</h2>
+<h2 class="step"><span class="n">5</span>Termina el merge</h2>
+<div class="cmd"><pre><code>git add fundamentos/git/e4/puertos.txt
+git commit --no-edit</code></pre></div>
+<pre><code>[main 8b9c0d1] Merge branch 'git/e4-b'</code></pre>
+<p><code>git add</code> marca el conflicto como resuelto y <code>git commit --no-edit</code> crea el commit de merge con el mensaje que propone git. No lo arregles con un commit aparte ni copiando el fichero: el corrector busca el merge que resolvió el conflicto.</p>
+
+<h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
 <div class="cmd"><pre><code>git log --oneline --graph -4
 git show HEAD:fundamentos/git/e4/puertos.txt</code></pre></div>
-<p>Un merge con dos padres y el inventario completo y ordenado.</p>
+<p>Un merge con dos padres y el inventario completo y ordenado, como en <a href="#que-entregas">Qué entregas</a>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>No hay un merge que una <code>git/e4-a</code> y <code>git/e4-b</code> resolviendo un conflicto real.</li>
-<li><code>puertos.txt</code> conserva marcadores de conflicto.</li>
-<li><code>puertos.txt</code> no sigue la regla.</li>
+<li>Falta el commit <code>feat(e4): puerto encontrado por A</code> o el <code>feat(e4): puerto encontrado por B</code>, o alguno aparece más de una vez.</li>
+<li>No hay un commit de merge que una una rama con el commit de A y otra con el de B que chocaban entre sí: el conflicto se resuelve dentro de <code>git merge</code>, no copiando el fichero ni con un commit aparte.</li>
+<li><code>puertos.txt</code> conserva marcadores de conflicto (<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code> o <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>).</li>
+<li><code>puertos.txt</code> no sigue la regla: le faltan líneas, le sobran (también repetidas) o no está ordenado por número de puerto.</li>
+<li>La etiqueta no es anotada: se creó sin <code>-a</code>.</li>
 </ul>
 
-<h2 class="step"><span class="n">6</span>Pruébalo en tu equipo</h2>
-<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
-<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e4</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+<h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-git-e4</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. No cambia nada de tu repositorio. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e4</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e4</code></pre></div>
+<p>Antes de subir, un ejercicio bien hecho se ve así (tus SHA serán otros):</p>
+<pre><code>E4 · rama main, todavía sin etiqueta (provisional) · 8b9c0d1
+  ✓ superado
+  ! en GitHub main apunta a 0f9e8d7, no a tu 8b9c0d1: el corrector evaluará el de GitHub. Sube el tuyo (…)</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide. Antes de subir es normal ver «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …»: desaparece al subir en el paso siguiente. En ese aviso, el primer SHA es lo que tiene GitHub (lo último que subiste) y el segundo, tu commit.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni trabajo en <code>fundamentos/git/e4/</code> de <code>main</code>: falta preparar el ejercicio o hacer sus commits.</li>
+<li>Si al final sale <b>Aviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe GitHub: el autor de los commits de E1 y el commit filtrado de E8</b>, en este ejercicio no te afecta: todo lo que comprueba el corrector se comprueba también en tu equipo.</li>
+</ul>
 
-<h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
+<h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
+<p>Sube tu trabajo a GitHub:</p>
 <div class="cmd"><pre><code>git push</code></pre></div>
-<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E4 salga sin fallos, etiqueta:</p>
-<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e4 -m "E4 resuelto"
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b> de GitHub, crea la etiqueta anotada sobre <code>main</code> y súbela:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e4 main -m "E4 resuelto"
 git push origin entrega-fundamentos-git-e4</code></pre></div>
-<p class="note">Si después hubiera que corregir algo, se puede mover la etiqueta: lo verás en <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>. Cuenta la etiqueta tal como esté al cerrar el plazo.</p>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E4 · etiqueta entrega-fundamentos-git-e4 · 8b9c0d1
+  ✓ superado</code></pre>
+<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio: ✅ entregado y superado, ❌ entregado con fallos, ✏️ provisional (aún sin etiqueta) y · sin empezar. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<ul>
+<li><b><code>puertos.txt</code> no sigue la regla</b>, pero el merge que resolvió el conflicto ya está: corrige el fichero con <code>code fundamentos/git/e4/puertos.txt</code> y haz un commit nuevo encima. El merge sigue en la historia y el corrector mira el fichero en la punta de <code>main</code>:
+<div class="cmd"><pre><code>git add fundamentos/git/e4/puertos.txt
+git commit -m "fix(e4): ordenar el inventario"
+git push</code></pre></div></li>
+<li><b>No hay merge</b> (copiaste el fichero o lo arreglaste con un commit aparte) y ya está subido: no reescribas <code>main</code>; pregunta al docente.</li>
+</ul>
+<p>Cuando <code>pruebas.py</code> vuelva a decir <b>✓ superado</b> sobre la rama, mueve la etiqueta al commit corregido: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Haz solo esto, sin tocar commits, si <code>pruebas.py</code> dice que la etiqueta no es anotada o que en GitHub apunta a otro commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e4 main -m "E4 resuelto"
+git push -f origin entrega-fundamentos-git-e4</code></pre></div>
+<p>Si <code>pruebas.py</code> dice «en GitHub ya existe entrega-fundamentos-git-e4 y no la tienes aquí», la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e3.html">← E3 · Fusiones</a><a href="e5.html">E5 · Rebase →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

@@ -18,44 +18,112 @@
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e7</code> sobre <code>main</code></dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p><code>main</code> con los tres commits que crea <code>preparar.py</code> intactos y, encima, un commit nuevo que deshace el erróneo:</p>
+<ul>
+<li>Siguen en la historia, una vez cada uno, <code>feat(e7): activar modo depuración</code> (el erróneo) y <code>docs(e7): instrucciones de despliegue</code>.</li>
+<li>Después del erróneo hay un commit, que no es un merge, que aplica exactamente su cambio al revés: el que crea <code>git revert</code>.</li>
+<li><code>fundamentos/git/e7/config.ini</code> queda como antes del error, con <code>debug = false</code>.</li>
+<li>La etiqueta anotada <code>entrega-fundamentos-git-e7</code> sobre <code>main</code>, subida a GitHub.</li>
+</ul>
+<p>Así se ve con <code>git log --oneline -4</code> (tus SHA serán otros):</p>
+<pre><code>e1f2a3b (HEAD -&gt; main, tag: entrega-fundamentos-git-e7, origin/main) Revert "feat(e7): activar modo depuración"
+c9d0e1f docs(e7): instrucciones de despliegue
+b8c9d0e feat(e7): activar modo depuración
+a7b8c9d feat(e7): configuración del servidor</code></pre>
+
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material, vuelve a <code>main</code> y mira que no tengas nada a medias. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git -C ../documentacion-hacking-etico pull
+git switch main
+git status</code></pre></div>
+<p><code>git status</code> tiene que terminar en <code>nothing to commit, working tree clean</code>. Si lista ficheros, termina o descarta antes lo que tengas a medias: <code>preparar.py</code> no sigue con cambios pendientes. Después, crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e7</code></pre></div>
-<p>Añade tres commits a <code>main</code>. El segundo activa por error el modo depuración del servidor en <code>config.ini</code>.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e7</code></pre></div>
+<pre><code>e7 preparado para &lt;tu-usuario&gt; en fundamentos/git/e7/. Sigue el enunciado.</code></pre>
+<p>Añade tres commits a <code>main</code>. El segundo, <code>feat(e7): activar modo depuración</code>, activa por error el modo depuración del servidor en <code>config.ini</code>.</p>
 
 <h2 class="step"><span class="n">2</span>Publica <code>main</code></h2>
-<div class="cmd"><pre><code>git push</code></pre></div><p>Desde ahora el commit erróneo es público: ya no se puede reescribir.</p>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>Desde ahora el commit erróneo es público: otros pueden tenerlo, así que ya no se reescribe. Se deshace con un commit nuevo.</p>
 
-<h2 class="step"><span class="n">3</span>Revierte el commit erróneo</h2>
+<h2 class="step"><span class="n">3</span>Busca el SHA del commit erróneo</h2>
+<div class="cmd"><pre><code>git log --oneline -4</code></pre></div>
+<pre><code>c9d0e1f (HEAD -&gt; main, origin/main) docs(e7): instrucciones de despliegue
+b8c9d0e feat(e7): activar modo depuración
+a7b8c9d feat(e7): configuración del servidor
+2a3b4c5 chore(e5): cambio publicado en main</code></pre>
+<p>Apunta el SHA de la línea <code>feat(e7): activar modo depuración</code>: en el ejemplo, <code>b8c9d0e</code>.</p>
+
+<h2 class="step"><span class="n">4</span>Revierte el commit erróneo</h2>
+<p>Cambia <code>&lt;sha&gt;</code> por el SHA que has apuntado:</p>
+<div class="cmd"><pre><code>git revert --no-edit &lt;sha&gt;</code></pre></div>
+<pre><code>[main e1f2a3b] Revert "feat(e7): activar modo depuración"
+ 1 file changed, 1 insertion(+), 1 deletion(-)</code></pre>
+<p>Git crea un commit nuevo que aplica el cambio inverso; <code>--no-edit</code> acepta el mensaje que propone. No uses <code>git reset</code> ni <code>git rebase</code>: borrarían commits ya publicados.</p>
+
+<h2 class="step"><span class="n">5</span>Comprueba antes de subir</h2>
 <div class="cmd"><pre><code>git log --oneline -4
-git revert &lt;sha-del-commit-erróneo&gt;</code></pre></div><p>Git crea un commit nuevo que aplica el cambio inverso. Guarda el mensaje que propone.</p>
-
-<h2 class="step"><span class="n">4</span>Comprueba antes de subir</h2>
-<div class="cmd"><pre><code>git log --oneline -5
 git show HEAD</code></pre></div>
+<pre><code>…
+--- a/fundamentos/git/e7/config.ini
++++ b/fundamentos/git/e7/config.ini
+@@ -1,4 +1,4 @@
+ [servidor]
+ puerto = 8443
+-debug = true
++debug = false
+ id = 3f2a…</code></pre>
 <p>Siguen los tres commits y encima hay uno <code>Revert "…"</code> que devuelve <code>debug = false</code>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>El commit erróneo o el siguiente han desaparecido de la historia (<code>reset</code>, <code>rebase</code>…).</li>
-<li>No hay un commit que deshaga exactamente el erróneo. Hazlo con <code>git revert</code>.</li>
-<li><code>config.ini</code> no queda como antes del error.</li>
+<li>Falta el commit <code>feat(e7): activar modo depuración</code> o el <code>docs(e7): instrucciones de despliegue</code>, o alguno aparece más de una vez: se reescribió la historia (<code>reset</code>, <code>rebase</code>…).</li>
+<li>No hay un commit posterior al erróneo, que no sea un merge, que deshaga exactamente su cambio en <code>config.ini</code>. Hazlo con <code>git revert</code>.</li>
+<li><code>config.ini</code> no queda igual que antes del error.</li>
+<li>La etiqueta no es anotada: se creó sin <code>-a</code>.</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
-<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
-<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e7</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+<h2 class="step"><span class="n">6</span>Pruébalo en tu equipo</h2>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-git-e7</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. No cambia nada de tu repositorio. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e7</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e7</code></pre></div>
+<p>Antes de subir, un ejercicio bien hecho se ve así (tus SHA serán otros):</p>
+<pre><code>E7 · rama main, todavía sin etiqueta (provisional) · e1f2a3b
+  ✓ superado
+  ! en GitHub main apunta a c9d0e1f, no a tu e1f2a3b: el corrector evaluará el de GitHub. Sube el tuyo (…)</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide. Antes de subir es normal ver «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …»: desaparece al subir en el paso siguiente. En ese aviso, el primer SHA es lo que tiene GitHub (lo último que subiste) y el segundo, tu commit.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni trabajo en <code>fundamentos/git/e7/</code> de <code>main</code>: falta preparar el ejercicio o hacer sus commits.</li>
+<li>Si al final sale <b>Aviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe GitHub: el autor de los commits de E1 y el commit filtrado de E8</b>, en este ejercicio no te afecta: todo lo que comprueba el corrector se comprueba también en tu equipo.</li>
+</ul>
 
-<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
+<p>Sube tu trabajo a GitHub:</p>
 <div class="cmd"><pre><code>git push</code></pre></div>
-<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E7 salga sin fallos, etiqueta:</p>
-<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e7 -m "E7 resuelto"
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b> de GitHub, crea la etiqueta anotada sobre <code>main</code> y súbela:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e7 main -m "E7 resuelto"
 git push origin entrega-fundamentos-git-e7</code></pre></div>
-<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>:</p>
-<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e7 -m "E7 resuelto"
-git push --force origin entrega-fundamentos-git-e7</code></pre></div>
-<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E7 · etiqueta entrega-fundamentos-git-e7 · e1f2a3b
+  ✓ superado</code></pre>
+<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio: ✅ entregado y superado, ❌ entregado con fallos, ✏️ provisional (aún sin etiqueta) y · sin empezar. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<ul>
+<li><b>Falta el revert</b>: hazlo como en los pasos 3 y 4 y súbelo con <code>git push</code>. Corrige siempre con commits nuevos encima: <code>main</code> ya es público, así que nada de <code>git reset</code>, <code>git rebase</code> ni <code>git push -f</code> de la rama, que borrarían los commits que el corrector busca.</li>
+<li><b>Hiciste un revert de otro commit</b> (por ejemplo, de <code>docs(e7): instrucciones de despliegue</code>): deshaz también ese revert con otro <code>git revert --no-edit &lt;sha-de-ese-revert&gt;</code>, revierte el commit correcto y sube.</li>
+</ul>
+<p>Cuando <code>pruebas.py</code> vuelva a decir <b>✓ superado</b> sobre la rama, mueve la etiqueta al commit corregido: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Haz solo esto, sin tocar commits, si <code>pruebas.py</code> dice que la etiqueta no es anotada o que en GitHub apunta a otro commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e7 main -m "E7 resuelto"
+git push -f origin entrega-fundamentos-git-e7</code></pre></div>
+<p>Si <code>pruebas.py</code> dice «en GitHub ya existe entrega-fundamentos-git-e7 y no la tienes aquí», la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e6.html">← E6 · Rebase interactivo</a><a href="e8.html">E8 · Secreto filtrado →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

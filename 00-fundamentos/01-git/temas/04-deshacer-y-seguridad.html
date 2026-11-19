@@ -92,10 +92,10 @@ git log --all --diff-filter=D --name-only    # ficheros que se borraron alguna v
 <section class="seccion">
 <h2>El autor de un commit se falsifica</h2>
 <p>El autor es solo lo que dice tu configuración. Nada impide esto:</p>
-<pre><code>git -c user.name="Otra Persona" -c user.email="su-correo@ejemplo.com" commit -m "fix: cambio inocente"</code></pre>
+<pre><code>git -c "user.name=Otra Persona" -c "user.email=su-correo@ejemplo.com" commit -m "fix: cambio inocente"</code></pre>
 <p>GitHub mostrará el commit con el nombre y la foto de esa persona. La defensa es <b>firmar los commits</b>: GitHub marca como <b>Verified</b> los firmados con una clave registrada en la cuenta, y con el modo vigilante marca como <b>Unverified</b> los que no lo están.</p>
 <pre><code>git config --global gpg.format ssh
-git config --global user.signingkey ~/.ssh/id_ed25519.pub
+git config --global user.signingkey "$HOME/.ssh/id_ed25519.pub"
 git config --global commit.gpgsign true
 # y en GitHub: Settings → SSH and GPG keys → New SSH key, tipo «Signing key»</code></pre>
 </section>

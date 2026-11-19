@@ -23,13 +23,22 @@
 
 <h2 id="ejercicios">Ejercicios</h2>
 <p class="note"><b>Antes de empezar:</b> <a href="../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a> y <a href="../../00-presentacion/temas/06-primer-commit.html">06 · Primer commit</a>.</p>
-<p>Ocho ejercicios en <code>fundamentos/git/</code> de tu repositorio de entregas. Cada uno empieza con <code>preparar.py</code>, que crea los ficheros, ramas y commits de partida a partir de tu usuario de GitHub: tu escenario es distinto del de tus compañeros. Ejecútalo desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
-<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e1</code></pre>
-<p>Antes de etiquetar, compruébalo en tu equipo con <code>pruebas.py</code>: pasa exactamente las mismas comprobaciones que el corrector, sobre lo que ya tienes en commits, y dice qué falla y por qué. Sin el número de ejercicio, los comprueba todos:</p>
-<pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre>
-<p>Cada ejercicio se entrega con su propia <b>etiqueta anotada</b>, <code>entrega-fundamentos-git-eN</code>, sobre el commit donde está resuelto. Qué es una etiqueta y cómo se crea se explica en <a href="temas/01-modelo-y-commits.html#etiquetas">Git 1</a>, antes del primer ejercicio. Cada ejercicio tiene su página con los pasos, cómo comprobarlo y qué mira el corrector. Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores.</p>
-<p class="note"><b>Cuenta la etiqueta tal como esté al cerrar el plazo</b>, que es el del bloque: jueves 5 de noviembre a las 23:59. Si el corrector marca fallos, se puede mover (<a href="temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>). Moverla después de la fecha límite deja la entrega fuera de plazo. Antes de etiquetar, sube tu trabajo y mira el resultado provisional: en GitHub, junto al último commit de <code>main</code>, aparece el check <b>Corrector git</b> con una fila por ejercicio. Se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando tu ejercicio salga sin fallos, etiqueta.</p>
+<p>Ocho ejercicios en <code>fundamentos/git/</code> de tu repositorio de entregas. Cada uno empieza con <code>preparar.py</code>, que crea los ficheros, ramas y commits de partida a partir de tu usuario de GitHub: tu escenario es distinto del de tus compañeros. Ejecútalo desde la carpeta de tu repositorio, con el material clonado al lado (<a href="../../00-presentacion/temas/06-primer-commit.html">06 · Primer commit</a>), en <code>main</code> y sin cambios pendientes. En Windows, las órdenes van en PowerShell (la terminal de VS Code); en macOS y Linux, en Terminal:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git switch main
+git status</code></pre></div>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e1</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e1</code></pre></div>
+<p>Antes de etiquetar, compruébalo en tu equipo con <code>pruebas.py</code>: pasa las mismas comprobaciones que el corrector, con el mismo código, sobre la etiqueta si ya existe o, si no, sobre la rama del ejercicio. Marca con <b>✗</b> los fallos y con <b>!</b> los avisos: sobre todo, que lo que hay en GitHub no coincide con tu equipo, porque el corrector evalúa lo que hay en GitHub. Sin el número de ejercicio, los comprueba todos:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
+<p>Lo que solo sabe GitHub (el autor de los commits de E1, el commit filtrado de E8 y la hora de las etiquetas) lo comprueba con el GitHub CLI si tienes sesión (<code>gh auth login</code>); sin ella, lo salta y avisa.</p>
+<p>Cada ejercicio se entrega con su propia <b>etiqueta anotada</b>, <code>entrega-fundamentos-git-eN</code>, sobre el commit donde está resuelto, subida a GitHub. Qué es una etiqueta y cómo se crea se explica en <a href="temas/01-modelo-y-commits.html#etiquetas">Git 1</a>, antes del primer ejercicio. Cada ejercicio tiene su página con qué entregas, los pasos, cómo comprobarlo y qué mira el corrector. Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores. Etiqueta E1 en cuanto esté bien: el corrector cuenta todos los commits que tocan <code>fundamentos/git/e1/</code> hasta la etiqueta.</p>
+<p class="note"><b>No hay fecha límite:</b> entrega cada ejercicio cuando lo tengas, y si hay que corregir algo, mueve su etiqueta (<a href="temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3</a>). En GitHub, junto al último commit de <code>main</code>, el check <b>Corrector git</b> tiene una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
 <table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Etiqueta sobre</th></tr></thead><tbody>
 <tr><td><a href="ejercicios/e1.html">E1</a></td><td>Tres commits, uno por fichero, con mensajes Conventional Commits y tu identidad.</td><td><code>main</code></td></tr>
 <tr><td><a href="ejercicios/e2.html">E2</a></td><td>Un <code>.gitignore</code> que deja fuera lo que no debe subirse.</td><td><code>main</code></td></tr>
@@ -43,13 +52,14 @@ py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e
 
 <h3>Cómo se valora</h3>
 <ul>
-<li>Cada ejercicio vale lo mismo y se corrige de forma automática desde su etiqueta: estructura del historial (padres de los merges, commits por rama, conflicto real) y contenido de los ficheros.</li>
-<li>Las fechas de los commits no cuentan: se corrige cada etiqueta tal como esté al cierre del bloque.</li>
+<li>Cada ejercicio vale lo mismo y se corrige de forma automática desde su etiqueta en GitHub: estructura del historial (padres de los merges, commits por rama, conflicto real) y contenido de los ficheros. Una etiqueta que no es anotada es un fallo.</li>
+<li>No hay fecha límite: cuenta la etiqueta tal como esté cuando el docente lanza la corrección.</li>
 </ul>
 
 
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
 </body>
 </html>
