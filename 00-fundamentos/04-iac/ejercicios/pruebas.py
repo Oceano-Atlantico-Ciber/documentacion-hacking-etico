@@ -15,6 +15,7 @@ iac-comprobar-floci), no en la tuya: lo que tengas en tu Floci de la unidad no s
 from __future__ import annotations
 
 import io
+import os
 import subprocess
 import sys
 import tarfile
@@ -63,6 +64,11 @@ def main(argv: list[str]) -> int:
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
             copia = Path(tmp) / "repo"
             tarfile.open(fileobj=io.BytesIO(archivo.stdout)).extractall(copia, filter="data")
+            # git archive pone a cada fichero la hora de su commit; con dos ejercicios subidos en el mismo segundo,
+            # Docker puede reaprovechar el contexto del anterior y construir código viejo. Se les pone la hora de ahora.
+            for f in Path(copia).rglob("*"):
+                if not f.is_symlink():
+                    os.utime(f)
             if not (copia / p.RAIZ / ej).is_dir():
                 print(f"{ej.upper()} · sin empezar: {ref} no tiene {p.RAIZ}/{ej}/")
                 continue

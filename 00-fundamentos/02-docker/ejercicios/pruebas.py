@@ -20,6 +20,7 @@ un equipo limpio. No tocan nada más.
 from __future__ import annotations
 
 import io
+import os
 import re
 import subprocess
 import sys
@@ -75,6 +76,11 @@ def copia_del_commit(raiz: Path, ref: str, destino: Path, clon: Path) -> None:
     archivo = subprocess.run(["git", "-c", "core.autocrlf=false", "archive", "--format=tar", ref],
                              cwd=clon, capture_output=True, check=True)
     tarfile.open(fileobj=io.BytesIO(archivo.stdout)).extractall(destino, filter="data")
+    # git archive pone a cada fichero la hora de su commit; con dos ejercicios subidos en el mismo segundo,
+    # Docker puede reaprovechar el contexto del anterior y construir código viejo. Se les pone la hora de ahora.
+    for f in Path(destino).rglob("*"):
+        if not f.is_symlink():
+            os.utime(f)
 
 
 def main(argv: list[str]) -> int:
