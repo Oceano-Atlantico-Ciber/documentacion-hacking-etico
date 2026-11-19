@@ -406,8 +406,9 @@ def suite_e2(fichero: str, res: Resultado) -> None:
         return
     res.comprobar("Es un OpenAPI 3", isinstance(c, dict) and str(c.get("openapi", "")).startswith("3"), str(c.get("openapi") if isinstance(c, dict) else c)[:40])
     rutas = (c or {}).get("paths") or {}
-    verbos = re.compile(r"(^|[-_/])(get|obtener|listar|list|crear|create|nuevo|new|add|anadir|borrar|eliminar|delete|remove|"
-                        r"actualizar|update|modificar|cambiar|cerrar|close|editar|edit)([-_]|$)", re.I)
+    # Un verbo como palabra de la ruta: separado por - o _, o en camelCase (listarComentarios, getIncidencias).
+    verbos = re.compile(r"(?:^|[-_/]|(?<=[a-z])(?=[A-Z]))(?i:get|obtener|listar|list|crear|create|nuevo|new|add|anadir|borrar|eliminar|"
+                        r"delete|remove|actualizar|update|modificar|cambiar|cerrar|close|editar|edit)(?:[-_]|$|(?=[A-Z]))")
     res.comprobar("Todas las rutas empiezan por /api/v1/", bool(rutas) and all(r.startswith("/api/v1/") for r in rutas), ", ".join(r for r in rutas if not r.startswith("/api/v1/")))
     res.comprobar("Ninguna ruta lleva un verbo: la acción la dice el método", not [r for r in rutas if any(verbos.search(s) for s in r.split("/"))],
                   ", ".join(r for r in rutas if any(verbos.search(s) for s in r.split("/"))))
