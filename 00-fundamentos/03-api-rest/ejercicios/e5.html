@@ -30,7 +30,7 @@
 </tbody></table></div>
 <p>Una de las tres carpetas es tu E4 tal cual; las otras dos las escribes tú. El corrector construye las tres imágenes, comprueba que responden lo mismo a la misma serie de peticiones y pasa a cada una las pruebas del E4.</p>
 
-<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<h2 class="step" id="paso-1"><span class="n">1</span>Prepara el escenario</h2>
 <p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
@@ -42,10 +42,10 @@ python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/pre
 cd fundamentos/api/e5</code></pre></div>
 <p><code>preparar.py</code> copia tu E4 a la carpeta de su lenguaje (por ejemplo, <code>e5/go/</code> si lo hiciste en Go) y deja el esqueleto de los otros dos en las suyas, con los mismos datos y las mismas pruebas.</p>
 
-<h2 class="step"><span class="n">2</span>Escribe las otras dos</h2>
+<h2 class="step" id="paso-2"><span class="n">2</span>Escribe las otras dos</h2>
 <p>Programa en cada esqueleto lo mismo que ya tienes, ruta a ruta, con su <code>Dockerfile</code>. Cada carpeta se arranca y se prueba como en el <a href="e3.html">E3</a>, desde dentro de ella y de una en una, porque en tu equipo todas escuchan en el 8000. Por ejemplo, para la de Python: <code>cd python</code>, las órdenes de Python del paso 1 del E3 y, en otra pestaña desde esa misma carpeta, <code>pruebas.py e4</code>. <code>preparar.py</code> no copia <code>.venv/</code> ni <code>node_modules/</code>, así que la primera vez, dentro de <code>e5/python/</code> crea el entorno e instala las dependencias (las tres órdenes de Python del E3) y dentro de <code>e5/node/</code> ejecuta <code>npm install</code>. Si te apoyas en la IA para traducir, pasa <code>pruebas.py e4</code> a cada una antes de seguir.</p>
 
-<h2 class="step"><span class="n">3</span>Arranca las tres a la vez</h2>
+<h2 class="step" id="paso-3"><span class="n">3</span>Arranca las tres a la vez</h2>
 <p>Para las APIs que tengas arrancadas en tu equipo (<kbd>Ctrl</kbd>+<kbd>C</kbd>). Con Docker Desktop en marcha, construye las tres imágenes y arráncalas, cada una en su puerto: Go en el 8001, Python en el 8002 y Node en el 8003. Desde <code>fundamentos/api/e5/</code>, en cualquier sistema:</p>
 <div class="cmd"><pre><code>docker build -t api-e5-go go
 docker build -t api-e5-python python
@@ -54,7 +54,7 @@ docker run -d --rm --name e5-go -p 8001:8000 api-e5-go
 docker run -d --rm --name e5-python -p 8002:8000 api-e5-python
 docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 
-<h2 class="step"><span class="n">4</span>Compáralas</h2>
+<h2 class="step" id="paso-4"><span class="n">4</span>Compáralas</h2>
 <p>Desde <code>fundamentos/api/e5/</code>, con los tres contenedores recién arrancados:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
@@ -73,7 +73,7 @@ docker run -d --rm --name e5-go -p 8001:8000 api-e5-go
 docker run -d --rm --name e5-python -p 8002:8000 api-e5-python
 docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 
-<h2 class="step"><span class="n">5</span>Explica las diferencias</h2>
+<h2 class="step" id="paso-5"><span class="n">5</span>Explica las diferencias</h2>
 <div class="cmd"><pre><code>code diferencias.md</code></pre></div>
 <p>Al menos tres cosas que un lenguaje o su framework hacía distinto de los otros sin pedírselo (errores por defecto, cabeceras, tipos de los parámetros, valores <code>null</code>…), qué respondía y qué has cambiado para igualarlo. Son también las pistas con las que alguien de fuera adivinaría con qué está hecha una API.</p>
 <p>Una diferencia por elemento de lista (o por apartado <code>##</code>), cada una con las tres partes: qué petición, qué respondía cada lenguaje y qué has cambiado. Por ejemplo, la del paso 4:</p>
@@ -89,7 +89,7 @@ docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 <li><code>diferencias.md</code> no explica al menos tres diferencias y su arreglo.</li>
 </ul>
 
-<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<h2 class="step" id="paso-6"><span class="n">6</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add .
 git commit -m "feat(api-e5): la misma API en Go, Python y Node"
 git push

@@ -28,7 +28,7 @@
 </tbody></table></div>
 <p><code>casos.txt</code>, <code>diferencias.md</code> y <code>escenario.md</code> se suben tal cual.</p>
 
-<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<h2 class="step" id="paso-1"><span class="n">1</span>Prepara el escenario</h2>
 <p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
@@ -49,14 +49,14 @@ docker run -d --rm --name e8-python -p 8002:8000 api-e8-python
 docker run -d --rm --name e8-node -p 8003:8000 api-e8-node</code></pre></div>
 <p>Cada vez que cambies código, <code>docker stop e8-go e8-python e8-node</code> y otra vez las órdenes <code>docker build</code> y <code>docker run</code>.</p>
 
-<h2 class="step"><span class="n">2</span>¿Quién eres?</h2>
+<h2 class="step" id="paso-2"><span class="n">2</span>¿Quién eres?</h2>
 <ul>
 <li><code>POST /api/v1/sesiones</code> con <code>{"usuario", "clave"}</code>: <code>201</code> y <code>{"token": …}</code> si son buenos; <code>401</code> si no.</li>
 <li>Todas las rutas, salvo <code>/api/v1/salud</code> y <code>/api/v1/sesiones</code>, piden <code>Authorization: Bearer &lt;token&gt;</code>. Sin él o con uno que no existe: <code>401</code> con <code>WWW-Authenticate: Bearer</code>. Ninguna otra cabecera sirve para identificarse.</li>
 <li><code>GET /api/v1/usuarios/yo</code> devuelve <code>usuario</code>, <code>nombre</code> y <code>rol</code>.</li>
 </ul>
 
-<h2 class="step"><span class="n">3</span>¿Es tuyo? ¿Puedes?</h2>
+<h2 class="step" id="paso-3"><span class="n">3</span>¿Es tuyo? ¿Puedes?</h2>
 <ul>
 <li>Un técnico solo ve, en la lista y una a una, las incidencias cuyo <code>tecnico</code> es él. Las demás, también sus comentarios, le dan <code>404</code>. El administrador ve todas (BOLA).</li>
 <li>Lo que crea un técnico queda a su nombre. Un técnico que intenta crear o reasignar una incidencia para otro recibe <code>403</code>.</li>
@@ -64,14 +64,14 @@ docker run -d --rm --name e8-node -p 8003:8000 api-e8-node</code></pre></div>
 <li>Borrar incidencias es solo del administrador. Un técnico recibe <code>403</code>, también con las suyas (BFLA).</li>
 </ul>
 
-<h2 class="step"><span class="n">4</span>¿Cuántas veces? ¿Qué dices de ti?</h2>
+<h2 class="step" id="paso-4"><span class="n">4</span>¿Cuántas veces? ¿Qué dices de ti?</h2>
 <ul>
 <li>Tras cinco claves erróneas para un mismo usuario en un minuto, <code>/api/v1/sesiones</code> responde <code>429</code> con <code>Retry-After</code> en segundos a ese usuario, aunque la clave sea buena, hasta que pase el minuto.</li>
 <li>Ninguna respuesta lleva <code>X-Powered-By</code> ni un <code>Server</code> que diga el lenguaje o el framework.</li>
 </ul>
 <p class="note">En Python, la cabecera <code>server: uvicorn</code> no la pone tu código, sino uvicorn, el servidor que lo arranca; por eso no se quita desde FastAPI. Uvicorn tiene una opción para no enviarla: búscala en <a href="../temas/04-seguridad.html">API 4</a> y ponla en el <code>ENTRYPOINT</code> del <code>Dockerfile</code>, y también en la orden con la que la arrancas en tu equipo si pruebas ahí. En Node, <code>X-Powered-By: Express</code> sí se quita desde el código.</p>
 
-<h2 class="step"><span class="n">5</span>Documenta los controles</h2>
+<h2 class="step" id="paso-5"><span class="n">5</span>Documenta los controles</h2>
 <div class="cmd"><pre><code>code controles.md</code></pre></div>
 <p>Un apartado <code>##</code> por cada uno de los seis controles, con las cuatro preguntas de <a href="../../../01-hacking-etico/03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html">Documentar una vulnerabilidad</a>: dónde estaría el fallo, cuál sería, qué permitiría y cómo lo impide tu código, con la orden <code>curl</code> que lo demuestra (<code>curl.exe</code> si trabajas en Windows), lo que responde y su CWE. Cada control con su riesgo de la OWASP y su CWE:</p>
 <div class="tabla"><table><thead><tr><th>Control</th><th>OWASP API</th><th>CWE</th></tr></thead><tbody>
@@ -109,17 +109,13 @@ ADMIN=$(python3 -c 'import json; print(next(u["token"] for u in json.load(open("
 echo $LUCIA</code></pre></div>
 <p>La última línea enseña el token de <code>lucia</code>: si sale vacía, no estás en <code>e8/</code> o falta <code>go/usuarios.json</code>. Las variables duran lo que esa pestaña; si abres otra, repítelo. Después, <code>-H "Authorization: Bearer $LUCIA"</code> se escribe igual en PowerShell que en macOS o Linux. Los tokens son datos de prueba de tu laboratorio: en <code>controles.md</code> escribe <code>$LUCIA</code> o <code>$ADMIN</code>, no su valor.</p>
 
-<h2 class="step"><span class="n">6</span>Pruébalo en las tres</h2>
+<h2 class="step" id="paso-6"><span class="n">6</span>Pruébalo en las tres</h2>
 <p>Desde <code>fundamentos/api/e8/</code>, con los tres contenedores recién arrancados:</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>py go/pruebas.py e8 http://localhost:8001
-py python/pruebas.py e8 http://localhost:8002
-py node/pruebas.py e8 http://localhost:8003</code></pre></div>
+<div class="cmd"><pre><code>py go/pruebas.py e8 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<div class="cmd"><pre><code>python3 go/pruebas.py e8 http://localhost:8001
-python3 python/pruebas.py e8 http://localhost:8002
-python3 node/pruebas.py e8 http://localhost:8003</code></pre></div>
-<p>Cada orden lanza primero los ataques con los tokens de los técnicos y después repite todas las pruebas anteriores con el token del administrador. Está listo cuando las tres terminan en <code>0 mal</code>. El bloqueo por intentos dura un minuto: reinicia los contenedores entre pasadas, con <code>docker stop e8-go e8-python e8-node</code> y sus tres <code>docker run</code> del paso 1.</p>
+<div class="cmd"><pre><code>python3 go/pruebas.py e8 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
+<p>A cada API le lanza primero los ataques con los tokens de los técnicos y después repite todas las pruebas anteriores con el token del administrador, igual que el corrector; al final, «Qué arreglar» agrupa los fallos por causa, con el arreglo, la orden para repetirlo y el paso de este enunciado. El bloqueo por intentos dura un minuto: reinicia los contenedores entre pasadas, con <code>docker stop e8-go e8-python e8-node</code> y sus tres <code>docker run</code> del paso 1. Está listo cuando termina en <code>0 mal</code>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Algún ataque funciona: sin token, con un token inventado o con <code>X-User</code>; ver o cambiar la incidencia de otro; crear o reasignar para otro; borrar sin ser administrador; cambiarse el rol; probar claves sin límite.</li>
@@ -128,7 +124,7 @@ python3 node/pruebas.py e8 http://localhost:8003</code></pre></div>
 <li><code>controles.md</code> no tiene las cuatro preguntas para cada control.</li>
 </ul>
 
-<h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
+<h2 class="step" id="paso-7"><span class="n">7</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add .
 git commit -m "feat(api-e8): autenticación, autorización y límites"
 git push

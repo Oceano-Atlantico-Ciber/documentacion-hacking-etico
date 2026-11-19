@@ -23,7 +23,7 @@
 <h2>Qué entregas</h2>
 <p>La carpeta <code>fundamentos/api/e4/</code>: tu API del E3 con las escrituras añadidas. Cambias el código de tu lenguaje (<code>main.go</code>, <code>main.py</code> o <code>main.js</code>) y, si hace falta, el <code>Dockerfile</code>; lo demás va tal cual lo copia <code>preparar.py</code>. El corrector construye tu imagen y le pasa <code>pruebas.py e3</code>, <code>pruebas.py e4</code> y unas pocas pruebas más que no ves (abajo dice cuáles).</p>
 
-<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<h2 class="step" id="paso-1"><span class="n">1</span>Prepara el escenario</h2>
 <p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
@@ -35,7 +35,7 @@ python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/pre
 cd fundamentos/api/e4</code></pre></div>
 <p><code>preparar.py</code> copia tu E3 entero a <code>e4/</code>: sigues sobre tu propio código, y el E3 se queda como lo entregaste. No copia <code>node_modules/</code> ni <code>.venv/</code>: si usas Python o Node, vuelve a instalar las dependencias en la carpeta nueva, como en el paso 1 del <a href="e3.html">E3</a>. Desde ahora arrancas la API desde <code>fundamentos/api/e4/</code>, con las mismas órdenes que en el E3; antes, para la del E3 con <kbd>Ctrl</kbd>+<kbd>C</kbd>, porque las dos usan el puerto 8000.</p>
 
-<h2 class="step"><span class="n">2</span>Programa las escrituras</h2>
+<h2 class="step" id="paso-2"><span class="n">2</span>Programa las escrituras</h2>
 <div class="tabla"><table><thead><tr><th>Petición</th><th>Responde</th></tr></thead><tbody>
 <tr><td><code>POST /api/v1/incidencias</code></td><td><code>201</code>, la incidencia creada y <code>Location: /api/v1/incidencias/{id}</code>. Si no llegan, <code>estado</code> es <code>abierta</code> y <code>tecnico</code>, <code>null</code>. Sin <code>titulo</code> o <code>prioridad</code>: <code>400</code> o <code>422</code>.</td></tr>
 <tr><td><code>PUT /api/v1/incidencias/{id}</code></td><td><code>200</code> y la incidencia sustituida entera. Si falta alguno de los cuatro campos: <code>400</code> o <code>422</code>.</td></tr>
@@ -67,7 +67,7 @@ HTTP/1.1 405 Method Not Allowed
 Allow: GET, POST
 …</code></pre>
 
-<h2 class="step"><span class="n">3</span>Pruébalo</h2>
+<h2 class="step" id="paso-3"><span class="n">3</span>Pruébalo</h2>
 <p>Con la API recién arrancada, en otra pestaña de la terminal y desde <code>fundamentos/api/e4/</code>:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py pruebas.py e4 http://localhost:8000</code></pre></div>
@@ -90,7 +90,7 @@ docker stop api</code></pre></div>
 <li>Falla alguna de las que no ves: un id borrado reutilizado, un <code>PUT</code> que acepta la mitad de los campos, un <code>DELETE</code> con cuerpo.</li>
 </ul>
 
-<h2 class="step"><span class="n">4</span>Sube y etiqueta</h2>
+<h2 class="step" id="paso-4"><span class="n">4</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add .
 git commit -m "feat(api-e4): escrituras de la API de incidencias"
 git push

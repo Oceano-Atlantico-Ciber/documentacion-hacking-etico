@@ -28,7 +28,7 @@
 </tbody></table></div>
 <p>El resto lo deja <code>preparar.py</code> y se sube sin tocar: <code>lenguaje.txt</code> (dice <code>go</code>, <code>python</code> o <code>node</code>), <code>incidencias.json</code>, <code>contrato.yaml</code>, <code>pruebas.py</code> y los ficheros de proyecto (<code>go.mod</code>, <code>requirements.txt</code> o <code>package.json</code>).</p>
 
-<h2 class="step"><span class="n">1</span>Elige lenguaje y prepara el escenario</h2>
+<h2 class="step" id="paso-1"><span class="n">1</span>Elige lenguaje y prepara el escenario</h2>
 <p>Empieza por el que te resulte más cómodo: los otros dos llegan en el E5. Con Go, Python y Node instalados (<a href="../temas/02-disenar-y-construir.html">API 2</a>), en la terminal:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
@@ -66,7 +66,7 @@ Content-Type: application/json
 
 {"estado": "ok"}</code></pre>
 
-<h2 class="step"><span class="n">2</span>Programa las tres lecturas</h2>
+<h2 class="step" id="paso-2"><span class="n">2</span>Programa las tres lecturas</h2>
 <p>Están marcadas en el código con <code>E3:</code>. Lo que dice el contrato:</p>
 <ul>
 <li><code>GET /api/v1/incidencias</code> devuelve <code>{"datos": [todas, ordenadas por id], "siguiente": null}</code>.</li>
@@ -91,7 +91,7 @@ Content-Type: application/json
 {… un JSON que diga que no existe …}</code></pre>
 <p>La incidencia tiene que salir con los mismos campos y valores que en <code>incidencias.json</code>: ni uno de más, ni uno cambiado. El orden de los campos y los espacios dan igual.</p>
 
-<h2 class="step"><span class="n">3</span>Pruébalo desde fuera</h2>
+<h2 class="step" id="paso-3"><span class="n">3</span>Pruébalo desde fuera</h2>
 <p>Las pruebas leen tu <code>incidencias.json</code> para saber qué esperar, así que se lanzan desde <code>fundamentos/api/e3/</code>. Con la API recién arrancada (si ya la has usado, <kbd>Ctrl</kbd>+<kbd>C</kbd> y arráncala otra vez), en la otra pestaña:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py pruebas.py e3 http://localhost:8000</code></pre></div>
@@ -107,7 +107,7 @@ Content-Type: application/json
 8 bien, 0 mal</code></pre>
 <p>Si una prueba falla, repite con <code>curl -i</code> la petición que hace y compara con el contrato.</p>
 
-<h2 class="step"><span class="n">4</span>Completa el Dockerfile</h2>
+<h2 class="step" id="paso-4"><span class="n">4</span>Completa el Dockerfile</h2>
 <p>Los comentarios del <code>Dockerfile</code> dicen qué falta. Para la API que arrancaste en el paso 1 (<kbd>Ctrl</kbd>+<kbd>C</kbd> en su pestaña), porque el contenedor usa el mismo puerto, el 8000. Con Docker Desktop en marcha y desde <code>fundamentos/api/e3/</code>, construye la imagen, arráncala y pasa las pruebas contra el contenedor:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker build -t api-incidencias:e3 .
@@ -129,7 +129,7 @@ docker stop api</code></pre></div>
 <li><code>lenguaje.txt</code> no dice el lenguaje del proyecto.</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<h2 class="step" id="paso-5"><span class="n">5</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git status
 git add .
 git commit -m "feat(api-e3): rutas de lectura de la API de incidencias"
