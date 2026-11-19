@@ -6,7 +6,7 @@ Arrancar en tu equipo, desde esta carpeta:
     pip install -r requirements.txt
     uvicorn main:app --port 8000 --reload
 
-Probar:  curl -i http://localhost:8000/api/v1/salud
+Probar:  curl.exe -i http://localhost:8000/api/v1/salud
 Documentación que genera FastAPI: http://localhost:8000/docs
 
 El contrato está en contrato.yaml. FastAPI tiene costumbres propias (por ejemplo, responde 422

@@ -27,7 +27,7 @@
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e3 --lenguaje go
 cd fundamentos/api/e3</code></pre></div>
 <p>Cambia <code>go</code> por <code>python</code> o <code>node</code> si eliges otro. Deja un proyecto que ya arranca y responde en <code>/api/v1/salud</code>, tus datos en <code>incidencias.json</code>, el contrato de referencia en <code>contrato.yaml</code>, <code>pruebas.py</code> y un <code>Dockerfile</code> a medias. Arráncalo como explica la cabecera de <code>main.go</code>, <code>main.py</code> o <code>main.js</code>, y comprueba:</p>
-<div class="cmd"><pre><code>curl -i http://localhost:8000/api/v1/salud</code></pre></div>
+<div class="cmd"><pre><code>curl.exe -i http://localhost:8000/api/v1/salud</code></pre></div>
 
 <h2 class="step"><span class="n">2</span>Programa las tres lecturas</h2>
 <p>Están marcadas en el código con <code>E3:</code>. Lo que dice el contrato:</p>
@@ -41,7 +41,7 @@ cd fundamentos/api/e3</code></pre></div>
 <h2 class="step"><span class="n">3</span>Pruébalo desde fuera</h2>
 <p>Con la API recién arrancada, en otra pestaña de Git Bash:</p>
 <div class="cmd"><pre><code>py pruebas.py e3 http://localhost:8000</code></pre></div>
-<p>Si una prueba falla, repite con <code>curl -i</code> la petición que hace y compara con el contrato.</p>
+<p>Si una prueba falla, repite con <code>curl.exe -i</code> la petición que hace y compara con el contrato.</p>
 
 <h2 class="step"><span class="n">4</span>Completa el Dockerfile</h2>
 <p>Los comentarios del <code>Dockerfile</code> dicen qué falta. Construye, arranca y vuelve a pasar las pruebas, ahora contra el contenedor:</p>

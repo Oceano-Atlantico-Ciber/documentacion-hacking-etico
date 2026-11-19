@@ -163,7 +163,7 @@ Content-Length: 98
 <section class="seccion">
 <h2>Míralo en crudo</h2>
 <p>Con <code>-v</code>, <code>curl</code> enseña la conversación entera: las líneas que empiezan por <code>&gt;</code> son lo que envía y las que empiezan por <code>&lt;</code>, lo que recibe. Con la API del laboratorio del E1 en marcha, en Git Bash:</p>
-<pre><code>curl -v http://localhost:8080/api/v1/incidencias/7</code></pre>
+<pre><code>curl.exe -v http://localhost:8080/api/v1/incidencias/7</code></pre>
 <pre><code>&gt; GET /api/v1/incidencias/7 HTTP/1.1
 &gt; Host: localhost:8080
 &gt; User-Agent: curl/8.10.1
@@ -421,7 +421,7 @@ Location: /api/v1/incidencias/13</span>
 
 <section class="seccion">
 <h2>curl: la petición desde la terminal</h2>
-<p><b>curl</b> envía peticiones HTTP desde la terminal. Viene con Git para Windows, así que ya lo tienes en Git Bash. En PowerShell, <code>curl</code> es otra orden (<code>Invoke-WebRequest</code>) y no entiende estas opciones: en este curso, <code>curl</code> se lanza siempre desde Git Bash. Elige un método, una URL y el cuerpo, y mira cómo se escribe la orden y qué hace cada pieza.</p>
+<p><b>curl</b> envía peticiones HTTP desde la terminal. Viene con Git para Windows, así que ya lo tienes en Git Bash. Escríbelo siempre como <code>curl.exe</code>: en PowerShell, <code>curl</code> a secas es otra orden (<code>Invoke-WebRequest</code>) y falla. Las órdenes con cuerpo JSON, lánzalas desde Git Bash: PowerShell estropea sus comillas. Elige un método, una URL y el cuerpo, y mira cómo se escribe la orden y qué hace cada pieza.</p>
 <div class="panel">
 <div class="opciones" id="c-metodos">
 <button type="button" aria-pressed="true">GET</button>
@@ -452,7 +452,7 @@ Location: /api/v1/incidencias/13</span>
 <section class="seccion">
 <h2>Práctica</h2>
 <p><a href="../ejercicios/e1.html">E1 · HTTP a mano</a>: escribes dos peticiones en un fichero de texto, las envías con <code>enviar.py</code> a la API del laboratorio y compruebas que la respuesta es la misma que con <code>curl</code>.</p>
-<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pide a la IA que te explique una cabecera o un código que no conozcas, y compruébalo en la respuesta real de <code>curl -v</code>. Si no coincide, gana la respuesta.</p></div>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pide a la IA que te explique una cabecera o un código que no conozcas, y compruébalo en la respuesta real de <code>curl.exe -v</code>. Si no coincide, gana la respuesta.</p></div>
 </section>
 
 <section class="seccion">
@@ -733,7 +733,7 @@ Location: /api/v1/incidencias/13</span>
   pintarFormulario();
   pintarDatos();
 
-  // Constructor de órdenes curl para Git Bash, con la explicación de cada pieza.
+  // Constructor de órdenes curl.exe para Git Bash, con la explicación de cada pieza.
   const comillas = (texto) => `'${texto.replaceAll("'", `'\\''`)}'`;
   const botonesMetodo = [...document.querySelectorAll("#c-metodos button")];
   const cUrl = $("c-url"), cCuerpo = $("c-cuerpo");
@@ -742,7 +742,7 @@ Location: /api/v1/incidencias/13</span>
     const conCuerpo = CON_CUERPO.has(cMetodo);
     for (const b of botonesMetodo) b.setAttribute("aria-pressed", String(b.textContent === cMetodo));
     cCuerpo.disabled = !conCuerpo;
-    const piezas = [["curl", "el programa"], ["-i", "enseña el código y las cabeceras de la respuesta, no solo el cuerpo"]];
+    const piezas = [["curl.exe", "el programa"], ["-i", "enseña el código y las cabeceras de la respuesta, no solo el cuerpo"]];
     if (cMetodo !== "GET") piezas.push([`-X ${cMetodo}`, "el método; sin -X, curl hace GET"]);
     piezas.push([comillas(cUrl.value.trim()), "la URL, entre comillas simples"]);
     if (conCuerpo) piezas.push(
