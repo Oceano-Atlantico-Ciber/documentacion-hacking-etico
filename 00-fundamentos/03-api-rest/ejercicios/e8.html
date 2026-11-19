@@ -38,7 +38,7 @@ cd fundamentos/api/e8</code></pre></div>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e8
 cd fundamentos/api/e8</code></pre></div>
-<p><code>preparar.py</code> copia tu E7 a <code>e8/</code> y añade a cada lenguaje <code>usuarios.json</code>: un administrador y dos técnicos, <code>lucia</code> y <code>marcos</code>, con su clave y su token. Son datos de prueba de tu laboratorio, generados para ti; aun así, trátalos como lo que son: no los copies en ningún otro sitio. Añade <code>usuarios.json</code> a la imagen en el <code>Dockerfile</code> de cada lenguaje, junto a <code>incidencias.json</code>.</p>
+<p><code>preparar.py</code> copia tu E7 a <code>e8/</code> y añade a cada lenguaje <code>usuarios.json</code>: un administrador y dos técnicos, <code>lucia</code> y <code>marcos</code>, con su clave y su token. Son datos de prueba de tu laboratorio, generados para ti; aun así, trátalos como lo que son: no los copies en ningún otro sitio. Sí van en tu repositorio de entregas, porque la imagen los necesita: es tu repositorio privado y son datos de prueba. Añade <code>usuarios.json</code> a la imagen en el <code>Dockerfile</code> de cada lenguaje, junto a <code>incidencias.json</code>.</p>
 <p>Mientras programas, construye y arranca las tres como en el E7: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden para los contenedores del E7, si siguen en marcha. Desde <code>fundamentos/api/e8/</code>, en cualquier sistema:</p>
 <div class="cmd"><pre><code>docker stop e7-go e7-python e7-node
 docker build -t api-e8-go go
@@ -99,7 +99,7 @@ Content-Type: application/problem+json
 ```</code></pre>
 <p>Para no pegar tokens en las órdenes, guárdalos antes en variables de la terminal, sacándolos de tu <code>usuarios.json</code>. Desde <code>fundamentos/api/e8/</code>, en la pestaña donde vayas a lanzar los <code>curl</code>:</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>$u = Get-Content go/usuarios.json -Raw | ConvertFrom-Json
+<div class="cmd"><pre><code>$u = Get-Content go/usuarios.json -Raw -Encoding UTF8 | ConvertFrom-Json
 $LUCIA = ($u.usuarios | Where-Object usuario -eq lucia).token
 $ADMIN = ($u.usuarios | Where-Object usuario -eq admin).token
 $LUCIA</code></pre></div>
