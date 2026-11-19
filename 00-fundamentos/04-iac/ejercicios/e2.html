@@ -19,53 +19,129 @@
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-iac-e2</code> sobre <code>main</code></dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p>En <code>fundamentos/iac/e2/</code> de <code>main</code>, <code>inventario.md</code>, y la carpeta <code>empresa/</code> tal como la deja <code>preparar.py</code>. El inventario recorre la cuenta por servicio y termina con lo que un atacante miraría primero. Su forma (tu huella será otra; lo de los <code>…</code> lo escribes tú):</p>
+<pre><code># Inventario de la cuenta de la empresa
+
+## S3
+- copias-1a2b3c4d: …
+- informes-1a2b3c4d: …
+- secretos-1a2b3c4d: …
+
+## IAM
+- Usuario operaciones-1a2b3c4d, política … : permite …
+- Usuario becario-1a2b3c4d, política … : permite … Claves de acceso: …
+
+## EC2
+- Grupo de seguridad web-1a2b3c4d: abre el puerto … a … y el puerto … a …
+- Servidor web-1a2b3c4d: …
+
+## Lo que miraría primero un atacante
+1. … porque …
+2. … porque …
+3. … porque …</code></pre>
+<p>La etiqueta anotada <code>entrega-fundamentos-iac-e2</code> va sobre <code>main</code>, subida a GitHub.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material y vuelve a <code>main</code>. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e2
-cd fundamentos/iac/e2/empresa</code></pre></div>
-<p>Deja en <code>empresa/</code> el Terraform de la cuenta (<code>empresa.tf</code>) y su <code>proveedor.tf</code>. Los nombres llevan tu huella. Es la base de este ejercicio, del E7 y del E8. Todavía no lo leas: hoy miras la cuenta desde fuera.</p>
+git -C ../documentacion-hacking-etico pull
+git switch main</code></pre></div>
+<p>Crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e2</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e2</code></pre></div>
+<pre><code>e2 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e2/. Sigue el enunciado.</code></pre>
+<p>Deja en <code>fundamentos/iac/e2/empresa/</code> el Terraform de la cuenta (<code>empresa.tf</code>) y su <code>proveedor.tf</code>. Los nombres llevan tu huella. Es la base de este ejercicio, del E7 y del E8. Todavía no lo leas: hoy miras la cuenta desde fuera, con la CLI, como si no tuvieras el código.</p>
 
 <h2 class="step"><span class="n">2</span>Despliega la empresa en tu nube</h2>
-<p>Con tu Floci en marcha (<code>docker compose up -d</code> en <code>fundamentos/iac/</code>):</p>
-<div class="cmd"><pre><code>terraform init
+<p>Tu Floci tiene que estar en marcha. Si reiniciaste el equipo o la paraste, levántala otra vez (desde la carpeta de tu repositorio, con Docker Desktop abierto):</p>
+<div class="cmd"><pre><code>cd fundamentos/iac
+docker compose up -d
+cd ../..</code></pre></div>
+<p>Despliega la cuenta con Terraform. Desde la carpeta de tu repositorio:</p>
+<div class="cmd"><pre><code>cd fundamentos/iac/e2/empresa
+terraform init
 terraform apply</code></pre></div>
-<p>Lee la última línea del plan antes de escribir <code>yes</code>. En <a href="../temas/02-terraform.html">IaC 2</a> verás qué ha hecho Terraform; aquí solo lo usas para tener la cuenta.</p>
+<p><code>init</code> descarga el proveedor de AWS y termina en <code>Terraform has been successfully initialized!</code>. <code>apply</code> enseña lo que va a crear, termina en <code>Plan: 13 to add, 0 to change, 0 to destroy.</code> y pregunta <code>Enter a value:</code>. Escribe <code>yes</code> y pulsa Intro:</p>
+<pre><code>Apply complete! Resources: 13 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+becario_clave = "…"
+becario_secreto = &lt;sensitive&gt;</code></pre>
+<p>En <a href="../temas/02-terraform.html">IaC 2</a> verás qué ha hecho Terraform; aquí solo lo usas para tener la cuenta. No borres el <code>terraform.tfstate</code> que aparece en <code>empresa/</code>: en el E7 lo reutilizas.</p>
 
 <h2 class="step"><span class="n">3</span>Recorre la cuenta</h2>
+<p>Lanza estas órdenes una a una, desde cualquier carpeta, y lee cada respuesta. Donde pone <code>&lt;…&gt;</code>, escribe un nombre que te haya dado la respuesta anterior, sin los <code>&lt; &gt;</code>, y repite la orden con cada bucket o usuario:</p>
 <div class="cmd"><pre><code>aws s3 ls
-aws s3 ls s3://&lt;cada-bucket&gt;
-aws iam list-users
+aws s3 ls s3://&lt;cada-bucket&gt;</code></pre></div>
+<p>Los tres buckets de la empresa y lo que guarda cada uno. Como la Floci es la misma de toda la unidad, también sale <code>e1-notas-…</code> del E1: no es de la empresa; puedes nombrarlo aparte o dejarlo fuera.</p>
+<div class="cmd"><pre><code>aws iam list-users --query "Users[].UserName"
 aws iam list-user-policies --user-name &lt;cada-usuario&gt;
-aws iam get-user-policy --user-name &lt;usuario&gt; --policy-name &lt;política&gt;
-aws iam list-access-keys --user-name &lt;cada-usuario&gt;
-aws ec2 describe-security-groups --query "SecurityGroups[].[GroupName,IpPermissions]"
-aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceId,Tags]"</code></pre></div>
-<p>Sigue el hilo: cada respuesta te dice qué preguntar después.</p>
+aws iam get-user-policy --user-name &lt;usuario&gt; --policy-name &lt;su-política&gt;
+aws iam list-access-keys --user-name &lt;cada-usuario&gt;</code></pre></div>
+<p>Los dos usuarios de la empresa (el <code>lector-…</code> es tuyo, del E1), el nombre de su política en línea, lo que dice (<code>Action</code> y <code>Resource</code> de cada sentencia) y si tienen claves de acceso.</p>
+<div class="cmd"><pre><code>aws ec2 describe-security-groups --query "SecurityGroups[].[GroupName,IpPermissions]"
+aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceId,Tags]"
+aws ec2 describe-instance-attribute --instance-id &lt;id-del-servidor&gt; --attribute userData</code></pre></div>
+<p>Los grupos de seguridad con sus reglas de entrada: <code>FromPort</code> es el puerto y <code>CidrIp</code>, desde dónde se admite (<code>0.0.0.0/0</code> es todo internet). El grupo <code>default</code> lo tiene toda cuenta: céntrate en el de la empresa. Y los servidores, con su etiqueta <code>Name</code>. La última orden, con el <code>InstanceId</code> que da la anterior, enseña el script de arranque del servidor (<code>user_data</code>) codificado en base64: un atacante lo descodificaría buscando contraseñas.</p>
 
 <h2 class="step"><span class="n">4</span>Escribe el inventario</h2>
 <div class="cmd"><pre><code>cd ..
 code inventario.md</code></pre></div>
-<p>Por servicio, qué hay: cada bucket y lo que guarda, cada usuario con su política y lo que permite, cada grupo de seguridad con sus puertos abiertos y a quién, y cada servidor. Termina con una lista de al menos tres cosas que un atacante miraría primero en esta cuenta, y por qué.</p>
+<p>Con la forma de <a href="#que-entregas">Qué entregas</a>: por servicio, qué hay, con el nombre exacto de cada recurso. Cada bucket y lo que guarda; cada usuario con su política y lo que permite; el grupo de seguridad con sus puertos abiertos y a quién (escribe los números de puerto y los rangos tal como salen, por ejemplo <code>0.0.0.0/0</code>); y el servidor. Termina con una lista de al menos tres cosas que un atacante miraría primero en esta cuenta, y por qué. Guarda.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta <code>inventario.md</code>.</li>
-<li>No aparecen todos los recursos de la cuenta, con su nombre: los tres buckets, los dos usuarios y el grupo de seguridad.</li>
-<li>No dice qué puertos abre el grupo de seguridad y a quién.</li>
-<li>No tiene una lista con al menos tres cosas que miraría un atacante.</li>
+<li>No aparecen, con su nombre exacto, todos los recursos: los tres buckets (<code>copias-…</code>, <code>informes-…</code>, <code>secretos-…</code>), los dos usuarios (<code>operaciones-…</code>, <code>becario-…</code>) y el grupo de seguridad <code>web-…</code> (el servidor se llama igual).</li>
+<li>No dice qué puertos abre el grupo de seguridad y a quién: tiene que aparecer el rango <code>0.0.0.0/0</code> y el puerto <code>22</code>.</li>
+<li>No habla de lo que miraría un <b>atacante</b> (con esa palabra), o no tiene una lista con al menos tres puntos (líneas que empiezan por <code>-</code> o <code>*</code>, o numeradas: <code>1.</code>, <code>2.</code>…).</li>
 </ul>
 
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e2</code></pre></div>
-<p>Comprueba lo que ya está en commits. Cada ✗ dice qué falla; corrige, haz commit y repite hasta que salga <b>✓ superado</b>.</p>
-
+git status --short -uall fundamentos/iac/e2</code></pre></div>
+<pre><code>?? fundamentos/iac/e2/empresa/empresa.tf
+?? fundamentos/iac/e2/empresa/proveedor.tf
+?? fundamentos/iac/e2/inventario.md</code></pre>
+<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<div class="cmd"><pre><code>git add fundamentos/iac/e2
+git commit -m "docs(iac-e2): inventario de la cuenta de la empresa"</code></pre></div>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e2</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e2</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e2</code></pre></div>
+<p>En este ejercicio el corrector solo lee <code>inventario.md</code>, pero <code>pruebas.py</code> necesita Docker igualmente.</p>
+<p>Antes de subir, un ejercicio bien hecho se ve así:</p>
+<pre><code>E2 · main, todavía sin etiqueta (provisional) · 7a8b9c0 · comprobando…
+  ✓ superado
+  ! main aún no está en GitHub: el corrector no lo verá hasta que lo subas</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide: «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …». Antes de subir es normal: desaparece al subir en el paso siguiente. Los SHA de tus líneas serán otros.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni <code>fundamentos/iac/e2/</code> en <code>main</code>: falta preparar el ejercicio o hacer su commit.</li>
+</ul>
 <h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add fundamentos/iac
-git commit -m "docs(iac-e2): inventario de la cuenta de la empresa"
-git push</code></pre></div>
-<p>Cuando la fila de E2 de <b>Corrector iac</b> salga sin fallos:</p>
-<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e2 -m "E2 resuelto"
+<p>Sube tu trabajo a GitHub:</p>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b>, crea la etiqueta anotada sobre <code>main</code> y súbela:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e2 main -m "E2 resuelto"
 git push origin entrega-fundamentos-iac-e2</code></pre></div>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E2 · etiqueta entrega-fundamentos-iac-e2 · 7a8b9c0 · comprobando…
+  ✓ superado</code></pre>
+<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>Corrige en <code>fundamentos/iac/e2/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e2 main -m "E2 resuelto"
+git push -f origin entrega-fundamentos-iac-e2</code></pre></div>
+<p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e1.html">← E1 · A mano, una vez</a><a href="e3.html">E3 · Del clic al código →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

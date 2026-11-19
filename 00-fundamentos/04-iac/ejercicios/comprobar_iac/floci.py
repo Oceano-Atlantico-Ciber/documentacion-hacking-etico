@@ -28,7 +28,7 @@ REGION = "eu-west-1"
 RAIZ = ("test", "test")  # la clave de administrador de Floci
 # Solo lo imprescindible del entorno: en Linux, PATH y HOME; en Windows, además, lo que Docker Desktop necesita.
 ENTORNO = {k: os.environ[k] for k in ("PATH", "HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "PROGRAMDATA",
-                                      "SYSTEMROOT", "TEMP", "TMP") if k in os.environ}
+                                      "SYSTEMROOT", "TEMP", "TMP", "PROGRAMFILES", "PROGRAMW6432") if k in os.environ}
 
 
 class Fallo(Exception):

@@ -53,27 +53,42 @@
 
 <section class="seccion" id="instalar">
 <h2>Prepara tu equipo</h2>
-<p>Docker Desktop ya lo tienes de <a href="../../02-docker/temas/01-imagenes-y-contenedores.html">Docker 1</a>. Abre <b>PowerShell</b> e instala la CLI de AWS y Terraform:</p>
-<pre><code>winget install -e --id Amazon.AWSCLI
-winget install -e --id Hashicorp.Terraform</code></pre>
-<p>Cierra Git Bash y vuelve a abrirlo para que encuentre los programas nuevos, y comprueba:</p>
-<pre><code>aws --version
-terraform version</code></pre>
-<p>Ahora dile a la CLI de AWS dónde está tu nube. Estas cuatro órdenes escriben la configuración por defecto en <code>~/.aws/</code>, una sola vez:</p>
-<pre><code>aws configure set aws_access_key_id test
+<p>Trabajas en la terminal de VS Code (<b>Terminal → New Terminal</b>): en Windows es PowerShell; en macOS y Linux, la Terminal. Docker Desktop ya lo tienes de <a href="../../02-docker/temas/01-imagenes-y-contenedores.html">Docker 1</a>. Instala la CLI de AWS y Terraform:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>winget install -e --id Amazon.AWSCLI
+winget install -e --id Hashicorp.Terraform</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>brew install awscli terraform</code></pre></div>
+<p>En Linux sin Homebrew, sigue las guías oficiales: <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">CLI de AWS</a> y <a href="https://developer.hashicorp.com/terraform/install">Terraform</a>.</p>
+<p>En Windows, <code>winget</code> cambia el <code>PATH</code>, pero la terminal abierta no se entera: <b>cierra VS Code entero y vuelve a abrirlo</b> (abrir otra pestaña de terminal no basta). Después comprueba que los dos programas responden:</p>
+<div class="cmd"><pre><code>aws --version
+terraform version</code></pre></div>
+<pre><code>aws-cli/2.x.x Python/3.x.x Windows/11 exe/AMD64
+Terraform v1.x.x
+on windows_amd64</code></pre>
+<p>Tus números serán otros, y en macOS o Linux saldrá tu sistema. Si dice que no reconoce <code>aws</code> o <code>terraform</code>, no has reabierto VS Code.</p>
+<p>Ahora dile a la CLI de AWS dónde está tu nube. Estas cuatro órdenes escriben la configuración por defecto en la carpeta <code>.aws</code> de tu usuario. Se lanzan una sola vez, desde cualquier carpeta, y son iguales en los dos sistemas:</p>
+<div class="cmd"><pre><code>aws configure set aws_access_key_id test
 aws configure set aws_secret_access_key test
 aws configure set region eu-west-1
-aws configure set endpoint_url http://localhost:4566</code></pre>
+aws configure set endpoint_url http://localhost:4566</code></pre></div>
+<p>No escriben nada en pantalla. <code>test</code> / <code>test</code> es la clave de administrador de Floci; <code>endpoint_url</code> manda las peticiones a tu equipo en vez de a Amazon.</p>
 <p class="note">Con esta configuración, cada orden <code>aws</code> va a Floci y nunca a AWS de verdad. Si algún día usas una cuenta real, créale otro perfil con <code>--profile</code>.</p>
 </section>
 
 <section class="seccion" id="levantar">
 <h2>Levantar la nube</h2>
-<p>Toda la unidad usa una sola Floci, la de <code>fundamentos/iac/</code> de tu repositorio de entregas. <code>preparar.py</code> deja allí el <code>docker-compose.yml</code> la primera vez que lo lanzas:</p>
-<pre><code>cd fundamentos/iac
+<p>Toda la unidad usa una sola Floci, la de <code>fundamentos/iac/</code> de tu repositorio de entregas. <code>preparar.py</code> deja allí el <code>docker-compose.yml</code> la primera vez que lo lanzas (en el <a href="../ejercicios/e1.html">E1</a>). Con Docker Desktop abierto, desde la carpeta de tu repositorio:</p>
+<div class="cmd"><pre><code>cd fundamentos/iac
 docker compose up -d
-aws sts get-caller-identity</code></pre>
-<p>La última orden pregunta «¿quién soy?». Si responde un JSON con la cuenta (<code>Account</code>) y tu ARN, tu nube funciona. Lo que crees se guarda en un volumen de Docker y sigue ahí tras <code>docker compose down</code>; con <code>docker compose down -v</code> empiezas de cero.</p>
+aws sts get-caller-identity</code></pre></div>
+<p>La última orden pregunta «¿quién soy?». Si responde un JSON parecido a este (con la cuenta, <code>Account</code>, y tu ARN), tu nube funciona:</p>
+<pre><code>{
+    "UserId": "…",
+    "Account": "000000000000",
+    "Arn": "arn:aws:iam::000000000000:root"
+}</code></pre>
+<p>Si sale <code>Could not connect to the endpoint URL</code>, Floci no está en marcha: mira <code>docker compose ps</code> o espera unos segundos tras el <code>up -d</code>. Lo que crees se guarda en un volumen de Docker y sigue ahí tras <code>docker compose down</code> o un reinicio; con <code>docker compose down -v</code> lo borras todo y empiezas de cero.</p>
 </section>
 
 <section class="seccion">
@@ -85,7 +100,8 @@ aws s3 ls s3://pruebas-1a2b3c4d                     # listar
 aws iam create-user --user-name ana                 # crear un usuario
 aws iam list-users                                  # listar los usuarios
 aws iam list-user-policies --user-name ana          # sus políticas en línea</code></pre>
-<p>Las respuestas son JSON. Para quedarte con un dato, <code>--query</code> recorre la respuesta: <code>aws iam list-users --query "Users[].UserName"</code>. Cuando una orden falla, la última línea dice por qué: <code>AccessDenied</code> es un permiso que falta, <code>NoSuchEntity</code> algo que no existe.</p>
+<p>Lo que va detrás de <code>#</code> es un comentario, aquí y en los dos sistemas. Para recorrer una cuenta bastan tres verbos: <code>list-…</code> (qué hay), <code>get-…</code> (los detalles de uno) y, en EC2 y RDS, <code>describe-…</code> (las dos cosas a la vez, por ejemplo <code>aws ec2 describe-instances</code>). Las respuestas son JSON. Para quedarte con un dato, <code>--query</code> recorre la respuesta: <code>aws iam list-users --query "Users[].UserName"</code>. Cuando una orden falla, la última línea dice por qué: <code>AccessDenied</code> es un permiso que falta, <code>NoSuchEntity</code> algo que no existe. Si una respuesta larga se queda parada en <code>-- More --</code>, pulsa espacio para seguir o <code>q</code> para salir.</p>
+<p>Escribe cada orden en una sola línea, aunque sea larga. En PowerShell, la <code>\</code> del final de línea que verás en otras guías no sirve para continuar una orden.</p>
 </section>
 
 <section class="seccion" id="politicas">
@@ -100,19 +116,22 @@ aws iam list-user-policies --user-name ana          # sus políticas en línea</
 }</code></pre>
 <p>Este usuario puede listar un bucket y leer sus ficheros, y nada más: ni borrarlos, ni ver otros buckets, ni tocar IAM. Fíjate en los dos ARN: el bucket para listarlo, y <code>bucket/*</code> para los objetos de dentro.</p>
 <p>Una política se puede guardar <b>en línea</b>, dentro del usuario (<code>put-user-policy</code>), o como política <b>gestionada</b> aparte que se adjunta a varios (<code>attach-user-policy</code>). La regla que guía todo esto es la del <b>menor privilegio</b>: cada identidad, solo lo que necesita para su trabajo.</p>
+<p>El JSON de la política va en un fichero, por ejemplo <code>politica.json</code>, que creas con VS Code en la carpeta donde lanzas la orden. <code>file://</code> le dice a la CLI que lea el fichero:</p>
 <pre><code>aws iam put-user-policy --user-name ana --policy-name lectura-informes --policy-document file://politica.json
 aws iam create-access-key --user-name ana</code></pre>
+<p class="note">No escribas el JSON dentro de la propia orden: en PowerShell las comillas de dentro se pierden por el camino y la CLI recibe un JSON roto. Con un fichero, la misma orden vale en Windows, macOS y Linux.</p>
 <p class="note"><code>create-access-key</code> enseña el secreto una sola vez. En una cuenta real es una credencial: no la pegues en un chat ni la subas a un repositorio. En <a href="04-seguridad-de-la-infraestructura.html">IaC 4</a> verás qué pasa cuando ocurre.</p>
 </section>
 
 <section class="seccion">
 <h2>Lo que haces a mano no queda en ningún sitio</h2>
-<p>Has creado un bucket, un usuario y su política con cinco órdenes. ¿Cómo sabrá un compañero qué hay en la cuenta y por qué? ¿Cómo lo repites en otra cuenta, o después de un <code>down -v</code>? Guardar las órdenes en un fichero ayuda, pero no dice qué existe ahora: si alguien cambia algo a mano, el fichero ya no cuenta la verdad. Ese problema es el que resuelve Terraform, en el <a href="02-terraform.html">siguiente tema</a>.</p>
+<p>En el E1 crearás un bucket, un usuario y su política con cuatro órdenes. ¿Cómo sabrá un compañero qué hay en la cuenta y por qué? ¿Cómo lo repites en otra cuenta, o después de un <code>down -v</code>? Guardar las órdenes en un fichero ayuda, pero no dice qué existe ahora: si alguien cambia algo a mano, el fichero ya no cuenta la verdad. Ese problema es el que resuelve Terraform, en el <a href="02-terraform.html">siguiente tema</a>.</p>
 </section>
 
 <nav class="temas" aria-label="Temas de la unidad"><a href="../../03-api-rest/temas/04-seguridad.html">← API 4 · Seguridad</a><a href="02-terraform.html">IaC 2 · Terraform →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>
