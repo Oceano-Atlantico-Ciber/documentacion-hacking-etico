@@ -6,16 +6,21 @@ Uso, desde cualquier carpeta de tu repositorio de entregas y con Docker Desktop 
     py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e2    (Windows)
     py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py        (todos)
 
+En macOS o Linux, python3 en lugar de py.
+
 Se evalúa lo mismo que evaluará el corrector: lo que hay en la etiqueta entrega-fundamentos-docker-eN
 si ya existe y, si no, lo que hay en main. Lo que no tienes en un commit no cuenta. Se trabaja sobre una
-copia, así que tu carpeta no cambia, pero las pruebas construyen y levantan contenedores de verdad: antes
-y después de cada ejercicio quitan los contenedores, redes y volúmenes del laboratorio de ese ejercicio
-(e5-db, e6-red, el proyecto e7-lab…) para empezar como en un equipo limpio. No tocan nada más.
+copia del repositorio entero, sacada como la saca el corrector (con saltos de línea LF, aunque tu git en
+Windows los convierta a CRLF), así que tu carpeta no cambia. Pero las pruebas construyen y levantan
+contenedores de verdad: antes y después de cada ejercicio quitan los contenedores, redes y volúmenes del
+laboratorio de ese ejercicio (e5-db, e6-red, el proyecto de tu compose en E7 y E8…) para empezar como en
+un equipo limpio. No tocan nada más.
 """
 
 from __future__ import annotations
 
 import io
+import re
 import subprocess
 import sys
 import tarfile
@@ -35,13 +40,18 @@ LABORATORIO = {
     "e5": {"contenedores": ["e5-db", "e5-web"], "volumenes": ["e5-datos"]},
     "e6": {"contenedores": ["e6-web", "e6-datos"], "redes": ["e6-red"]},
     "e7": {"proyectos": ["e7-lab"]},
-    "e8": {"proyectos": ["e8"]},
+    "e8": {"proyectos": ["e8-panel", "e8"]},
 }
 
 
-def limpiar(ej: str) -> None:
+def limpiar(ej: str, carpeta: Path) -> None:
     lab = LABORATORIO.get(ej, {})
-    for proyecto in lab.get("proyectos", []):
+    proyectos = list(lab.get("proyectos", []))
+    if lab.get("proyectos") and (compose := carpeta / "docker-compose.yml").is_file():
+        # el corrector levanta el proyecto con el name: de tu compose; si lo cambiaste, también se quita ese
+        if (m := re.search(r"^name:\s*['\"]?([\w.-]+)", compose.read_text(encoding="utf-8", errors="replace"), re.M)):
+            proyectos.append(m[1].lower())
+    for proyecto in dict.fromkeys(proyectos):
         docker("compose", "-p", proyecto, "down", "-v", "--remove-orphans")
     if lab.get("contenedores"):
         docker("rm", "-f", "-v", *lab["contenedores"])
@@ -54,6 +64,17 @@ def limpiar(ej: str) -> None:
 
 def git(*args: str, cwd: Path) -> str:
     return subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, check=True).stdout.strip()
+
+
+def copia_del_commit(raiz: Path, ref: str, destino: Path, clon: Path) -> None:
+    """El árbol del commit, igual que lo saca el corrector: el repositorio entero, sin core.autocrlf ni
+    .gitattributes que cambien los ficheros (git archive los obedece; en Windows, autocrlf los pasaría a CRLF)."""
+    subprocess.run(["git", "clone", "--mirror", "--quiet", str(raiz), str(clon)], check=True, capture_output=True)
+    (clon / "info").mkdir(exist_ok=True)
+    (clon / "info" / "attributes").write_text("* -export-ignore -export-subst -text\n")
+    archivo = subprocess.run(["git", "-c", "core.autocrlf=false", "archive", "--format=tar", ref],
+                             cwd=clon, capture_output=True, check=True)
+    tarfile.open(fileobj=io.BytesIO(archivo.stdout)).extractall(destino, filter="data")
 
 
 def main(argv: list[str]) -> int:
@@ -80,18 +101,19 @@ def main(argv: list[str]) -> int:
     for ej in pedidos:
         etiqueta = p.etiqueta(ej)
         ref, que = (etiqueta, f"etiqueta {etiqueta}") if git("tag", "-l", etiqueta, cwd=raiz) else ("main", "main, todavía sin etiqueta")
-        archivo = subprocess.run(["git", "archive", "--format=tar", ref, p.RAIZ], cwd=raiz, capture_output=True)
-        if archivo.returncode:
-            print(f"{ej.upper()} · sin empezar: {ref} no tiene {p.RAIZ}/")
-            continue
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
             copia = Path(tmp) / "repo"
-            tarfile.open(fileobj=io.BytesIO(archivo.stdout)).extractall(copia, filter="data")
+            try:
+                copia_del_commit(raiz, ref, copia, Path(tmp) / "clon")
+            except subprocess.CalledProcessError:
+                print(f"{ej.upper()} · sin empezar: no hay {ref}")
+                continue
             if not (copia / p.RAIZ / ej).is_dir():
                 print(f"{ej.upper()} · sin empezar: {ref} no tiene {p.RAIZ}/{ej}/")
                 continue
             print(f"{ej.upper()} · {que} · comprobando…", flush=True)
-            limpiar(ej)
+            carpeta = copia / p.RAIZ / ej
+            limpiar(ej, carpeta)
             fallos: list[str] = []
             try:
                 fallos.extend(COMPROBACIONES[ej](Caso(usuario, copia, ej)))
@@ -100,7 +122,9 @@ def main(argv: list[str]) -> int:
             except Exception as e:  # un fallo de las pruebas no es un fallo tuyo
                 fallos.append(f"las pruebas no han podido terminar ({e}); avisa al docente")
             finally:
-                limpiar(ej)
+                limpiar(ej, carpeta)
+        if ref == etiqueta and git("cat-file", "-t", etiqueta, cwd=raiz) != "tag":
+            fallos.append("la etiqueta no es anotada (git tag -a)")  # el corrector la marca igual
         if fallos:
             mal += 1
             for f in fallos:
