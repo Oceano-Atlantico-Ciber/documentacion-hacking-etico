@@ -171,7 +171,7 @@ def e1(caso: Caso) -> Iterator[str]:
     if imagen != "nginx:1.27-alpine":
         yield f"el contenedor salía de {imagen} y debía salir de nginx:1.27-alpine"
     if _puertos(c) != {"80/tcp": [("127.0.0.1", "8080")]}:
-        yield f"el contenedor no publicaba 127.0.0.1:8080->80/tcp: publicaba {_publica(c)}"
+        yield f"el contenedor no publicaba 127.0.0.1:8080->80/tcp: publicaba {_publica(c)}" if _puertos(c) else "el contenedor no publicaba 127.0.0.1:8080->80/tcp: no publicaba ningún puerto"
     if estado["FinishedAt"].startswith("0001"):
         yield "el contenedor no llegó a pararse y volver a arrancar: según inspect.json no se paró nunca"
     elif estado["StartedAt"] <= estado["FinishedAt"]:

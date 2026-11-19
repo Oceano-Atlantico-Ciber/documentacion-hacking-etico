@@ -161,7 +161,7 @@ def _regla_e4(real: str, esperado: str) -> str | None:
         return f"sobran líneas: {', '.join(f'«{x}»' for x in sobran)}"
     for a, b in zip(r, r[1:]):
         if e.index(a) > e.index(b):
-            return f"no está ordenado por número de puerto: «{b}» va antes que «{a}»"
+            return f"no está ordenado por número de puerto: «{b}» debe ir antes que «{a}»"
     return None
 
 
