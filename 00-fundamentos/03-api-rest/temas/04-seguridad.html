@@ -45,7 +45,7 @@ tr.e8 td:first-child { font-weight: 700; }
 <tr class="e8"><td>API5 · BFLA</td><td>Autorización a nivel de función: usar una operación de administrador sin serlo.</td><td>E8</td></tr>
 <tr><td>API6 · Flujos de negocio sensibles</td><td>Automatizar algo que solo debía hacer una persona (comprar todas las entradas).</td><td>Aplicaciones web</td></tr>
 <tr><td>API7 · SSRF</td><td>Hacer que el servidor pida una URL que elige el atacante.</td><td>Aplicaciones web</td></tr>
-<tr><td>API8 · Mala configuración</td><td>Trazas en los errores, cabeceras que delatan la tecnología, CORS abierto.</td><td>E6 y E8</td></tr>
+<tr class="e8"><td>API8 · Mala configuración</td><td>Trazas en los errores, cabeceras que delatan la tecnología, CORS abierto.</td><td>E6 y E8</td></tr>
 <tr><td>API9 · Inventario descuidado</td><td>Versiones antiguas o rutas de pruebas que siguen vivas.</td><td>la versión en la ruta, API 2</td></tr>
 <tr><td>API10 · Consumo inseguro de APIs</td><td>Fiarse sin comprobar de lo que devuelve otra API.</td><td>Aplicaciones web</td></tr>
 </tbody></table></div>
@@ -178,12 +178,12 @@ Content-Type: application/problem+json
 
 <section class="seccion">
 <h2>Documentar cada control</h2>
-<p>Cada control se documenta con las cuatro preguntas de <a href="../../../01-hacking-etico/03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html">Documentar una vulnerabilidad</a>, ahora desde el lado de quien construye: dónde estaría el fallo, cuál sería, qué permitiría y cómo lo impide tu código. Es lo que pide <code>controles.md</code> en el E8.</p>
+<p>Cada control se documenta con las cuatro preguntas de <a href="../../../01-hacking-etico/03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html">Documentar una vulnerabilidad</a>, ahora desde el lado de quien construye: dónde estaría el fallo, cuál sería, qué permitiría y cómo lo impide tu código. Es lo que pide <code>controles.md</code> en el E8, un apartado por control con su CWE: <code>CWE-287</code> (autenticación), <code>CWE-639</code> (BOLA), <code>CWE-915</code> (asignación masiva), <code>CWE-285</code> (BFLA), <code>CWE-307</code> (límite de intentos) y <code>CWE-497</code> (huella de la tecnología).</p>
 </section>
 
 <section class="seccion">
 <h2>Práctica</h2>
-<p><a href="../ejercicios/e8.html">E8 · Una API que se defiende</a>: los cinco controles en las tres APIs, sin romper nada de lo anterior.</p>
+<p><a href="../ejercicios/e8.html">E8 · Una API que se defiende</a>: los seis controles (autenticación, BOLA, asignación masiva, BFLA, límite de intentos y huella de la tecnología) en las tres APIs, sin romper nada de lo anterior.</p>
 <div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pregunta a la IA cómo atacaría tu API, y comprueba cada idea con <code>curl</code> contra la tuya. Lo que funcione es un fallo que corregir; lo que no, explica por qué en <code>controles.md</code>.</p></div>
 </section>
 

@@ -112,6 +112,7 @@ app.use((req, res) =&gt; problema(res, 404, `No existe ${req.path}`));
 app.use((err, req, res, next) =&gt;
   problema(res, err.type === "entity.parse.failed" ? 400 : 500, "Petición no válida"));</code></pre></div>
 </div>
+<p>Las tres usan como <code>title</code> la frase estándar del código, y no todas dicen lo mismo. Para el <code>422</code>, Go y Node dicen <code>Unprocessable Entity</code>; Python 3.13 dice <code>Unprocessable Content</code>, el nombre que le dio la RFC 9110. Vale cualquiera de las dos: el cliente decide por <code>status</code> y <code>type</code>, y <code>title</code> solo lo lee una persona.</p>
 </section>
 
 <section class="seccion">
@@ -189,7 +190,7 @@ ETag: "3"
 <section class="seccion">
 <h2>Práctica</h2>
 <p><a href="../ejercicios/e6.html">E6 · Errores que ayudan</a> y <a href="../ejercicios/e7.html">E7 · Listas grandes y escrituras a la vez</a>, en las tres APIs del E5.</p>
-<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Si la IA te propone un manejador de errores, comprueba con <code>curl.exe -i</code> qué devuelve de verdad ante un JSON roto y una ruta que no existe, en los tres lenguajes. El framework suele tener la última palabra si no se le quita.</p></div>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Si la IA te propone un manejador de errores, comprueba con <code>curl -i</code> qué devuelve de verdad ante un JSON roto y una ruta que no existe, en los tres lenguajes. El framework suele tener la última palabra si no se le quita.</p></div>
 </section>
 
 <section class="seccion">

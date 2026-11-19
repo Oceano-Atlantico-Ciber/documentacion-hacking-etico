@@ -162,8 +162,11 @@ Content-Length: 98
 
 <section class="seccion">
 <h2>Míralo en crudo</h2>
-<p>Con <code>-v</code>, <code>curl</code> enseña la conversación entera: las líneas que empiezan por <code>&gt;</code> son lo que envía y las que empiezan por <code>&lt;</code>, lo que recibe. Con la API del laboratorio del E1 en marcha, en Git Bash:</p>
+<p>Con <code>-v</code>, <code>curl</code> enseña la conversación entera: las líneas que empiezan por <code>&gt;</code> son lo que envía y las que empiezan por <code>&lt;</code>, lo que recibe. Con la API del laboratorio del E1 en marcha:</p>
+<p class="so">Windows · PowerShell</p>
 <pre><code>curl.exe -v http://localhost:8080/api/v1/incidencias/7</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>curl -v http://localhost:8080/api/v1/incidencias/7</code></pre>
 <pre><code>&gt; GET /api/v1/incidencias/7 HTTP/1.1
 &gt; Host: localhost:8080
 &gt; User-Agent: curl/8.10.1
@@ -421,7 +424,7 @@ Location: /api/v1/incidencias/13</span>
 
 <section class="seccion">
 <h2>curl: la petición desde la terminal</h2>
-<p><b>curl</b> envía peticiones HTTP desde la terminal. Viene con Git para Windows, así que ya lo tienes en Git Bash. Escríbelo siempre como <code>curl.exe</code>: en PowerShell, <code>curl</code> a secas es otra orden (<code>Invoke-WebRequest</code>) y falla. Las órdenes con cuerpo JSON, lánzalas desde Git Bash: PowerShell estropea sus comillas. Elige un método, una URL y el cuerpo, y mira cómo se escribe la orden y qué hace cada pieza.</p>
+<p><b>curl</b> envía peticiones HTTP desde la terminal. Viene instalado en Windows 10 y 11, en macOS y en casi todas las distribuciones de Linux. En Windows se trabaja en PowerShell y se escribe siempre <code>curl.exe</code>: <code>curl</code> a secas es otra orden de PowerShell (<code>Invoke-WebRequest</code>) que no entiende estas opciones. En macOS y Linux, en la Terminal, es <code>curl</code>. Elige un método, una URL y el cuerpo, y mira cómo se escribe la orden en cada sistema y qué hace cada pieza.</p>
 <div class="panel">
 <div class="opciones" id="c-metodos">
 <button type="button" aria-pressed="true">GET</button>
@@ -432,19 +435,28 @@ Location: /api/v1/incidencias/13</span>
 </div>
 <label>URL <input id="c-url" type="url" spellcheck="false" autocomplete="off" value="http://localhost:8080/api/v1/incidencias/7"></label>
 <label>Cuerpo en JSON <textarea id="c-cuerpo" rows="2" spellcheck="false">{"prioridad": "alta"}</textarea></label>
+<p class="so">Windows · PowerShell</p>
+<pre><code id="c-orden-win"></code></pre>
+<p class="so">macOS / Linux · Terminal</p>
 <pre><code id="c-orden"></code></pre>
 <ul class="ordenes" id="c-piezas"></ul>
 </div>
-<p class="note">En Git Bash, todo lo que lleve espacios, comillas dobles, <code>?</code> o <code>&amp;</code> va entre <b>comillas simples</b>. Por eso el JSON se escribe <code>'{"prioridad": "alta"}'</code>: las simples protegen a las dobles.</p>
-<p>Si la respuesta es un JSON largo, quita <code>-i</code> y añade <code>| py -m json.tool</code>: Python lo imprime ordenado.</p>
+<p class="note">En las dos terminales, todo lo que lleve espacios, comillas dobles, <code>?</code> o <code>&amp;</code> va entre <b>comillas simples</b>: así la terminal no lo interpreta. En macOS y Linux eso basta para el JSON, <code>'{"prioridad": "alta"}'</code>: las simples protegen a las dobles. Windows PowerShell, en cambio, quita las comillas dobles de dentro al pasarle el texto a <code>curl.exe</code>, y la API recibiría <code>{prioridad: alta}</code>, que no es JSON. Por eso en Windows el cuerpo se escribe antes en un fichero con <code>New-Item</code> (en UTF-8, como lo espera la API) y <code>curl.exe</code> lo manda con <code>--data-binary "@cuerpo.json"</code>.</p>
+<p>Si la respuesta es un JSON largo, cambia <code>-i</code> por <code>-s</code> (solo el cuerpo, sin cabeceras) y pásala a un programa que la imprima ordenada:</p>
+<p class="so">Windows · PowerShell</p>
+<pre><code>curl.exe -s http://localhost:8080/api/v1/incidencias | ConvertFrom-Json | ConvertTo-Json -Depth 5</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>curl -s http://localhost:8080/api/v1/incidencias | python3 -m json.tool</code></pre>
+<p>En PowerShell, si las tildes salen mal, ejecuta antes <code>[Console]::OutputEncoding = [Text.Encoding]::UTF8</code> en esa ventana.</p>
 </section>
 
 <section class="seccion">
 <h2>Del navegador a curl</h2>
 <p>Pulsa <b>F12</b> en cualquier web y ve a la pestaña <b>Network</b> (Red) con el filtro <b>Fetch/XHR</b>: verás cada petición que el JavaScript de la página hace a su API, con su método, su código, sus cabeceras y su cuerpo. Es el mismo texto de este tema.</p>
-<div class="flow"><span>F12 → Network</span><i>→</i><span>botón derecho en la petición</span><i>→</i><span>Copy → <b>Copy as cURL (bash)</b></span><i>→</i><span>pegar en Git Bash</span></div>
+<div class="flow"><span>F12 → Network</span><i>→</i><span>botón derecho en la petición</span><i>→</i><span>Copy → <b>Copy as cURL</b> o <b>Copy as PowerShell</b></span><i>→</i><span>pegar en la terminal</span></div>
 <ul>
-<li>Elige siempre la versión <b>(bash)</b>: las de <i>cmd</i> y <i>PowerShell</i> usan otras comillas y fallan en Git Bash.</li>
+<li>En macOS y Linux, elige <b>Copy as cURL</b> (en Chrome para Windows y Linux se llama <b>Copy as cURL (bash)</b>) y pégala en la Terminal tal cual.</li>
+<li>En Windows, ninguna copia de cURL funciona tal cual en PowerShell: la <i>(bash)</i> escribe <code>curl</code> y parte las líneas con <code>\</code>, y la <i>(cmd)</i> usa las comillas de cmd. Elige <b>Copy as PowerShell</b>: es la misma petición, con su método, cabeceras, cookies y cuerpo, escrita con <code>Invoke-WebRequest</code>, y se pega tal cual en PowerShell. Si quieres leerla como curl, copia la <i>(bash)</i> y pégala en el editor, no en la terminal.</li>
 <li>La orden copiada lleva tus cookies y tus tokens: son tu sesión. No la pegues en una IA en la nube, en un chat ni en tu repositorio sin borrarlos antes.</li>
 </ul>
 </section>
@@ -452,7 +464,7 @@ Location: /api/v1/incidencias/13</span>
 <section class="seccion">
 <h2>Práctica</h2>
 <p><a href="../ejercicios/e1.html">E1 · HTTP a mano</a>: escribes dos peticiones en un fichero de texto, las envías con <code>enviar.py</code> a la API del laboratorio y compruebas que la respuesta es la misma que con <code>curl</code>.</p>
-<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pide a la IA que te explique una cabecera o un código que no conozcas, y compruébalo en la respuesta real de <code>curl.exe -v</code>. Si no coincide, gana la respuesta.</p></div>
+<div class="ia"><p class="eyebrow">Regla de la IA</p><p>Pide a la IA que te explique una cabecera o un código que no conozcas, y compruébalo en la respuesta real de <code>curl -v</code>. Si no coincide, gana la respuesta.</p></div>
 </section>
 
 <section class="seccion">
@@ -463,7 +475,7 @@ Location: /api/v1/incidencias/13</span>
 <li>Explicas las reglas que REST añade a HTTP y corriges una ruta con un verbo</li>
 <li>Eliges el método para leer, crear, sustituir, cambiar y borrar, y sabes cuáles son idempotentes</li>
 <li>Por un código sabes si el fallo es tuyo o del servidor, y distingues 400, 404, 405 y 422</li>
-<li>Escribes en Git Bash un <code>curl</code> con método, cabecera y cuerpo JSON</li>
+<li>Escribes en tu terminal un <code>curl</code> con método, cabecera y cuerpo JSON (en PowerShell, <code>curl.exe</code> con el cuerpo en un fichero)</li>
 </ul>
 </section>
 
@@ -733,8 +745,11 @@ Location: /api/v1/incidencias/13</span>
   pintarFormulario();
   pintarDatos();
 
-  // Constructor de órdenes curl.exe para Git Bash, con la explicación de cada pieza.
+  // Constructor de órdenes curl: la de PowerShell (curl.exe, cuerpo en un fichero) y la de macOS/Linux,
+  // con la explicación de cada pieza.
   const comillas = (texto) => `'${texto.replaceAll("'", `'\\''`)}'`;
+  // En PowerShell, dentro de comillas simples, una comilla simple (también las tipográficas) se escribe doble.
+  const comillasPS = (texto) => `'${texto.replace(/['\u2018\u2019\u201A\u201B]/g, "$&$&")}'`;
   const botonesMetodo = [...document.querySelectorAll("#c-metodos button")];
   const cUrl = $("c-url"), cCuerpo = $("c-cuerpo");
   let cMetodo = "GET";
@@ -742,14 +757,24 @@ Location: /api/v1/incidencias/13</span>
     const conCuerpo = CON_CUERPO.has(cMetodo);
     for (const b of botonesMetodo) b.setAttribute("aria-pressed", String(b.textContent === cMetodo));
     cCuerpo.disabled = !conCuerpo;
-    const piezas = [["curl.exe", "el programa"], ["-i", "enseña el código y las cabeceras de la respuesta, no solo el cuerpo"]];
+    const url = cUrl.value.trim(), metodo = cMetodo !== "GET" ? ` -X ${cMetodo}` : "";
+    const cabecera = ' -H "Content-Type: application/json"';
+    $("c-orden-win").textContent = conCuerpo
+      ? `New-Item cuerpo.json -Force -Value ${comillasPS(cCuerpo.value)}\ncurl.exe -i${metodo} ${comillasPS(url)}${cabecera} --data-binary "@cuerpo.json"`
+      : `curl.exe -i${metodo} ${comillasPS(url)}`;
+    $("c-orden").textContent = `curl -i${metodo} ${comillas(url)}` + (conCuerpo ? `${cabecera} --data ${comillas(cCuerpo.value)}` : "");
+    const piezas = [
+      ["curl.exe · curl", "el programa: curl.exe en PowerShell, curl en macOS y Linux"],
+      ["-i", "enseña el código y las cabeceras de la respuesta, no solo el cuerpo"],
+    ];
     if (cMetodo !== "GET") piezas.push([`-X ${cMetodo}`, "el método; sin -X, curl hace GET"]);
-    piezas.push([comillas(cUrl.value.trim()), "la URL, entre comillas simples"]);
+    piezas.push([comillas(url), "la URL, entre comillas simples"]);
     if (conCuerpo) piezas.push(
-      ["-H 'Content-Type: application/json'", "una cabecera: avisa de que el cuerpo es JSON. -H se repite una vez por cabecera"],
-      [`--data ${comillas(cCuerpo.value)}`, "el cuerpo; curl calcula Content-Length por ti"],
+      [cabecera.trim(), "una cabecera: avisa de que el cuerpo es JSON. -H se repite una vez por cabecera"],
+      ["New-Item cuerpo.json -Force -Value '…'", "solo en PowerShell: escribe el cuerpo en el fichero cuerpo.json, en UTF-8; -Force lo sobrescribe si ya existe"],
+      ['--data-binary "@cuerpo.json"', "solo en PowerShell: manda como cuerpo el contenido del fichero, tal cual"],
+      [`--data ${comillas(cCuerpo.value)}`, "en macOS y Linux: el cuerpo, escrito en la propia orden. En los dos casos curl calcula Content-Length por ti"],
     );
-    $("c-orden").textContent = piezas.map(([orden]) => orden).join(" ");
     $("c-piezas").replaceChildren(...piezas.map(([orden, explicacion]) => {
       const li = document.createElement("li");
       const code = document.createElement("code");

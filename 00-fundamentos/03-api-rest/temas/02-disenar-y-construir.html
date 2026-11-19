@@ -98,14 +98,24 @@ components:
 
 <section class="seccion">
 <h2>Prepara los tres lenguajes</h2>
-<p>Python ya lo tienes de la <a href="../../../00-presentacion/temas/03-git-y-github.html">Presentación</a>. Abre <b>PowerShell</b> e instala Go y Node:</p>
+<p>Python ya lo tienes de la <a href="../../../00-presentacion/temas/03-git-y-github.html">Presentación</a>. Instala Go y Node: en Windows con <code>winget</code>, en macOS con <a href="https://brew.sh/">Homebrew</a>.</p>
+<p class="so">Windows · PowerShell</p>
 <pre><code>winget install -e --id GoLang.Go
 winget install -e --id OpenJS.NodeJS.LTS</code></pre>
-<p>Cierra Git Bash y vuelve a abrirlo para que encuentre los programas nuevos, y comprueba:</p>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>brew install go node</code></pre>
+<p>En Linux, instálalos con el gestor de paquetes de tu distribución o con los instaladores de <a href="https://go.dev/dl/">go.dev</a> y <a href="https://nodejs.org/">nodejs.org</a>; hace falta Go 1.22 o posterior y Node 20 o posterior.</p>
+<p>Cierra la terminal y vuelve a abrirla para que encuentre los programas nuevos, y comprueba que cada orden responde con un número de versión:</p>
+<p class="so">Windows · PowerShell</p>
 <pre><code>go version
 node --version
 npm --version
 py --version</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>go version
+node --version
+npm --version
+python3 --version</code></pre>
 <p class="note">Cada lenguaje trae su forma de instalar dependencias: Go las baja solo al compilar, Python usa <code>pip</code> dentro de un entorno virtual y Node usa <code>npm</code>. Ninguna se sube al repositorio: el <code>.gitignore</code> de cada esqueleto deja fuera <code>.venv/</code> y <code>node_modules/</code>.</p>
 </section>
 
@@ -140,16 +150,27 @@ py --version</code></pre>
 <div class="lenguaje">
 <div data-leng="go"><pre><code>cd fundamentos/api/e3
 go run .                       # compila y arranca; Ctrl+C para parar</code></pre></div>
-<div data-leng="python" hidden><pre><code>cd fundamentos/api/e3
-py -m venv .venv                       # un entorno solo para este proyecto
-source .venv/Scripts/activate          # en Git Bash; el prompt muestra (.venv)
-pip install -r requirements.txt
-uvicorn main:app --port 8000 --reload  # --reload rearranca al guardar</code></pre></div>
+<div data-leng="python" hidden>
+<p class="so">Windows · PowerShell</p>
+<pre><code>cd fundamentos/api/e3
+py -m venv .venv                                     # un entorno solo para este proyecto
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m uvicorn main:app --port 8000 --reload  # --reload rearranca al guardar</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>cd fundamentos/api/e3
+python3 -m venv .venv                                # un entorno solo para este proyecto
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m uvicorn main:app --port 8000 --reload  # --reload rearranca al guardar</code></pre>
+<p>Se llama al Python de dentro de <code>.venv</code> por su ruta: así usa las dependencias de ese entorno y no hace falta activarlo.</p></div>
 <div data-leng="node" hidden><pre><code>cd fundamentos/api/e3
 npm install                    # baja Express a node_modules/
 node --watch main.js           # --watch rearranca al guardar</code></pre></div>
 </div>
-<p>En otra pestaña de Git Bash: <code>curl.exe -i http://localhost:8000/api/v1/salud</code>. La respuesta es la misma en los tres.</p>
+<p>Con la API arrancada, abre otra pestaña de la terminal y pídele la salud. La respuesta es la misma en los tres:</p>
+<p class="so">Windows · PowerShell</p>
+<pre><code>curl.exe -i http://localhost:8000/api/v1/salud</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>curl -i http://localhost:8000/api/v1/salud</code></pre>
 
 <h3>Leer una incidencia</h3>
 <div class="lenguaje">
@@ -270,17 +291,27 @@ USER node
 EXPOSE 8000
 ENTRYPOINT ["node", "main.js"]</code></pre></div>
 </div>
+<p>Desde la carpeta del proyecto, con Docker Desktop en marcha y la API de tu equipo parada (usan el mismo puerto):</p>
+<p class="so">Windows · PowerShell</p>
 <pre><code>docker build -t api-incidencias:e3 .
 docker run -d --rm --name api -p 8000:8000 api-incidencias:e3
 curl.exe -i http://localhost:8000/api/v1/salud
+docker stop api</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>docker build -t api-incidencias:e3 .
+docker run -d --rm --name api -p 8000:8000 api-incidencias:e3
+curl -i http://localhost:8000/api/v1/salud
 docker stop api</code></pre>
 <p class="note">Dentro del contenedor la API tiene que escuchar en todas las interfaces (<code>0.0.0.0</code>), no solo en <code>localhost</code>: si no, el puerto publicado no llega (<a href="../../02-docker/temas/03-datos-y-redes.html">Docker 3</a>). Go y Express ya lo hacen; uvicorn hay que pedírselo con <code>--host 0.0.0.0</code>.</p>
 </section>
 
 <section class="seccion">
 <h2>Probar desde fuera</h2>
-<p>Cada esqueleto trae <code>pruebas.py</code>: unas pruebas que hablan con tu API solo por HTTP, sin mirar el código. Son las mismas para los tres lenguajes, porque prueban el contrato. Con la API recién arrancada:</p>
+<p>Cada esqueleto trae <code>pruebas.py</code>: unas pruebas que hablan con tu API solo por HTTP, sin mirar el código. Son las mismas para los tres lenguajes, porque prueban el contrato. Con la API recién arrancada, desde la carpeta del proyecto (las pruebas leen su <code>incidencias.json</code>):</p>
+<p class="so">Windows · PowerShell</p>
 <pre><code>py pruebas.py e3 http://localhost:8000</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>python3 pruebas.py e3 http://localhost:8000</code></pre>
 <pre><code>E3 · Lectura
   ✓ GET /api/v1/salud responde 200 {"estado": "ok"}
   ✓ La lista es JSON con Content-Type application/json

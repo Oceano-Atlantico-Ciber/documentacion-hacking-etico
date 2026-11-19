@@ -3,7 +3,7 @@
 // Arrancar en tu equipo, desde esta carpeta:
 //   npm install
 //   node --watch main.js
-// Probar:  curl.exe -i http://localhost:8000/api/v1/salud
+// Probar:  curl.exe -i http://localhost:8000/api/v1/salud   (en macOS o Linux, curl)
 //
 // El contrato está en contrato.yaml. Express tiene costumbres propias (por ejemplo, añade la
 // cabecera X-Powered-By y responde 404 en HTML): manda el contrato, no el framework.
