@@ -18,6 +18,7 @@ coinciden, te avisa. No hay fecha límite.
 from __future__ import annotations
 
 import io
+import os
 import subprocess
 import sys
 import tarfile
@@ -59,6 +60,9 @@ def copia_del_commit(raiz: Path, sha: str, destino: Path, clon: Path) -> None:
     archivo = subprocess.run(["git", "-c", "core.autocrlf=false", "archive", "--format=tar", sha],
                              cwd=clon, capture_output=True, check=True)
     tarfile.open(fileobj=io.BytesIO(archivo.stdout)).extractall(destino, filter="data")
+    for f in destino.rglob("*"):  # la hora de ahora, no la del commit, como en los correctores
+        if not f.is_symlink():
+            os.utime(f)
 
 
 def en_github(raiz: Path) -> dict[str, str] | None:
