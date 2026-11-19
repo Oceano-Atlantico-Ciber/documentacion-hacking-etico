@@ -49,9 +49,7 @@ cd fundamentos/api/e1
 curl -i http://localhost:8080/api/v1/incidencias</code></pre></div>
 <p><code>preparar.py</code> construye y arranca la API de incidencias del laboratorio en <code>http://localhost:8080</code>, con datos generados para tu usuario, y deja en <code>fundamentos/api/e1/</code> los ficheros <code>enviar.py</code> y <code>LEEME.md</code> y la carpeta <code>laboratorio/</code>. Al terminar escribe una línea como esta, con tu número:</p>
 <pre><code>La API del laboratorio escucha en http://localhost:8080. Tu incidencia es la 11.</code></pre>
-<p>El <code>curl -i</code> del final tiene que responder <code>HTTP/1.1 200 OK</code> y una lista en JSON. Si <code>preparar.py</code> terminó con un error de <code>docker</code> (Docker Desktop no estaba en marcha), los ficheros ya están escritos y repetirlo solo dice que <code>e1</code> ya está preparado. Arranca Docker Desktop y levanta tú el laboratorio desde <code>fundamentos/api/e1/</code>, en cualquier sistema:</p>
-<div class="cmd"><pre><code>docker build -t api-incidencias:e1 laboratorio
-docker run -d --name api-e1 -p 8080:8080 api-incidencias:e1</code></pre></div>
+<p>El <code>curl -i</code> del final tiene que responder <code>HTTP/1.1 200 OK</code> y una lista en JSON. <code>preparar.py</code> no termina hasta que la API contesta, así que el <code>curl</code> funciona nada más acabar. Si <code>preparar.py</code> terminó con un error de <code>docker</code> (Docker Desktop no estaba en marcha), arranca Docker Desktop, espera a que diga que está en marcha y vuelve a ejecutar la misma orden <code>preparar.py e1</code> desde la raíz de tu repositorio: no toca tus ficheros, solo levanta el laboratorio.</p>
 <p>Tu número de incidencia también está en <code>LEEME.md</code>.</p>
 <p>En Windows, la línea de <code>[Console]::OutputEncoding</code> hace que PowerShell muestre y guarde bien las tildes de las respuestas; vale para esa ventana, así que repítela si abres otra. Todas las órdenes que siguen se lanzan desde esta carpeta, <code>fundamentos/api/e1/</code>.</p>
 

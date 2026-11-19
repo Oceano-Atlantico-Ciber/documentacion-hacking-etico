@@ -22,6 +22,8 @@ import re
 import shutil
 import subprocess
 import sys
+import time
+import urllib.request
 from pathlib import Path
 from typing import Callable
 
@@ -171,16 +173,28 @@ def usuario_de(remoto: str) -> str:
 
 
 def _docker(*args: str, cwd: Path) -> None:
-    r = subprocess.run(["docker", *args], cwd=cwd, capture_output=True, text=True)
+    r = subprocess.run(["docker", *args], cwd=cwd, capture_output=True, encoding="utf-8", errors="replace")
     if r.returncode:
         raise Error(f"docker {' '.join(args)}: {r.stderr.strip() or r.stdout.strip()}  ¿Está Docker Desktop en marcha?")
 
 
 def arrancar_laboratorio(carpeta: Path) -> None:
-    """Construye la API del laboratorio y la deja escuchando en http://localhost:8080."""
+    """Construye la API del laboratorio, la arranca y espera a que responda en http://localhost:8080."""
     _docker("build", "-t", "api-incidencias:e1", "laboratorio", cwd=carpeta)
     subprocess.run(["docker", "rm", "-f", "api-e1"], capture_output=True)
     _docker("run", "-d", "--name", "api-e1", "-p", "8080:8080", "api-incidencias:e1", cwd=carpeta)
+    # El contenedor arranca antes que la API: hasta que no contesta, un curl recibe «Empty reply from server».
+    limite = time.monotonic() + 60
+    while True:
+        try:
+            with urllib.request.urlopen("http://localhost:8080/api/v1/incidencias", timeout=2) as r:
+                if r.status == 200:
+                    return
+        except OSError:
+            pass
+        if time.monotonic() > limite:
+            raise Error("el laboratorio no responde en http://localhost:8080 tras un minuto: mira «docker logs api-e1»")
+        time.sleep(0.5)
 
 
 def preparar(ejercicio: str, lenguaje: str | None, cwd: Path) -> None:
@@ -204,8 +218,14 @@ def preparar(ejercicio: str, lenguaje: str | None, cwd: Path) -> None:
                     _escribir(destino / leng / nombre, contenido)
         print(f"{ejercicio} preparado para {usuario}: copia de {anterior}/ en {RAIZ}/{ejercicio}/ con los ficheros nuevos.")
         return
-    if destino.exists():
+    if destino.exists() and not (ejercicio == "e1" and (destino / "laboratorio").is_dir()):
         raise Error(f"{ejercicio} ya está preparado (existe {destino})")
+    if destino.exists():
+        # E1 ya preparado (por ejemplo, Docker estaba parado la primera vez): no toca tus ficheros, solo el laboratorio.
+        print("e1 ya estaba preparado: no toco tus ficheros, solo vuelvo a levantar el laboratorio.")
+        arrancar_laboratorio(destino)
+        print(f"La API del laboratorio escucha en http://localhost:8080. Tu incidencia es la {incidencia_e1(usuario)}.")
+        return
     for nombre, contenido in ESCENARIOS[ejercicio](usuario, lenguaje).items():
         _escribir(destino / nombre, contenido)
     if ejercicio == "e1":
