@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo se corrige tu entrega · Hacking ético</title>
+<link rel="stylesheet" href="../../assets/estilo.css">
+<style>
+/* Las figuras y la tabla se desplazan dentro de su caja, no la página. */
+.seccion > * { min-width: 0; }
+/* Tabla de estados: el mismo resultado se ve con un símbolo distinto en cada sitio. */
+.estados td:nth-child(-n+3) { white-space: nowrap; font-family: var(--f-mono); }
+.estados td:last-child { min-width: 15em; }
+.estados .c { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 5px; font: 700 13px/1 var(--f-mono); vertical-align: middle; }
+.estados .c.bien { background: var(--ok); color: var(--surface); }
+.estados .c.mal { background: var(--crit); color: var(--surface); }
+.estados .c.provisional { border: 2px solid var(--warn); color: var(--warn); }
+.estados .c.pendiente { border: 2px dashed var(--muted); }
+.estados .c.aviso { background: var(--warn); color: var(--surface); }
+.estados .c.sin::after { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--line); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Presentación</a></nav>
+<header>
+<p class="eyebrow">Presentación · Entregas</p>
+<h1>Cómo se corrige tu entrega</h1>
+<p class="lead">Entregas con una etiqueta, el corrector la evalúa y el resultado aparece en tu repositorio y en la <a href="../../entregas/index.html">tabla de entregas</a>, con el motivo de cada fallo. No hay fecha límite: puedes corregir y volver a entregar las veces que haga falta.</p>
+</header>
+
+<section class="seccion">
+<h2>El recorrido</h2>
+<figure>
+<svg class="diagrama" viewBox="0 0 760 290" role="img" aria-label="Tu equipo: pruebas.py, push y etiqueta. GitHub guarda tu repositorio. El docente lanza el corrector, que evalúa la etiqueta y deja el resultado en el check de tu repositorio y en la tabla pública de entregas. Si algo falla, lo arreglas y mueves la etiqueta.">
+<defs>
+<marker id="pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="punta"/></marker>
+<marker id="pfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="punta-acento"/></marker>
+</defs>
+<rect class="caja" x="10" y="20" width="170" height="170" rx="10"/>
+<text x="26" y="46" class="tit">Tu equipo</text>
+<text x="26" y="78" class="mono">1  pruebas.py</text>
+<text x="26" y="96" class="tenue peq">   ¿qué fallaría?</text>
+<text x="26" y="126" class="mono">2  commit + push</text>
+<text x="26" y="160" class="mono">3  etiqueta</text>
+<text x="26" y="178" class="tenue peq mono">   entrega-…-eN</text>
+
+<rect class="caja" x="210" y="50" width="150" height="110" rx="10"/>
+<text x="226" y="76" class="tit">GitHub</text>
+<text x="226" y="100" class="mono peq">entregas-&lt;usuario&gt;</text>
+<text x="226" y="122" class="tenue peq">tu repositorio,</text>
+<text x="226" y="140" class="tenue peq">privado</text>
+
+<rect class="caja-acento" x="390" y="50" width="150" height="110" rx="10"/>
+<text x="406" y="76" class="tit">Corrector</text>
+<text x="406" y="100" class="peq">lo lanza el docente</text>
+<text x="406" y="122" class="tenue peq">evalúa lo que hay</text>
+<text x="406" y="140" class="tenue peq">en la etiqueta</text>
+
+<rect class="caja-ok" x="580" y="20" width="170" height="74" rx="10"/>
+<text x="596" y="46" class="tit">Check</text>
+<text x="596" y="68" class="peq">en tu repositorio</text>
+<text x="596" y="84" class="tenue peq">solo lo ves tú</text>
+
+<rect class="caja-ia" x="580" y="116" width="170" height="74" rx="10"/>
+<text x="596" y="142" class="tit mono">/entregas/</text>
+<text x="596" y="164" class="peq">tabla pública</text>
+<text x="596" y="180" class="tenue peq">y panel con el motivo</text>
+
+<path class="linea" d="M180,105 H210" marker-end="url(#pf)"/>
+<path class="linea" d="M360,105 H390" marker-end="url(#pf)"/>
+<path class="linea" d="M540,95 C560,95 560,57 580,57" marker-end="url(#pf)"/>
+<path class="linea" d="M540,115 C560,115 560,153 580,153" marker-end="url(#pf)"/>
+
+<path class="linea-acento discontinua" d="M665,190 V250 H95 V190" marker-end="url(#pfa)"/>
+<rect x="232" y="238" width="296" height="24" rx="6" style="fill:var(--bg)"/>
+<text x="380" y="255" text-anchor="middle" class="acento peq">si algo falla: arréglalo y mueve la etiqueta</text>
+</svg>
+</figure>
+<ol>
+<li><b>Tú</b> haces el ejercicio, lo compruebas con <code>pruebas.py</code>, lo subes y lo etiquetas. Cada enunciado dice su etiqueta, por ejemplo <code>entrega-fundamentos-git-e1</code>.</li>
+<li><b>El docente</b> lanza el corrector de cada unidad. No corre en cada <code>push</code>: tu resultado cambia cuando se lanza la siguiente corrección.</li>
+<li><b>El corrector</b> evalúa lo que hay en la etiqueta <b>en GitHub</b>, no en tu equipo, y deja el resultado en dos sitios: el check de tu repositorio y la tabla de entregas.</li>
+</ol>
+</section>
+
+<section class="seccion">
+<h2>pruebas.py dice lo mismo que el corrector</h2>
+<figure>
+<svg class="diagrama" viewBox="0 0 760 230" role="img" aria-label="pruebas.py en tu equipo y el corrector usan las mismas comprobaciones, con el mismo código. Por eso el mismo fallo sale con el mismo motivo en tu terminal, en el check y en el panel de la tabla de entregas.">
+<defs><marker id="pm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="punta"/></marker></defs>
+<rect class="caja" x="10" y="20" width="170" height="70" rx="10"/>
+<text x="26" y="48" class="tit mono">pruebas.py</text>
+<text x="26" y="70" class="tenue peq">en tu equipo, al momento</text>
+<rect class="caja-acento" x="10" y="140" width="170" height="70" rx="10"/>
+<text x="26" y="168" class="tit">Corrector</text>
+<text x="26" y="190" class="tenue peq">cuando lo lanza el docente</text>
+
+<rect class="caja" x="250" y="70" width="210" height="90" rx="10"/>
+<text x="266" y="98" class="tit">Mismas comprobaciones</text>
+<text x="266" y="120" class="peq">mismo código, mismo</text>
+<text x="266" y="138" class="peq">motivo y mismo arreglo</text>
+
+<rect class="caja" x="560" y="10" width="190" height="56" rx="10"/>
+<text x="576" y="34" class="tit">Terminal</text>
+<text x="576" y="54" class="tenue peq">«Qué arreglar»</text>
+<rect class="caja-ok" x="560" y="87" width="190" height="56" rx="10"/>
+<text x="576" y="111" class="tit">Check</text>
+<text x="576" y="131" class="tenue peq">Details en tu repositorio</text>
+<rect class="caja-ia" x="560" y="164" width="190" height="56" rx="10"/>
+<text x="576" y="188" class="tit mono">/entregas/</text>
+<text x="576" y="208" class="tenue peq">panel de tu usuario</text>
+
+<path class="linea" d="M180,55 C215,55 215,100 250,100" marker-end="url(#pm)"/>
+<path class="linea" d="M180,175 C215,175 215,130 250,130" marker-end="url(#pm)"/>
+<path class="linea" d="M460,100 C510,100 510,38 560,38" marker-end="url(#pm)"/>
+<path class="linea" d="M460,115 H560" marker-end="url(#pm)"/>
+<path class="linea" d="M460,130 C510,130 510,192 560,192" marker-end="url(#pm)"/>
+</svg>
+</figure>
+<p>Si <code>pruebas.py</code> dice <b>✓ superado</b> sobre lo que hay en GitHub, el corrector dirá lo mismo. La única diferencia es <b>qué</b> mira: <code>pruebas.py</code> mira tus commits y te avisa con <b>!</b> si GitHub no tiene lo mismo; el corrector solo ve GitHub. Cada enunciado tiene un paso «Pruébalo en tu equipo» con su orden exacta. Por ejemplo, para Git E1, desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
+</section>
+
+<section class="seccion">
+<h2>Qué significa cada símbolo</h2>
+<p>El mismo resultado se dibuja distinto en cada sitio:</p>
+<div class="tabla"><table class="estados">
+<thead><tr><th>Tabla</th><th>Check</th><th>pruebas.py</th><th>Qué significa y qué haces</th></tr></thead>
+<tbody>
+<tr><td><i class="c bien">✓</i></td><td>✅</td><td>✓ superado</td><td><b>Superado.</b> Tiene etiqueta y pasa todo. Nada más que hacer.</td></tr>
+<tr><td><i class="c mal">×</i></td><td>❌</td><td>✗</td><td><b>Con fallos.</b> Lee el motivo, arréglalo y mueve la etiqueta (abajo).</td></tr>
+<tr><td><i class="c provisional">·</i></td><td>✏️</td><td>(provisional)</td><td><b>Provisional.</b> Hay trabajo en <code>main</code> pero aún no hay etiqueta: no cuenta como entregado. Etiqueta cuando <code>pruebas.py</code> diga superado.</td></tr>
+<tr><td><i class="c pendiente"></i></td><td></td><td></td><td><b>Pendiente de corregir.</b> Has etiquetado después de la última corrección. Saldrá en la siguiente.</td></tr>
+<tr><td><i class="c aviso">!</i></td><td>⚠️</td><td></td><td><b>Error del corrector, no tuyo.</b> No cuenta contra ti. Avisa al docente.</td></tr>
+<tr><td><i class="c sin"></i></td><td>·</td><td>sin empezar</td><td><b>Sin empezar.</b> Ni etiqueta ni trabajo en la carpeta del ejercicio.</td></tr>
+</tbody>
+</table></div>
+<p class="note">En <code>pruebas.py</code>, <b>!</b> es otra cosa: un <b>aviso</b> de que GitHub no tiene lo mismo que tu equipo (por ejemplo, falta un <code>push</code>). Tu trabajo puede estar bien, pero el corrector verá lo de GitHub.</p>
+</section>
+
+<section class="seccion">
+<h2>Dónde ver el motivo de un fallo</h2>
+<ul>
+<li><b>En la <a href="../../entregas/index.html">tabla de entregas</a>:</b> pulsa tu usuario o una casilla. Se abre tu panel con cada fallo: qué ha encontrado, cómo arreglarlo, un enlace al paso del enunciado y, en «Pruébalo tú», la orden para repetirlo. Tu panel tiene su propia dirección, <code>entregas/#alumno-&lt;usuario&gt;</code>, para guardarla.</li>
+<li><b>En tu repositorio:</b> pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en el check del corrector (por ejemplo, <b>Corrector de git</b>). Hay una fila por ejercicio.</li>
+<li><b>En tu terminal:</b> <code>pruebas.py</code> te da lo mismo, al momento y sin esperar a ninguna corrección.</li>
+</ul>
+</section>
+
+<section class="seccion">
+<h2>Corregir y volver a entregar</h2>
+<figure>
+<svg class="diagrama" viewBox="0 0 760 170" role="img" aria-label="Ciclo para corregir: lee el motivo, arréglalo con commit y push, comprueba con pruebas.py hasta que diga superado, mueve la etiqueta y espera a la siguiente corrección. Si vuelve a fallar, se repite.">
+<defs>
+<marker id="pc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="punta"/></marker>
+<marker id="pcp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="punta-peligro"/></marker>
+</defs>
+<rect class="caja-peligro" x="10" y="20" width="160" height="70" rx="10"/>
+<text x="26" y="48" class="tit">Lee el motivo</text>
+<text x="26" y="70" class="tenue peq">panel, check o terminal</text>
+<rect class="caja" x="205" y="20" width="160" height="70" rx="10"/>
+<text x="221" y="48" class="tit">Arréglalo</text>
+<text x="221" y="70" class="tenue peq">commit y push</text>
+<rect class="caja" x="400" y="20" width="160" height="70" rx="10"/>
+<text x="416" y="48" class="tit mono">pruebas.py</text>
+<text x="416" y="70" class="tenue peq">hasta ✓ superado</text>
+<rect class="caja-ok" x="595" y="20" width="155" height="70" rx="10"/>
+<text x="611" y="48" class="tit">Mueve la etiqueta</text>
+<text x="611" y="70" class="tenue peq">al commit corregido</text>
+<path class="linea" d="M170,55 H205" marker-end="url(#pc)"/>
+<path class="linea" d="M365,55 H400" marker-end="url(#pc)"/>
+<path class="linea" d="M560,55 H595" marker-end="url(#pc)"/>
+<path class="linea-peligro discontinua" d="M672,90 V140 H90 V90" marker-end="url(#pcp)"/>
+<rect x="216" y="128" width="330" height="24" rx="6" style="fill:var(--bg)"/>
+<text x="381" y="145" text-anchor="middle" class="peligro peq">siguiente corrección: si aún falla, otra vuelta</text>
+</svg>
+</figure>
+<p>Para mover la etiqueta al commit corregido, <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code> en GitHub. Las órdenes son iguales en Windows, macOS y Linux; cambia el nombre de la etiqueta y la rama por las de tu ejercicio:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e1 main -m "E1 resuelto"
+git push -f origin entrega-fundamentos-git-e1</code></pre></div>
+<p>Más detalle en <a href="../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>. Algunos ejercicios piden algo distinto para corregir (en Git E1, por ejemplo, un commit nuevo suspende): sigue siempre lo que diga su enunciado.</p>
+<p class="note">No hay fecha límite ni número máximo de entregas. Cuenta lo que haya en la etiqueta cuando se lance la corrección.</p>
+</section>
+
+<nav class="temas" aria-label="Temas de la presentación"><a href="02-como-funciona-la-asignatura.html">← Cómo funciona la asignatura</a><a href="../../entregas/index.html">Tabla de entregas →</a></nav>
+<footer><span>Hacking ético · Módulo profesional 5025</span></footer>
+</div>
+<script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
+</body>
+</html>

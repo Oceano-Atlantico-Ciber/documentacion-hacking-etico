@@ -13,6 +13,7 @@
       ["06 · Primer commit", "00-presentacion/temas/06-primer-commit.html"],
       ["07 · Hackea el ranking", "00-presentacion/temas/07-hackea-el-ranking.html"],
       ["Hackea el ranking · Solución", "00-presentacion/hackea-el-ranking/solucion.html"],
+      ["Cómo se corrige tu entrega", "00-presentacion/temas/08-como-se-corrige.html"],
     ]],
     ["Fundamentos", "00-fundamentos/index.html", [
       ["01 · Git", "00-fundamentos/01-git/index.html", [
