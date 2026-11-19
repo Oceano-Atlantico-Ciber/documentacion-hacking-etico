@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-19T21:20+00:00",
+ "actualizado": "2026-11-19T22:19+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -164,6 +164,140 @@ window.ENTREGAS = {
      "e6": "bien",
      "e7": "bien",
      "e8": "bien"
+    }
+   },
+   "detalle": {
+    "adrian47gg": {
+     "e1": [
+      {
+       "resumen": "se esperaban 3 commits en e1/ y hay 2 (e49fc61 «docs(e1): objetivo de la auditoría», f9f64e8 «Guarda cambios antes del ejercicio e4»): cada fichero va en su propio commit"
+      },
+      {
+       "resumen": "f9f64e8 debe cambiar un solo fichero de e1/ y cambia 6: e1/herramientas.md, e1/notas.md, …, ….py, ….md, ….txt"
+      },
+      {
+       "resumen": "f9f64e8: el mensaje «Guarda cambios antes del ejercicio e4» no sigue Conventional Commits, tipo(ámbito): descripción, con tipo feat, fix, docs, style, refactor, test o chore"
+      }
+     ],
+     "e3": [
+      {
+       "resumen": "se esperaba un commit «feat(e3): rama para fast-forward» y no está en la historia: o falta integrar su rama, o se borró al reescribir la historia"
+      },
+      {
+       "resumen": "se esperaba un commit «feat(e3): rama para merge con commit» y no está en la historia: o falta integrar su rama, o se borró al reescribir la historia"
+      },
+      {
+       "resumen": "falta fundamentos/git/e3/ff.txt: no está en el commit evaluado"
+      },
+      {
+       "resumen": "falta fundamentos/git/e3/noff.txt: no está en el commit evaluado"
+      }
+     ]
+    },
+    "dayx33": {
+     "e1": [
+      {
+       "resumen": "se esperaban 3 commits en e1/ y hay 7 (40a1545 «docs(e1): objetivo de la auditoría», 7ec6453 «docs(e1): herramientas de la auditoría», 74e209b «docs(e1): notas de la auditoría», b04a5fe «Eliminar ficheros mal hechos», 7cd0561 «docs(e1): objetivo de la auditoría», 1966037 «docs(e1): notas de la audi…"
+      },
+      {
+       "resumen": "b04a5fe debe cambiar un solo fichero de e1/ y cambia 3: e1/herramientas.md, e1/notas.md, e1/objetivo.md"
+      },
+      {
+       "resumen": "b04a5fe: el mensaje «Eliminar ficheros mal hechos» no sigue Conventional Commits, tipo(ámbito): descripción, con tipo feat, fix, docs, style, refactor, test o chore"
+      }
+     ],
+     "e4": [
+      {
+       "resumen": "puertos.txt no sigue la regla: no está ordenado por número de puerto: «53 dns» va antes que «5432 postgresql»"
+      }
+     ]
+    },
+    "juanadiego": {
+     "e4": [
+      {
+       "resumen": "se esperaba un commit «feat(e4): puerto encontrado por B» y no está en la historia: o falta integrar su rama, o se borró al reescribir la historia"
+      },
+      {
+       "resumen": "puertos.txt no sigue la regla: faltan líneas: «9200 elasticsearch»"
+      }
+     ],
+     "e6": [
+      {
+       "resumen": "el último commit debe llamarse «docs(e6): informe de alcance» y se llama «Merge branch 'git/e6-wip' of https://github.… into git/e6-wip»"
+      },
+      {
+       "resumen": "quedan commits wip en la historia (1): fúndelos con squash o fixup en git rebase -i"
+      },
+      {
+       "resumen": "debe quedar un único commit que cree ….md y nada más: el último commit es un merge"
+      }
+     ],
+     "e7": [
+      {
+       "resumen": "no hay un commit que deshaga exactamente «feat(e7): activar modo depuración»: un arreglo a mano no deja el mismo cambio inverso, hazlo con git revert a6ff69c"
+      },
+      {
+       "resumen": "….ini no tiene el contenido esperado: la línea 3 es «debug = true» y debería ser «debug = false»"
+      }
+     ],
+     "e8": [
+      {
+       "resumen": "la clave sigue en la historia de la rama, en 2112693, 106cc2e: repite la purga con git-filter-repo"
+      },
+      {
+       "resumen": "hallazgo.txt debe contener el SHA completo del commit que filtró la clave: no hay ningún SHA de 40 caracteres"
+      }
+     ]
+    },
+    "pabloba1710": {
+     "e1": [
+      {
+       "resumen": "se esperaban 3 commits en e1/ y hay 1 (8cf0951 «Añadir archivos del ejercicio 1 de fundamentos»): cada fichero va en su propio commit"
+      },
+      {
+       "resumen": "8cf0951 debe cambiar un solo fichero de e1/ y cambia 3: e1/herramientas.md, e1/notas.md, e1/objetivo.md"
+      },
+      {
+       "resumen": "8cf0951: el mensaje «Añadir archivos del ejercicio 1 de fundamentos» no sigue Conventional Commits, tipo(ámbito): descripción, con tipo feat, fix, docs, style, refactor, test o chore"
+      }
+     ]
+    },
+    "umbreon0197": {
+     "e1": [
+      {
+       "resumen": "se esperaban 3 commits en e1/ y hay 1 (3d357fd «docs(e1): objetivo de la auditoría»): cada fichero va en su propio commit"
+      },
+      {
+       "resumen": "sin commit: ….md, ….md: ningún commit lo añade"
+      },
+      {
+       "resumen": "falta ….md: no está en el commit evaluado"
+      },
+      {
+       "resumen": "falta ….md: no está en el commit evaluado"
+      }
+     ],
+     "e3": [
+      {
+       "resumen": "se esperaba un commit «feat(e3): rama para merge con commit» y no está en la historia: o falta integrar su rama, o se borró al reescribir la historia"
+      },
+      {
+       "resumen": "falta fundamentos/git/e3/noff.txt: no está en el commit evaluado"
+      }
+     ],
+     "e4": [
+      {
+       "resumen": "puertos.txt no sigue la regla: no está ordenado por número de puerto: «22 ssh» va antes que «9200 elasticsearch»"
+      }
+     ],
+     "e8": [
+      {
+       "resumen": "ca71c0e sigue en la historia de la rama: al purgar, el commit que filtró la clave cambia de SHA"
+      },
+      {
+       "resumen": "ca71c0e no es el commit que subió la clave a GitHub: no añade la clave en fundamentos/git/e8/.env. Búscalo con git log -p -S API_KEY="
+      }
+     ]
     }
    }
   },
@@ -330,6 +464,72 @@ window.ENTREGAS = {
      "e7": "bien",
      "e8": "bien"
     }
+   },
+   "detalle": {
+    "adrian47gg": {
+     "e2": [
+      {
+       "resumen": "falta …, ….txt"
+      }
+     ],
+     "e3": [
+      {
+       "resumen": "falta fundamentos/docker/e3/.dockerignore"
+      }
+     ],
+     "e5": [
+      {
+       "resumen": "La etiqueta no es anotada: bórrala y créala con git tag -a"
+      }
+     ],
+     "e8": [
+      {
+       "resumen": "informe.md tiene 0 filas y hay al menos 10 fallos: una fila por fallo"
+      }
+     ]
+    },
+    "hugocampos646": {
+     "e2": [
+      {
+       "resumen": "sondeo.txt no es el sondeo de 22, 80 y 443, con el 80 abierto: la línea 2 es «localhost:80 cerrado» y debería ser «localhost:80 abierto»"
+      }
+     ]
+    },
+    "juanadiego": {
+     "e8": [
+      {
+       "resumen": "queda alguna puerta abierta: panel: privileged; panel: monta el socket de Docker"
+      }
+     ]
+    },
+    "pabloba1710": {
+     "e1": [
+      {
+       "resumen": "el contenedor salía de nginx:alpine y debía salir de nginx:1.27-alpine"
+      },
+      {
+       "resumen": "el contenedor no publicaba 127.0.0.1:8080->80/tcp: publicaba ningún puerto"
+      },
+      {
+       "resumen": "el contenedor no llegó a pararse y volver a arrancar: según inspect.json no se paró nunca"
+      },
+      {
+       "resumen": "en logs.txt no hay ninguna petición servida con tu página: no hay ningún GET / con código 200"
+      }
+     ],
+     "e4": [
+      {
+       "resumen": "la construcción no ejecuta informe.py --comprobar con el secreto: no aparece «clave de la API válida». Usa RUN --mount=type=secret,id=api"
+      }
+     ]
+    },
+    "umbreon0197": {
+     "e6": [
+      {
+       "resumen": "sondeo.txt no tiene las cuatro líneas, con 80 y 5432 abiertos: tiene 2 líneas y debe tener 4, una por puerto sondeado"
+      }
+     ]
+    }
    }
   },
   {
@@ -494,6 +694,15 @@ window.ENTREGAS = {
      "e6": "bien",
      "e7": "bien",
      "e8": "mal"
+    }
+   },
+   "detalle": {
+    "vladukrisp-ctrl": {
+     "e8": [
+      {
+       "resumen": "controles.md no documenta todos los controles con su CWE: faltan CWE-285"
+      }
+     ]
     }
    }
   },
@@ -660,7 +869,8 @@ window.ENTREGAS = {
      "e7": "sin",
      "e8": "sin"
     }
-   }
+   },
+   "detalle": {}
   },
   {
    "nombre": "RA1 · Hacking ético",
@@ -857,7 +1067,8 @@ window.ENTREGAS = {
      "u4-e2": "sin",
      "u4-e3": "sin"
     }
-   }
+   },
+   "detalle": {}
   }
  ]
 };
