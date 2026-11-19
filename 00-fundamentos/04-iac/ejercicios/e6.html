@@ -19,41 +19,148 @@
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-iac-e6</code> sobre <code>main</code></dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p>En <code>fundamentos/iac/e6/</code> de <code>main</code>:</p>
+<pre><code>e6/
+├── LEEME.md, proveedor.tf    # los que copia preparar.py, sin cambiar
+├── main.tf                   # la raíz: dos bloques module y sus salidas, ningún resource
+└── modulos/lab/
+    ├── main.tf               # tu laboratorio del E5, con lo que cambia sacado a variables
+    ├── variables.tf          # nombre y cidr
+    └── outputs.tf            # ip_web</code></pre>
+<p>Con <code>apply</code> quedan dos VPC, cada una con su etiqueta <code>Name</code> y su rango, y dentro de cada una un laboratorio que cumple lo mismo que el del E5 (salvo la página, que aquí no se mira: el <code>user_data</code> que copias del E5 puede quedarse como está). La etiqueta anotada <code>entrega-fundamentos-iac-e6</code> va sobre <code>main</code>, subida a GitHub.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material y vuelve a <code>main</code>. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e6
-cd fundamentos/iac/e6</code></pre></div>
-<p>Copia tu E5 como punto de partida.</p>
+git -C ../documentacion-hacking-etico pull
+git switch main</code></pre></div>
+<p>Crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e6</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e6</code></pre></div>
+<pre><code>e6 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e6/. Sigue el enunciado.</code></pre>
+<p>Copia tu E5 (sin estado ni <code>.terraform/</code>) a <code>e6/</code> como punto de partida. Entra en la carpeta. Si el laboratorio del E5 sigue desplegado, no importa: este crea VPC nuevas.</p>
+<div class="cmd"><pre><code>cd fundamentos/iac/e6</code></pre></div>
 
 <h2 class="step"><span class="n">2</span>Mueve el laboratorio a un módulo</h2>
-<p>Pasa los recursos a <code>modulos/lab/</code>, con <code>variables.tf</code> para lo que cambia de un laboratorio a otro (al menos el nombre y el rango de la VPC; las subredes se calculan con <code>cidrsubnet</code>) y <code>outputs.tf</code> con lo que necesita quien lo usa. <code>proveedor.tf</code> se queda en la raíz.</p>
+<p>Crea la carpeta del módulo y mueve allí tu <code>main.tf</code>. Estas órdenes valen igual en PowerShell que en macOS y Linux:</p>
+<div class="cmd"><pre><code>mkdir modulos
+mkdir modulos/lab
+mv main.tf modulos/lab/main.tf</code></pre></div>
+<p>Si en el E5 repartiste el laboratorio en varios <code>.tf</code>, muévelos todos menos <code>proveedor.tf</code>, que se queda en la raíz. Ahora el módulo necesita entradas. Crea <code>modulos/lab/variables.tf</code>:</p>
+<div class="cmd"><pre><code>code modulos/lab/variables.tf</code></pre></div>
+<pre><code>variable "nombre" {
+  description = "Nombre del laboratorio: va en la etiqueta Name y en lo que tiene que ser único"
+  type        = string
+}
+
+variable "cidr" {
+  description = "Rango de la VPC, por ejemplo 10.1.0.0/16"
+  type        = string
+}</code></pre>
+<p>Aquí no hace falta <code>default</code>: los valores los da la raíz. Abre <code>modulos/lab/main.tf</code> y cambia lo que es distinto en cada laboratorio:</p>
+<ul>
+<li>En la VPC, <code>cidr_block = var.cidr</code> y <code>tags = { Name = var.nombre }</code>.</li>
+<li>En las tres subredes, el rango sale del de la VPC: <code>cidr_block = cidrsubnet(var.cidr, 8, 1)</code> para la pública, y <code>2</code> y <code>3</code> para las privadas.</li>
+<li>Lo que tiene que ser único en la cuenta lleva el nombre: el <code>identifier</code> de la base de datos (<code>"${var.nombre}-db"</code>) y el <code>name</code> de su grupo de subredes (<code>"${var.nombre}-db"</code>). Si no, el segundo laboratorio choca con el primero. Haz lo mismo con el <code>name</code> de los dos grupos de seguridad (<code>"${var.nombre}-web"</code> y <code>"${var.nombre}-db"</code>): así los distingues en la CLI.</li>
+<li>Quita de aquí el <code>output "ip_web"</code>: va en <code>outputs.tf</code>.</li>
+</ul>
+<div class="cmd"><pre><code>code modulos/lab/outputs.tf</code></pre></div>
+<pre><code>output "ip_web" {
+  value = aws_instance.web.private_ip
+}</code></pre>
+<p>Guarda los tres ficheros del módulo.</p>
 
 <h2 class="step"><span class="n">3</span>Úsalo dos veces</h2>
-<p>En <code>main.tf</code> de la raíz, dos bloques <code>module</code> con nombres y rangos distintos, y una salida con la IP del servidor de cada uno. La raíz no crea ningún recurso por su cuenta.</p>
+<p>Crea el <code>main.tf</code> de la raíz, en <code>e6/</code>: dos bloques <code>module</code> con nombres y rangos distintos, y una salida con la IP del servidor de cada uno. La raíz no crea ningún recurso por su cuenta.</p>
+<div class="cmd"><pre><code>code main.tf</code></pre></div>
+<pre><code>module "uno" {
+  source = "./modulos/lab"
+  nombre = "lab-uno"
+  cidr   = "10.1.0.0/16"
+}
+
+module "dos" {
+  source = "./modulos/lab"
+  nombre = "lab-dos"
+  cidr   = "10.2.0.0/16"
+}
+
+output "ip_uno" {
+  value = module.uno.ip_web
+}
+
+output "ip_dos" {
+  value = module.dos.ip_web
+}</code></pre>
+<p>Guarda, y desde <code>fundamentos/iac/e6/</code>, con tu Floci en marcha:</p>
 <div class="cmd"><pre><code>terraform init
+terraform validate
 terraform apply
 terraform output
-aws ec2 describe-vpcs --query "Vpcs[].[CidrBlock,Tags]"
-terraform destroy</code></pre></div>
+aws ec2 describe-vpcs --query "Vpcs[].[CidrBlock,Tags]"</code></pre></div>
+<p><code>init</code> carga el módulo (<code>Initializing modules...</code>); repítelo cada vez que añadas o cambies un bloque <code>module</code>. <code>apply</code> crea el doble de recursos que en el E5 (escribe <code>yes</code>), y las salidas dan dos IP:</p>
+<pre><code>ip_dos = "10.2.1.…"
+ip_uno = "10.1.1.…"</code></pre>
+<p>En <code>describe-vpcs</code> salen <code>10.1.0.0/16</code> con <code>lab-uno</code> y <code>10.2.0.0/16</code> con <code>lab-dos</code>, además de la VPC por defecto. Si <code>apply</code> falla con <code>already exists</code>, algún nombre único no lleva <code>var.nombre</code>. Cuando esté bien, destruye (con <code>yes</code>):</p>
+<div class="cmd"><pre><code>terraform destroy</code></pre></div>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>No hay ningún módulo en <code>modulos/</code>, o la raíz no lo usa dos veces, o crea VPC, servidores o bases de datos fuera del módulo.</li>
-<li>No hay dos VPC, o no tienen etiquetas <code>Name</code> distintas, o comparten rango.</li>
-<li>Algún laboratorio no cumple lo del E5: tres subredes, servidor con el 80 abierto y nada más, base de datos privada que solo admite al servidor.</li>
-<li><code>destroy</code> falla.</li>
+<li>Falta <code>proveedor.tf</code> en <code>e6/</code>, o no hay ninguna carpeta dentro de <code>modulos/</code>.</li>
+<li>Los <code>.tf</code> de la raíz (los de <code>e6/</code>, no los del módulo) no usan un <code>module</code> dos veces, o crean directamente un <code>aws_vpc</code>, un <code>aws_instance</code> o un <code>aws_db_instance</code>.</li>
+<li><code>terraform init</code> o <code>apply</code> fallan.</li>
+<li>No hay al menos dos VPC, o no tienen etiquetas <code>Name</code> distintas, o comparten rango.</li>
+<li>Algún laboratorio no cumple lo del E5: tres subredes, un servidor con el 80 abierto a todo el mundo y nada más, y una base de datos privada que solo admite al servidor.</li>
+<li><code>terraform destroy</code> falla.</li>
 </ul>
 
 <h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e6</code></pre></div>
-
+git status --short -uall fundamentos/iac/e6</code></pre></div>
+<pre><code>?? fundamentos/iac/e6/LEEME.md
+?? fundamentos/iac/e6/main.tf
+?? fundamentos/iac/e6/modulos/lab/main.tf
+?? fundamentos/iac/e6/modulos/lab/outputs.tf
+?? fundamentos/iac/e6/modulos/lab/variables.tf
+?? fundamentos/iac/e6/proveedor.tf</code></pre>
+<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<div class="cmd"><pre><code>git add fundamentos/iac/e6
+git commit -m "feat(iac-e6): módulo lab usado dos veces"</code></pre></div>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e6</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e6</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e6</code></pre></div>
+<p class="note">Este ejercicio crea y destruye un laboratorio entero: cada <code>pruebas.py</code> tarda entre 4 y 8 minutos. Déjalo terminar.</p>
+<p>Antes de subir, un ejercicio bien hecho se ve así:</p>
+<pre><code>E6 · main, todavía sin etiqueta (provisional) · 7a8b9c0 · comprobando…
+  ✓ superado
+  ! main aún no está en GitHub: el corrector no lo verá hasta que lo subas</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide: «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …». Antes de subir es normal: desaparece al subir en el paso siguiente. Los SHA de tus líneas serán otros.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni <code>fundamentos/iac/e6/</code> en <code>main</code>: falta preparar el ejercicio o hacer su commit.</li>
+</ul>
 <h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add fundamentos/iac
-git commit -m "feat(iac-e6): módulo lab usado dos veces"
-git push</code></pre></div>
-<p>Cuando la fila de E6 de <b>Corrector iac</b> salga sin fallos:</p>
-<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e6 -m "E6 resuelto"
+<p>Sube tu trabajo a GitHub:</p>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b>, crea la etiqueta anotada sobre <code>main</code> y súbela:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e6 main -m "E6 resuelto"
 git push origin entrega-fundamentos-iac-e6</code></pre></div>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E6 · etiqueta entrega-fundamentos-iac-e6 · 7a8b9c0 · comprobando…
+  ✓ superado</code></pre>
+<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>Corrige en <code>fundamentos/iac/e6/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e6 main -m "E6 resuelto"
+git push -f origin entrega-fundamentos-iac-e6</code></pre></div>
+<p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e5.html">← E5 · Un laboratorio completo</a><a href="e7.html">E7 · Auditar los permisos →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

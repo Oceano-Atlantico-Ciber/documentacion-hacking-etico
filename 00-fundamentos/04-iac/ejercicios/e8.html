@@ -19,52 +19,125 @@
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-iac-e8</code> sobre <code>main</code></dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p>En <code>fundamentos/iac/e8/empresa/</code> de <code>main</code>, <code>empresa.tf</code> corregido (y <code>proveedor.tf</code>, sin cambiar). El resto de <code>e8/</code> es la copia de tu E7 que deja <code>preparar.py</code> (por eso su <code>LEEME.md</code> aún dice «E7»: no hace falta tocarlo). El corrector aplica tu <code>empresa.tf</code> en una cuenta vacía y comprueba, simulando y con una clave nueva:</p>
+<div class="tabla"><table><thead><tr><th>Identidad</th><th>Tiene que poder</th><th>No tiene que poder</th></tr></thead><tbody>
+<tr><td>Becario</td><td>Leer <code>informe-semanal.txt</code> de <code>informes-&lt;huella&gt;</code>.</td><td>Ninguna acción de IAM que dé permisos sobre su usuario; leer <code>secretos-&lt;huella&gt;</code>; tener una clave de acceso.</td></tr>
+<tr><td>Operaciones</td><td><code>ec2:DescribeInstances</code>: ver y administrar los servidores.</td><td>Ninguna acción de IAM que dé permisos sobre su usuario; leer <code>secretos-&lt;huella&gt;</code>.</td></tr>
+</tbody></table></div>
+<p>Los tres buckets y los dos usuarios siguen existiendo: corregir no es borrar. La etiqueta anotada <code>entrega-fundamentos-iac-e8</code> va sobre <code>main</code>, subida a GitHub.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material y vuelve a <code>main</code>. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e8
-cd fundamentos/iac/e8/empresa</code></pre></div>
-<p>Copia tu E7 con su auditoría. Trabajas sobre esta copia de <code>empresa.tf</code>.</p>
+git -C ../documentacion-hacking-etico pull
+git switch main</code></pre></div>
+<p>Crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e8</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e8</code></pre></div>
+<pre><code>e8 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e8/. Sigue el enunciado.</code></pre>
+<p>Copia tu E7 a <code>e8/</code>, con su auditoría. Trabajas sobre esta copia de <code>empresa.tf</code>. Como en el E7, trae el estado para que Terraform sepa qué hay desplegado (con tu Floci en marcha):</p>
+<div class="cmd"><pre><code>cd fundamentos/iac/e8/empresa
+cp ../../e7/empresa/terraform.tfstate .
+terraform init
+terraform plan</code></pre></div>
+<pre><code>No changes. Your infrastructure matches the configuration.</code></pre>
+<p>Si sale otra cosa, mira las indicaciones del paso 2 del <a href="e7.html">E7</a>: son las mismas, con <code>e7</code> en lugar de <code>e2</code>.</p>
 
 <h2 class="step"><span class="n">2</span>Corrige</h2>
-<p>Lo que cada uno necesita para su trabajo, y nada más:</p>
+<div class="cmd"><pre><code>code empresa.tf</code></pre></div>
+<p>Lo que cada uno necesita para su trabajo, y nada más. Haz en <code>empresa.tf</code> las correcciones de tu auditoría:</p>
 <ul>
-<li>El <b>becario</b> lee los informes, y ya. Ninguna acción de IAM.</li>
-<li><b>Operaciones</b> administra el servidor web: acciones de EC2. Ni IAM ni los datos de dirección.</li>
-<li>La <b>clave del becario</b> se filtró: se revoca. Quítala del código, con sus salidas.</li>
-<li>Los usuarios y los buckets siguen existiendo: corregir no es borrar.</li>
+<li>El <b>becario</b> lee los informes, y ya. En su política (<code>aws_iam_user_policy.becario</code>), borra entera la sentencia <code>AjustarseLosPermisos</code>, desde su <code>{</code> hasta su <code>},</code>, y deja <code>LeerInformes</code> como está.</li>
+<li><b>Operaciones</b> administra el servidor web: solo acciones de EC2. En su política (<code>aws_iam_user_policy.operaciones</code>), cambia <code>Action = "*"</code> por <code>Action = "ec2:*"</code>. Así no toca IAM ni los datos de dirección.</li>
+<li>La <b>clave del becario</b> se filtró: se revoca. Borra el recurso <code>aws_iam_access_key.becario</code> y las dos salidas que la enseñan, <code>becario_clave</code> y <code>becario_secreto</code>.</li>
+<li>No borres ningún usuario ni ningún bucket.</li>
 </ul>
+<p>Guarda, y desde <code>fundamentos/iac/e8/empresa/</code>:</p>
 <div class="cmd"><pre><code>terraform fmt
-terraform plan
-terraform apply</code></pre></div>
-<p>Lee el plan antes de aplicar: tienen que salir solo cambios en las políticas y la clave destruida.</p>
+terraform plan</code></pre></div>
+<p>Lee el plan antes de aplicar: tienen que salir solo los cambios que buscas, las dos políticas cambiadas (<code>~</code>) y la clave destruida (<code>-</code>):</p>
+<pre><code>  # aws_iam_access_key.becario will be destroyed
+…
+  # aws_iam_user_policy.becario will be updated in-place
+…
+  # aws_iam_user_policy.operaciones will be updated in-place
+…
+Plan: 0 to add, 2 to change, 1 to destroy.</code></pre>
+<p>Si sale algún <code>to add</code> o se destruye un usuario o un bucket, revisa lo que has borrado. Cuando el plan sea ese, aplica (con <code>yes</code>):</p>
+<div class="cmd"><pre><code>terraform apply</code></pre></div>
 
 <h2 class="step"><span class="n">3</span>Comprueba el arreglo</h2>
-<p>Repite las simulaciones del E7. Lo que antes era <code>allowed</code> ahora es <code>implicitDeny</code>, y lo que necesitan para su trabajo sigue <code>allowed</code>:</p>
+<p>Repite las simulaciones del E7, con los mismos ARN (si no los tienes, <code>aws iam get-user --user-name … --query User.Arn</code>). Lo que antes era <code>allowed</code> ahora es <code>implicitDeny</code>, y lo que necesitan para su trabajo sigue <code>allowed</code>:</p>
 <div class="cmd"><pre><code>aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --action-names iam:PutUserPolicy iam:AttachUserPolicy iam:CreateAccessKey --resource-arns &lt;ARN del becario&gt;
-aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --action-names s3:GetObject --resource-arns "arn:aws:s3:::informes-&lt;huella&gt;/*"
-aws iam simulate-principal-policy --policy-source-arn &lt;ARN de operaciones&gt; --action-names iam:PutUserPolicy ec2:DescribeInstances --resource-arns &lt;ARN de operaciones&gt;
+aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --action-names s3:GetObject --resource-arns "arn:aws:s3:::informes-&lt;huella&gt;/*" "arn:aws:s3:::secretos-&lt;huella&gt;/*"
+aws iam simulate-principal-policy --policy-source-arn &lt;ARN de operaciones&gt; --action-names iam:PutUserPolicy iam:CreateAccessKey --resource-arns &lt;ARN de operaciones&gt;
+aws iam simulate-principal-policy --policy-source-arn &lt;ARN de operaciones&gt; --action-names ec2:DescribeInstances --resource-arns "*"
 aws iam list-access-keys --user-name becario-&lt;huella&gt;</code></pre></div>
+<p>Tiene que salir:</p>
+<ul>
+<li>Becario: las tres acciones de IAM, <code>implicitDeny</code>; <code>s3:GetObject</code>, <code>allowed</code> en <code>informes-…</code> e <code>implicitDeny</code> en <code>secretos-…</code>.</li>
+<li>Operaciones: las acciones de IAM, <code>implicitDeny</code>; <code>ec2:DescribeInstances</code>, <code>allowed</code>.</li>
+<li>Claves del becario: <code>"AccessKeyMetadata": []</code>, ninguna.</li>
+</ul>
 <p>El corrector marca fallo si, con tu <code>empresa.tf</code> aplicado en una cuenta nueva:</p>
 <ul class="falla">
-<li>Falta algún bucket, el becario o operaciones.</li>
+<li>Falta <code>empresa/empresa.tf</code> o <code>empresa/proveedor.tf</code>, o <code>terraform init</code> o <code>apply</code> fallan.</li>
+<li>Falta alguno de los tres buckets, el becario u operaciones.</li>
 <li>El becario sigue teniendo una clave de acceso.</li>
-<li>El becario u operaciones pueden <code>iam:PutUserPolicy</code>, <code>iam:AttachUserPolicy</code>, <code>iam:CreateAccessKey</code> o <code>iam:CreatePolicyVersion</code> sobre su usuario.</li>
-<li>El becario u operaciones pueden leer el bucket <code>secretos-&lt;huella&gt;</code>.</li>
-<li>Con una clave nueva, el becario no puede leer <code>informe-semanal.txt</code>, u operaciones no puede <code>ec2:DescribeInstances</code>.</li>
+<li>La simulación permite al becario o a operaciones <code>iam:PutUserPolicy</code>, <code>iam:AttachUserPolicy</code>, <code>iam:CreateAccessKey</code> o <code>iam:CreatePolicyVersion</code> sobre su propio usuario.</li>
+<li>La simulación permite al becario o a operaciones <code>s3:GetObject</code> en <code>secretos-&lt;huella&gt;</code>.</li>
+<li>Con una clave nueva que crea el corrector, el becario no puede leer <code>informe-semanal.txt</code> de <code>informes-&lt;huella&gt;</code>.</li>
+<li>La simulación no permite a operaciones <code>ec2:DescribeInstances</code>.</li>
 </ul>
 
 <h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e8</code></pre></div>
-
+git status --short -uall fundamentos/iac/e8</code></pre></div>
+<pre><code>?? fundamentos/iac/e8/LEEME.md
+?? fundamentos/iac/e8/auditoria.md
+?? fundamentos/iac/e8/empresa/empresa.tf
+?? fundamentos/iac/e8/empresa/proveedor.tf
+?? fundamentos/iac/e8/simulacion.json</code></pre>
+<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<div class="cmd"><pre><code>git add fundamentos/iac/e8
+git commit -m "fix(iac-e8): menor privilegio para el becario y operaciones"</code></pre></div>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e8</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e8</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e8</code></pre></div>
+<p>Antes de subir, un ejercicio bien hecho se ve así:</p>
+<pre><code>E8 · main, todavía sin etiqueta (provisional) · 7a8b9c0 · comprobando…
+  ✓ superado
+  ! main aún no está en GitHub: el corrector no lo verá hasta que lo subas</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide: «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …». Antes de subir es normal: desaparece al subir en el paso siguiente. Los SHA de tus líneas serán otros.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni <code>fundamentos/iac/e8/</code> en <code>main</code>: falta preparar el ejercicio o hacer su commit.</li>
+</ul>
 <h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add fundamentos/iac
-git commit -m "fix(iac-e8): menor privilegio para el becario y operaciones"
-git push</code></pre></div>
-<p>Cuando la fila de E8 de <b>Corrector iac</b> salga sin fallos:</p>
-<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e8 -m "E8 resuelto"
+<p>Sube tu trabajo a GitHub:</p>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b>, crea la etiqueta anotada sobre <code>main</code> y súbela:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e8 main -m "E8 resuelto"
 git push origin entrega-fundamentos-iac-e8</code></pre></div>
-<p class="note">Los demás fallos de la cuenta (el 22 abierto, la contraseña en <code>user_data</code>, el bucket de copias sin bloqueo público) no los mira este corrector. Ya sabes cómo cerrarlos: hazlo si quieres, y Trivy te dirá si queda alguno.</p>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E8 · etiqueta entrega-fundamentos-iac-e8 · 7a8b9c0 · comprobando…
+  ✓ superado</code></pre>
+<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>Corrige en <code>fundamentos/iac/e8/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e8 main -m "E8 resuelto"
+git push -f origin entrega-fundamentos-iac-e8</code></pre></div>
+<p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
+<p class="note">Desde ahora la empresa la gestiona <code>e8/empresa/</code>. Los estados de <code>e2/</code> y <code>e7/</code> se han quedado atrás: no vuelvas a hacer <code>apply</code> allí, o deshará las correcciones del E8.</p>
+<p class="note">Los demás fallos de la cuenta (el 22 abierto a todo el mundo, la contraseña en el <code>user_data</code>, el bucket de copias sin bloqueo de acceso público) no los mira este corrector. Ya sabes cómo cerrarlos con la tabla de <a href="../temas/04-seguridad-de-la-infraestructura.html#hallazgos">IaC 4</a>: hazlo si quieres, pasando antes el plan para ver qué cambia.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e7.html">← E7 · Auditar los permisos</a><span></span></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

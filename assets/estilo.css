@@ -108,6 +108,10 @@ dl.ficha dd { margin: 0; min-width: 0; }
 .cmd pre { padding-right: 84px; }
 .cmd button { position: absolute; top: 8px; right: 8px; font: 500 12px var(--f-body); padding: 3px 10px; border-radius: 6px; border: 1px solid var(--muted); background: var(--ink); color: var(--bg); cursor: pointer; }
 .cmd button:hover, .cmd button:focus-visible { border-color: var(--accent); outline: none; }
+/* Etiqueta del sistema encima de un bloque de órdenes que cambia entre Windows y macOS/Linux:
+   <p class="so">Windows · PowerShell</p> + .cmd, y <p class="so">macOS / Linux · Terminal</p> + .cmd */
+.so { margin: 14px 0 4px; font: 600 12px var(--f-body); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.so + .cmd { margin-top: 0; }
 ul.falla li::marker { color: var(--crit); }
 .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
 .flow span { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }

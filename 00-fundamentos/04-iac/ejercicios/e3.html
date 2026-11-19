@@ -19,45 +19,153 @@
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-iac-e3</code> sobre <code>main</code></dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p>En <code>fundamentos/iac/e3/</code> de <code>main</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué es</th></tr></thead><tbody>
+<tr><td><code>main.tf</code></td><td>Tres recursos (<code>aws_s3_bucket</code>, <code>aws_iam_user</code> y <code>aws_iam_user_policy</code>) que describen lo que creaste en el E1, y un bloque <code>import</code> por cada uno.</td></tr>
+<tr><td><code>proveedor.tf</code></td><td>El que deja <code>preparar.py</code>, sin cambiar.</td></tr>
+<tr><td><code>LEEME.md</code></td><td>El que deja <code>preparar.py</code>.</td></tr>
+</tbody></table></div>
+<p>El corrector lanza tu <code>e1/ordenes.sh</code> en una cuenta vacía, como en el E1, y después tu Terraform. El primer plan tiene que decir:</p>
+<pre><code>Plan: 3 to import, 0 to add, 0 to change, 0 to destroy.</code></pre>
+<p>Después de <code>apply</code>, un segundo plan no tiene que cambiar nada. La etiqueta anotada <code>entrega-fundamentos-iac-e3</code> va sobre <code>main</code>, subida a GitHub.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material y vuelve a <code>main</code>. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e3
-cd fundamentos/iac/e3</code></pre></div>
-<p>Deja <code>proveedor.tf</code>, que apunta a tu Floci, y un <code>LEEME.md</code> con los tres recursos que tienes que adoptar. Tu Floci tiene que seguir teniendo lo del E1: compruébalo con <code>aws s3 ls</code> y <code>aws iam list-users</code>. Si hiciste <code>down -v</code>, vuelve a lanzar las órdenes de <code>e1/ordenes.sh</code>.</p>
+git -C ../documentacion-hacking-etico pull
+git switch main</code></pre></div>
+<p>Crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e3</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e3</code></pre></div>
+<pre><code>e3 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e3/. Sigue el enunciado.</code></pre>
+<p>Deja <code>proveedor.tf</code>, que apunta a tu Floci, y un <code>LEEME.md</code> con los tres recursos que tienes que adoptar. Entra en la carpeta y léelo:</p>
+<div class="cmd"><pre><code>cd fundamentos/iac/e3
+code LEEME.md</code></pre></div>
+<p class="note"><code>code LEEME.md</code> lo abre en VS Code. Léelo y copia de ahí, no de la terminal: PowerShell de Windows muestra mal los acentos y el punto medio (<code>Â·</code>) de un fichero UTF-8.</p>
+<p>Tu Floci tiene que seguir teniendo lo del E1. Con Floci en marcha (si no, <code>docker compose up -d</code> en <code>fundamentos/iac/</code>), compruébalo:</p>
+<div class="cmd"><pre><code>aws s3 ls
+aws iam list-users --query "Users[].UserName"</code></pre></div>
+<p>Tienen que salir <code>e1-notas-&lt;huella&gt;</code> y <code>lector-&lt;huella&gt;</code> (y, si hiciste el E2, también los de la empresa). Si no salen, porque hiciste <code>docker compose down -v</code>, vuelve a crearlos: entra en <code>e1/</code> (<code>cd ../e1</code>), copia y lanza una a una las cuatro líneas de tu <code>ordenes.sh</code>, y vuelve (<code>cd ../e3</code>).</p>
 
 <h2 class="step"><span class="n">2</span>Escribe los recursos</h2>
 <div class="cmd"><pre><code>code main.tf</code></pre></div>
-<p>Un <code>aws_s3_bucket</code>, un <code>aws_iam_user</code> y un <code>aws_iam_user_policy</code> con la misma política que <code>e1/politica.json</code>, escrita con <code>jsonencode</code> y con referencias en vez de nombres repetidos. Y un bloque <code>import</code> por cada uno, con el <code>id</code> que dice el <code>LEEME.md</code> (<a href="../temas/02-terraform.html#import">IaC 2 · Adoptar lo que ya existe</a>).</p>
+<p>Escribe los tres recursos tal como los creaste en el E1, con tu huella en lugar de <code>&lt;huella&gt;</code>. La política es la de tu <code>e1/politica.json</code>, escrita con <code>jsonencode</code> y con una referencia al bucket en vez de repetir su nombre (<a href="../temas/02-terraform.html">IaC 2 · Un fichero de Terraform</a>). Si tu <code>politica.json</code> tiene más acciones o sentencias, ponlas igual aquí:</p>
+<pre><code>resource "aws_s3_bucket" "notas" {
+  bucket = "e1-notas-&lt;huella&gt;"
+}
+
+resource "aws_iam_user" "lector" {
+  name = "lector-&lt;huella&gt;"
+}
+
+resource "aws_iam_user_policy" "lectura" {
+  name = "lectura-notas"
+  user = aws_iam_user.lector.name
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      { Effect = "Allow", Action = "s3:GetObject", Resource = "${aws_s3_bucket.notas.arn}/*" },
+    ]
+  })
+}</code></pre>
+<p>Debajo, un bloque <code>import</code> por recurso: <code>to</code> es el recurso del código y <code>id</code>, cómo encontrarlo en la cuenta. Los <code>id</code> están en tu <code>LEEME.md</code> (<a href="../temas/02-terraform.html#import">IaC 2 · Adoptar lo que ya existe</a>):</p>
+<pre><code>import {
+  to = aws_s3_bucket.notas
+  id = "e1-notas-&lt;huella&gt;"
+}
+
+import {
+  to = aws_iam_user.lector
+  id = "lector-&lt;huella&gt;"
+}
+
+import {
+  to = aws_iam_user_policy.lectura
+  id = "lector-&lt;huella&gt;:lectura-notas"
+}</code></pre>
+<p>Guarda. No toques <code>proveedor.tf</code>.</p>
 
 <h2 class="step"><span class="n">3</span>Ajusta hasta que el plan solo importe</h2>
+<p>Desde <code>fundamentos/iac/e3/</code>:</p>
 <div class="cmd"><pre><code>terraform init
 terraform fmt
 terraform plan</code></pre></div>
-<p>El objetivo es <code>Plan: 3 to import, 0 to add, 0 to change, 0 to destroy.</code> Si dice <code>to change</code>, el plan te enseña con <code>~</code> qué atributo de tu código no coincide con la cuenta: corrígelo en el código, no en la cuenta. Si dice <code>to add</code>, algún <code>import</code> no encuentra su recurso.</p>
+<p><code>init</code> descarga el proveedor (la primera vez tarda); <code>fmt</code> ordena el formato de tus <code>.tf</code> y escribe el nombre de los que ha cambiado. El plan describe cada recurso y termina así:</p>
+<pre><code>  # aws_iam_user.lector will be imported
+…
+  # aws_iam_user_policy.lectura will be imported
+…
+  # aws_s3_bucket.notas will be imported
+…
+Plan: 3 to import, 0 to add, 0 to change, 0 to destroy.</code></pre>
+<p>Si no sale eso:</p>
+<ul>
+<li><b><code>to change</code></b>: el plan marca con <code>~</code> el atributo de tu código que no coincide con la cuenta (por ejemplo, la política). Corrígelo en el código, no en la cuenta, y repite <code>terraform plan</code>.</li>
+<li><b><code>to add</code></b>, o un error <code>Cannot import non-existent remote object</code>: algún <code>import</code> no encuentra su recurso. Revisa su <code>id</code> y que lo del E1 sigue en tu Floci (paso 1).</li>
+<li>Un error con un número de línea: falta una llave, unas comillas o una coma. <code>terraform validate</code> te dice dónde.</li>
+</ul>
 
 <h2 class="step"><span class="n">4</span>Aplica y comprueba</h2>
-<div class="cmd"><pre><code>terraform apply
-terraform plan</code></pre></div>
-<p>El segundo plan tiene que decir <code>No changes</code>. El <code>terraform.tfstate</code> que aparece en la carpeta no se sube: el <code>.gitignore</code> de la unidad ya lo deja fuera.</p>
+<div class="cmd"><pre><code>terraform apply</code></pre></div>
+<p>Enseña el mismo plan y pregunta <code>Enter a value:</code>. Escribe <code>yes</code> y pulsa Intro:</p>
+<pre><code>Apply complete! Resources: 3 imported, 0 added, 0 changed, 0 destroyed.</code></pre>
+<div class="cmd"><pre><code>terraform plan</code></pre></div>
+<pre><code>No changes. Your infrastructure matches the configuration.</code></pre>
+<p>El código y la cuenta coinciden. El <code>terraform.tfstate</code> que aparece en la carpeta no se sube: el <code>.gitignore</code> de la unidad ya lo deja fuera.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>Falta <code>main.tf</code>, o falta alguno de los tres recursos, o no hay ningún bloque <code>import</code>.</li>
-<li>En una cuenta nueva donde se han lanzado tus órdenes del E1, el primer plan no importa, o además añade, cambia o destruye algo.</li>
-<li>Después de <code>apply</code>, el plan todavía quiere cambiar algo.</li>
+<li>Falta <code>main.tf</code> o <code>proveedor.tf</code>.</li>
+<li>En los <code>.tf</code> falta un <code>resource</code> <code>aws_s3_bucket</code>, <code>aws_iam_user</code> o <code>aws_iam_user_policy</code>, o no hay ningún bloque <code>import</code>.</li>
+<li>Tu <code>e1/ordenes.sh</code> falla en una cuenta nueva (lo comprueba igual que en el E1).</li>
+<li><code>terraform init</code> o <code>terraform plan</code> fallan.</li>
+<li>El primer plan no importa nada (no dice <code>… to import</code>), o además añade, cambia o destruye algo: tiene que ser <code>0 to add, 0 to change, 0 to destroy</code>.</li>
+<li><code>terraform apply</code> falla, o después el plan todavía quiere cambiar algo.</li>
 </ul>
 
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e3</code></pre></div>
-<p>Como el corrector, lanza tu <code>e1/ordenes.sh</code> en una Floci vacía y después tu Terraform. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>.</p>
-
+git status --short -uall fundamentos/iac/e3</code></pre></div>
+<pre><code>?? fundamentos/iac/e3/LEEME.md
+?? fundamentos/iac/e3/main.tf
+?? fundamentos/iac/e3/proveedor.tf</code></pre>
+<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<div class="cmd"><pre><code>git add fundamentos/iac/e3
+git commit -m "feat(iac-e3): bucket y lector adoptados con import"</code></pre></div>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e3</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e3</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e3</code></pre></div>
+<p>Antes de subir, un ejercicio bien hecho se ve así:</p>
+<pre><code>E3 · main, todavía sin etiqueta (provisional) · 7a8b9c0 · comprobando…
+  ✓ superado
+  ! main aún no está en GitHub: el corrector no lo verá hasta que lo subas</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide: «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …». Antes de subir es normal: desaparece al subir en el paso siguiente. Los SHA de tus líneas serán otros.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni <code>fundamentos/iac/e3/</code> en <code>main</code>: falta preparar el ejercicio o hacer su commit.</li>
+</ul>
 <h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add fundamentos/iac
-git commit -m "feat(iac-e3): bucket y lector adoptados con import"
-git push</code></pre></div>
-<p>Cuando la fila de E3 de <b>Corrector iac</b> salga sin fallos:</p>
-<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e3 -m "E3 resuelto"
+<p>Sube tu trabajo a GitHub:</p>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b>, crea la etiqueta anotada sobre <code>main</code> y súbela:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-iac-e3 main -m "E3 resuelto"
 git push origin entrega-fundamentos-iac-e3</code></pre></div>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E3 · etiqueta entrega-fundamentos-iac-e3 · 7a8b9c0 · comprobando…
+  ✓ superado</code></pre>
+<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>Corrige en <code>fundamentos/iac/e3/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e3 main -m "E3 resuelto"
+git push -f origin entrega-fundamentos-iac-e3</code></pre></div>
+<p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e2.html">← E2 · Inventario de una cuenta</a><a href="e4.html">E4 · Variables y deriva →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

@@ -64,8 +64,14 @@ resource "aws_subnet" "privada_a" {
   vpc_id            = aws_vpc.lab.id
   cidr_block        = "10.0.2.0/24"
   availability_zone = "eu-west-1a"
+}
+
+resource "aws_subnet" "privada_b" {
+  vpc_id            = aws_vpc.lab.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "eu-west-1b"
 }</code></pre>
-<p>La etiqueta <code>Name</code> es la que muestra la consola de AWS y la que usarás para encontrar tus recursos con la CLI. <code>cidrsubnet("10.0.0.0/16", 8, 1)</code> calcula <code>10.0.1.0/24</code>: útil cuando el rango de la VPC es una variable. En AWS real, para que la subred pública salga a internet hacen falta además una puerta de enlace (<code>aws_internet_gateway</code>) y una tabla de rutas; en esta unidad no las necesitas.</p>
+<p>Cada subred dice a qué VPC pertenece (<code>vpc_id</code>) y qué trozo de su rango usa. La etiqueta <code>Name</code> es la que muestra la consola de AWS y la que usarás para encontrar tus recursos con la CLI. <code>cidrsubnet("10.0.0.0/16", 8, 1)</code> calcula <code>10.0.1.0/24</code>: útil cuando el rango de la VPC es una variable. En AWS real, para que la subred pública salga a internet hacen falta además una puerta de enlace (<code>aws_internet_gateway</code>) y una tabla de rutas; en esta unidad no las necesitas.</p>
 </section>
 
 <section class="seccion" id="grupos">
@@ -92,7 +98,7 @@ resource "aws_security_group" "db" {
     security_groups = [aws_security_group.web.id]   # solo desde el grupo web
   }
 }</code></pre>
-<p>Los grupos recuerdan las conexiones: si entra una petición al 80, su respuesta sale aunque no haya regla de salida. Lo que más se ve en auditorías es <code>0.0.0.0/0</code> en puertos de administración: SSH (22), escritorio remoto (3389) o la propia base de datos.</p>
+<p>Cada grupo lleva <code>vpc_id</code>: sin él, AWS lo crea en la VPC por defecto de la cuenta y no protege nada de tu laboratorio. El nombre (<code>name</code>) solo tiene que ser único dentro de la VPC. Los grupos recuerdan las conexiones: si entra una petición al 80, su respuesta sale aunque no haya regla de salida. Lo que más se ve en auditorías es <code>0.0.0.0/0</code> en puertos de administración: SSH (22), escritorio remoto (3389) o la propia base de datos.</p>
 </section>
 
 <section class="seccion">
@@ -108,6 +114,11 @@ resource "aws_security_group" "db" {
   SH
 }
 
+resource "random_password" "db" {               # una contraseña generada, que nadie escribe
+  length  = 20
+  special = false
+}
+
 resource "aws_db_subnet_group" "db" {
   name       = "lab-db"
   subnet_ids = [aws_subnet.privada_a.id, aws_subnet.privada_b.id]
@@ -120,17 +131,21 @@ resource "aws_db_instance" "db" {
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
   username               = "lab"
-  password               = var.clave_db
+  password               = random_password.db.result
   db_subnet_group_name   = aws_db_subnet_group.db.name
   vpc_security_group_ids = [aws_security_group.db.id]
   publicly_accessible    = false
   skip_final_snapshot    = true
+}
+
+output "ip_web" {
+  value = aws_instance.web.private_ip
 }</code></pre>
-<p><code>user_data</code> es un script que el servidor ejecuta al arrancar la primera vez: así se instala y configura sin entrar en él. Lo puede leer cualquiera con permiso para describir la instancia, así que <b>nunca lleva contraseñas</b>. <code>publicly_accessible = false</code> impide que la base de datos tenga una dirección pública. <code>ami-ubuntu2204</code> es un nombre de imagen que entiende Floci; en AWS real las AMI tienen identificadores como <code>ami-0abc…</code> distintos en cada región.</p>
+<p><code>user_data</code> es un script que el servidor ejecuta al arrancar la primera vez: así se instala y configura sin entrar en él. Lo puede leer cualquiera con permiso para describir la instancia, así que <b>nunca lleva contraseñas</b>. La contraseña de la base de datos tampoco se escribe en el código: <code>random_password</code> (del proveedor <code>hashicorp/random</code>, que <code>terraform init</code> descarga solo) la genera en el primer <code>apply</code> y la guarda en el estado, que no se sube. <code>publicly_accessible = false</code> impide que la base de datos tenga una dirección pública. La base de datos necesita un grupo de subredes (<code>aws_db_subnet_group</code>) con subredes de dos zonas distintas. La salida <code>ip_web</code> da la IP privada del servidor, la que tiene siempre; en AWS real, para llegar desde internet usarías <code>public_ip</code>. <code>ami-ubuntu2204</code> es un nombre de imagen que entiende Floci; en AWS real las AMI tienen identificadores como <code>ami-0abc…</code> distintos en cada región.</p>
 <p class="note">En la Floci del curso, los servidores y bases de datos están simulados: <code>terraform apply</code> los crea con toda su configuración y la CLI los describe, pero no arranca ningún Ubuntu ni ningún PostgreSQL. Por eso los compruebas con <code>aws ec2 describe-instances</code> y <code>aws rds describe-db-instances</code>, no entrando en ellos.</p>
-<p>Para revisar lo que has creado:</p>
+<p>Para revisar lo que has creado (cambia <code>vpc-…</code> por el <code>VpcId</code> que da la primera orden):</p>
 <pre><code>aws ec2 describe-vpcs --query "Vpcs[].[VpcId,CidrBlock]"
-aws ec2 describe-security-groups --filters Name=vpc-id,Values=vpc-… --query "SecurityGroups[].[GroupName,IpPermissions]"
+aws ec2 describe-security-groups --filters "Name=vpc-id,Values=vpc-…" --query "SecurityGroups[].[GroupName,IpPermissions]"
 aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceId,PrivateIpAddress]"
 aws rds describe-db-instances --query "DBInstances[].[DBInstanceIdentifier,PubliclyAccessible]"</code></pre>
 </section>
@@ -145,6 +160,19 @@ aws rds describe-db-instances --query "DBInstances[].[DBInstanceIdentifier,Publi
     ├── variables.tf        # nombre, cidr…
     ├── main.tf             # la VPC, las subredes, los grupos, el servidor y la base
     └── outputs.tf          # lo que devuelve: la IP del servidor…</code></pre>
+<pre><code># modulos/lab/variables.tf
+variable "nombre" {
+  type = string
+}
+
+variable "cidr" {
+  type = string
+}
+
+# modulos/lab/outputs.tf
+output "ip_web" {
+  value = aws_instance.web.private_ip
+}</code></pre>
 <pre><code># main.tf de la raíz
 module "uno" {
   source = "./modulos/lab"
@@ -161,7 +189,7 @@ module "dos" {
 output "ip_uno" {
   value = module.uno.ip_web
 }</code></pre>
-<p>Dentro del módulo todo lo que cambia viene de <code>var.</code>; fuera solo se ven sus salidas. Tras añadir o cambiar un <code>module</code>, hay que repetir <code>terraform init</code>. Así se levantarán los laboratorios de los bloques siguientes: un módulo probado, un <code>apply</code>.</p>
+<p>Dentro del módulo todo lo que cambia viene de <code>var.</code>; fuera solo se ven sus salidas (<code>module.uno.ip_web</code> es la salida <code>ip_web</code> del <code>outputs.tf</code> del módulo). Lo que tiene que ser único en la cuenta, como el <code>identifier</code> de la base de datos o el nombre de su grupo de subredes, se construye con la variable: <code>"${var.nombre}-db"</code>; si no, el segundo laboratorio choca con el primero. Las subredes salen del rango con <code>cidrsubnet(var.cidr, 8, 1)</code>, <code>2</code> y <code>3</code>. Tras añadir o cambiar un <code>module</code>, hay que repetir <code>terraform init</code>. Así se levantarán los laboratorios de los bloques siguientes: un módulo probado, un <code>apply</code>.</p>
 </section>
 
 <nav class="temas" aria-label="Temas de la unidad"><a href="02-terraform.html">← IaC 2 · Terraform</a><a href="04-seguridad-de-la-infraestructura.html">IaC 4 · Seguridad de la infraestructura →</a></nav>
