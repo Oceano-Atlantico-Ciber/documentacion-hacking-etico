@@ -25,9 +25,14 @@
 <p>Un solo fichero: <code>fundamentos/api/e2/contrato.yaml</code>, el contrato OpenAPI 3 que te deja <code>preparar.py</code>, completado con <b>todas</b> las rutas que piden los nueve requisitos. <code>requisitos.md</code> se queda como está. No hay que programar nada.</p>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>En PowerShell:</p>
+<p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e2
+cd fundamentos/api/e2</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e2
 cd fundamentos/api/e2</code></pre></div>
 <p>Deja <code>requisitos.md</code>, con lo que necesita el equipo de sistemas, y <code>contrato.yaml</code> con la ruta de salud ya escrita y el principio del esquema <code>Incidencia</code>.</p>
 
@@ -65,10 +70,16 @@ cd fundamentos/api/e2</code></pre></div>
 <p>Pega el fichero en <a href="https://editor.swagger.io/">editor.swagger.io</a> para ver que no tiene errores de formato y cómo queda como documentación.</p>
 
 <h2 class="step"><span class="n">4</span>Compruébalo</h2>
-<p>Las pruebas del E2 leen tu contrato y aplican las reglas de diseño. Necesitan la librería PyYAML; la primera orden solo hace falta una vez:</p>
+<p>Las pruebas del E2 leen tu contrato y aplican las reglas de diseño. Necesitan la librería PyYAML; la primera orden solo hace falta una vez. Las pruebas se lanzan desde la raíz de tu repositorio, no desde <code>e2/</code>:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py -m pip install pyyaml
 cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/plantillas/pruebas.py e2 fundamentos/api/e2/contrato.yaml</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 -m pip install --user pyyaml
+cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/plantillas/pruebas.py e2 fundamentos/api/e2/contrato.yaml</code></pre></div>
+<p>En macOS o Linux, si <code>pip</code> responde <code>externally-managed-environment</code> (Python de Homebrew, Debian o Ubuntu), repite la primera orden añadiendo <code>--break-system-packages</code> al final: instala PyYAML solo para tu usuario. Si en lugar de las pruebas sale <code>Falta PyYAML</code>, la instalación no ha funcionado.</p>
 <p>Cada regla sale con <code>✓</code> o con <code>✗</code> y el motivo. Está listo cuando la última línea dice <code>0 mal</code>. Un fallo se ve así:</p>
 <pre><code>  ✗ Ninguna ruta lleva un verbo: la acción la dice el método  (/api/v1/incidencias/{id}/cerrar)</code></pre>
 <p>El corrector marca fallo si:</p>

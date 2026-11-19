@@ -32,17 +32,22 @@
 <p>Una de las tres carpetas es tu E4 tal cual; las otras dos las escribes tú. El corrector construye las tres imágenes, comprueba que responden lo mismo a la misma serie de peticiones y pasa a cada una las pruebas del E4.</p>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>En PowerShell:</p>
+<p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e5
+cd fundamentos/api/e5</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e5
 cd fundamentos/api/e5</code></pre></div>
 <p><code>preparar.py</code> copia tu E4 a la carpeta de su lenguaje (por ejemplo, <code>e5/go/</code> si lo hiciste en Go) y deja el esqueleto de los otros dos en las suyas, con los mismos datos y las mismas pruebas.</p>
 
 <h2 class="step"><span class="n">2</span>Escribe las otras dos</h2>
-<p>Programa en cada esqueleto lo mismo que ya tienes, ruta a ruta, con su <code>Dockerfile</code>. Si te apoyas en la IA para traducir, pasa <code>pruebas.py e4</code> a cada una antes de seguir.</p>
+<p>Programa en cada esqueleto lo mismo que ya tienes, ruta a ruta, con su <code>Dockerfile</code>. Cada carpeta se arranca y se prueba como en el <a href="e3.html">E3</a>, desde dentro de ella: por ejemplo, para la de Python, <code>cd python</code>, las órdenes de Python del paso 1 del E3 y, en otra pestaña desde esa misma carpeta, <code>pruebas.py e4</code>. Si te apoyas en la IA para traducir, pasa <code>pruebas.py e4</code> a cada una antes de seguir.</p>
 
 <h2 class="step"><span class="n">3</span>Arranca las tres a la vez</h2>
-<p>Cada una en su puerto, desde <code>e5/</code>:</p>
+<p>Para las APIs que tengas arrancadas en tu equipo (<kbd>Ctrl</kbd>+<kbd>C</kbd>). Con Docker Desktop en marcha, construye las tres imágenes y arráncalas, cada una en su puerto: Go en el 8001, Python en el 8002 y Node en el 8003. Desde <code>fundamentos/api/e5/</code>, en cualquier sistema:</p>
 <div class="cmd"><pre><code>docker build -t api-e5-go go
 docker build -t api-e5-python python
 docker build -t api-e5-node node
@@ -51,10 +56,18 @@ docker run -d --rm --name e5-python -p 8002:8000 api-e5-python
 docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 
 <h2 class="step"><span class="n">4</span>Compáralas</h2>
+<p>Desde <code>fundamentos/api/e5/</code>, con los tres contenedores recién arrancados:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
 <p>Primero manda a las tres la misma serie de peticiones (leer, crear, cambiar, borrar, errores) y compara código, <code>Content-Type</code>, <code>Location</code>, <code>Allow</code> y cuerpo. Después pasa a cada una las pruebas del E4. Una diferencia sale así:</p>
 <pre><code>  ✗ DELETE /api/v1/incidencias: misma respuesta en las tres  (distinto: código · 405 | 405 | 404)</code></pre>
-<p>Ahí, Express ha respondido <code>404</code> porque de serie no conoce el <code>405</code>. Para volver a probar, para los tres contenedores con <code>docker stop e5-go e5-python e5-node</code> y arráncalos otra vez.</p>
+<p>Ahí, Express ha respondido <code>404</code> porque de serie no conoce el <code>405</code>. Está bien cuando la última línea dice <code>0 mal</code>. Para volver a probar, para los tres contenedores y arráncalos otra vez; si has cambiado código, reconstruye antes su imagen con su <code>docker build</code> del paso 3:</p>
+<div class="cmd"><pre><code>docker stop e5-go e5-python e5-node
+docker run -d --rm --name e5-go -p 8001:8000 api-e5-go
+docker run -d --rm --name e5-python -p 8002:8000 api-e5-python
+docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 
 <h2 class="step"><span class="n">5</span>Explica las diferencias</h2>
 <div class="cmd"><pre><code>code diferencias.md</code></pre></div>
@@ -68,7 +81,7 @@ docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Alguna de las tres imágenes no construye o no escucha en el 8000.</li>
-<li>Las tres no responden igual a la serie de peticiones de <code>py pruebas.py e5</code>, o alguna no pasa las del E4.</li>
+<li>Las tres no responden igual a la serie de peticiones de <code>pruebas.py e5</code>, o alguna no pasa las del E4.</li>
 <li><code>diferencias.md</code> no explica al menos tres diferencias y su arreglo.</li>
 </ul>
 

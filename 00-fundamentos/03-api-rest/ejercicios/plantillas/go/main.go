@@ -1,7 +1,7 @@
 // API de incidencias en Go, solo con la biblioteca estándar (net/http).
 //
 // Arrancar en tu equipo:   go run .
-// Probar:                  curl.exe -i http://localhost:8000/api/v1/salud
+// Probar:                  curl.exe -i http://localhost:8000/api/v1/salud   (en macOS o Linux, curl)
 //
 // El contrato está en contrato.yaml. Desde Go 1.22 el enrutador entiende el método y los
 // parámetros de la ruta: "GET /api/v1/incidencias/{id}" y r.PathValue("id").

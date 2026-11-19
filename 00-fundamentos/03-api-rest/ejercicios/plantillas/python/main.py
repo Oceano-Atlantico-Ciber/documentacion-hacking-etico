@@ -1,11 +1,15 @@
 """API de incidencias en Python con FastAPI.
 
-Arrancar en tu equipo, desde esta carpeta (PowerShell):
+Arrancar en tu equipo, desde esta carpeta. En Windows (PowerShell):
     py -m venv .venv
-    .venv/Scripts/pip install -r requirements.txt
-    .venv/Scripts/uvicorn main:app --port 8000 --reload
+    .venv/Scripts/python.exe -m pip install -r requirements.txt
+    .venv/Scripts/python.exe -m uvicorn main:app --port 8000 --reload
+En macOS o Linux (Terminal):
+    python3 -m venv .venv
+    .venv/bin/python -m pip install -r requirements.txt
+    .venv/bin/python -m uvicorn main:app --port 8000 --reload
 
-Probar:  curl.exe -i http://localhost:8000/api/v1/salud
+Probar:  curl.exe -i http://localhost:8000/api/v1/salud   (en macOS o Linux, curl)
 Documentación que genera FastAPI: http://localhost:8000/docs
 
 El contrato está en contrato.yaml. FastAPI tiene costumbres propias (por ejemplo, responde 422

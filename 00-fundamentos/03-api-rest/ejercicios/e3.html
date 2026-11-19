@@ -30,18 +30,37 @@
 <p>El resto lo deja <code>preparar.py</code> y se sube sin tocar: <code>lenguaje.txt</code> (dice <code>go</code>, <code>python</code> o <code>node</code>), <code>incidencias.json</code>, <code>contrato.yaml</code>, <code>pruebas.py</code> y los ficheros de proyecto (<code>go.mod</code>, <code>requirements.txt</code> o <code>package.json</code>).</p>
 
 <h2 class="step"><span class="n">1</span>Elige lenguaje y prepara el escenario</h2>
-<p>Empieza por el que te resulte más cómodo: los otros dos llegan en el E5. Con Go, Python y Node instalados (<a href="../temas/02-disenar-y-construir.html">API 2</a>), en PowerShell:</p>
+<p>Empieza por el que te resulte más cómodo: los otros dos llegan en el E5. Con Go, Python y Node instalados (<a href="../temas/02-disenar-y-construir.html">API 2</a>), en la terminal:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e3 --lenguaje go
 cd fundamentos/api/e3</code></pre></div>
-<p>Cambia <code>go</code> por <code>python</code> o <code>node</code> si eliges otro. Deja un proyecto que ya arranca y responde en <code>/api/v1/salud</code>, tus datos en <code>incidencias.json</code>, el contrato de referencia en <code>contrato.yaml</code>, <code>pruebas.py</code> y un <code>Dockerfile</code> a medias. Arráncalo con las órdenes de tu lenguaje y déjalo en marcha en esa pestaña:</p>
-<div class="tabla"><table><thead><tr><th>Lenguaje</th><th>Arrancar en tu equipo (desde <code>e3/</code>)</th></tr></thead><tbody>
-<tr><td>Go</td><td><code>go run .</code></td></tr>
-<tr><td>Python</td><td><code>py -m venv .venv</code><br><code>.venv\Scripts\pip install -r requirements.txt</code><br><code>.venv\Scripts\uvicorn main:app --port 8000 --reload</code></td></tr>
-<tr><td>Node</td><td><code>npm install</code><br><code>node --watch main.js</code></td></tr>
-</tbody></table></div>
-<p>En otra pestaña de PowerShell, comprueba que responde:</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e3 --lenguaje go
+cd fundamentos/api/e3</code></pre></div>
+<p>Cambia <code>go</code> por <code>python</code> o <code>node</code> si eliges otro. Deja un proyecto que ya arranca y responde en <code>/api/v1/salud</code>, tus datos en <code>incidencias.json</code>, el contrato de referencia en <code>contrato.yaml</code>, <code>pruebas.py</code> y un <code>Dockerfile</code> a medias. Arráncalo desde <code>fundamentos/api/e3/</code> con las órdenes de tu lenguaje y déjalo en marcha en esa pestaña de la terminal: mientras la API esté arrancada, esa pestaña no acepta más órdenes.</p>
+<p><b>Go</b>, en cualquier sistema:</p>
+<div class="cmd"><pre><code>go run .</code></pre></div>
+<p><b>Node</b>, en cualquier sistema (<code>npm install</code> solo hace falta la primera vez):</p>
+<div class="cmd"><pre><code>npm install
+node --watch main.js</code></pre></div>
+<p>Los dos escriben <code>Escuchando en http://localhost:8000</code> cuando están listos.</p>
+<p><b>Python</b>: la primera vez crea el entorno virtual <code>.venv</code> e instala en él las dependencias; las siguientes, basta la última orden:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m uvicorn main:app --port 8000 --reload</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m uvicorn main:app --port 8000 --reload</code></pre></div>
+<p>Está listo cuando escribe <code>Uvicorn running on http://127.0.0.1:8000</code>. Se llama al Python de dentro de <code>.venv</code> por su ruta, así que no hace falta activar el entorno. En Debian o Ubuntu, si <code>python3 -m venv</code> dice que falta <code>ensurepip</code>, instala antes el paquete <code>python3-venv</code> (<code>sudo apt install python3-venv</code>).</p>
+<p>Para pararla, <kbd>Ctrl</kbd>+<kbd>C</kbd> en su pestaña. Abre otra pestaña de la terminal, ve a la misma carpeta <code>fundamentos/api/e3/</code> y comprueba que responde:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -i http://localhost:8000/api/v1/salud</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -i http://localhost:8000/api/v1/salud</code></pre></div>
 <pre><code>HTTP/1.1 200 OK
 Content-Type: application/json
 …
@@ -56,8 +75,12 @@ Content-Type: application/json
 <li><code>GET /api/v1/incidencias/{id}/comentarios</code> devuelve <code>{"datos": [sus comentarios], "siguiente": null}</code>, o <code>404</code> si la incidencia no existe.</li>
 </ul>
 <p>Todas con <code>Content-Type: application/json</code>. Usa la función <code>responder</code> del esqueleto. Así se ven bien, con tus datos en lugar de estos:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -i http://localhost:8000/api/v1/incidencias/1
 curl.exe -i http://localhost:8000/api/v1/incidencias/abc</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -i http://localhost:8000/api/v1/incidencias/1
+curl -i http://localhost:8000/api/v1/incidencias/abc</code></pre></div>
 <pre><code>HTTP/1.1 200 OK
 Content-Type: application/json
 
@@ -70,8 +93,11 @@ Content-Type: application/json
 <p>La incidencia tiene que salir con los mismos campos y valores que en <code>incidencias.json</code>: ni uno de más, ni uno cambiado. El orden de los campos y los espacios dan igual.</p>
 
 <h2 class="step"><span class="n">3</span>Pruébalo desde fuera</h2>
-<p>Con la API recién arrancada, en la otra pestaña:</p>
+<p>Las pruebas leen tu <code>incidencias.json</code> para saber qué esperar, así que se lanzan desde <code>fundamentos/api/e3/</code>. Con la API recién arrancada (si ya la has usado, <kbd>Ctrl</kbd>+<kbd>C</kbd> y arráncala otra vez), en la otra pestaña:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py pruebas.py e3 http://localhost:8000</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 pruebas.py e3 http://localhost:8000</code></pre></div>
 <p>Está bien cuando todas salen en <code>✓</code> y la última línea dice <code>0 mal</code>:</p>
 <pre><code>E3 · Lectura
   ✓ GET /api/v1/salud responde 200 {"estado": "ok"}
@@ -80,20 +106,27 @@ Content-Type: application/json
   ✓ Los comentarios de una incidencia que no existe dan 404
 
 8 bien, 0 mal</code></pre>
-<p>Si una prueba falla, repite con <code>curl.exe -i</code> la petición que hace y compara con el contrato.</p>
+<p>Si una prueba falla, repite con <code>curl -i</code> la petición que hace y compara con el contrato.</p>
 
 <h2 class="step"><span class="n">4</span>Completa el Dockerfile</h2>
-<p>Los comentarios del <code>Dockerfile</code> dicen qué falta. Para la API que arrancaste en el paso 1 (<kbd>Ctrl</kbd>+<kbd>C</kbd> en su pestaña) y pasa las pruebas contra el contenedor:</p>
+<p>Los comentarios del <code>Dockerfile</code> dicen qué falta. Para la API que arrancaste en el paso 1 (<kbd>Ctrl</kbd>+<kbd>C</kbd> en su pestaña), porque el contenedor usa el mismo puerto, el 8000. Con Docker Desktop en marcha y desde <code>fundamentos/api/e3/</code>, construye la imagen, arráncala y pasa las pruebas contra el contenedor:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker build -t api-incidencias:e3 .
 docker image inspect api-incidencias:e3 --format "usuario: {{.Config.User}}"
 docker run -d --rm --name api -p 8000:8000 api-incidencias:e3
 py pruebas.py e3 http://localhost:8000
 docker stop api</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>docker build -t api-incidencias:e3 .
+docker image inspect api-incidencias:e3 --format "usuario: {{.Config.User}}"
+docker run -d --rm --name api -p 8000:8000 api-incidencias:e3
+python3 pruebas.py e3 http://localhost:8000
+docker stop api</code></pre></div>
 <p>La segunda orden tiene que decir un usuario, por ejemplo <code>usuario: app</code>. Si sale <code>usuario: </code> vacío o <code>root</code>, falta la línea <code>USER</code>. Las pruebas, otra vez <code>0 mal</code>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>El <code>Dockerfile</code> no construye, la imagen no escucha en el 8000 o se ejecuta como root.</li>
-<li>Alguna prueba de <code>py pruebas.py e3</code> sale en ✗ contra la imagen.</li>
+<li>Alguna prueba de <code>pruebas.py e3</code> sale en ✗ contra la imagen.</li>
 <li><code>lenguaje.txt</code> no dice el lenguaje del proyecto.</li>
 </ul>
 

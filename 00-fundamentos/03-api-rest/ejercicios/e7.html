@@ -25,16 +25,29 @@
 <p>En <code>fundamentos/api/e7/</code>:</p>
 <div class="tabla"><table><thead><tr><th>Ruta</th><th>Qué lleva</th></tr></thead><tbody>
 <tr><td><code>go/</code>, <code>python/</code>, <code>node/</code></td><td>Tus tres APIs con paginación, filtros, <code>ETag</code> e <code>If-Match</code>, pasando todas las pruebas anteriores.</td></tr>
-<tr><td><code>escenario.md</code></td><td>Los dos técnicos que cambian la misma incidencia: las órdenes <code>curl.exe -i</code>, lo que respondió tu API y dos frases sobre qué habría pasado sin <code>If-Match</code>. Va en <code>e7/</code>.</td></tr>
+<tr><td><code>escenario.md</code></td><td>Los dos técnicos que cambian la misma incidencia: las órdenes <code>curl -i</code>, lo que respondió tu API y dos frases sobre qué habría pasado sin <code>If-Match</code>. Va en <code>e7/</code>.</td></tr>
 </tbody></table></div>
 <p><code>casos.txt</code> y <code>diferencias.md</code> se suben tal cual.</p>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>En PowerShell:</p>
+<p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e7
 cd fundamentos/api/e7</code></pre></div>
-<p><code>preparar.py</code> copia tu E6 a <code>e7/</code> y cambia <code>incidencias.json</code> de cada lenguaje por uno con 500 incidencias. Vuelve a construir las tres imágenes para que lleven los datos nuevos.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e7
+cd fundamentos/api/e7</code></pre></div>
+<p><code>preparar.py</code> copia tu E6 a <code>e7/</code> y cambia <code>incidencias.json</code> de cada lenguaje por uno con 500 incidencias. Vuelve a construir las tres imágenes para que lleven los datos nuevos y arráncalas como en el E6: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden para los contenedores del E6, si siguen en marcha. Desde <code>fundamentos/api/e7/</code>, en cualquier sistema:</p>
+<div class="cmd"><pre><code>docker stop e6-go e6-python e6-node
+docker build -t api-e7-go go
+docker build -t api-e7-python python
+docker build -t api-e7-node node
+docker run -d --rm --name e7-go -p 8001:8000 api-e7-go
+docker run -d --rm --name e7-python -p 8002:8000 api-e7-python
+docker run -d --rm --name e7-node -p 8003:8000 api-e7-node</code></pre></div>
+<p>Cada vez que cambies código, <code>docker stop e7-go e7-python e7-node</code> y otra vez las órdenes <code>docker build</code> y <code>docker run</code>.</p>
 
 <h2 class="step"><span class="n">2</span>Pagina y filtra</h2>
 <ul>
@@ -53,26 +66,38 @@ cd fundamentos/api/e7</code></pre></div>
 </ul>
 
 <h2 class="step"><span class="n">4</span>Reprodúcelo con dos terminales</h2>
-<div class="cmd"><pre><code>code escenario.md</code></pre></div>
-<p>Abre dos pestañas de PowerShell en <code>e7/</code>, una por técnico, con una de tus APIs arrancada (aquí la de Go, en el 8001). Prepara antes tres ficheros de una línea: los dos cuerpos y la cabecera con la versión que las dos leyeron. La cabecera va en un fichero porque PowerShell quitaría las comillas de <code>"1"</code>, y el <code>ETag</code> las lleva.</p>
-<div class="tabla"><table><thead><tr><th>Fichero</th><th>Contenido</th></tr></thead><tbody>
-<tr><td><code>cerrar.json</code></td><td><code>{"estado": "cerrada"}</code></td></tr>
-<tr><td><code>prioridad.json</code></td><td><code>{"prioridad": "media"}</code></td></tr>
-<tr><td><code>version-1.txt</code></td><td><code>If-Match: "1"</code></td></tr>
-</tbody></table></div>
-<p>Las dos pestañas leen la misma incidencia (aquí la 4) y ven su <code>ETag</code>:</p>
+<p>Usa una de tus APIs arrancada con los datos recién cargados (aquí la de Go, en el 8001: si ya la has usado, reiníciala con <code>docker stop e7-go</code> y su <code>docker run</code>). Abre dos pestañas de la terminal en <code>fundamentos/api/e7/</code>, una por técnico.</p>
+<p>En cualquiera de las dos, prepara tres ficheros de una línea: los dos cuerpos y la cabecera con la versión que las dos leyeron. La cabecera va en un fichero porque Windows PowerShell quitaría las comillas de <code>"1"</code>, y el <code>ETag</code> las lleva; así la orden es la misma en todos los sistemas.</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>New-Item cerrar.json -Force -Value '{"estado": "cerrada"}'
+New-Item prioridad.json -Force -Value '{"prioridad": "media"}'
+New-Item version-1.txt -Force -Value 'If-Match: "1"'</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>echo '{"estado": "cerrada"}' &gt; cerrar.json
+echo '{"prioridad": "media"}' &gt; prioridad.json
+echo 'If-Match: "1"' &gt; version-1.txt</code></pre></div>
+<p>Las dos pestañas leen la misma incidencia (aquí la 4) y ven su <code>ETag</code>. En cada pestaña:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -i http://localhost:8001/api/v1/incidencias/4</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -i http://localhost:8001/api/v1/incidencias/4</code></pre></div>
 <p>La pestaña 1 la cierra con la versión que leyó:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -i -X PATCH http://localhost:8001/api/v1/incidencias/4 -H "Content-Type: application/json" -H "@version-1.txt" --data-binary "@cerrar.json"</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -i -X PATCH http://localhost:8001/api/v1/incidencias/4 -H "Content-Type: application/json" -H "@version-1.txt" --data-binary "@cerrar.json"</code></pre></div>
 <p>La pestaña 2, que no se ha enterado, intenta cambiarle la prioridad con la misma versión, que ya es vieja:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -i -X PATCH http://localhost:8001/api/v1/incidencias/4 -H "Content-Type: application/json" -H "@version-1.txt" --data-binary "@prioridad.json"</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -i -X PATCH http://localhost:8001/api/v1/incidencias/4 -H "Content-Type: application/json" -H "@version-1.txt" --data-binary "@prioridad.json"</code></pre></div>
 <p>Si tu API lo hace bien, la primera da <code>200</code> con <code>ETag: "2"</code> y la segunda, esto:</p>
 <pre><code>HTTP/1.1 412 Precondition Failed
 Content-Type: application/problem+json
 ETag: "2"
 
 {"type": "about:blank", "title": "Precondition Failed", "status": 412, "detail": "La incidencia ya va por la versión 2"}</code></pre>
-<p><code>escenario.md</code> lleva cuatro apartados con título <code>##</code>: la lectura, el cierre, el cambio rechazado y qué habría pasado sin <code>If-Match</code>. En cada uno de los tres primeros, la orden y la respuesta completa que te dio <b>tu</b> API, copiadas de la terminal en un bloque de código. En el último, dos frases tuyas. El principio queda así:</p>
+<p><code>escenario.md</code> lleva cuatro apartados con título <code>##</code>: la lectura, el cierre, el cambio rechazado y qué habría pasado sin <code>If-Match</code>. En cada uno de los tres primeros, la orden y la respuesta completa que te dio <b>tu</b> API, copiadas de la terminal en un bloque de código (la orden tal como la escribiste: <code>curl.exe</code> en Windows, <code>curl</code> en macOS o Linux). En el último, dos frases tuyas. Ábrelo con <code>code escenario.md</code>. El principio queda así:</p>
 <pre><code>## Las dos pestañas leen la incidencia 4
 
 ```
@@ -87,11 +112,18 @@ ETag: "1"
 …</code></pre>
 
 <h2 class="step"><span class="n">5</span>Pruébalo en las tres</h2>
+<p>Desde <code>fundamentos/api/e7/</code>, con los tres contenedores recién arrancados:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py go/pruebas.py e7 http://localhost:8001
 py python/pruebas.py e7 http://localhost:8002
 py node/pruebas.py e7 http://localhost:8003
 py go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
-<p>Las cuatro terminan en <code>0 mal</code>. Reinicia los contenedores antes de la última: las pruebas cambian datos.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 go/pruebas.py e7 http://localhost:8001
+python3 python/pruebas.py e7 http://localhost:8002
+python3 node/pruebas.py e7 http://localhost:8003
+python3 go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
+<p>Las cuatro terminan en <code>0 mal</code>. Reinicia los contenedores antes de la última, porque las pruebas cambian datos: <code>docker stop e7-go e7-python e7-node</code> y sus tres <code>docker run</code> del paso 1.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Recorrer la lista con <code>limit</code> y <code>cursor</code> pierde o repite incidencias, o los filtros traen de más o de menos.</li>

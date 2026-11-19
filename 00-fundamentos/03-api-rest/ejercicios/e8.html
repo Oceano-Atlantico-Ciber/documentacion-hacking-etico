@@ -25,16 +25,30 @@
 <p>En <code>fundamentos/api/e8/</code>:</p>
 <div class="tabla"><table><thead><tr><th>Ruta</th><th>Qué lleva</th></tr></thead><tbody>
 <tr><td><code>go/</code>, <code>python/</code>, <code>node/</code></td><td>Tus tres APIs con los seis controles, cada una con su <code>usuarios.json</code> dentro de la imagen, pasando con el token de administrador todas las pruebas anteriores.</td></tr>
-<tr><td><code>controles.md</code></td><td>Un apartado por control, con las cuatro preguntas, la orden <code>curl.exe</code> que lo demuestra y su CWE. Va en <code>e8/</code>.</td></tr>
+<tr><td><code>controles.md</code></td><td>Un apartado por control, con las cuatro preguntas, la orden <code>curl</code> que lo demuestra y su CWE. Va en <code>e8/</code>.</td></tr>
 </tbody></table></div>
 <p><code>casos.txt</code>, <code>diferencias.md</code> y <code>escenario.md</code> se suben tal cual.</p>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>En PowerShell:</p>
+<p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e8
 cd fundamentos/api/e8</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e8
+cd fundamentos/api/e8</code></pre></div>
 <p><code>preparar.py</code> copia tu E7 a <code>e8/</code> y añade a cada lenguaje <code>usuarios.json</code>: un administrador y dos técnicos, <code>lucia</code> y <code>marcos</code>, con su clave y su token. Son datos de prueba de tu laboratorio, generados para ti; aun así, trátalos como lo que son: no los copies en ningún otro sitio. Añade <code>usuarios.json</code> a la imagen en el <code>Dockerfile</code> de cada lenguaje, junto a <code>incidencias.json</code>.</p>
+<p>Mientras programas, construye y arranca las tres como en el E7: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden para los contenedores del E7, si siguen en marcha. Desde <code>fundamentos/api/e8/</code>, en cualquier sistema:</p>
+<div class="cmd"><pre><code>docker stop e7-go e7-python e7-node
+docker build -t api-e8-go go
+docker build -t api-e8-python python
+docker build -t api-e8-node node
+docker run -d --rm --name e8-go -p 8001:8000 api-e8-go
+docker run -d --rm --name e8-python -p 8002:8000 api-e8-python
+docker run -d --rm --name e8-node -p 8003:8000 api-e8-node</code></pre></div>
+<p>Cada vez que cambies código, <code>docker stop e8-go e8-python e8-node</code> y otra vez las órdenes <code>docker build</code> y <code>docker run</code>.</p>
 
 <h2 class="step"><span class="n">2</span>¿Quién eres?</h2>
 <ul>
@@ -59,7 +73,7 @@ cd fundamentos/api/e8</code></pre></div>
 
 <h2 class="step"><span class="n">5</span>Documenta los controles</h2>
 <div class="cmd"><pre><code>code controles.md</code></pre></div>
-<p>Un apartado <code>##</code> por control (autenticación, BOLA, asignación masiva, BFLA, límite de intentos y huella de la tecnología) con las cuatro preguntas de <a href="../../../01-hacking-etico/03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html">Documentar una vulnerabilidad</a>: dónde estaría el fallo, cuál sería, qué permitiría y cómo lo impide tu código, con la orden <code>curl.exe</code> que lo demuestra, lo que responde y su CWE. Estos cuatro CWE tienen que aparecer, cada uno en su control: <code>CWE-639</code> (BOLA), <code>CWE-915</code> (asignación masiva), <code>CWE-285</code> (BFLA) y <code>CWE-307</code> (límite de intentos). Un apartado completo:</p>
+<p>Un apartado <code>##</code> por control (autenticación, BOLA, asignación masiva, BFLA, límite de intentos y huella de la tecnología) con las cuatro preguntas de <a href="../../../01-hacking-etico/03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html">Documentar una vulnerabilidad</a>: dónde estaría el fallo, cuál sería, qué permitiría y cómo lo impide tu código, con la orden <code>curl</code> que lo demuestra (<code>curl.exe</code> si trabajas en Windows), lo que responde y su CWE. Estos cuatro CWE tienen que aparecer, cada uno en su control: <code>CWE-639</code> (BOLA), <code>CWE-915</code> (asignación masiva), <code>CWE-285</code> (BFLA) y <code>CWE-307</code> (límite de intentos). Un apartado completo:</p>
 <pre><code>## Autorización por incidencia, BOLA (API1, CWE-639)
 
 - **Dónde estaría el fallo:** en GET, PUT, PATCH y DELETE de /incidencias/{id}, en sus comentarios y en la lista.
@@ -74,17 +88,29 @@ HTTP/1.1 404 Not Found
 Content-Type: application/problem+json
 …
 ```</code></pre>
-<p>Para no pegar tokens en las órdenes, guárdalos antes en variables de PowerShell, sacándolos de tu <code>usuarios.json</code>:</p>
+<p>Para no pegar tokens en las órdenes, guárdalos antes en variables de la terminal, sacándolos de tu <code>usuarios.json</code>. Desde <code>fundamentos/api/e8/</code>, en la pestaña donde vayas a lanzar los <code>curl</code>:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>$u = Get-Content go/usuarios.json -Raw | ConvertFrom-Json
 $LUCIA = ($u.usuarios | Where-Object usuario -eq lucia).token
-$ADMIN = ($u.usuarios | Where-Object usuario -eq admin).token</code></pre></div>
-<p>Los tokens son datos de prueba de tu laboratorio: en <code>controles.md</code> escribe <code>$LUCIA</code> o <code>$ADMIN</code>, no su valor.</p>
+$ADMIN = ($u.usuarios | Where-Object usuario -eq admin).token
+$LUCIA</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>LUCIA=$(python3 -c 'import json; print(next(u["token"] for u in json.load(open("go/usuarios.json"))["usuarios"] if u["usuario"] == "lucia"))')
+ADMIN=$(python3 -c 'import json; print(next(u["token"] for u in json.load(open("go/usuarios.json"))["usuarios"] if u["usuario"] == "admin"))')
+echo $LUCIA</code></pre></div>
+<p>La última línea enseña el token de <code>lucia</code>: si sale vacía, no estás en <code>e8/</code> o falta <code>go/usuarios.json</code>. Las variables duran lo que esa pestaña; si abres otra, repítelo. Después, <code>-H "Authorization: Bearer $LUCIA"</code> se escribe igual en PowerShell que en macOS o Linux. Los tokens son datos de prueba de tu laboratorio: en <code>controles.md</code> escribe <code>$LUCIA</code> o <code>$ADMIN</code>, no su valor.</p>
 
 <h2 class="step"><span class="n">6</span>Pruébalo en las tres</h2>
+<p>Desde <code>fundamentos/api/e8/</code>, con los tres contenedores recién arrancados:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py go/pruebas.py e8 http://localhost:8001
 py python/pruebas.py e8 http://localhost:8002
 py node/pruebas.py e8 http://localhost:8003</code></pre></div>
-<p>Cada orden lanza primero los ataques con los tokens de los técnicos y después repite todas las pruebas anteriores con el token del administrador. Está listo cuando las tres terminan en <code>0 mal</code>. El bloqueo por intentos dura un minuto: reinicia los contenedores entre pasadas.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 go/pruebas.py e8 http://localhost:8001
+python3 python/pruebas.py e8 http://localhost:8002
+python3 node/pruebas.py e8 http://localhost:8003</code></pre></div>
+<p>Cada orden lanza primero los ataques con los tokens de los técnicos y después repite todas las pruebas anteriores con el token del administrador. Está listo cuando las tres terminan en <code>0 mal</code>. El bloqueo por intentos dura un minuto: reinicia los contenedores entre pasadas, con <code>docker stop e8-go e8-python e8-node</code> y sus tres <code>docker run</code> del paso 1.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Algún ataque funciona: sin token, con un token inventado o con <code>X-User</code>; ver o cambiar la incidencia de otro; crear o reasignar para otro; borrar sin ser administrador; cambiarse el rol; probar claves sin límite.</li>
