@@ -20,36 +20,90 @@
 <dt>Plazo</dt><dd>Jueves 12 de noviembre, 23:59</dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>fundamentos/docker/e6/</code>, dos ficheros que escribes tú:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>levantar.sh</code></td><td>Crea la red <code>e6-red</code> y arranca en ella <code>e6-web</code> y <code>e6-datos</code>, con las mismas reglas que el <code>levantar.sh</code> de <a href="e5.html">E5</a>: las tres líneas del principio y después solo órdenes <code>docker</code>, una por línea.</td></tr>
+<tr><td><code>sondeo.txt</code></td><td>Lo que imprime el sondeo del paso 4: exactamente cuatro líneas, en este orden: <code>e6-web</code> puerto 80, <code>e6-web</code> puerto 443, <code>e6-datos</code> puerto 5432 y <code>e6-datos</code> puerto 80.</td></tr>
+</tbody></table></div>
+<p>Cada línea de <code>sondeo.txt</code> tiene la forma <code>equipo:puerto estado</code>; la primera, por ejemplo, es:</p>
+<div class="cmd"><pre><code>e6-web:80 abierto</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Prepara la carpeta</h2>
-<p>E6 no tiene ficheros de partida. Desde tu repositorio:</p><div class="cmd"><pre><code>mkdir -p fundamentos/docker/e6 &amp;&amp; cd fundamentos/docker/e6</code></pre></div><p>Necesitas la imagen <code>sondeo:1.0</code> de <a href="e2.html">E2</a>; si la borraste, vuelve a construirla.</p>
+<p>E6 no tiene ficheros de partida. Desde tu repositorio, crea la carpeta y entra en ella:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+New-Item -ItemType Directory -Force fundamentos/docker/e6 | Out-Null
+cd fundamentos/docker/e6</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+mkdir -p fundamentos/docker/e6
+cd fundamentos/docker/e6</code></pre></div>
+<p>Necesitas la imagen <code>sondeo:1.0</code> de <a href="e2.html">E2</a>. Compruébalo con <code>docker image ls sondeo</code>: tiene que salir una fila con la etiqueta <code>1.0</code>. Si no sale, vuelve a construirla desde <code>fundamentos/docker/e2</code> con <code>docker build -t sondeo:1.0 .</code>. Todas las órdenes que siguen se lanzan desde <code>fundamentos/docker/e6</code>.</p>
 
 <h2 class="step"><span class="n">2</span>Escribe levantar.sh</h2>
-<div class="cmd"><pre><code>code levantar.sh</code></pre></div><p>Con el mismo principio que en <a href="e5.html">E5</a>, el script tiene que:</p><ul><li>Crear la red <code>e6-red</code>.</li><li>Arrancar <code>e6-web</code> (<code>nginx:1.27-alpine</code>) en esa red, publicado en <code>127.0.0.1:8086</code>.</li><li>Arrancar <code>e6-datos</code> (<code>postgres:16-alpine</code>) en esa red, <b>sin publicar ningún puerto</b>.</li></ul>
+<div class="cmd"><pre><code>code levantar.sh</code></pre></div>
+<p>Empieza con las mismas tres líneas que en <a href="e5.html">E5</a>:</p>
+<div class="cmd"><pre><code>#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")"</code></pre></div>
+<p>Debajo, una orden <code>docker</code> por línea, que haga en este orden:</p>
+<ol>
+<li>Crear la red <code>e6-red</code>.</li>
+<li>Arrancar en segundo plano el contenedor <code>e6-web</code> desde <code>nginx:1.27-alpine</code>, en la red <code>e6-red</code> (<code>--network</code>) y publicado en <code>127.0.0.1:8086</code> (puerto 80 del contenedor).</li>
+<li>Arrancar en segundo plano el contenedor <code>e6-datos</code> desde <code>postgres:16-alpine</code>, en la red <code>e6-red</code>, con la variable <code>POSTGRES_PASSWORD</code> (sin ella Postgres se para nada más arrancar) y <b>sin publicar ningún puerto</b>.</li>
+</ol>
+<p>Valen las mismas órdenes y opciones que en <a href="e5.html">E5</a>: completas, sin <code>\</code>, sin variables ni redirecciones, y sin <code>docker rm</code>.</p>
 
 <h2 class="step"><span class="n">3</span>Comprueba quién llega a quién</h2>
+<p>Lanza el script y mira qué puertos publica cada contenedor:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>Get-Content levantar.sh | Where-Object { $_ -match '^\s*docker\s' } | ForEach-Object { Invoke-Expression $_; if ($LASTEXITCODE) { throw "falla: $_" } }
+docker port e6-web
+docker port e6-datos</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>bash levantar.sh
 docker port e6-web
-docker port e6-datos
-docker run --rm --network e6-red curlimages/curl:8.11.1 -s -o /dev/null -w '%{http_code}\n' http://e6-web/
-docker run --rm curlimages/curl:8.11.1 -s -m 3 http://e6-web/</code></pre></div><p><code>e6-web</code> está publicado solo en <code>127.0.0.1</code> y <code>e6-datos</code>, en ninguno. Dentro de la red, <code>curl</code> llega por el nombre (200); fuera de ella, el nombre no existe.</p>
+docker port e6-datos</code></pre></div>
+<p>En Windows, la primera línea lanza una a una las órdenes <code>docker</code> del script, igual que hace el corrector, que no lo ejecuta con bash. <code>docker port e6-web</code> muestra <code>80/tcp -&gt; 127.0.0.1:8086</code> y <code>docker port e6-datos</code> no muestra nada. Ahora pide la web por su nombre desde un contenedor dentro de la red y desde otro fuera de ella (el <code>curl</code> corre dentro del contenedor, así que la orden es la misma en todos los sistemas):</p>
+<div class="cmd"><pre><code>docker run --rm --network e6-red curlimages/curl:8.11.1 -s -o /dev/null -w '%{http_code}\n' http://e6-web/
+docker run --rm curlimages/curl:8.11.1 -s -m 3 http://e6-web/</code></pre></div>
+<p>Dentro de la red, <code>curl</code> llega por el nombre e imprime <code>200</code>. Fuera de ella no imprime nada y acaba con error: el nombre <code>e6-web</code> no existe en la red por defecto.</p>
 
 <h2 class="step"><span class="n">4</span>Sondea desde dentro de la red</h2>
+<p>Espera a que Postgres acepte conexiones, sondea los dos contenedores con tu imagen de E2 y guarda las cuatro líneas en <code>sondeo.txt</code>; después quita el laboratorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>do { Start-Sleep 1; docker exec e6-datos pg_isready -U postgres -h localhost } until ($LASTEXITCODE -eq 0)
+docker run --rm --network e6-red sondeo:1.0 e6-web 80 443 | Tee-Object sondeo.txt
+docker run --rm --network e6-red sondeo:1.0 e6-datos 5432 80 | Tee-Object -Append sondeo.txt
+docker rm -f e6-web e6-datos
+docker network rm e6-red</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>until docker exec e6-datos pg_isready -U postgres -h localhost; do sleep 1; done
-{ docker run --rm --network e6-red sondeo:1.0 e6-web 80 443
-  docker run --rm --network e6-red sondeo:1.0 e6-datos 5432 80; } | tee sondeo.txt
-docker rm -f e6-web e6-datos &amp;&amp; docker network rm e6-red</code></pre></div><p>El 5432 de la base de datos está abierto <b>para quien esté en la red</b>, aunque no se haya publicado: es lo que verá nmap en la Mini auditoría.</p><p>El corrector marca fallo si:</p>
+docker run --rm --network e6-red sondeo:1.0 e6-web 80 443 | tee sondeo.txt
+docker run --rm --network e6-red sondeo:1.0 e6-datos 5432 80 | tee -a sondeo.txt
+docker rm -f e6-web e6-datos
+docker network rm e6-red</code></pre></div>
+<p>Abre <code>sondeo.txt</code> con <code>code sondeo.txt</code>: tiene cuatro líneas, con <code>e6-web:80</code> y <code>e6-datos:5432</code> abiertos y los otros dos cerrados. El 5432 de la base de datos está abierto <b>para quien esté en la red</b>, aunque no se haya publicado: es lo que verá nmap en la Mini auditoría. Si quieres volver a lanzar <code>levantar.sh</code>, quita antes los contenedores y la red con esas dos últimas órdenes: <code>docker network create</code> falla si la red ya existe.</p>
+<p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li><code>levantar.sh</code> tiene algo que no es una orden <code>docker</code> de las admitidas en <a href="e5.html">E5</a>, falla en un equipo limpio, o algún contenedor no sigue en marcha.</li>
-<li><code>e6-web</code> o <code>e6-datos</code> no están en <code>e6-red</code>, o no salen de las imágenes indicadas.</li>
+<li>Falta <code>levantar.sh</code> o <code>sondeo.txt</code>.</li>
+<li><code>sondeo.txt</code> no tiene las cuatro líneas, en el orden pedido, con 80 y 5432 abiertos.</li>
+<li><code>levantar.sh</code> tiene algo que no es una orden <code>docker</code> de las admitidas en <a href="e5.html">E5</a>, o falla en un equipo limpio.</li>
+<li><code>levantar.sh</code> no crea <code>e6-web</code> o <code>e6-datos</code>, o alguno no sigue en marcha unos segundos después.</li>
+<li><code>e6-web</code> o <code>e6-datos</code> no salen de las imágenes indicadas, o no están en <code>e6-red</code>.</li>
 <li>La web no publica en <code>127.0.0.1:8086</code>, o la base de datos publica algún puerto.</li>
-<li><code>sondeo.txt</code> no tiene las cuatro líneas, con 80 y 5432 abiertos.</li>
 </ul>
 
 
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
 <p>Antes de subir, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e6</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e6</code></pre></div>
 <p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>

@@ -22,12 +22,19 @@
 </div>
 
 <h2 id="ejercicios">Ejercicios</h2>
-<p class="note"><b>Antes de empezar:</b> Docker Desktop instalado (<a href="../../00-presentacion/temas/04-docker.html">Presentación · Docker</a>) y los pasos de instalación de <a href="temas/01-imagenes-y-contenedores.html#instalacion">Docker 1</a>: <code>docker login</code> y la función <code>docker()</code> en <code>~/.bashrc</code>.</p>
+<p class="note"><b>Antes de empezar:</b> Docker Desktop instalado (<a href="../../00-presentacion/temas/04-docker.html">Presentación · Docker</a>) y los pasos de instalación de <a href="temas/01-imagenes-y-contenedores.html#instalacion">Docker 1</a>: <code>docker login</code> con tu cuenta de Docker Hub. Las órdenes de Windows son de PowerShell; las de macOS y Linux, del Terminal.</p>
 <p>Ocho ejercicios en <code>fundamentos/docker/</code> de tu repositorio de entregas, todos en <code>main</code>. Los que tienen ficheros de partida empiezan con <code>preparar.py</code>, que los escribe a partir de tu usuario de GitHub; en E4 además construye la imagen que vas a auditar. Ejecútalo desde tu repositorio, con Docker Desktop en marcha:</p>
+<p class="so">Windows · PowerShell</p>
 <pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/preparar.py e1</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/preparar.py e1</code></pre>
 <p>Antes de etiquetar, compruébalo en tu equipo con <code>pruebas.py</code>: pasa exactamente las mismas comprobaciones que el corrector, sobre lo que ya tienes en commits, y dice qué falla y por qué, construyendo y levantando los contenedores como él (con Docker Desktop en marcha). Sin el número de ejercicio, los comprueba todos:</p>
+<p class="so">Windows · PowerShell</p>
 <pre><code>py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e1</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e1</code></pre>
 <p>Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-docker-eN</code>, sobre <code>main</code>, igual que los de git.</p>
 <p class="note"><b>Plazo de Docker: jueves 12 de noviembre a las 23:59.</b> Cuenta cada etiqueta tal como esté a esa hora; hasta entonces la puedes mover. Antes de etiquetar, mira tu fila en el check <b>Corrector docker</b> junto al último commit de <code>main</code>; se actualiza cuando el docente lanza la corrección. El corrector construye tus imágenes y levanta tus contenedores de verdad. Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores, y E6 y E7 reutilizan lo de E2 y E5.</p>
 <table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Tema</th></tr></thead><tbody>

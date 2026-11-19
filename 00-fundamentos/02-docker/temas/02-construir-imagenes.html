@@ -170,9 +170,17 @@ RUN --mount=type=secret,id=api python informe.py --comprobar /run/secrets/api
 # al construir: el secreto sale de un fichero tuyo, que no está en el contexto
 docker build --secret id=api,src=api.key -t informe:2.0 .</code></pre>
 <p>Y para buscar secretos en una imagen ajena, como haría un auditor:</p>
+<p class="so">Windows · PowerShell</p>
 <pre><code>docker history --no-trunc imagen:versión        # qué hizo cada capa
 docker save imagen:versión -o imagen.tar         # todas las capas en un fichero
-mkdir capas &amp;&amp; tar -xf imagen.tar -C capas       # cada capa es un .tar en capas/blobs/sha256/
+New-Item -ItemType Directory -Force capas | Out-Null
+tar -xf imagen.tar -C capas                      # cada capa es un .tar en capas/blobs/sha256/
+foreach ($c in Get-ChildItem capas/blobs/sha256) { if (tar -tf $c.FullName 2&gt;$null | Select-String api.key) { $c.FullName } }</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>docker history --no-trunc imagen:versión        # qué hizo cada capa
+docker save imagen:versión -o imagen.tar         # todas las capas en un fichero
+mkdir -p capas
+tar -xf imagen.tar -C capas                      # cada capa es un .tar en capas/blobs/sha256/
 for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep -q api.key &amp;&amp; echo "$capa"; done</code></pre>
 </section>
 

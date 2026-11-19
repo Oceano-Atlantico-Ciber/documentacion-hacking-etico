@@ -228,7 +228,10 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 <li><b>Usuario no root</b> en las imágenes propias (<code>USER</code> en el <code>Dockerfile</code>).</li>
 </ul>
 <p>Para el <code>Dockerfile</code>, <code>trivy config</code> revisa la mayoría de estos puntos solo, igual que hiciste con Terraform:</p>
-<pre><code>docker run --rm -v ./:/work:ro aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre>
+<p class="so">Windows · PowerShell</p>
+<pre><code>docker run --rm -v "${PWD}:/work:ro" aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>docker run --rm -v "$PWD:/work:ro" aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre>
 </section>
 
 <section class="seccion">
