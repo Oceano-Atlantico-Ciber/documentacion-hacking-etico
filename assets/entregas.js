@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-18T18:34+00:00",
+ "actualizado": "2026-11-19T17:43+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -201,7 +201,7 @@ window.ENTREGAS = {
      "e8": "bien"
     },
     "alfaro-cmd": {
-     "e1": "sin",
+     "e1": "bien",
      "e2": "sin",
      "e3": "bien",
      "e4": "sin",
@@ -224,8 +224,8 @@ window.ENTREGAS = {
      "e1": "bien",
      "e2": "mal",
      "e3": "bien",
-     "e4": "sin",
-     "e5": "sin",
+     "e4": "bien",
+     "e5": "bien",
      "e6": "sin",
      "e7": "sin",
      "e8": "sin"
@@ -254,11 +254,11 @@ window.ENTREGAS = {
      "e1": "bien",
      "e2": "bien",
      "e3": "bien",
-     "e4": "sin",
-     "e5": "sin",
-     "e6": "sin",
-     "e7": "sin",
-     "e8": "sin"
+     "e4": "bien",
+     "e5": "bien",
+     "e6": "bien",
+     "e7": "bien",
+     "e8": "mal"
     },
     "lord999w": {
      "e1": "bien",
