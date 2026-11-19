@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-19T23:13+00:00",
+ "actualizado": "2026-11-19T23:21+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -508,7 +508,7 @@ window.ENTREGAS = {
        "resumen": "el contenedor salía de nginx:alpine y debía salir de nginx:1.27-alpine"
       },
       {
-       "resumen": "el contenedor no publicaba 127.0.0.1:8080->80/tcp: publicaba ningún puerto"
+       "resumen": "el contenedor no publicaba 127.0.0.1:8080->80/tcp: no publicaba ningún puerto"
       },
       {
        "resumen": "el contenedor no llegó a pararse y volver a arrancar: según inspect.json no se paró nunca"
