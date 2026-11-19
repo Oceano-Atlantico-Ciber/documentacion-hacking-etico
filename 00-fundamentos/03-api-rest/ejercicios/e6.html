@@ -21,16 +21,31 @@
 <dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>La carpeta <code>fundamentos/api/e6/</code> con tus tres APIs (<code>go/</code>, <code>python/</code> y <code>node/</code>) validando lo que reciben y respondiendo cada error en <code>application/problem+json</code>. Cambias el código de las tres; <code>casos.txt</code> y <code>diferencias.md</code> se suben tal cual. No hay ningún fichero de texto que escribir: lo que se corrige es cómo responden.</p>
+<p>Un error bien respondido se ve así; según el caso cambian el código y el <code>detail</code>, pero la forma es siempre la misma:</p>
+<pre><code>HTTP/1.1 422 Unprocessable Entity
+Content-Type: application/problem+json
+
+{"type": "about:blank", "title": "Unprocessable Entity", "status": 422, "detail": "Falta el campo prioridad"}</code></pre>
+<p><code>status</code> es el mismo número que el código de la respuesta, y <code>detail</code> lo entiende una persona sin decir nada de cómo está hecha la API.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>En PowerShell:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e6
 cd fundamentos/api/e6</code></pre></div>
-<p>Copia tu E5 a <code>e6/</code> y añade <code>casos.txt</code>: las peticiones que tus APIs tienen que rechazar, con el código que toca a cada una.</p>
+<p><code>preparar.py</code> copia tu E5 a <code>e6/</code> y añade <code>casos.txt</code>: las peticiones que tus APIs tienen que rechazar, una por línea, con el código que toca a cada una. Por ejemplo, esta línea dice que un <code>POST</code> sin <code>prioridad</code> tiene que dar <code>422</code>:</p>
+<pre><code>POST /api/v1/incidencias | {"titulo": "Falta la prioridad"} | 422</code></pre>
 
 <h2 class="step"><span class="n">2</span>Antes de tocar nada, mira qué responden hoy</h2>
-<p>Con las tres APIs arrancadas como en el E5, prueba a mano unos cuantos casos y fíjate en el código, el <code>Content-Type</code> y el cuerpo:</p>
-<div class="cmd"><pre><code>curl.exe -i -X POST http://localhost:8001/api/v1/incidencias -H 'Content-Type: application/json' --data '{"titulo": "Sin cerrar"'
+<p>Con las tres APIs arrancadas como en el E5, prueba a mano unos cuantos casos y fíjate en el código, el <code>Content-Type</code> y el cuerpo. Escribe el cuerpo roto en un fichero, <code>roto.json</code>, con una sola línea a la que le falta la llave del final:</p>
+<pre><code>{"titulo": "Sin cerrar"</code></pre>
+<div class="cmd"><pre><code>curl.exe -i -X POST http://localhost:8001/api/v1/incidencias -H "Content-Type: application/json" --data-binary "@roto.json"
+curl.exe -i -X POST http://localhost:8002/api/v1/incidencias -H "Content-Type: application/json" --data-binary "@roto.json"
+curl.exe -i -X POST http://localhost:8003/api/v1/incidencias -H "Content-Type: application/json" --data-binary "@roto.json"
 curl.exe -i http://localhost:8003/api/v1/no-existe</code></pre></div>
+<p>El cuerpo va en un fichero porque PowerShell quita las comillas dobles de un JSON escrito en la propia orden. Para probar otro caso de <code>casos.txt</code>, cambia el contenido de <code>roto.json</code>.</p>
 <p>Apunta lo que delata cada una: es justo lo que tienes que cambiar.</p>
 
 <h2 class="step"><span class="n">3</span>Valida y uniforma los errores</h2>
@@ -44,7 +59,8 @@ curl.exe -i http://localhost:8003/api/v1/no-existe</code></pre></div>
 <div class="cmd"><pre><code>py go/pruebas.py e6 http://localhost:8001
 py python/pruebas.py e6 http://localhost:8002
 py node/pruebas.py e6 http://localhost:8003</code></pre></div>
-<p>Cada orden pasa también las pruebas del E3 y el E4: validar no puede romper lo que ya funcionaba. Reinicia los contenedores entre una pasada y otra.</p>
+<p>Cada orden pasa también las pruebas del E3 y el E4: validar no puede romper lo que ya funcionaba. Está listo cuando las tres terminan en <code>0 mal</code>. Reinicia los contenedores entre una pasada y otra. Al final, con los contenedores recién arrancados, comprueba que las tres siguen respondiendo igual:</p>
+<div class="cmd"><pre><code>py go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Algún caso de <code>casos.txt</code>, u otro parecido, no da su código en <code>application/problem+json</code> con <code>type</code>, <code>title</code>, <code>status</code> y <code>detail</code>.</li>

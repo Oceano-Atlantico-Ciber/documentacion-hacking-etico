@@ -21,11 +21,22 @@
 <dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>fundamentos/api/e5/</code>, tres carpetas y un fichero:</p>
+<div class="tabla"><table><thead><tr><th>Ruta</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>go/</code></td><td>La API completa del E4 en Go, con su <code>Dockerfile</code>.</td></tr>
+<tr><td><code>python/</code></td><td>La misma API en Python (FastAPI), con su <code>Dockerfile</code>.</td></tr>
+<tr><td><code>node/</code></td><td>La misma API en Node (Express), con su <code>Dockerfile</code>.</td></tr>
+<tr><td><code>diferencias.md</code></td><td>Al menos tres cosas que un framework hacía distinto, qué respondía y cómo lo has igualado. Va en <code>e5/</code>, no dentro de una carpeta de lenguaje.</td></tr>
+</tbody></table></div>
+<p>Una de las tres carpetas es tu E4 tal cual; las otras dos las escribes tú. El corrector construye las tres imágenes, comprueba que responden lo mismo a la misma serie de peticiones y pasa a cada una las pruebas del E4.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>En PowerShell:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e5
 cd fundamentos/api/e5</code></pre></div>
-<p>Copia tu E4 a la carpeta de su lenguaje y deja el esqueleto de los otros dos en las suyas, con los mismos datos y las mismas pruebas.</p>
+<p><code>preparar.py</code> copia tu E4 a la carpeta de su lenguaje (por ejemplo, <code>e5/go/</code> si lo hiciste en Go) y deja el esqueleto de los otros dos en las suyas, con los mismos datos y las mismas pruebas.</p>
 
 <h2 class="step"><span class="n">2</span>Escribe las otras dos</h2>
 <p>Programa en cada esqueleto lo mismo que ya tienes, ruta a ruta, con su <code>Dockerfile</code>. Si te apoyas en la IA para traducir, pasa <code>pruebas.py e4</code> a cada una antes de seguir.</p>
@@ -48,6 +59,12 @@ docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 <h2 class="step"><span class="n">5</span>Explica las diferencias</h2>
 <div class="cmd"><pre><code>code diferencias.md</code></pre></div>
 <p>Al menos tres cosas que un lenguaje o su framework hacía distinto de los otros sin pedírselo (errores por defecto, cabeceras, tipos de los parámetros, valores <code>null</code>…), qué respondía y qué has cambiado para igualarlo. Son también las pistas con las que alguien de fuera adivinaría con qué está hecha una API.</p>
+<p>Una diferencia por elemento de lista (o por apartado <code>##</code>), cada una con las tres partes: qué petición, qué respondía cada lenguaje y qué has cambiado. Por ejemplo, la del paso 4:</p>
+<pre><code>1. **DELETE sobre la colección.** Go y FastAPI respondían 405 con Allow: GET, POST;
+   Express respondía 404 en HTML porque no conoce el 405. He añadido en Express un
+   app.all para la ruta que responde 405 con su Allow.
+2. …
+3. …</code></pre>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Alguna de las tres imágenes no construye o no escucha en el 8000.</li>
