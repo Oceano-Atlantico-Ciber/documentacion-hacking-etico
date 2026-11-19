@@ -9,9 +9,9 @@ Uso, desde la carpeta de tu repositorio de entregas:
 Sin ejercicio, los comprueba todos. Evalúa lo mismo que el corrector y con el mismo código: la etiqueta
 entrega-fundamentos-git-eN si existe y, si no, la rama del ejercicio (main, o la suya en E5, E6 y E8).
 Lo que no está en un commit no cuenta. El corrector mira GitHub y esto mira tu equipo: si lo que tienes
-no coincide con lo que hay en GitHub, te avisa. Lo que solo sabe GitHub (el autor de los commits de E1,
-el commit filtrado de E8 y la hora de la etiqueta) lo pregunta con el GitHub CLI (gh) si tienes sesión
-iniciada; sin gh, lo salta y avisa. No cambia nada de tu repositorio.
+no coincide con lo que hay en GitHub, te avisa. Lo que solo sabe GitHub (el autor de los commits de E1 y
+el commit filtrado de E8) lo pregunta con el GitHub CLI (gh) si tienes sesión iniciada; sin gh, lo salta
+y avisa. No hay fecha límite. No cambia nada de tu repositorio.
 """
 
 from __future__ import annotations
@@ -20,7 +20,6 @@ import json
 import shutil
 import subprocess
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 AQUI = Path(__file__).resolve().parent
@@ -28,7 +27,7 @@ sys.path.insert(0, str(AQUI))
 
 import preparar as p  # noqa: E402
 from comprobar_git.ejercicios import COMPROBACIONES, Contexto  # noqa: E402
-from comprobar_git.entrega import FUERA_DE_PLAZO, NO_ANOTADA, PLAZO, fuera_de_plazo, que_evaluar  # noqa: E402
+from comprobar_git.entrega import NO_ANOTADA, que_evaluar  # noqa: E402
 from comprobar_git.repo import Repo  # noqa: E402
 
 
@@ -41,10 +40,6 @@ class GitHubLocal:
 
     def commit(self, repo: str, sha: str) -> dict | None:
         return self._api(f"repos/{repo}/commits/{sha}")
-
-    def ultimo_push(self, repo: str, ref: str) -> str | None:
-        datos = self._api(f"repos/{repo}/activity?ref={ref}&direction=desc&per_page=1")
-        return datos[0]["timestamp"] if datos else None
 
 
 def con_gh() -> GitHubLocal | None:
@@ -88,7 +83,6 @@ def main(argv: list[str]) -> int:
     api = con_gh()
     ctx = Contexto(repo, nombre, usuario, api)
     remoto_refs = en_github(repo)
-    plazo_cerrado = datetime.now(timezone.utc) > PLAZO
     mal = 0
     for ej in pedidos:
         ev = que_evaluar(repo, ej)
@@ -117,15 +111,6 @@ def main(argv: list[str]) -> int:
             avisos.append(f"en GitHub {ev.ref.removeprefix('refs/tags/')} apunta a {arriba[:7]}, no a tu {ev.sha[:7]}: "
                           "el corrector evaluará el de GitHub. Sube el tuyo (si lo has reescrito o movido la etiqueta, "
                           "con git push --force-with-lease o git push -f origin <etiqueta>)")
-        if ev.estado == "Entregado":
-            if arriba == ev.sha and api is not None:
-                if fuera_de_plazo(api.ultimo_push(nombre, ev.ref)):
-                    fallos.append(FUERA_DE_PLAZO)
-            elif arriba == ev.sha and plazo_cerrado:
-                avisos.append(f"el plazo cerró el {PLAZO:%d/%m/%Y a las %H:%M}: sin gh no sé a qué hora subiste la "
-                              "etiqueta; si fue después, el corrector la marcará fuera de plazo")
-            elif arriba != ev.sha and plazo_cerrado:
-                fallos.append(f"{FUERA_DE_PLAZO} si la subes ahora: el plazo cerró el {PLAZO:%d/%m/%Y a las %H:%M}")
         que = f"etiqueta {etiqueta}" if ev.estado == "Entregado" else f"rama {ev.ref}, todavía sin etiqueta (provisional)"
         print(f"{ej.upper()} · {que} · {ev.sha[:7]}")
         if fallos:
@@ -138,7 +123,7 @@ def main(argv: list[str]) -> int:
             print(f"  ! {a}")
     if api is None:
         print("\nAviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe "
-              "GitHub: el autor de los commits de E1, el commit filtrado de E8 y la hora de las etiquetas. "
+              "GitHub: el autor de los commits de E1 y el commit filtrado de E8. "
               "El corrector sí lo comprueba.")
     return 1 if mal else 0
 

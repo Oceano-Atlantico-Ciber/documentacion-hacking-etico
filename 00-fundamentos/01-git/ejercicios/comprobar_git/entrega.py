@@ -1,11 +1,11 @@
-"""Qué se evalúa de cada ejercicio y cuándo una entrega queda fuera de plazo.
+"""Qué se evalúa de cada ejercicio.
 
 Lo usan igual el corrector y pruebas.py, para que los dos den el mismo veredicto sobre el mismo commit.
+No hay fecha límite: cuenta la etiqueta tal como esté cuando se corrige.
 """
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import NamedTuple
 
 import preparar as p
@@ -13,11 +13,7 @@ import preparar as p
 from .ejercicios import RAMAS
 from .repo import Repo
 
-# Fecha límite de las etiquetas de git. El corrector la puede cambiar con --fecha-limite.
-PLAZO = datetime.fromisoformat("2026-11-05T23:59:59+01:00")
-
 NO_ANOTADA = "la etiqueta no es anotada: bórrala y créala con git tag -a (paso «Sube y etiqueta»)"
-FUERA_DE_PLAZO = "entregada fuera de plazo"
 
 
 class Evaluable(NamedTuple):
@@ -39,8 +35,3 @@ def que_evaluar(repo: Repo, ej: str) -> Evaluable:
     if (sha := repo.sha(rama)) and (rama != p.RAMA_PRINCIPAL or repo.ficheros(sha, f"{p.RAIZ}/{ej}")):
         return Evaluable("Provisional", rama, sha)
     return Evaluable("Sin empezar", None, None)
-
-
-def fuera_de_plazo(hora: str | None, plazo: datetime = PLAZO) -> bool:
-    """hora: ISO 8601 del último push que creó o movió la etiqueta."""
-    return bool(hora) and datetime.fromisoformat(hora.replace("Z", "+00:00")) > plazo
