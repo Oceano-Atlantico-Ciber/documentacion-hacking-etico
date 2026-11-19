@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-19T23:06+00:00",
+ "actualizado": "2026-11-19T23:13+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -208,7 +208,7 @@ window.ENTREGAS = {
      ],
      "e4": [
       {
-       "resumen": "puertos.txt no sigue la regla: no está ordenado por número de puerto: «53 dns» va antes que «5432 postgresql»"
+       "resumen": "puertos.txt no sigue la regla: no está ordenado por número de puerto: «53 dns» debe ir antes que «5432 postgresql»"
       }
      ]
     },
@@ -287,7 +287,7 @@ window.ENTREGAS = {
      ],
      "e4": [
       {
-       "resumen": "puertos.txt no sigue la regla: no está ordenado por número de puerto: «22 ssh» va antes que «9200 elasticsearch»"
+       "resumen": "puertos.txt no sigue la regla: no está ordenado por número de puerto: «22 ssh» debe ir antes que «9200 elasticsearch»"
       }
      ],
      "e8": [
