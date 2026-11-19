@@ -16,58 +16,149 @@
 <dt>Teoría</dt><dd><a href="../temas/04-deshacer-y-seguridad.html">Git 4 · Deshacer y seguridad</a></dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/git/e8/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e8</code> sobre <code>git/e8-app</code></dd>
+<dt>Plazo</dt><dd>Cerró el jueves 5 de noviembre de 2026 a las 23:59</dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p>La rama <code>git/e8-app</code> purgada de la clave y con tu hallazgo:</p>
+<ul>
+<li>Siguen los cuatro commits de la rama: <code>feat(e8): cliente de la API</code>, <code>feat(e8): conexión con clave</code>, <code>chore(e8): no versionar .env</code> y <code>docs(e8): instrucciones</code>. Se purga el fichero, no los commits.</li>
+<li>La clave no aparece en ningún commit de la rama, y <code>app.py</code> queda como estaba.</li>
+<li>Un commit más encima con <code>fundamentos/git/e8/hallazgo.txt</code>: el SHA completo, de 40 caracteres, del commit que subió la clave a GitHub. Ese commit ya no está en la rama, porque la purga le cambia el SHA.</li>
+<li>La rama subida a GitHub y la etiqueta anotada <code>entrega-fundamentos-git-e8</code> sobre <code>git/e8-app</code>, también subida.</li>
+</ul>
+<p>Así se ve con <code>git log --oneline -5 git/e8-app</code> (tus SHA serán otros):</p>
+<pre><code>f2a3b4c (HEAD -&gt; git/e8-app, tag: entrega-fundamentos-git-e8, origin/git/e8-app) docs(e8): commit que filtró la clave
+e1f2a3c docs(e8): instrucciones
+d0e1f2a chore(e8): no versionar .env
+c9d0e1f feat(e8): conexión con clave
+b8c9d0f feat(e8): cliente de la API</code></pre>
+<p>El orden importa: primero se sube la rama con la clave (paso 2) y después se purga. Si purgas antes de subir, GitHub nunca conoce el commit filtrado y el ejercicio no se puede superar.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material, vuelve a <code>main</code> y mira que no tengas nada a medias. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git -C ../documentacion-hacking-etico pull
+git switch main
+git status</code></pre></div>
+<p><code>git status</code> tiene que terminar en <code>nothing to commit, working tree clean</code>. Si lista ficheros, termina o descarta antes lo que tengas a medias: <code>preparar.py</code> no sigue con cambios pendientes. Después, crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e8</code></pre></div>
-<p>Crea <code>git/e8-app</code>. En uno de sus commits alguien subió un <code>.env</code> con una clave de API, y en otro lo borró.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e8</code></pre></div>
+<pre><code>e8 preparado para &lt;tu-usuario&gt; en fundamentos/git/e8/. Sigue el enunciado.</code></pre>
+<p>Crea <code>git/e8-app</code> con cuatro commits y te deja en <code>main</code>. En uno de ellos alguien subió un <code>.env</code> con una clave de API, y en otro lo borró.</p>
 
 <h2 class="step"><span class="n">2</span>Sube la rama tal cual</h2>
-<div class="cmd"><pre><code>git push -u origin git/e8-app</code></pre></div><p>Así simulas la filtración real: la clave ya está en GitHub. Sin este paso el ejercicio no se puede superar.</p>
+<div class="cmd"><pre><code>git push -u origin git/e8-app</code></pre></div>
+<pre><code> * [new branch]      git/e8-app -&gt; git/e8-app
+branch 'git/e8-app' set up to track 'origin/git/e8-app'.</code></pre>
+<p>Así simulas la filtración real: la clave ya está en GitHub. Sin este paso el ejercicio no se puede superar.</p>
 
 <h2 class="step"><span class="n">3</span>Encuentra el commit que la introdujo</h2>
-<div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app</code></pre></div><p>Salen dos commits: el que añade la clave (líneas con <code>+</code>) y el que la borra (<code>−</code>). Apunta el SHA <b>completo</b>, de 40 caracteres, del que la añade.</p>
+<div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app</code></pre></div>
+<p><code>-S</code> busca los commits que añaden o quitan ese texto, y <code>-p</code> enseña su cambio. Salen dos: uno añade el <code>.env</code> (línea <code>+API_KEY=…</code>) y otro lo borra (<code>-API_KEY=…</code>). Si la salida no cabe en pantalla, baja con las flechas y sal con <b>q</b>. Para ver los SHA completos:</p>
+<div class="cmd"><pre><code>git log --format="%H %s" -S API_KEY= git/e8-app</code></pre></div>
+<pre><code>a1b2c3d4e5f60718293a4b5c6d7e8f9012345678 chore(e8): no versionar .env
+0718293a4b5c6d7e8f9012345678a1b2c3d4e5f6 feat(e8): conexión con clave</code></pre>
+<p>Apunta el SHA completo, de 40 caracteres, del commit que <b>añade</b> la clave: el que en la salida de <code>git log -p</code> tiene la línea <code>+API_KEY=…</code>, que es <code>feat(e8): conexión con clave</code>. En el ejemplo, <code>0718293a4b5c6d7e8f9012345678a1b2c3d4e5f6</code>. El otro, <code>chore(e8): no versionar .env</code>, es el que la borra (<code>-API_KEY=…</code>): ese no.</p>
 
 <h2 class="step"><span class="n">4</span>Purga el <code>.env</code> de toda la rama</h2>
-<p><code>git-filter-repo</code> ya lo tienes instalado desde <a href="../../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a>. Se lanza como módulo de Python, que funciona aunque su carpeta no esté en el PATH; es la misma herramienta que <code>git filter-repo</code>:</p><div class="cmd"><pre><code>py -m git_filter_repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div><p>Reescribe todos los commits de la rama sin ese fichero. Los SHA cambian.</p>
-<p class="note">Desde aquí, <code>git status</code> dirá que tu rama y <code>origin/git/e8-app</code> han divergido y te sugerirá <code>git pull</code>. <b>No lo hagas</b>: traería de vuelta los commits con la clave. Lo correcto es el push forzado del paso 7.</p>
+<p><code>git-filter-repo</code> ya lo tienes instalado desde <a href="../../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a>. Antes, comprueba que no tienes nada a medias:</p>
+<div class="cmd"><pre><code>git status</code></pre></div>
+<p>Tiene que decir <code>nothing to commit, working tree clean</code>. Al terminar, <code>git-filter-repo</code> deja la rama en la que estás (aquí <code>main</code>) exactamente como en su último commit, con un <code>git reset --hard</code>: lo que no estuviera en un commit se perdería. Reescribe todos los commits de <code>git/e8-app</code> sin ese fichero:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py -m git_filter_repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>git filter-repo --refs git/e8-app --path fundamentos/git/e8/.env --invert-paths --force</code></pre></div>
+<pre><code>Parsed 21 commits
+HEAD is now at 6a7b8c9 Revert "feat(e7): activar modo depuración"
+
+New history written in 0.14 seconds...
+Completely finished after 0.24 seconds.</code></pre>
+<p>El número de commits será otro. La línea <code>HEAD is now at …</code> nombra el último commit de <code>main</code>, que no tiene nada que ver con E8: es el <code>git reset --hard</code> de la rama en la que estás. Es normal. <code>--path</code> elige el fichero, <code>--invert-paths</code> dice que se quite (y no que se quede solo él) y <code>--refs</code> limita la reescritura a esa rama. Los SHA de los commits que tenían la clave, y de los que van detrás, cambian.</p>
 
 <h2 class="step"><span class="n">5</span>Guarda tu hallazgo</h2>
 <div class="cmd"><pre><code>git switch git/e8-app
-code fundamentos/git/e8/hallazgo.txt</code></pre></div><p>Escribe en él el SHA del paso 3 en una línea, guarda y haz commit:</p><div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt
+code fundamentos/git/e8/hallazgo.txt</code></pre></div>
+<pre><code>Switched to branch 'git/e8-app'
+Your branch and 'origin/git/e8-app' have diverged,
+and have 3 and 3 different commits each, respectively.
+  (use "git pull" if you want to integrate the remote branch with yours)</code></pre>
+<p class="note">Que tu rama y la de GitHub hayan divergido es lo esperado: la de GitHub aún tiene la clave. <b>No hagas <code>git pull</code></b>: traería de vuelta los commits con la clave. Lo correcto es el push forzado del paso 8.</p>
+<p>En VS Code, escribe en <code>hallazgo.txt</code> el SHA completo que apuntaste en el paso 3, en una línea, y guarda con <b>Ctrl+S</b> (<b>Cmd+S</b> en macOS). Haz el commit:</p>
+<div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt
 git commit -m "docs(e8): commit que filtró la clave"</code></pre></div>
 
 <h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
-<div class="cmd"><pre><code>git log -p -S API_KEY= git/e8-app
+<div class="cmd"><pre><code>git log -S API_KEY= git/e8-app
 git ls-tree -r --name-only git/e8-app fundamentos/git/e8</code></pre></div>
-<p>La primera orden no debe mostrar nada, y en la carpeta no debe haber <code>.env</code>.</p>
+<pre><code>fundamentos/git/e8/.gitignore
+fundamentos/git/e8/README.md
+fundamentos/git/e8/app.py
+fundamentos/git/e8/hallazgo.txt</code></pre>
+<p>La primera orden no muestra nada: ningún commit de la rama tiene ya la clave. La segunda lista la carpeta, sin <code>.env</code>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>Falta alguno de los commits originales de la rama: purga el fichero, no los commits.</li>
-<li>La clave sigue en la historia de la rama.</li>
-<li><code>hallazgo.txt</code> no contiene el SHA completo, o ese commit sigue en la rama.</li>
-<li>Ese SHA no es el commit que subió la clave a GitHub, por ejemplo porque purgaste antes de subir.</li>
+<li>Falta alguno de los commits <code>feat(e8): cliente de la API</code>, <code>feat(e8): conexión con clave</code>, <code>chore(e8): no versionar .env</code> o <code>docs(e8): instrucciones</code>: purga el fichero, no los commits.</li>
+<li>La clave sigue en algún commit de la rama.</li>
+<li><code>app.py</code> no tiene su contenido final, el que lee la clave de <code>os.environ</code>.</li>
+<li><code>hallazgo.txt</code> no contiene un SHA completo de 40 caracteres.</li>
+<li>El commit de <code>hallazgo.txt</code> sigue en la historia de la rama: no has purgado, o has apuntado un commit que la purga no cambia.</li>
+<li>GitHub no conoce ese commit (por ejemplo, porque purgaste antes de subir en el paso 2), o ese commit no añade la clave en <code>fundamentos/git/e8/.env</code>.</li>
+<li>La etiqueta no es anotada: se creó sin <code>-a</code>.</li>
+<li>La etiqueta se subió a GitHub, o se movió, después del cierre del plazo (05/11/2026, 23:59): sale «entregada fuera de plazo».</li>
 </ul>
 
 <h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
-<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
-<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e8</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-git-e8</code> si ya la tienes y, si no, la rama <code>git/e8-app</code>. Solo mira commits: lo que no esté en un commit no cuenta. No cambia nada de tu repositorio. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e8</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e8</code></pre></div>
+<p>Antes de subir, un ejercicio bien hecho se ve así (tus SHA serán otros):</p>
+<pre><code>E8 · rama git/e8-app, todavía sin etiqueta (provisional) · f2a3b4c
+  ✓ superado
+  ! en GitHub git/e8-app apunta a 9a8b7c6, no a tu f2a3b4c: el corrector evaluará el de GitHub. Sube el tuyo (…)</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide. Antes de subir es normal ver «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …»: desaparece al subir en el paso siguiente. En ese aviso, el primer SHA es lo que tiene GitHub (lo último que subiste) y el segundo, tu commit.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni rama <code>git/e8-app</code>: falta preparar el ejercicio.</li>
+<li>Si al final sale <b>Aviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe GitHub: el autor de los commits de E1, el commit filtrado de E8 y la hora de las etiquetas</b>, en este ejercicio te afecta el commit filtrado (si el SHA de <code>hallazgo.txt</code> es el que subió la clave a GitHub) y la hora de la etiqueta. El corrector sí lo comprueba. Inicia sesión con <code>gh auth login</code> y repite.</li>
+</ul>
 
 <h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
+<p>Sube tu trabajo a GitHub:</p>
 <div class="cmd"><pre><code>git push --force-with-lease origin git/e8-app</code></pre></div>
-<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E8 salga sin fallos, etiqueta la punta de <code>git/e8-app</code>:</p>
+<p>Es un push forzado porque has reescrito la rama. <code>--force-with-lease</code> solo sobrescribe si GitHub sigue como la última vez que lo miraste.</p>
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b> de GitHub, crea la etiqueta anotada sobre <code>git/e8-app</code> y súbela:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e8 git/e8-app -m "E8 resuelto"
 git push origin entrega-fundamentos-git-e8</code></pre></div>
-<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>:</p>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E8 · etiqueta entrega-fundamentos-git-e8 · f2a3b4c
+  ✓ superado
+  ! el plazo cerró el 05/11/2026 a las 23:59: sin gh no sé a qué hora subiste la etiqueta; si fue después, el corrector la marcará fuera de plazo</code></pre>
+<p class="note"><b>Plazo.</b> Cerró el jueves 5 de noviembre de 2026 a las 23:59. El corrector mira a qué hora se subió a GitHub la etiqueta, o se movió por última vez: si fue después, la entrega sale <b>entregada fuera de plazo</b>. Con <code>gh</code>, <code>pruebas.py</code> lo marca con ✗; sin <code>gh</code>, solo avisa con !, como arriba. Una etiqueta creada en tu equipo y aún sin subir sale con ✗ «entregada fuera de plazo si la subes ahora».</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio: ✅ entregado y superado, ❌ entregado con fallos, ✏️ provisional (aún sin etiqueta) y · sin empezar. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>Trabaja en <code>git/e8-app</code> (<code>git switch git/e8-app</code>) y <b>nunca hagas <code>git pull</code></b> de esa rama: traería de vuelta los commits con la clave.</p>
+<ul>
+<li><b><code>hallazgo.txt</code> tiene un SHA equivocado</b>: corrígelo con <code>code fundamentos/git/e8/hallazgo.txt</code> y haz un commit nuevo encima; aquí sí vale, porque se mira el fichero en la punta de la rama. Tiene que ser el SHA completo que viste en el paso 3, el que GitHub conoce desde el paso 2, no uno de los SHA nuevos de después de purgar:
+<div class="cmd"><pre><code>git add fundamentos/git/e8/hallazgo.txt
+git commit -m "fix(e8): SHA del commit filtrado"</code></pre></div></li>
+<li><b>La clave sigue en la rama</b>: repite la purga del paso 4, con la rama sin cambios pendientes.</li>
+<li><b>Falta alguno de los cuatro commits</b>, o <b>purgaste antes de subir</b> en el paso 2: pregunta al docente.</li>
+</ul>
+<p>Después súbela con <code>git push --force-with-lease origin git/e8-app</code>, como arriba.</p>
+<p>Cuando <code>pruebas.py</code> vuelva a decir <b>✓ superado</b> sobre la rama, mueve la etiqueta al commit corregido: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Haz solo esto, sin tocar commits, si <code>pruebas.py</code> dice que la etiqueta no es anotada o que en GitHub apunta a otro commit:</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e8 git/e8-app -m "E8 resuelto"
-git push --force origin entrega-fundamentos-git-e8</code></pre></div>
-<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
+git push -f origin entrega-fundamentos-git-e8</code></pre></div>
+<p>Moverla cuenta como subirla de nuevo: si ya ha cerrado el plazo, la entrega pasa a estar fuera de plazo. Si <code>pruebas.py</code> dice «en GitHub ya existe entrega-fundamentos-git-e8 y no la tienes aquí», la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <h2 class="step"><span class="n">9</span>Mira qué queda en GitHub</h2>
-<p>Abre <code>https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;/commit/&lt;SHA&gt;</code>. ¿Sigue ahí la clave? ¿Qué habría que hacer con ella en un caso real?</p><p>Esta pregunta no se entrega: la comentamos en clase.</p>
+<p>Abre <code>https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;/commit/&lt;SHA&gt;</code>, con el SHA de <code>hallazgo.txt</code>. ¿Sigue ahí la clave? ¿Qué habría que hacer con ella en un caso real?</p>
+<p>Esta pregunta no se entrega: la comentamos en clase.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e7.html">← E7 · Revert</a><span></span></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

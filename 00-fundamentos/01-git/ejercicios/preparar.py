@@ -231,7 +231,7 @@ def _escribir(fichero: Path, contenido: str) -> None:
 
 
 def usuario_de(remoto: str) -> str:
-    m = re.search(r"/entregas-([A-Za-z0-9-]+?)(?:\.git)?/?$", remoto)
+    m = re.search(r"[/\\]entregas-([A-Za-z0-9-]+?)(?:\.git)?[/\\]?$", remoto)
     if not m:
         raise Error(f"el remoto origin ({remoto}) no es un repositorio entregas-<usuario>")
     return m.group(1).lower()

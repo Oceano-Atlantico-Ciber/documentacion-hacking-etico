@@ -16,47 +16,130 @@
 <dt>Teoría</dt><dd><a href="../temas/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a></dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/git/e6/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e6</code> sobre <code>git/e6-wip</code></dd>
+<dt>Plazo</dt><dd>Cerró el jueves 5 de noviembre de 2026 a las 23:59</dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p>La rama <code>git/e6-wip</code> con los cuatro commits <code>wip(e6): paso N</code> fundidos en uno solo:</p>
+<ul>
+<li>El último commit de la rama se llama exactamente <code>docs(e6): informe de alcance</code>.</li>
+<li>Ese commit crea <code>fundamentos/git/e6/informe.md</code> y no cambia nada más. En el commit anterior, <code>informe.md</code> no existía.</li>
+<li><code>informe.md</code> tiene el contenido del último paso, el 4.</li>
+<li>No queda ningún commit <code>wip(e6)…</code> en la historia de la rama.</li>
+<li>La rama subida a GitHub y la etiqueta anotada <code>entrega-fundamentos-git-e6</code> sobre <code>git/e6-wip</code>, también subida.</li>
+</ul>
+<p>Así se ve con <code>git log --oneline -2 git/e6-wip</code> (tus SHA serán otros):</p>
+<pre><code>0d1e2f3 (HEAD -&gt; git/e6-wip, tag: entrega-fundamentos-git-e6, origin/git/e6-wip) docs(e6): informe de alcance
+2a3b4c5 (origin/main, main) chore(e5): cambio publicado en main</code></pre>
+
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material, vuelve a <code>main</code> y mira que no tengas nada a medias. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git -C ../documentacion-hacking-etico pull
+git switch main
+git status</code></pre></div>
+<p><code>git status</code> tiene que terminar en <code>nothing to commit, working tree clean</code>. Si lista ficheros, termina o descarta antes lo que tengas a medias: <code>preparar.py</code> no sigue con cambios pendientes. Después, crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e6</code></pre></div>
-<p>Crea <code>git/e6-wip</code> con cuatro commits <code>wip(e6): paso N</code> que van escribiendo <code>informe.md</code>.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e6</code></pre></div>
+<pre><code>e6 preparado para &lt;tu-usuario&gt; en fundamentos/git/e6/. Sigue el enunciado.</code></pre>
+<p>Crea <code>git/e6-wip</code> con cuatro commits <code>wip(e6): paso N</code> que van escribiendo <code>informe.md</code>, y te deja en <code>main</code>.</p>
 
-<h2 class="step"><span class="n">2</span>Abre el rebase interactivo</h2>
+<h2 class="step"><span class="n">2</span>Mira los cuatro commits</h2>
 <div class="cmd"><pre><code>git switch git/e6-wip
-git rebase -i HEAD~4</code></pre></div><p>En el editor, deja <code>pick</code> en la primera línea y cambia las otras tres a <code>squash</code> (o <code>fixup</code>). Guarda y cierra la pestaña.</p>
+git log --oneline -5</code></pre></div>
+<pre><code>a4b5c6d (HEAD -&gt; git/e6-wip) wip(e6): paso 4
+93a4b5c wip(e6): paso 3
+82f3a4b wip(e6): paso 2
+71e2f3a wip(e6): paso 1
+2a3b4c5 (origin/main, main) chore(e5): cambio publicado en main</code></pre>
+<p>Los cuatro <code>wip</code> son los que vas a fundir. <code>HEAD~4</code> es el commit de debajo, el último de <code>main</code>.</p>
 
-<h2 class="step"><span class="n">3</span>Escribe el mensaje</h2>
-<p>Git te pide el mensaje del commit resultante. Borra todo y deja exactamente:</p><div class="cmd"><pre><code>docs(e6): informe de alcance</code></pre></div>
+<h2 class="step"><span class="n">3</span>Abre el rebase interactivo</h2>
+<div class="cmd"><pre><code>git rebase -i HEAD~4</code></pre></div>
+<p>Se abre en VS Code la lista de commits, del más antiguo al más nuevo:</p>
+<pre><code>pick 71e2f3a wip(e6): paso 1
+pick 82f3a4b wip(e6): paso 2
+pick 93a4b5c wip(e6): paso 3
+pick a4b5c6d wip(e6): paso 4</code></pre>
+<p>Deja <code>pick</code> en la primera línea y cambia la palabra <code>pick</code> de las otras tres por <code>fixup</code>: <code>fixup</code> mete ese commit en el anterior y descarta su mensaje. No cambies los SHA ni borres líneas. Las líneas que empiezan por <code>#</code> son ayuda y dan igual.</p>
+<pre><code>pick 71e2f3a wip(e6): paso 1
+fixup 82f3a4b wip(e6): paso 2
+fixup 93a4b5c wip(e6): paso 3
+fixup a4b5c6d wip(e6): paso 4</code></pre>
+<p>Guarda con <b>Ctrl+S</b> (<b>Cmd+S</b> en macOS) y cierra la pestaña. En la terminal:</p>
+<pre><code>Successfully rebased and updated refs/heads/git/e6-wip.</code></pre>
+<p>Si no se abre VS Code, revisa <code>core.editor</code> en <a href="../../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a>. Si algo va mal a mitad, <code>git rebase --abort</code> deja la rama como estaba.</p>
 
-<h2 class="step"><span class="n">4</span>Comprueba antes de subir</h2>
+<h2 class="step"><span class="n">4</span>Pon el mensaje</h2>
+<p>Ahora la rama tiene un solo commit con el mensaje del primero, <code>wip(e6): paso 1</code>. Cámbialo por el definitivo:</p>
+<div class="cmd"><pre><code>git commit --amend -m "docs(e6): informe de alcance"</code></pre></div>
+<pre><code>[git/e6-wip 0d1e2f3] docs(e6): informe de alcance
+ 1 file changed, 7 insertions(+)
+ create mode 100644 fundamentos/git/e6/informe.md</code></pre>
+
+<h2 class="step"><span class="n">5</span>Comprueba antes de subir</h2>
 <div class="cmd"><pre><code>git log --oneline main..git/e6-wip
 git show --stat git/e6-wip</code></pre></div>
-<p>Una sola línea, con el mensaje exacto, que solo crea <code>informe.md</code>. Si ya habías subido la rama, usa <code>git push --force-with-lease</code>.</p>
+<p>La primera orden muestra una sola línea, <code>docs(e6): informe de alcance</code>. La segunda, que ese commit solo crea <code>fundamentos/git/e6/informe.md</code> (<code>1 file changed</code>).</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>El último commit no se llama exactamente <code>docs(e6): informe de alcance</code>.</li>
-<li>Quedan commits <code>wip</code> en la historia.</li>
-<li>No queda un único commit que cree <code>informe.md</code> y nada más.</li>
+<li>El último commit de la rama no se llama exactamente <code>docs(e6): informe de alcance</code>.</li>
+<li>Queda algún commit <code>wip(e6)…</code> en la historia de la rama.</li>
+<li>No queda un único commit que cree <code>informe.md</code> y nada más: el último commit es un merge, <code>informe.md</code> ya existía en el commit anterior (no fundiste los cuatro) o el commit cambia también otros ficheros.</li>
 <li><code>informe.md</code> no tiene el contenido del último paso.</li>
+<li>La etiqueta no es anotada: se creó sin <code>-a</code>.</li>
+<li>La etiqueta se subió a GitHub, o se movió, después del cierre del plazo (05/11/2026, 23:59): sale «entregada fuera de plazo».</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
-<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
-<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e6</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+<h2 class="step"><span class="n">6</span>Pruébalo en tu equipo</h2>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-git-e6</code> si ya la tienes y, si no, la rama <code>git/e6-wip</code>. Solo mira commits: lo que no esté en un commit no cuenta. No cambia nada de tu repositorio. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e6</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e6</code></pre></div>
+<p>Antes de subir, un ejercicio bien hecho se ve así (tus SHA serán otros):</p>
+<pre><code>E6 · rama git/e6-wip, todavía sin etiqueta (provisional) · 0d1e2f3
+  ✓ superado
+  ! git/e6-wip aún no está en GitHub: el corrector no lo verá hasta que lo subas</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide. Antes de subir es normal ver «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …»: desaparece al subir en el paso siguiente. En ese aviso, el primer SHA es lo que tiene GitHub (lo último que subiste) y el segundo, tu commit.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni rama <code>git/e6-wip</code>: falta preparar el ejercicio.</li>
+<li>Si al final sale <b>Aviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe GitHub: el autor de los commits de E1, el commit filtrado de E8 y la hora de las etiquetas</b>, en este ejercicio te afecta solo la hora de la etiqueta (el plazo). El corrector sí lo comprueba. Inicia sesión con <code>gh auth login</code> y repite.</li>
+</ul>
 
-<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
+<p>Sube tu trabajo a GitHub:</p>
 <div class="cmd"><pre><code>git push -u origin git/e6-wip</code></pre></div>
-<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, también para los que se trabajan en una rama, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E6 salga sin fallos, etiqueta la punta de <code>git/e6-wip</code>:</p>
+<p>Si ya habías subido la rama antes de fundir los commits, el push se rechaza (<code>rejected … non-fast-forward</code>). Súbela forzando con cuidado:</p>
+<div class="cmd"><pre><code>git push --force-with-lease origin git/e6-wip</code></pre></div>
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b> de GitHub, crea la etiqueta anotada sobre <code>git/e6-wip</code> y súbela:</p>
 <div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e6 git/e6-wip -m "E6 resuelto"
 git push origin entrega-fundamentos-git-e6</code></pre></div>
-<p>Si el corrector marca fallos después de etiquetar, corrígelos, sube los cambios y <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>:</p>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E6 · etiqueta entrega-fundamentos-git-e6 · 0d1e2f3
+  ✓ superado
+  ! el plazo cerró el 05/11/2026 a las 23:59: sin gh no sé a qué hora subiste la etiqueta; si fue después, el corrector la marcará fuera de plazo</code></pre>
+<p class="note"><b>Plazo.</b> Cerró el jueves 5 de noviembre de 2026 a las 23:59. El corrector mira a qué hora se subió a GitHub la etiqueta, o se movió por última vez: si fue después, la entrega sale <b>entregada fuera de plazo</b>. Con <code>gh</code>, <code>pruebas.py</code> lo marca con ✗; sin <code>gh</code>, solo avisa con !, como arriba. Una etiqueta creada en tu equipo y aún sin subir sale con ✗ «entregada fuera de plazo si la subes ahora».</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio: ✅ entregado y superado, ❌ entregado con fallos, ✏️ provisional (aún sin etiqueta) y · sin empezar. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>Tiene que quedar un único commit que cree <code>informe.md</code>: <b>nunca añadas un commit nuevo encima</b>. Arréglalo reescribiendo ese commit, desde <code>git switch git/e6-wip</code>:</p>
+<ul>
+<li><b>El mensaje no es exacto</b>:
+<div class="cmd"><pre><code>git commit --amend -m "docs(e6): informe de alcance"</code></pre></div></li>
+<li><b>Quedan commits <code>wip</code> o no se fundieron todos</b>: abre otra vez el rebase interactivo con todos los commits de la rama desde <code>main</code>, deja <code>pick</code> en el primero y <code>fixup</code> en los demás, como en el paso 3, y pon el mensaje como en el paso 4:
+<div class="cmd"><pre><code>git rebase -i main
+git commit --amend -m "docs(e6): informe de alcance"</code></pre></div></li>
+</ul>
+<p>Como has reescrito la rama, súbela forzando con cuidado:</p>
+<div class="cmd"><pre><code>git push --force-with-lease origin git/e6-wip</code></pre></div>
+<p>Cuando <code>pruebas.py</code> vuelva a decir <b>✓ superado</b> sobre la rama, mueve la etiqueta al commit corregido: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Haz solo esto, sin tocar commits, si <code>pruebas.py</code> dice que la etiqueta no es anotada o que en GitHub apunta a otro commit:</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e6 git/e6-wip -m "E6 resuelto"
-git push --force origin entrega-fundamentos-git-e6</code></pre></div>
-<p class="note">Cuenta la etiqueta tal como esté al cerrar el plazo. Si la mueves después, la entrega queda fuera de plazo.</p>
+git push -f origin entrega-fundamentos-git-e6</code></pre></div>
+<p>Moverla cuenta como subirla de nuevo: si ya ha cerrado el plazo, la entrega pasa a estar fuera de plazo. Si <code>pruebas.py</code> dice «en GitHub ya existe entrega-fundamentos-git-e6 y no la tienes aquí», la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e5.html">← E5 · Rebase</a><a href="e7.html">E7 · Revert →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

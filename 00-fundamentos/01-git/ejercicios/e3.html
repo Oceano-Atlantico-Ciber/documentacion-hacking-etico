@@ -16,41 +16,116 @@
 <dt>Teoría</dt><dd><a href="../temas/02-ramas-y-fusiones.html">Git 2 · Ramas y fusiones</a></dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/git/e3/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e3</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Cerró el jueves 5 de noviembre de 2026 a las 23:59</dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p><code>main</code> con las dos ramas que crea <code>preparar.py</code> integradas, cada una de una forma:</p>
+<div class="tabla"><table><thead><tr><th>Rama</th><th>Cómo entra en <code>main</code></th></tr></thead><tbody>
+<tr><td><code>git/e3-ff</code></td><td>Con <b>fast-forward</b>: su commit <code>feat(e3): rama para fast-forward</code> queda en la línea de <code>main</code>, sin merge.</td></tr>
+<tr><td><code>git/e3-noff</code></td><td>Con un <b>commit de merge</b> (<code>--no-ff</code>) en <code>main</code> que trae su commit <code>feat(e3): rama para merge con commit</code>.</td></tr>
+</tbody></table></div>
+<p>Cada uno de esos dos commits aparece una sola vez en la historia, y <code>ff.txt</code> y <code>noff.txt</code> quedan como los dejó <code>preparar.py</code>. La etiqueta anotada <code>entrega-fundamentos-git-e3</code> va sobre <code>main</code>, subida a GitHub. Así se ve con <code>git log --oneline --graph -4</code> (tus SHA serán otros):</p>
+<pre><code>*   7a8b9c0 (HEAD -&gt; main, tag: entrega-fundamentos-git-e3, origin/main) Merge branch 'git/e3-noff'
+|\
+| * 4d5e6f7 (git/e3-noff) feat(e3): rama para merge con commit
+* | 2b3c4d5 (git/e3-ff) feat(e3): rama para fast-forward
+|/
+* 6e7f8a9 chore(e2): ignorar lo que genera la app</code></pre>
+
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
-<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material, vuelve a <code>main</code> y mira que no tengas nada a medias. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git -C ../documentacion-hacking-etico pull
+git switch main
+git status</code></pre></div>
+<p><code>git status</code> tiene que terminar en <code>nothing to commit, working tree clean</code>. Si lista ficheros, termina o descarta antes lo que tengas a medias: <code>preparar.py</code> no sigue con cambios pendientes. Después, crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e3</code></pre></div>
-<p>Crea las ramas <code>git/e3-ff</code> y <code>git/e3-noff</code>, con un commit cada una, y te deja en <code>main</code>. Míralas con <code>git log --oneline --graph --all</code>.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e3</code></pre></div>
+<pre><code>e3 preparado para &lt;tu-usuario&gt; en fundamentos/git/e3/. Sigue el enunciado.</code></pre>
+<p>Crea las ramas <code>git/e3-ff</code> y <code>git/e3-noff</code>, con un commit cada una, y te deja en <code>main</code>. Míralas:</p>
+<div class="cmd"><pre><code>git log --oneline --graph --all -4</code></pre></div>
+<pre><code>* 2b3c4d5 (git/e3-ff) feat(e3): rama para fast-forward
+| * 4d5e6f7 (git/e3-noff) feat(e3): rama para merge con commit
+|/
+* 6e7f8a9 (HEAD -&gt; main, origin/main) chore(e2): ignorar lo que genera la app</code></pre>
+<p>Las dos ramas salen del commit en el que está <code>main</code>. Haz los pasos 2 y 3 seguidos, sin otros commits en <code>main</code> entre medias.</p>
 
 <h2 class="step"><span class="n">2</span>Fusiona <code>git/e3-ff</code> con fast-forward</h2>
-<div class="cmd"><pre><code>git merge --ff-only git/e3-ff</code></pre></div><p><code>main</code> avanza hasta el commit de la rama, sin crear ningún commit nuevo. Hazlo primero: después del siguiente paso ya no sería posible.</p>
+<div class="cmd"><pre><code>git merge --ff-only git/e3-ff</code></pre></div>
+<pre><code>Updating 6e7f8a9..2b3c4d5
+Fast-forward
+ fundamentos/git/e3/ff.txt | 1 +
+ 1 file changed, 1 insertion(+)</code></pre>
+<p><code>main</code> avanza hasta el commit de la rama, sin crear ningún commit nuevo. Hazlo antes del paso 3: después ya no sería posible.</p>
+<p>Si sale <code>fatal: Not possible to fast-forward, aborting.</code>, <code>main</code> ha avanzado desde que preparaste el ejercicio. Pon la rama encima de <code>main</code> y repite el merge:</p>
+<div class="cmd"><pre><code>git switch git/e3-ff
+git rebase main
+git switch main
+git merge --ff-only git/e3-ff</code></pre></div>
 
 <h2 class="step"><span class="n">3</span>Fusiona <code>git/e3-noff</code> con commit de merge</h2>
-<div class="cmd"><pre><code>git merge --no-ff git/e3-noff</code></pre></div><p>Se abre VS Code con el mensaje del merge: déjalo tal cual y cierra la pestaña para guardarlo. Si no se abre VS Code, revisa <code>core.editor</code> en <a href="../../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a>.</p>
+<div class="cmd"><pre><code>git merge --no-ff --no-edit git/e3-noff</code></pre></div>
+<pre><code>Merge made by the 'ort' strategy.
+ fundamentos/git/e3/noff.txt | 1 +
+ 1 file changed, 1 insertion(+)</code></pre>
+<p><code>--no-ff</code> obliga a crear un commit de merge aunque se pudiera avanzar sin él, y <code>--no-edit</code> acepta el mensaje que propone git (<code>Merge branch 'git/e3-noff'</code>) sin abrir el editor.</p>
 
 <h2 class="step"><span class="n">4</span>Comprueba antes de subir</h2>
-<div class="cmd"><pre><code>git log --oneline --graph -5</code></pre></div>
-<p>El commit de <code>git/e3-ff</code> está en la línea de <code>main</code>, sin merge, y encima hay un commit de merge con dos padres que trae <code>git/e3-noff</code>.</p>
+<div class="cmd"><pre><code>git log --oneline --graph -4</code></pre></div>
+<p>Arriba, un commit de merge con dos líneas que se juntan: una trae el commit de <code>git/e3-noff</code> y la otra es la línea de <code>main</code>, donde está el commit de <code>git/e3-ff</code> sin merge propio. Compáralo con <a href="#que-entregas">Qué entregas</a>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>El commit de <code>git/e3-ff</code> entró mediante un merge.</li>
-<li><code>git/e3-noff</code> se integró sin commit de merge.</li>
-<li>Falta o cambió el contenido de alguna de las dos ramas.</li>
+<li>Falta el commit <code>feat(e3): rama para fast-forward</code> o el <code>feat(e3): rama para merge con commit</code>, o alguno aparece más de una vez: se copió (con <code>cherry-pick</code> o rehaciéndolo) en lugar de integrarse.</li>
+<li>El commit de <code>git/e3-ff</code> lo trajo un merge, o no está en la línea principal de <code>main</code>.</li>
+<li><code>git/e3-noff</code> no entró con un commit de merge: entró con fast-forward, o no se ha integrado.</li>
+<li>Falta <code>ff.txt</code> o <code>noff.txt</code>, o su contenido no es el que dejó <code>preparar.py</code>.</li>
+<li>La etiqueta no es anotada: se creó sin <code>-a</code>.</li>
+<li>La etiqueta se subió a GitHub, o se movió, después del cierre del plazo (05/11/2026, 23:59): sale «entregada fuera de plazo».</li>
 </ul>
 
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
-<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
-<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e3</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-git-e3</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. No cambia nada de tu repositorio. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e3</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e3</code></pre></div>
+<p>Antes de subir, un ejercicio bien hecho se ve así (tus SHA serán otros):</p>
+<pre><code>E3 · rama main, todavía sin etiqueta (provisional) · 7a8b9c0
+  ✓ superado
+  ! en GitHub main apunta a 6e7f8a9, no a tu 7a8b9c0: el corrector evaluará el de GitHub. Sube el tuyo (…)</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide. Antes de subir es normal ver «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …»: desaparece al subir en el paso siguiente. En ese aviso, el primer SHA es lo que tiene GitHub (lo último que subiste) y el segundo, tu commit.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni trabajo en <code>fundamentos/git/e3/</code> de <code>main</code>: falta preparar el ejercicio o hacer sus commits.</li>
+<li>Si al final sale <b>Aviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe GitHub: el autor de los commits de E1, el commit filtrado de E8 y la hora de las etiquetas</b>, en este ejercicio te afecta solo la hora de la etiqueta (el plazo). El corrector sí lo comprueba. Inicia sesión con <code>gh auth login</code> y repite.</li>
+</ul>
 
 <h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<p>Sube tu trabajo a GitHub:</p>
 <div class="cmd"><pre><code>git push</code></pre></div>
-<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E3 salga sin fallos, etiqueta:</p>
-<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e3 -m "E3 resuelto"
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b> de GitHub, crea la etiqueta anotada sobre <code>main</code> y súbela:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e3 main -m "E3 resuelto"
 git push origin entrega-fundamentos-git-e3</code></pre></div>
-<p class="note">Si después hubiera que corregir algo, se puede mover la etiqueta: lo verás en <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>. Cuenta la etiqueta tal como esté al cerrar el plazo.</p>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E3 · etiqueta entrega-fundamentos-git-e3 · 7a8b9c0
+  ✓ superado
+  ! el plazo cerró el 05/11/2026 a las 23:59: sin gh no sé a qué hora subiste la etiqueta; si fue después, el corrector la marcará fuera de plazo</code></pre>
+<p class="note"><b>Plazo.</b> Cerró el jueves 5 de noviembre de 2026 a las 23:59. El corrector mira a qué hora se subió a GitHub la etiqueta, o se movió por última vez: si fue después, la entrega sale <b>entregada fuera de plazo</b>. Con <code>gh</code>, <code>pruebas.py</code> lo marca con ✗; sin <code>gh</code>, solo avisa con !, como arriba. Una etiqueta creada en tu equipo y aún sin subir sale con ✗ «entregada fuera de plazo si la subes ahora».</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio: ✅ entregado y superado, ❌ entregado con fallos, ✏️ provisional (aún sin etiqueta) y · sin empezar. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<ul>
+<li><b>Falta integrar una rama</b>: haz su merge tal como en el paso 2 (<code>git/e3-ff</code>, con <code>--ff-only</code>) o en el 3 (<code>git/e3-noff</code>, con <code>--no-ff</code>) y súbelo con <code>git push</code>.</li>
+<li>No copies commits con <code>cherry-pick</code> ni los rehagas a mano: cada commit de las ramas tiene que aparecer una sola vez.</li>
+<li><b>Una rama entró de la forma equivocada y ya está subida</b> (por ejemplo, <code>git/e3-ff</code> con un merge): no reescribas <code>main</code>; pregunta al docente.</li>
+</ul>
+<p>Cuando <code>pruebas.py</code> vuelva a decir <b>✓ superado</b> sobre la rama, mueve la etiqueta al commit corregido: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Haz solo esto, sin tocar commits, si <code>pruebas.py</code> dice que la etiqueta no es anotada o que en GitHub apunta a otro commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e3 main -m "E3 resuelto"
+git push -f origin entrega-fundamentos-git-e3</code></pre></div>
+<p>Moverla cuenta como subirla de nuevo: si ya ha cerrado el plazo, la entrega pasa a estar fuera de plazo. Si <code>pruebas.py</code> dice «en GitHub ya existe entrega-fundamentos-git-e3 y no la tienes aquí», la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><a href="e2.html">← E2 · <code>.gitignore</code></a><a href="e4.html">E4 · Conflicto →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

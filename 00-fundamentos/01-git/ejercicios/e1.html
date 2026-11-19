@@ -16,49 +16,154 @@
 <dt>Teoría</dt><dd><a href="../temas/01-modelo-y-commits.html">Git 1 · Modelo y commits</a></dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/git/e1/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e1</code> sobre <code>main</code></dd>
+<dt>Plazo</dt><dd>Cerró el jueves 5 de noviembre de 2026 a las 23:59</dd>
 </dl>
 
+<h2 id="que-entregas">Qué entregas</h2>
+<p>En <code>main</code>, tres commits que tocan <code>fundamentos/git/e1/</code>, ni uno más:</p>
+<div class="tabla"><table><thead><tr><th>Commit</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td>1</td><td>Solo <code>fundamentos/git/e1/objetivo.md</code>.</td></tr>
+<tr><td>2</td><td>Solo <code>fundamentos/git/e1/herramientas.md</code>.</td></tr>
+<tr><td>3</td><td>Solo <code>fundamentos/git/e1/notas.md</code>.</td></tr>
+</tbody></table></div>
+<ul>
+<li>Los ficheros, tal como los deja <code>preparar.py</code>: no cambies su contenido.</li>
+<li>Cada mensaje sigue <a href="https://www.conventionalcommits.org/es/v1.0.0/">Conventional Commits</a>: <code>tipo(ámbito): descripción</code>.</li>
+<li>El autor de los tres es un correo que GitHub asocia a tu cuenta.</li>
+<li>Los tres subidos a GitHub y la etiqueta anotada <code>entrega-fundamentos-git-e1</code> sobre <code>main</code>, también subida.</li>
+</ul>
+<p>Así se ve una entrega correcta con <code>git log --oneline --stat -- fundamentos/git/e1</code> (tus SHA serán otros):</p>
+<pre><code>5d6e7f8 (HEAD -&gt; main, tag: entrega-fundamentos-git-e1, origin/main) docs(e1): notas del alcance
+ fundamentos/git/e1/notas.md | 3 +++
+ 1 file changed, 3 insertions(+)
+3c4d5e6 docs(e1): herramientas de la auditoría
+ fundamentos/git/e1/herramientas.md | 5 +++++
+ 1 file changed, 5 insertions(+)
+1a2b3c4 docs(e1): objetivo de la auditoría
+ fundamentos/git/e1/objetivo.md | 4 ++++
+ 1 file changed, 4 insertions(+)</code></pre>
+<p class="note"><b>Etiqueta E1 en cuanto esté bien.</b> El corrector cuenta <b>todos</b> los commits que hayan tocado <code>fundamentos/git/e1/</code> en la historia hasta la etiqueta, y hasta la punta de <code>main</code> mientras no la tengas: también los que hagas después, aunque deshagan algo. Un <code>git add .</code> en otro ejercicio que toque <code>e1/</code> deja E1 con cuatro commits y suspendido. Por eso, añade siempre los ficheros por su ruta y crea la etiqueta en el último paso, antes de empezar E2.</p>
+
 <h2 class="step"><span class="n">1</span>Comprueba tu identidad</h2>
+<p>Cada commit guarda el nombre y el correo con los que se creó, y no se cambian después sin reescribir la historia. Míralos <b>antes</b> de hacer ningún commit:</p>
 <div class="cmd"><pre><code>git config user.name
 git config user.email</code></pre></div>
-<p>El correo tiene que ser uno de los verificados en GitHub (<b>Settings → Emails</b>); el privado <code>…@users.noreply.github.com</code> también vale. Si no lo es, cámbialo <b>antes</b> de hacer commits, porque cada commit guarda el correo con el que se creó:</p>
-<div class="cmd"><pre><code>git config --global user.email "tu-correo-verificado"</code></pre></div>
+<pre><code>Ana García
+ana.garcia@ejemplo.com</code></pre>
+<p>El correo tiene que ser uno de los verificados en GitHub (<b>Settings → Emails</b>); el privado <code>…@users.noreply.github.com</code> de esa misma página también vale. Si sale vacío o es otro, cámbialo (con tus datos, entre comillas):</p>
+<div class="cmd"><pre><code>git config --global user.name "Tu Nombre"
+git config --global user.email "tu-correo-verificado@ejemplo.com"</code></pre></div>
+<p>Comprueba también que tienes sesión en el GitHub CLI: sin ella, <code>pruebas.py</code> no puede mirar si GitHub asocia tus commits a tu cuenta.</p>
+<div class="cmd"><pre><code>gh auth status</code></pre></div>
+<p>Debe decir <code>Logged in to github.com account &lt;tu-usuario&gt;</code>. Si no, inicia sesión con <code>gh auth login</code> (<a href="../../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a>).</p>
 
 <h2 class="step"><span class="n">2</span>Prepara el escenario</h2>
-<p>Desde tu repositorio, en <code>main</code> y sin cambios pendientes:</p>
+<p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material, vuelve a <code>main</code> y mira que no tengas nada a medias. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git -C ../documentacion-hacking-etico pull
+git switch main
+git status</code></pre></div>
+<p><code>git status</code> tiene que terminar en <code>nothing to commit, working tree clean</code>. Si lista ficheros, termina o descarta antes lo que tengas a medias: <code>preparar.py</code> no sigue con cambios pendientes. Después, crea el punto de partida:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e1</code></pre></div>
-<p>Deja tres ficheros sin versionar en <code>fundamentos/git/e1/</code>: <code>objetivo.md</code>, <code>herramientas.md</code> y <code>notas.md</code>. No cambies su contenido.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/preparar.py e1</code></pre></div>
+<pre><code>e1 preparado para &lt;tu-usuario&gt; en fundamentos/git/e1/. Sigue el enunciado.</code></pre>
+<p>Deja tres ficheros sin versionar en <code>fundamentos/git/e1/</code>. Míralos:</p>
+<div class="cmd"><pre><code>git status --short -uall</code></pre></div>
+<pre><code>?? fundamentos/git/e1/herramientas.md
+?? fundamentos/git/e1/notas.md
+?? fundamentos/git/e1/objetivo.md</code></pre>
+<p>No cambies su contenido: el corrector lo compara con el que te ha generado.</p>
+<p class="note"><b>Nunca <code>git add .</code> ni <code>git add -A</code> en la raíz del repositorio.</b> Añade cada fichero por su ruta, como en los pasos: un <code>git add .</code> mete en el commit lo de otros ejercicios y lo estropea.</p>
 
-<h2 class="step"><span class="n">3</span>Haz un commit por fichero</h2>
-<p>Cada commit lleva un solo fichero y un mensaje <a href="https://www.conventionalcommits.org/es/v1.0.0/">Conventional Commits</a>: <code>tipo(ámbito): descripción</code>, con tipo <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code> o <code>chore</code>.</p>
+<h2 class="step"><span class="n">3</span>Primer commit: <code>objetivo.md</code></h2>
+<p>Añade solo ese fichero y haz el commit. El mensaje sigue <code>tipo(ámbito): descripción</code>: el tipo es <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code> o <code>chore</code>; el ámbito, entre paréntesis, es opcional; después de los dos puntos va un espacio. Puedes usar estos mensajes u otros con ese formato.</p>
 <div class="cmd"><pre><code>git add fundamentos/git/e1/objetivo.md
 git commit -m "docs(e1): objetivo de la auditoría"</code></pre></div>
-<p>Repite con los otros dos ficheros, cada uno con su propio mensaje.</p>
+<pre><code>[main 1a2b3c4] docs(e1): objetivo de la auditoría
+ 1 file changed, 4 insertions(+)
+ create mode 100644 fundamentos/git/e1/objetivo.md</code></pre>
+<p>Tiene que decir <code>1 file changed</code>. El aviso <i>LF will be replaced by CRLF</i> no es un error: es <code>core.autocrlf</code> haciendo su trabajo.</p>
 
-<h2 class="step"><span class="n">4</span>Comprueba antes de subir</h2>
-<div class="cmd"><pre><code>git log --oneline --stat -- fundamentos/git/e1</code></pre></div>
-<p>Tres commits y un fichero en cada uno.</p>
+<h2 class="step"><span class="n">4</span>Segundo commit: <code>herramientas.md</code></h2>
+<div class="cmd"><pre><code>git add fundamentos/git/e1/herramientas.md
+git commit -m "docs(e1): herramientas de la auditoría"</code></pre></div>
+<p>Otra vez <code>1 file changed</code>.</p>
+
+<h2 class="step"><span class="n">5</span>Tercer commit: <code>notas.md</code></h2>
+<div class="cmd"><pre><code>git add fundamentos/git/e1/notas.md
+git commit -m "docs(e1): notas del alcance"</code></pre></div>
+<p>Otra vez <code>1 file changed</code>.</p>
+
+<h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
+<div class="cmd"><pre><code>git status --short -uall fundamentos/git/e1
+git log --oneline --stat -- fundamentos/git/e1</code></pre></div>
+<p>La primera orden no muestra nada: no queda nada de <code>e1/</code> sin commit. La segunda muestra tres commits, cada uno con <code>1 file changed</code>, como en <a href="#que-entregas">Qué entregas</a>.</p>
+<p>Si un commit ha salido mal y <b>todavía no has hecho <code>git push</code></b>, deshazlo y repite el paso: <code>git reset HEAD~1</code> quita el último commit y deja su fichero sin añadir, con el contenido intacto.</p>
+<div class="cmd"><pre><code>git reset HEAD~1</code></pre></div>
+<p>Si ya lo has subido, no lo arregles con más commits: cada uno cuenta. Pregunta al docente.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
-<li>No hay exactamente tres commits en <code>e1/</code>, o alguno cambia más de un fichero.</li>
-<li>Algún mensaje no sigue Conventional Commits.</li>
+<li>En la historia hay más o menos de tres commits que toquen <code>fundamentos/git/e1/</code>. Cuentan todos hasta la etiqueta, también los que deshacen algo o vienen de otro ejercicio.</li>
+<li>Alguno de esos commits cambia más de un fichero, o un fichero que no es uno de los tres de <code>e1/</code>.</li>
+<li>Alguno de los tres ficheros no tiene commit.</li>
+<li>Algún mensaje no sigue Conventional Commits con tipo <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code> o <code>chore</code>.</li>
+<li>Falta alguno de los tres ficheros o su contenido no es el que dejó <code>preparar.py</code> (no cuentan los espacios ni las líneas en blanco).</li>
+<li>Alguno de los commits no está en GitHub.</li>
 <li>GitHub no asocia el correo del autor a tu cuenta.</li>
-<li>Has cambiado el contenido de los ficheros.</li>
+<li>La etiqueta no es anotada: se creó sin <code>-a</code>.</li>
+<li>La etiqueta se subió a GitHub, o se movió, después del cierre del plazo (05/11/2026, 23:59): sale «entregada fuera de plazo».</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
-<p>Antes de subir, pasa las mismas comprobaciones que el corrector. Se evalúa lo que ya está en commits: la etiqueta si existe y, si no, la rama del ejercicio.</p>
-<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Lo que depende de GitHub (el autor de los commits de E1 y el commit filtrado de E8) lo comprueba con tu sesión del GitHub CLI; sin ella, lo salta y avisa.</p>
+<h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
+<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-git-e1</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. No cambia nada de tu repositorio. Desde la carpeta de tu repositorio:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
+<p>Antes de subir, un ejercicio bien hecho se ve así (tus SHA serán otros):</p>
+<pre><code>E1 · rama main, todavía sin etiqueta (provisional) · 5d6e7f8
+  ✓ superado
+  ! en GitHub main apunta a 0f9e8d7, no a tu 5d6e7f8: el corrector evaluará el de GitHub. Sube el tuyo (…)</code></pre>
+<ul>
+<li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide. Antes de subir es normal ver «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …»: desaparece al subir en el paso siguiente. En ese aviso, el primer SHA es lo que tiene GitHub (lo último que subiste) y el segundo, tu commit.</li>
+<li><b>sin empezar</b>: no hay etiqueta ni trabajo en <code>fundamentos/git/e1/</code> de <code>main</code>: falta preparar el ejercicio o hacer sus commits.</li>
+<li>En E1, con sesión en <code>gh</code>, antes de subir salen además tres ✗ «… no está en GitHub: súbelo con git push…», uno por commit: GitHub aún no los tiene y no puede decir de quién son. Es lo esperado: desaparecen al subir en el paso siguiente.</li>
+<li>Si al final sale <b>Aviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe GitHub: el autor de los commits de E1, el commit filtrado de E8 y la hora de las etiquetas</b>, en este ejercicio te afecta el autor de tus commits (y si están en GitHub) y la hora de la etiqueta. El corrector sí lo comprueba. Inicia sesión con <code>gh auth login</code> y repite.</li>
+</ul>
 
-<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
+<p>Sube tu trabajo a GitHub:</p>
 <div class="cmd"><pre><code>git push</code></pre></div>
-<p>En GitHub, cada uno de tus tres commits debe mostrar tu avatar y tu usuario. Si sale solo un nombre en gris, GitHub no ha asociado el correo a tu cuenta.</p>
-<p>En la portada de tu repositorio en GitHub, pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección: si has subido commits después, el último aún no tiene símbolo hasta la siguiente corrección. Cuando la fila de E1 salga sin fallos, etiqueta:</p>
-<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e1 -m "E1 resuelto"
+<p>Mira en GitHub que los tres commits son tuyos: abre <code>https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;/commits/main</code>. Cada uno debe mostrar tu avatar y tu usuario. Si sale solo un nombre en gris, GitHub no asocia ese correo a tu cuenta: verifícalo en <b>Settings → Emails</b> o pregunta al docente.</p>
+<p>Vuelve a lanzar <code>pruebas.py</code> (paso anterior). Cuando diga <b>✓ superado</b> y no quede ningún aviso <b>!</b> de GitHub, crea la etiqueta anotada sobre <code>main</code> y súbela:</p>
+<div class="cmd"><pre><code>git tag -a entrega-fundamentos-git-e1 main -m "E1 resuelto"
 git push origin entrega-fundamentos-git-e1</code></pre></div>
-<p class="note">Si después hubiera que corregir algo, se puede mover la etiqueta: lo verás en <a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>. Cuenta la etiqueta tal como esté al cerrar el plazo.</p>
+<p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
+<pre><code>E1 · etiqueta entrega-fundamentos-git-e1 · 5d6e7f8
+  ✓ superado
+  ! el plazo cerró el 05/11/2026 a las 23:59: sin gh no sé a qué hora subiste la etiqueta; si fue después, el corrector la marcará fuera de plazo</code></pre>
+<p class="note"><b>Plazo.</b> Cerró el jueves 5 de noviembre de 2026 a las 23:59. El corrector mira a qué hora se subió a GitHub la etiqueta, o se movió por última vez: si fue después, la entrega sale <b>entregada fuera de plazo</b>. Con <code>gh</code>, <code>pruebas.py</code> lo marca con ✗; sin <code>gh</code>, solo avisa con !, como arriba. Una etiqueta creada en tu equipo y aún sin subir sale con ✗ «entregada fuera de plazo si la subes ahora».</p>
+<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio: ✅ entregado y superado, ❌ entregado con fallos, ✏️ provisional (aún sin etiqueta) y · sin empezar. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
+<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>En E1 no se corrige con commits nuevos: cualquier commit más que toque <code>fundamentos/git/e1/</code>, aunque deshaga algo, hace cuatro y suspende. Depende de si ya has subido los commits:</p>
+<ul>
+<li><b>Aún no has hecho <code>git push</code> y el fallo está en el último commit</b> (su mensaje o su autor): rehazlo en el sitio con <code>--amend</code>, que lo sustituye en lugar de añadir otro. Para el mensaje:
+<div class="cmd"><pre><code>git commit --amend -m "docs(e1): notas del alcance"</code></pre></div>
+Para el autor, después de corregir <code>user.email</code> (paso 1):
+<div class="cmd"><pre><code>git commit --amend --reset-author --no-edit</code></pre></div></li>
+<li><b>Aún no has hecho <code>git push</code> y el fallo está en un commit anterior</b>: deshaz los commits de E1 con <code>git reset</code> (quita commits y deja los ficheros sin añadir, con su contenido intacto) y repite desde el paso 3. Con los tres commits de E1 en lo alto de <code>main</code>:
+<div class="cmd"><pre><code>git reset HEAD~3</code></pre></div></li>
+<li><b>Ya los has subido</b> (si etiquetaste siguiendo los pasos, es tu caso): no reescribas <code>main</code> ni añadas commits; pregunta al docente.</li>
+</ul>
+<p>Después sube con <code>git push</code> y lanza <code>pruebas.py</code>.</p>
+<p>Cuando <code>pruebas.py</code> vuelva a decir <b>✓ superado</b> sobre la rama, mueve la etiqueta al commit corregido: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Haz solo esto, sin tocar commits, si <code>pruebas.py</code> dice que la etiqueta no es anotada o que en GitHub apunta a otro commit:</p>
+<div class="cmd"><pre><code>git tag -fa entrega-fundamentos-git-e1 main -m "E1 resuelto"
+git push -f origin entrega-fundamentos-git-e1</code></pre></div>
+<p>Moverla cuenta como subirla de nuevo: si ya ha cerrado el plazo, la entrega pasa a estar fuera de plazo. Si <code>pruebas.py</code> dice «en GitHub ya existe entrega-fundamentos-git-e1 y no la tienes aquí», la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de git"><span></span><a href="e2.html">E2 · <code>.gitignore</code> →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
