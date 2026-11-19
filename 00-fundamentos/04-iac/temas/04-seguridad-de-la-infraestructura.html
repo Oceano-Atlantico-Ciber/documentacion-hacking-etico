@@ -71,7 +71,7 @@ aws iam simulate-principal-policy --policy-source-arn arn:aws:iam::000000000000:
             …
         },
         …</code></pre>
-<p>Para guardar la respuesta como prueba, añade al final de la orden <code>| Out-File -Encoding utf8 simulacion.json</code> en PowerShell (con <code>&gt;</code>, Windows lo guardaría en UTF-16) o <code>&gt; simulacion.json</code> en macOS y Linux: no sale nada en pantalla y el JSON queda en el fichero. Cada acción sale con su <code>EvalDecision</code>: <code>allowed</code>, <code>implicitDeny</code> o <code>explicitDeny</code>. Un <code>allowed</code> en <code>iam:PutUserPolicy</code> sobre el propio usuario es la prueba del riesgo, sin haber cambiado nada en la cuenta. Así se trabaja en una auditoría: se demuestra con la mínima intervención y se documenta.</p>
+<p>Para guardar la respuesta como prueba, añade al final de la orden <code>&gt; simulacion.json</code>: no sale nada en pantalla y el JSON queda en el fichero. Cada acción sale con su <code>EvalDecision</code>: <code>allowed</code>, <code>implicitDeny</code> o <code>explicitDeny</code>. Un <code>allowed</code> en <code>iam:PutUserPolicy</code> sobre el propio usuario es la prueba del riesgo, sin haber cambiado nada en la cuenta. Así se trabaja en una auditoría: se demuestra con la mínima intervención y se documenta.</p>
 <p class="note">Usar la clave de otra persona, aunque la encuentres publicada, es acceder con una identidad que no es tuya. En un encargo real solo se hace si el <a href="../../../01-hacking-etico/02-permisos-y-alcance/temas/02-autorizacion-y-alcance.html">alcance</a> lo permite por escrito. En esta unidad no hace falta: la simulación basta.</p>
 </section>
 

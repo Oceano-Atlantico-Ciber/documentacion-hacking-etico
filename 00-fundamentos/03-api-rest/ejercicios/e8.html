@@ -99,7 +99,7 @@ Content-Type: application/problem+json
 ```</code></pre>
 <p>Para no pegar tokens en las órdenes, guárdalos antes en variables de la terminal, sacándolos de tu <code>usuarios.json</code>. Desde <code>fundamentos/api/e8/</code>, en la pestaña donde vayas a lanzar los <code>curl</code>:</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>$u = Get-Content go/usuarios.json -Raw -Encoding UTF8 | ConvertFrom-Json
+<div class="cmd"><pre><code>$u = Get-Content go/usuarios.json -Raw | ConvertFrom-Json
 $LUCIA = ($u.usuarios | Where-Object usuario -eq lucia).token
 $ADMIN = ($u.usuarios | Where-Object usuario -eq admin).token
 $LUCIA</code></pre></div>

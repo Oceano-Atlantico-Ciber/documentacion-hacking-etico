@@ -154,8 +154,7 @@ Content-Length: 98
 <ul>
 <li>La <b>primera línea</b> de la petición dice qué quieres (<code>GET</code>, leer) y sobre qué (<code>/api/v1/incidencias/7</code>). La de la respuesta, cómo ha ido: <code>200 OK</code>.</li>
 <li>Después van las <b>cabeceras</b>, una por línea con la forma <code>Nombre: valor</code>: datos sobre el mensaje.</li>
-<li>Una <b>línea en blanco</b> separa las cabeceras del <b>cuerpo</b>, los datos. <code>Content-Length</code> dice cuántos bytes ocupa, para que quien lee sepa dónde acaba.</li>
-<li>Cada línea termina en dos caracteres, <code>\r\n</code> (CRLF). Lo verás al escribir peticiones a mano en el E1.</li>
+<li>Una <b>línea en blanco</b> separa las cabeceras del <b>cuerpo</b>, los datos. <code>Content-Length</code> dice cuánto ocupa el cuerpo, para que quien lee sepa dónde acaba.</li>
 </ul>
 <p>Con <b>HTTPS</b> el texto es el mismo, pero viaja cifrado. El cifrado protege el viaje; lo que se envía lo sigue decidiendo el cliente.</p>
 </section>
@@ -382,7 +381,7 @@ Location: /api/v1/incidencias/13</span>
 <div class="tabla"><table><thead><tr><th>Cabecera</th><th>Va en</th><th>Para qué sirve</th></tr></thead><tbody>
 <tr><td><code>Host</code></td><td>Petición</td><td>A qué máquina va. Un mismo servidor puede atender varias.</td></tr>
 <tr><td><code>Content-Type</code></td><td>Las dos</td><td>Formato del cuerpo. En APIs, <code>application/json</code>.</td></tr>
-<tr><td><code>Content-Length</code></td><td>Las dos</td><td>Cuántos bytes ocupa el cuerpo.</td></tr>
+<tr><td><code>Content-Length</code></td><td>Las dos</td><td>Cuánto ocupa el cuerpo.</td></tr>
 <tr><td><code>Accept</code></td><td>Petición</td><td>Qué formatos entiende el cliente.</td></tr>
 <tr><td><code>Authorization</code></td><td>Petición</td><td>Quién eres: un token. Cada petición lo lleva, porque el servidor no recuerda.</td></tr>
 <tr><td><code>Location</code></td><td>Respuesta</td><td>Dónde está el recurso recién creado.</td></tr>
@@ -441,13 +440,13 @@ Location: /api/v1/incidencias/13</span>
 <pre><code id="c-orden"></code></pre>
 <ul class="ordenes" id="c-piezas"></ul>
 </div>
-<p class="note">En las dos terminales, todo lo que lleve espacios, comillas dobles, <code>?</code> o <code>&amp;</code> va entre <b>comillas simples</b>: así la terminal no lo interpreta. En macOS y Linux eso basta para el JSON, <code>'{"prioridad": "alta"}'</code>: las simples protegen a las dobles. Windows PowerShell, en cambio, quita las comillas dobles de dentro al pasarle el texto a <code>curl.exe</code>, y la API recibiría <code>{prioridad: alta}</code>, que no es JSON. Por eso en Windows el cuerpo se escribe antes en un fichero con <code>New-Item</code> (en UTF-8, como lo espera la API) y <code>curl.exe</code> lo manda con <code>--data-binary "@cuerpo.json"</code>.</p>
+<p class="note">En las dos terminales, todo lo que lleve espacios, comillas dobles, <code>?</code> o <code>&amp;</code> va entre <b>comillas simples</b>: así la terminal no lo interpreta. En macOS y Linux eso basta para el JSON, <code>'{"prioridad": "alta"}'</code>: las simples protegen a las dobles. Windows PowerShell, en cambio, quita las comillas dobles de dentro al pasarle el texto a <code>curl.exe</code>, y la API recibiría <code>{prioridad: alta}</code>, que no es JSON. Por eso en Windows el cuerpo se escribe antes en un fichero con <code>New-Item</code> y <code>curl.exe</code> lo manda con <code>--data-binary "@cuerpo.json"</code>.</p>
 <p>Si la respuesta es un JSON largo, cambia <code>-i</code> por <code>-s</code> (solo el cuerpo, sin cabeceras) y pásala a un programa que la imprima ordenada:</p>
 <p class="so">Windows · PowerShell</p>
 <pre><code>curl.exe -s http://localhost:8080/api/v1/incidencias | ConvertFrom-Json | ConvertTo-Json -Depth 5</code></pre>
 <p class="so">macOS / Linux · Terminal</p>
 <pre><code>curl -s http://localhost:8080/api/v1/incidencias | python3 -m json.tool</code></pre>
-<p>En PowerShell, si las tildes salen mal, ejecuta antes <code>[Console]::OutputEncoding = [Text.Encoding]::UTF8</code> en esa ventana.</p>
+<p>En PowerShell, con esta orden alguna tilde puede salir con símbolos raros: es solo cómo la pinta la terminal, los datos de la API están bien.</p>
 </section>
 
 <section class="seccion">
@@ -771,7 +770,7 @@ Location: /api/v1/incidencias/13</span>
     piezas.push([comillas(url), "la URL, entre comillas simples"]);
     if (conCuerpo) piezas.push(
       [cabecera.trim(), "una cabecera: avisa de que el cuerpo es JSON. -H se repite una vez por cabecera"],
-      ["New-Item cuerpo.json -Force -Value '…'", "solo en PowerShell: escribe el cuerpo en el fichero cuerpo.json, en UTF-8; -Force lo sobrescribe si ya existe"],
+      ["New-Item cuerpo.json -Force -Value '…'", "solo en PowerShell: escribe el cuerpo en el fichero cuerpo.json; -Force lo sobrescribe si ya existe"],
       ['--data-binary "@cuerpo.json"', "solo en PowerShell: manda como cuerpo el contenido del fichero, tal cual"],
       [`--data ${comillas(cCuerpo.value)}`, "en macOS y Linux: el cuerpo, escrito en la propia orden. En los dos casos curl calcula Content-Length por ti"],
     );

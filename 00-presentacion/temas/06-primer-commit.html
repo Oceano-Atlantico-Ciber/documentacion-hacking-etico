@@ -36,7 +36,7 @@ cd entregas-&lt;tu-usuario&gt;</code></pre></li>
 <li>Crea <code>fundamentos/puesto.txt</code> con la versión de tus herramientas:
 <p class="so">Windows · PowerShell</p>
 <pre><code>mkdir fundamentos
-(git --version), (py --version), (docker compose version) | Set-Content -Encoding utf8 fundamentos/puesto.txt
+(git --version), (py --version), (docker compose version) | Set-Content fundamentos/puesto.txt
 code fundamentos/puesto.txt</code></pre>
 <p class="so">macOS / Linux · Terminal</p>
 <pre><code>mkdir fundamentos
@@ -47,7 +47,7 @@ En VS Code, añade al final la respuesta de tu IA a «qué es un escaneo de puer
 <pre><code>git add .gitignore fundamentos/puesto.txt
 git commit -m "chore: puesto de trabajo listo"
 git push</code></pre>
-<code>git add</code> puede avisar <i>LF will be replaced by CRLF</i>: es <code>core.autocrlf</code> haciendo su trabajo, no un error. Qué hace cada orden se explica en <a href="../../00-fundamentos/01-git/temas/01-modelo-y-commits.html">Git 1</a>.</li>
+Si <code>git add</code> avisa <i>LF will be replaced by CRLF</i>, no es un error: puedes ignorarlo. Qué hace cada orden se explica en <a href="../../00-fundamentos/01-git/temas/01-modelo-y-commits.html">Git 1</a>.</li>
 </ol>
 <p>Si ya tenías tu repositorio clonado en otra carpeta, haz solo lo que te falte: el clon del material al lado de tu repositorio y el <code>.gitignore</code> en la raíz.</p>
 </section>

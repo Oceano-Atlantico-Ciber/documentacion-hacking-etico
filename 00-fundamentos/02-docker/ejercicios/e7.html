@@ -64,7 +64,7 @@ code docker-compose.yml</code></pre></div>
 <h2 class="step"><span class="n">3</span>La contraseña, en .env</h2>
 <p>Crea <code>.env.ejemplo</code> con la variable vacía, cópialo a <code>.env</code> y abre <code>.env</code>:</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>Set-Content -Encoding ascii .env.ejemplo 'POSTGRES_PASSWORD='
+<div class="cmd"><pre><code>Set-Content .env.ejemplo 'POSTGRES_PASSWORD='
 Copy-Item .env.ejemplo .env
 code .env</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>

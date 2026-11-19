@@ -67,7 +67,7 @@ tar -xOf $capa.FullName app/api.key</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>capa=$(for c in capas/blobs/sha256/*; do tar -tf "$c" 2&gt;/dev/null | grep -qx 'app/api.key' &amp;&amp; echo "$c"; done | head -n 1)
 tar -xOf "$capa" app/api.key</code></pre></div>
-<p>Sale una línea como <code>oa-</code> seguido de 32 caracteres hexadecimales: es la clave. <code>e4.tar</code> y <code>capas/</code> no se suben: el <code>.gitignore</code> de la carpeta ya los excluye.</p>
+<p>Sale una línea como <code>oa-</code> seguido de 32 letras y números: es la clave. <code>e4.tar</code> y <code>capas/</code> no se suben: el <code>.gitignore</code> de la carpeta ya los excluye.</p>
 
 <h2 class="step"><span class="n">4</span>Redacta el hallazgo sin filtrar la clave</h2>
 <div class="cmd"><pre><code>code hallazgo.txt</code></pre></div>
@@ -76,10 +76,10 @@ tar -xOf "$capa" app/api.key</code></pre></div>
 <h2 class="step"><span class="n">5</span>Reconstruye sin el secreto</h2>
 <p>Guarda la clave que encontraste en <code>api.key</code>, en la carpeta del ejercicio. Tu <code>.gitignore</code> excluye <code>*.key</code>, así que no se subirá:</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>tar -xOf $capa.FullName app/api.key | Set-Content -Encoding ascii api.key</code></pre></div>
+<div class="cmd"><pre><code>tar -xOf $capa.FullName app/api.key | Set-Content api.key</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>tar -xOf "$capa" app/api.key &gt; api.key</code></pre></div>
-<p class="note">En Windows PowerShell, <code>&gt;</code> guarda en UTF-16 y <code>informe.py</code> no podría leer la clave: por eso se usa <code>Set-Content -Encoding ascii</code>. Si has cerrado la ventana desde el paso 3, vuelve a lanzar la línea que guarda <code>$capa</code>.</p>
+<p class="note">Si has cerrado la ventana desde el paso 3, vuelve a lanzar la línea que guarda <code>$capa</code>.</p>
 <p>Después cambia el <code>Dockerfile</code> con <code>code Dockerfile</code>: quita <code>COPY api.key .</code> y el <code>rm</code>, y haz que la línea <code>RUN</code> que ejecuta <code>informe.py --comprobar</code> monte el secreto con id <code>api</code>, que dentro de la construcción aparece en <code>/run/secrets/api</code>. Cómo, en <a href="../temas/02-construir-imagenes.html">Docker 2 · Un secreto en una capa</a>. Escribe también el <code>.dockerignore</code>:</p>
 <div class="cmd"><pre><code>code .dockerignore</code></pre></div>
 <p>Con tres líneas: <code>api.key</code>, <code>*.tar</code> y <code>capas/</code>. Construye sin caché, para ver la salida de cada paso:</p>
