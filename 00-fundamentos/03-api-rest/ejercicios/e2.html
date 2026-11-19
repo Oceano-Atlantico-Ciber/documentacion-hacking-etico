@@ -23,7 +23,7 @@
 <h2>Qué entregas</h2>
 <p>Un solo fichero: <code>fundamentos/api/e2/contrato.yaml</code>, el contrato OpenAPI 3 que te deja <code>preparar.py</code>, completado con <b>todas</b> las rutas que piden los nueve requisitos. <code>requisitos.md</code> se queda como está. No hay que programar nada.</p>
 
-<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<h2 class="step" id="paso-1"><span class="n">1</span>Prepara el escenario</h2>
 <p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
@@ -40,7 +40,7 @@ cd fundamentos/api/e2</code></pre></div>
 <li><code>estado</code>: <code>abierta</code>, <code>en-curso</code> o <code>cerrada</code>.</li>
 </ul>
 
-<h2 class="step"><span class="n">2</span>Lee los requisitos como recursos</h2>
+<h2 class="step" id="paso-2"><span class="n">2</span>Lee los requisitos como recursos</h2>
 <p>Antes de escribir, haz en un papel una tabla con una fila por requisito: qué <b>método</b> sobre qué <b>ruta</b> lo cumple. Primero, qué <b>recursos</b> hay (cosas con datos propios) y cuál cuelga de cuál. Los verbos de los requisitos («cerrar», «borrar las duplicadas») no van en las rutas: cerrar es cambiar el estado. Las dos primeras filas, para que veas la forma:</p>
 <div class="tabla"><table><thead><tr><th>Requisito</th><th>Método y ruta</th><th>Responde bien</th></tr></thead><tbody>
 <tr><td>1. Ver todas las incidencias</td><td><code>GET /api/v1/incidencias</code></td><td><code>200</code> con la lista</td></tr>
@@ -48,7 +48,7 @@ cd fundamentos/api/e2</code></pre></div>
 <tr><td>3 a 9</td><td colspan="2">Las completas tú.</td></tr>
 </tbody></table></div>
 
-<h2 class="step"><span class="n">3</span>Completa el contrato</h2>
+<h2 class="step" id="paso-3"><span class="n">3</span>Completa el contrato</h2>
 <div class="cmd"><pre><code>code contrato.yaml</code></pre></div>
 <p>Escribe debajo de <code># Escribe aquí el resto de rutas.</code> y completa los esquemas. Tiene que quedar:</p>
 <ul>
@@ -73,7 +73,7 @@ cd fundamentos/api/e2</code></pre></div>
           description: No existe ninguna incidencia con ese id</code></pre>
 <p>Pega el fichero en <a href="https://editor.swagger.io/">editor.swagger.io</a> para ver que no tiene errores de formato y cómo queda como documentación.</p>
 
-<h2 class="step"><span class="n">4</span>Compruébalo</h2>
+<h2 class="step" id="paso-4"><span class="n">4</span>Compruébalo</h2>
 <p>Las pruebas del E2 leen tu contrato y aplican las reglas de diseño. Necesitan la librería PyYAML; la primera orden solo hace falta una vez. Las pruebas se lanzan desde la raíz de tu repositorio, no desde <code>e2/</code>:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py -m pip install pyyaml
@@ -96,7 +96,7 @@ python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/pla
 </ul>
 <p class="note">A partir del E3 se programa el contrato de referencia del curso, el mismo para todos, para que el corrector pueda probar todas las APIs igual. Compáralo con el tuyo cuando lo recibas: si has seguido las reglas, se parecerán mucho.</p>
 
-<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
+<h2 class="step" id="paso-5"><span class="n">5</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add .
 git commit -m "feat(api-e2): contrato de la API de incidencias"
 git push

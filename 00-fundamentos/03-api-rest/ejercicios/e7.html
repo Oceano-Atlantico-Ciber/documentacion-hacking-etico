@@ -28,7 +28,7 @@
 </tbody></table></div>
 <p><code>casos.txt</code> y <code>diferencias.md</code> se suben tal cual.</p>
 
-<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<h2 class="step" id="paso-1"><span class="n">1</span>Prepara el escenario</h2>
 <p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
@@ -48,7 +48,7 @@ docker run -d --rm --name e7-python -p 8002:8000 api-e7-python
 docker run -d --rm --name e7-node -p 8003:8000 api-e7-node</code></pre></div>
 <p>Cada vez que cambies código, <code>docker stop e7-go e7-python e7-node</code> y otra vez las órdenes <code>docker build</code> y <code>docker run</code>.</p>
 
-<h2 class="step"><span class="n">2</span>Pagina y filtra</h2>
+<h2 class="step" id="paso-2"><span class="n">2</span>Pagina y filtra</h2>
 <ul>
 <li><code>GET /api/v1/incidencias</code> devuelve como mucho <code>limit</code> incidencias: 20 si no se dice, entre 1 y 100 si se dice.</li>
 <li><code>siguiente</code> es el id de la última devuelta, en texto, si quedan más; <code>null</code> si no. Con <code>?cursor=&lt;ese id&gt;</code> se piden las de id mayor.</li>
@@ -56,7 +56,7 @@ docker run -d --rm --name e7-node -p 8003:8000 api-e7-node</code></pre></div>
 <li>Un <code>limit</code> fuera de rango o que no es un número, un <code>cursor</code> que no es un id, o un estado o prioridad que no existen: <code>400</code> en <code>problem+json</code>.</li>
 </ul>
 
-<h2 class="step"><span class="n">3</span>Versiones con ETag</h2>
+<h2 class="step" id="paso-3"><span class="n">3</span>Versiones con ETag</h2>
 <ul>
 <li>Cada incidencia tiene una versión que empieza en 1 y sube con cada <code>PUT</code> o <code>PATCH</code>. Su <code>ETag</code> es ese número entre comillas: <code>"1"</code>, <code>"2"</code>…</li>
 <li><code>GET</code> de una incidencia, <code>POST</code>, <code>PUT</code> y <code>PATCH</code> devuelven la cabecera <code>ETag</code>.</li>
@@ -64,7 +64,7 @@ docker run -d --rm --name e7-node -p 8003:8000 api-e7-node</code></pre></div>
 <li><code>PUT</code>, <code>PATCH</code> o <code>DELETE</code> con <code>If-Match</code> distinto del actual: <code>412</code> en <code>problem+json</code>, y no se cambia nada.</li>
 </ul>
 
-<h2 class="step"><span class="n">4</span>Reprodúcelo con dos terminales</h2>
+<h2 class="step" id="paso-4"><span class="n">4</span>Reprodúcelo con dos terminales</h2>
 <p>Usa una de tus APIs arrancada con los datos recién cargados (aquí la de Go, en el 8001: si ya la has usado, reiníciala con <code>docker stop e7-go</code> y su <code>docker run</code>). Abre dos pestañas de la terminal en <code>fundamentos/api/e7/</code>, una por técnico.</p>
 <p>En cualquiera de las dos, prepara tres ficheros de una línea: los dos cuerpos y la cabecera con la versión que las dos leyeron. La cabecera va en un fichero porque Windows PowerShell quitaría las comillas de <code>"1"</code>, y el <code>ETag</code> las lleva; así la orden es la misma en todos los sistemas.</p>
 <p class="so">Windows · PowerShell</p>
@@ -116,19 +116,13 @@ ETag: "1"
 ## Pestaña 1: la cierra con If-Match
 …</code></pre>
 
-<h2 class="step"><span class="n">5</span>Pruébalo en las tres</h2>
+<h2 class="step" id="paso-5"><span class="n">5</span>Pruébalo en las tres</h2>
 <p>Desde <code>fundamentos/api/e7/</code>, con los tres contenedores recién arrancados:</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>py go/pruebas.py e7 http://localhost:8001
-py python/pruebas.py e7 http://localhost:8002
-py node/pruebas.py e7 http://localhost:8003
-py go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
+<div class="cmd"><pre><code>py go/pruebas.py e7 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<div class="cmd"><pre><code>python3 go/pruebas.py e7 http://localhost:8001
-python3 python/pruebas.py e7 http://localhost:8002
-python3 node/pruebas.py e7 http://localhost:8003
-python3 go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
-<p>Las cuatro terminan en <code>0 mal</code>. Reinicia los contenedores antes de la última, porque las pruebas cambian datos: <code>docker stop e7-go e7-python e7-node</code> y sus tres <code>docker run</code> del paso 1.</p>
+<div class="cmd"><pre><code>python3 go/pruebas.py e7 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
+<p>Es lo mismo que hace el corrector: pasa a cada API sus pruebas y, después, compara las tres; al final, «Qué arreglar» agrupa los fallos por causa, con el arreglo, la orden para repetirlo y el paso de este enunciado. Las pruebas cambian datos: reinicia los contenedores (<code>docker stop e7-go e7-python e7-node</code> y sus tres <code>docker run</code> del paso 1) antes de cada pasada. Está listo cuando termina en <code>0 mal</code>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Recorrer la lista con <code>limit</code> y <code>cursor</code> pierde o repite incidencias, o los filtros traen de más o de menos.</li>
@@ -138,7 +132,7 @@ python3 go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://loca
 <li><code>escenario.md</code> no tiene las dos peticiones, sus respuestas y la explicación.</li>
 </ul>
 
-<h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
+<h2 class="step" id="paso-6"><span class="n">6</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add .
 git commit -m "feat(api-e7): paginación, filtros, ETag e If-Match"
 git push
