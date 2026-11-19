@@ -15,10 +15,9 @@
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/04-seguridad.html">API 4 · Seguridad</a></dd>
 <dt>Aprendes</dt><dd>A responder con HTTP las preguntas que una API se tiene que hacer: quién eres, si es tuyo, si puedes y cuántas veces.</dd>
-<dt>Buena práctica</dt><dd>OWASP API Security Top 10: API1, API2, API3, API4 y API5.</dd>
+<dt>Buena práctica</dt><dd>OWASP API Security Top 10: API1, API2, API3, API4, API5 y API8.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/api/e8/</code>, con sus tres carpetas de lenguaje</dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e8</code> sobre <code>main</code></dd>
-<dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
 <h2>Qué entregas</h2>
@@ -70,10 +69,20 @@ docker run -d --rm --name e8-node -p 8003:8000 api-e8-node</code></pre></div>
 <li>Tras cinco claves erróneas para un mismo usuario en un minuto, <code>/api/v1/sesiones</code> responde <code>429</code> con <code>Retry-After</code> en segundos a ese usuario, aunque la clave sea buena, hasta que pase el minuto.</li>
 <li>Ninguna respuesta lleva <code>X-Powered-By</code> ni un <code>Server</code> que diga el lenguaje o el framework.</li>
 </ul>
+<p class="note">En Python, la cabecera <code>server: uvicorn</code> no la pone tu código, sino uvicorn, el servidor que lo arranca; por eso no se quita desde FastAPI. Uvicorn tiene una opción para no enviarla: búscala en <a href="../temas/04-seguridad.html">API 4</a> y ponla en el <code>ENTRYPOINT</code> del <code>Dockerfile</code>, y también en la orden con la que la arrancas en tu equipo si pruebas ahí. En Node, <code>X-Powered-By: Express</code> sí se quita desde el código.</p>
 
 <h2 class="step"><span class="n">5</span>Documenta los controles</h2>
 <div class="cmd"><pre><code>code controles.md</code></pre></div>
-<p>Un apartado <code>##</code> por control (autenticación, BOLA, asignación masiva, BFLA, límite de intentos y huella de la tecnología) con las cuatro preguntas de <a href="../../../01-hacking-etico/03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html">Documentar una vulnerabilidad</a>: dónde estaría el fallo, cuál sería, qué permitiría y cómo lo impide tu código, con la orden <code>curl</code> que lo demuestra (<code>curl.exe</code> si trabajas en Windows), lo que responde y su CWE. Estos cuatro CWE tienen que aparecer, cada uno en su control: <code>CWE-639</code> (BOLA), <code>CWE-915</code> (asignación masiva), <code>CWE-285</code> (BFLA) y <code>CWE-307</code> (límite de intentos). Un apartado completo:</p>
+<p>Un apartado <code>##</code> por cada uno de los seis controles, con las cuatro preguntas de <a href="../../../01-hacking-etico/03-vulnerabilidades-y-ataques/temas/05-documentar-una-vulnerabilidad.html">Documentar una vulnerabilidad</a>: dónde estaría el fallo, cuál sería, qué permitiría y cómo lo impide tu código, con la orden <code>curl</code> que lo demuestra (<code>curl.exe</code> si trabajas en Windows), lo que responde y su CWE. Cada control con su riesgo de la OWASP y su CWE:</p>
+<div class="tabla"><table><thead><tr><th>Control</th><th>OWASP API</th><th>CWE</th></tr></thead><tbody>
+<tr><td>Autenticación: token obligatorio</td><td>API2</td><td><code>CWE-287</code></td></tr>
+<tr><td>BOLA: solo tus incidencias</td><td>API1</td><td><code>CWE-639</code></td></tr>
+<tr><td>Asignación masiva: no te cambias el rol</td><td>API3</td><td><code>CWE-915</code></td></tr>
+<tr><td>BFLA: borrar es de administración</td><td>API5</td><td><code>CWE-285</code></td></tr>
+<tr><td>Límite de intentos en el login</td><td>API2 y API4</td><td><code>CWE-307</code></td></tr>
+<tr><td>Huella de la tecnología</td><td>API8</td><td><code>CWE-497</code></td></tr>
+</tbody></table></div>
+<p>El corrector busca en <code>controles.md</code> cuatro de ellos: <code>CWE-639</code>, <code>CWE-915</code>, <code>CWE-285</code> y <code>CWE-307</code>. Los otros dos apartados van igual de completos, con su CWE. Un apartado completo:</p>
 <pre><code>## Autorización por incidencia, BOLA (API1, CWE-639)
 
 - **Dónde estaría el fallo:** en GET, PUT, PATCH y DELETE de /incidencias/{id}, en sus comentarios y en la lista.

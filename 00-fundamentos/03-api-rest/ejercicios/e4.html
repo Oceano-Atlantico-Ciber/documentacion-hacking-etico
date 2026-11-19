@@ -18,7 +18,6 @@
 <dt>Buena práctica</dt><dd><code>201</code> con <code>Location</code>, <code>204</code> sin cuerpo, <code>405</code> con <code>Allow</code>, idempotencia.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/api/e4/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e4</code> sobre <code>main</code></dd>
-<dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
 <h2>Qué entregas</h2>
@@ -46,7 +45,8 @@ cd fundamentos/api/e4</code></pre></div>
 <tr><td><code>GET /api/v1/incidencias/{id}/comentarios/{comentario}</code></td><td><code>200</code> con el comentario, o <code>404</code>.</td></tr>
 <tr><td>Un método que la ruta no tiene</td><td><code>405</code> y <code>Allow</code> con los que sí: <code>GET, POST</code> en la colección; <code>GET, PUT, PATCH, DELETE</code> en un elemento.</td></tr>
 </tbody></table></div>
-<p>Los ids nuevos nunca reutilizan uno existente ni uno borrado. Si a <code>Allow</code> se le añade <code>HEAD</code>, como hacen Go y FastAPI con las rutas <code>GET</code>, no pasa nada.</p>
+<p>Los ids nuevos nunca reutilizan uno existente ni uno borrado. Si a <code>Allow</code> se le añade <code>HEAD</code> u <code>OPTIONS</code>, no pasa nada: las pruebas no los cuentan. Go lo hace solo, con <code>Allow: GET, HEAD, POST</code> en la colección.</p>
+<p class="note warn">FastAPI no lo hace bien de serie. Con la versión de la plantilla (0.115.6), <code>DELETE /api/v1/incidencias</code> responde <code>405</code>, pero con <code>allow: GET</code>, sin <code>POST</code>: Starlette solo mira la primera ruta que coincide con la URL, y cada método es una ruta distinta. Si programas en Python, el <code>405</code> y su <code>Allow</code> completo los tienes que asegurar tú, en la colección y en el elemento.</p>
 <p>Para probar una escritura a mano, con tu API arrancada, escribe el cuerpo en un fichero y mándalo con <code>--data-binary</code>: Windows PowerShell quita las comillas dobles de un JSON escrito en la propia orden. Desde <code>fundamentos/api/e4/</code>, la primera orden crea <code>nueva.json</code>, la segunda crea una incidencia y la tercera prueba un método que la colección no tiene:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>New-Item nueva.json -Force -Value '{"titulo": "Impresora atascada (aula 2)", "prioridad": "alta"}'

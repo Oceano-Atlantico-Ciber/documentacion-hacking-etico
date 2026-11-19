@@ -18,7 +18,6 @@
 <dt>Buena práctica</dt><dd>Entender el mensaje antes que la herramienta.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/api/e1/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e1</code> sobre <code>main</code></dd>
-<dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
 <h2>Qué entregas</h2>
@@ -62,12 +61,19 @@ docker run -d --name api-e1 -p 8080:8080 api-incidencias:e1</code></pre></div>
 <pre><code>GET /api/v1/incidencias/11 HTTP/1.1
 Host: localhost:8080
 </code></pre>
-<p>Guarda, envíala y deja la respuesta en su fichero:</p>
+<p>Ojo con el final: escribe la línea <code>Host</code> y pulsa <kbd>Enter</kbd> <b>dos veces</b>. La primera termina la línea <code>Host</code>; la segunda termina la línea vacía. El cursor tiene que quedar en la línea 4, vacía. Si solo pulsas una, falta la línea en blanco y <code>enviar.py</code> avisa «no hay línea en blanco».</p>
+<p>Guárdalo en <b>UTF-8 sin BOM</b>, que es lo que hace VS Code: en la barra de estado, abajo a la derecha, tiene que poner <code>UTF-8</code>. Si pone <code>UTF-8 with BOM</code>, haz clic ahí, elige <b>Save with Encoding</b> y después <b>UTF-8</b>. No lo escribas con el Bloc de notas ni con <code>Set-Content -Encoding UTF8</code>: añaden al principio tres bytes invisibles (la BOM) que viajan delante de <code>GET</code>, y la API no reconoce el método: responde <code>501 Unsupported method</code>. Para comprobar las dos cosas a la vez, mira los bytes del fichero:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>Format-Hex peticion-get.txt</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>od -c peticion-get.txt</code></pre></div>
+<p>Tiene que empezar por <code>47 45 54</code> (<code>G E T</code>), no por <code>EF BB BF</code> (la BOM). Y tiene que acabar en dos saltos de línea seguidos: <code>0D 0A 0D 0A</code> en Windows, <code>\n \n</code> en macOS o Linux. Si tu petición es la del ejemplo, en Windows son 61 bytes y la última fila empieza por <code>00000030</code>.</p>
+<p>Envíala y deja la respuesta en su fichero:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py enviar.py peticion-get.txt | Tee-Object respuesta-get.txt</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 enviar.py peticion-get.txt | tee respuesta-get.txt</code></pre></div>
-<p><code>Tee-Object</code> y <code>tee</code> hacen lo mismo: enseñan la salida en pantalla y la guardan en el fichero. Si repites el envío, el fichero se sobrescribe. (En Windows, <code>Tee-Object</code> guarda el fichero en UTF-16; es normal y el corrector lo lee bien.)</p>
+<p><code>Tee-Object</code> y <code>tee</code> hacen lo mismo: enseñan la salida en pantalla y la guardan en el fichero. Si repites el envío, el fichero se sobrescribe. Según la configuración de tu PowerShell, <code>Tee-Object</code> lo guarda en UTF-16 o en UTF-8; da igual, el corrector lee UTF-8, con BOM o sin ella, y UTF-16.</p>
 <p><code>enviar.py</code> abre una conexión TCP, escribe el fichero tal cual (solo cambia los saltos de línea por <code>\r\n</code>) y enseña lo que vuelve. Es lo que hace cualquier cliente HTTP. Una respuesta válida empieza por <code>200 OK</code> y trae en el cuerpo <b>tu</b> número de incidencia:</p>
 <pre><code>--- Enviando 61 bytes a localhost:8080 ---
 GET /api/v1/incidencias/11 HTTP/1.1
@@ -81,11 +87,11 @@ Content-Type: application/json
 Content-Length: 114
 
 {"id": 11, "titulo": "Cambio de puesto (recepción)", "prioridad": "baja", "estado": "abierta", "tecnico": "ivan"}</code></pre>
-<p>Si sale <code>404</code>, la ruta no es la de tu incidencia. Si se queda esperando cinco segundos, falta la línea en blanco final.</p>
+<p>Si sale <code>404</code>, la ruta no es la de tu incidencia. Si antes de la respuesta sale «Aviso: no hay línea en blanco», falta la segunda <kbd>Enter</kbd> del final: <code>enviar.py</code> la añade por ti para que veas la respuesta, pero el fichero no es una petición completa. Corrígelo y vuelve a enviarlo. Si sale <code>501 Unsupported method</code>, el fichero tiene BOM: vuelve a guardarlo en <code>UTF-8</code>.</p>
 
 <h2 class="step"><span class="n">3</span>Escribe la petición que crea una incidencia</h2>
 <div class="cmd"><pre><code>code peticion-post.txt</code></pre></div>
-<p>Una incidencia nueva con un título tuyo y prioridad <code>baja</code>. Lleva, por este orden: la línea <code>POST</code> a la colección, tres cabeceras (<code>Host</code>, <code>Content-Type: application/json</code> y <code>Content-Length</code>), la línea en blanco y el JSON en una sola línea. Por ejemplo:</p>
+<p>Crea el fichero igual que el anterior, en UTF-8 sin BOM. Una incidencia nueva con un título tuyo y prioridad <code>baja</code>. Lleva, por este orden: la línea <code>POST</code> a la colección, tres cabeceras (<code>Host</code>, <code>Content-Type: application/json</code> y <code>Content-Length</code>), la línea en blanco y el JSON en una sola línea. Por ejemplo:</p>
 <pre><code>POST /api/v1/incidencias HTTP/1.1
 Host: localhost:8080
 Content-Type: application/json

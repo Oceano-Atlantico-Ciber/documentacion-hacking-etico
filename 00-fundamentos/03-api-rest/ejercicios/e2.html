@@ -18,7 +18,6 @@
 <dt>Buena práctica</dt><dd>El contrato primero; el lenguaje, después.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/api/e2/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e2</code> sobre <code>main</code></dd>
-<dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
 <h2>Qué entregas</h2>
@@ -35,6 +34,11 @@ cd fundamentos/api/e2</code></pre></div>
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e2
 cd fundamentos/api/e2</code></pre></div>
 <p>Deja <code>requisitos.md</code>, con lo que necesita el equipo de sistemas, y <code>contrato.yaml</code> con la ruta de salud ya escrita y el principio del esquema <code>Incidencia</code>.</p>
+<p class="note"><code>requisitos.md</code> está escrito como habla el equipo de sistemas: «crítica», «en curso». En la API los valores van sin tildes ni espacios, en minúsculas, y son exactamente estos. Son los que usarán los datos de todos los ejercicios siguientes:</p>
+<ul>
+<li><code>prioridad</code>: <code>baja</code>, <code>media</code>, <code>alta</code> o <code>critica</code>.</li>
+<li><code>estado</code>: <code>abierta</code>, <code>en-curso</code> o <code>cerrada</code>.</li>
+</ul>
 
 <h2 class="step"><span class="n">2</span>Lee los requisitos como recursos</h2>
 <p>Antes de escribir, haz en un papel una tabla con una fila por requisito: qué <b>método</b> sobre qué <b>ruta</b> lo cumple. Primero, qué <b>recursos</b> hay (cosas con datos propios) y cuál cuelga de cuál. Los verbos de los requisitos («cerrar», «borrar las duplicadas») no van en las rutas: cerrar es cambiar el estado. Las dos primeras filas, para que veas la forma:</p>

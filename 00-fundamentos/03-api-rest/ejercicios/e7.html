@@ -18,7 +18,6 @@
 <dt>Buena práctica</dt><dd><code>limit</code> y <code>cursor</code>, <code>ETag</code> con <code>304</code>, <code>If-Match</code> con <code>412</code>.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/api/e7/</code>, con sus tres carpetas de lenguaje</dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e7</code> sobre <code>main</code></dd>
-<dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
 <h2>Qué entregas</h2>
@@ -76,7 +75,13 @@ New-Item version-1.txt -Force -Value 'If-Match: "1"'</code></pre></div>
 <div class="cmd"><pre><code>echo '{"estado": "cerrada"}' &gt; cerrar.json
 echo '{"prioridad": "media"}' &gt; prioridad.json
 echo 'If-Match: "1"' &gt; version-1.txt</code></pre></div>
-<p>Las dos pestañas leen la misma incidencia (aquí la 4) y ven su <code>ETag</code>. En cada pestaña:</p>
+<p>Elige una incidencia <b>abierta</b> de tus datos: el escenario es cerrarla. Tu API ya sabe filtrar, así que pídele unas cuantas:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>curl.exe -s "http://localhost:8001/api/v1/incidencias?estado=abierta&amp;limit=3"</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -s "http://localhost:8001/api/v1/incidencias?estado=abierta&amp;limit=3"</code></pre></div>
+<p>Quédate con el <code>id</code> de una de ellas. Las órdenes de aquí usan la 4: cambia el <code>4</code> por el tuyo en todas.</p>
+<p>Las dos pestañas leen esa incidencia y ven su <code>ETag</code>. En cada pestaña:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -i http://localhost:8001/api/v1/incidencias/4</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
