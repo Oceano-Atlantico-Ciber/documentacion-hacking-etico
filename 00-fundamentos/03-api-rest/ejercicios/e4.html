@@ -21,11 +21,15 @@
 <dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>La carpeta <code>fundamentos/api/e4/</code>: tu API del E3 con las escrituras añadidas. Cambias el código de tu lenguaje (<code>main.go</code>, <code>main.py</code> o <code>main.js</code>) y, si hace falta, el <code>Dockerfile</code>; lo demás va tal cual lo copia <code>preparar.py</code>. El corrector construye tu imagen y le pasa <code>pruebas.py e3</code>, <code>pruebas.py e4</code> y unas pocas pruebas más que no ves (abajo dice cuáles).</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
+<p>En PowerShell:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e4
 cd fundamentos/api/e4</code></pre></div>
-<p>Copia tu E3 a <code>e4/</code>: sigues sobre tu propio código. Si usas Python o Node, vuelve a instalar las dependencias en la carpeta nueva.</p>
+<p><code>preparar.py</code> copia tu E3 entero a <code>e4/</code>: sigues sobre tu propio código, y el E3 se queda como lo entregaste. No copia <code>node_modules/</code> ni <code>.venv/</code>: si usas Python o Node, vuelve a instalar las dependencias en la carpeta nueva, como en el paso 1 del <a href="e3.html">E3</a>.</p>
 
 <h2 class="step"><span class="n">2</span>Programa las escrituras</h2>
 <div class="tabla"><table><thead><tr><th>Petición</th><th>Responde</th></tr></thead><tbody>
@@ -38,10 +42,29 @@ cd fundamentos/api/e4</code></pre></div>
 <tr><td>Un método que la ruta no tiene</td><td><code>405</code> y <code>Allow</code> con los que sí: <code>GET, POST</code> en la colección; <code>GET, PUT, PATCH, DELETE</code> en un elemento.</td></tr>
 </tbody></table></div>
 <p>Los ids nuevos nunca reutilizan uno existente ni uno borrado. Si a <code>Allow</code> se le añade <code>HEAD</code>, como hacen Go y FastAPI con las rutas <code>GET</code>, no pasa nada.</p>
+<p>Para probar una escritura a mano, escribe el cuerpo en un fichero (PowerShell quita las comillas dobles de un JSON escrito en la propia orden) y mándalo con <code>--data-binary</code>. Por ejemplo, con <code>nueva.json</code>:</p>
+<pre><code>{"titulo": "Impresora atascada (aula 2)", "prioridad": "alta"}</code></pre>
+<div class="cmd"><pre><code>curl.exe -i -X POST http://localhost:8000/api/v1/incidencias -H "Content-Type: application/json" --data-binary "@nueva.json"
+curl.exe -i -X DELETE http://localhost:8000/api/v1/incidencias</code></pre></div>
+<p>Así responde una API que lo hace bien, con el id que toque en tus datos:</p>
+<pre><code>HTTP/1.1 201 Created
+Content-Type: application/json
+Location: /api/v1/incidencias/13
+
+{"id": 13, "titulo": "Impresora atascada (aula 2)", "prioridad": "alta", "estado": "abierta", "tecnico": null}
+
+HTTP/1.1 405 Method Not Allowed
+Allow: GET, POST
+…</code></pre>
 
 <h2 class="step"><span class="n">3</span>Pruébalo</h2>
+<p>Con la API recién arrancada, en otra pestaña de PowerShell:</p>
 <div class="cmd"><pre><code>py pruebas.py e4 http://localhost:8000</code></pre></div>
-<p>Pasa también las del E3. Las pruebas crean y borran: reinicia la API antes de repetirlas. Cuando salgan todas en ✓, construye la imagen y pásalas contra el contenedor, como en el E3.</p>
+<p>Pasa primero las del E3 y después las del E4. Está bien cuando la última línea dice <code>0 mal</code>. Las pruebas crean y borran: reinicia la API antes de repetirlas, o las del E3 fallarán porque la lista ya no es la de <code>incidencias.json</code>. Cuando salgan todas en ✓, pásalas contra el contenedor:</p>
+<div class="cmd"><pre><code>docker build -t api-incidencias:e4 .
+docker run -d --rm --name api -p 8000:8000 api-incidencias:e4
+py pruebas.py e4 http://localhost:8000
+docker stop api</code></pre></div>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Alguna prueba de <code>py pruebas.py e4</code> sale en ✗ contra la imagen.</li>

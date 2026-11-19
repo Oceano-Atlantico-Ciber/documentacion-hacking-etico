@@ -11,7 +11,7 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">03 · API REST</a></nav>
 
 <h1>E1 · HTTP a mano</h1>
-<p class="lead">Escribe dos peticiones HTTP en un fichero de texto, mándalas a una API por una conexión sin más y comprueba que recibes lo mismo que con <code>curl</code>.</p>
+<p class="lead">Escribe dos peticiones HTTP en un fichero de texto, mándalas a una API por una conexión sin más y comprueba que recibes lo mismo que con <code>curl.exe</code>.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-rest-es-http.html">API 1 · REST es HTTP</a></dd>
 <dt>Aprendes</dt><dd>Que una API REST no es más que texto HTTP, y a leer y escribir ese texto.</dd>
@@ -21,45 +21,121 @@
 <dt>Plazo</dt><dd>El que anuncie el docente para la unidad</dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>Siete ficheros en <code>fundamentos/api/e1/</code>, con estos nombres exactos. Los que escribes tú son tres; los otros cuatro los genera una orden.</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th><th>Lo haces</th></tr></thead><tbody>
+<tr><td><code>peticion-get.txt</code></td><td>La petición HTTP que lee <b>tu incidencia</b>.</td><td>A mano, paso 2</td></tr>
+<tr><td><code>respuesta-get.txt</code></td><td>Lo que contesta la API a esa petición: tiene que ser <code>200</code> con tu incidencia.</td><td>Con <code>enviar.py</code>, paso 2</td></tr>
+<tr><td><code>peticion-post.txt</code></td><td>La petición HTTP que crea una incidencia nueva.</td><td>A mano, paso 3</td></tr>
+<tr><td><code>respuesta-post.txt</code></td><td>Lo que contesta la API: <code>201 Created</code> con <code>Location</code>.</td><td>Con <code>enviar.py</code>, paso 3</td></tr>
+<tr><td><code>curl-get.txt</code></td><td>La misma lectura hecha con <code>curl.exe -v</code>.</td><td>Con <code>curl.exe</code>, paso 4</td></tr>
+<tr><td><code>curl-post.txt</code></td><td>La misma alta hecha con <code>curl.exe -v</code>.</td><td>Con <code>curl.exe</code>, paso 4</td></tr>
+<tr><td><code>comparacion.md</code></td><td>Tres apartados con título <code>##</code>: qué añade curl, qué es igual y qué cuenta el servidor.</td><td>A mano, paso 5</td></tr>
+</tbody></table></div>
+<p>Los ejemplos de esta página son para un alumno cuya incidencia es la <b>11</b>. La tuya es otra: la dice <code>LEEME.md</code>.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el laboratorio</h2>
-<p>Desde tu repositorio, con Docker Desktop en marcha:</p>
+<p>En PowerShell, desde tu repositorio y con Docker Desktop en marcha:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e1
-cd fundamentos/api/e1</code></pre></div>
-<p>Construye y arranca la API de incidencias del laboratorio en <code>http://localhost:8080</code>, con datos generados para tu usuario, y deja <code>enviar.py</code> y un <code>LEEME.md</code> que dice cuál es <b>tu incidencia</b>. Comprueba que responde:</p>
-<div class="cmd"><pre><code>curl.exe -i http://localhost:8080/api/v1/incidencias</code></pre></div>
+cd fundamentos/api/e1
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+curl.exe -i http://localhost:8080/api/v1/incidencias</code></pre></div>
+<p><code>preparar.py</code> construye y arranca la API de incidencias del laboratorio en <code>http://localhost:8080</code>, con datos generados para tu usuario, y deja en la carpeta <code>enviar.py</code> y <code>LEEME.md</code>. Al terminar escribe una línea como esta, con tu número:</p>
+<pre><code>La API del laboratorio escucha en http://localhost:8080. Tu incidencia es la 11.</code></pre>
+<p>La línea de <code>[Console]::OutputEncoding</code> hace que PowerShell muestre bien las tildes de las respuestas; vale para esa ventana, así que repítela si abres otra. El <code>curl.exe -i</code> del final tiene que responder <code>HTTP/1.1 200 OK</code> y una lista en JSON.</p>
 
-<h2 class="step"><span class="n">2</span>Escribe una lectura</h2>
+<h2 class="step"><span class="n">2</span>Escribe la petición que lee tu incidencia</h2>
 <div class="cmd"><pre><code>code peticion-get.txt</code></pre></div>
-<p>Escribe la petición que lee tu incidencia: la primera línea con el método, la ruta y <code>HTTP/1.1</code>, la cabecera <code>Host: localhost:8080</code> y una línea en blanco al final. Nada más. Envíala y guarda lo que sale:</p>
+<p>El fichero tiene <b>tres líneas</b>: la línea de petición (método, ruta de tu incidencia y versión), la cabecera <code>Host</code> y una línea en blanco que cierra las cabeceras. Nada más: ni la URL completa, ni comillas, ni comentarios. Para la incidencia 11 queda así (la tercera línea está vacía):</p>
+<pre><code>GET /api/v1/incidencias/11 HTTP/1.1
+Host: localhost:8080
+</code></pre>
+<p>Guarda, envíala y deja la respuesta en su fichero:</p>
 <div class="cmd"><pre><code>py enviar.py peticion-get.txt | tee respuesta-get.txt</code></pre></div>
-<p><code>enviar.py</code> abre una conexión TCP, escribe el fichero tal cual (solo cambia los saltos de línea por <code>\r\n</code>) y enseña lo que vuelve. Es lo que hace cualquier cliente HTTP.</p>
+<p><code>enviar.py</code> abre una conexión TCP, escribe el fichero tal cual (solo cambia los saltos de línea por <code>\r\n</code>) y enseña lo que vuelve. Es lo que hace cualquier cliente HTTP. Una respuesta válida empieza por <code>200 OK</code> y trae en el cuerpo <b>tu</b> número de incidencia:</p>
+<pre><code>--- Enviando 61 bytes a localhost:8080 ---
+GET /api/v1/incidencias/11 HTTP/1.1
+Host: localhost:8080
 
-<h2 class="step"><span class="n">3</span>Escribe una alta</h2>
+--- Respuesta ---
+HTTP/1.1 200 OK
+Server: BaseHTTP/0.6 Python/3.13.14
+Date: Tue, 17 Nov 2026 19:52:03 GMT
+Content-Type: application/json
+Content-Length: 114
+
+{"id": 11, "titulo": "Cambio de puesto (recepción)", "prioridad": "baja", "estado": "abierta", "tecnico": "ivan"}</code></pre>
+<p>Si sale <code>404</code>, la ruta no es la de tu incidencia. Si se queda esperando cinco segundos, falta la línea en blanco final.</p>
+
+<h2 class="step"><span class="n">3</span>Escribe la petición que crea una incidencia</h2>
 <div class="cmd"><pre><code>code peticion-post.txt</code></pre></div>
-<p>Escribe la petición que abre una incidencia nueva con un título tuyo y prioridad <code>baja</code>. Necesita, además de <code>Host</code>, las cabeceras <code>Content-Type: application/json</code> y <code>Content-Length</code> con los bytes exactos del cuerpo, la línea en blanco y el JSON. Una letra con tilde ocupa dos bytes. Envíala:</p>
-<div class="cmd"><pre><code>py enviar.py peticion-post.txt | tee respuesta-post.txt</code></pre></div>
-<p>Tiene que responder <code>201 Created</code> con la cabecera <code>Location</code>. Si se queda esperando cinco segundos, <code>Content-Length</code> dice más bytes de los que hay; si responde <code>400</code>, el JSON no está bien o dice menos. Prueba a propósito un <code>Content-Length</code> erróneo para ver qué pasa.</p>
+<p>Una incidencia nueva con un título tuyo y prioridad <code>baja</code>. Lleva, por este orden: la línea <code>POST</code> a la colección, tres cabeceras (<code>Host</code>, <code>Content-Type: application/json</code> y <code>Content-Length</code>), la línea en blanco y el JSON en una sola línea. Por ejemplo:</p>
+<pre><code>POST /api/v1/incidencias HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Content-Length: 64
 
-<h2 class="step"><span class="n">4</span>Lo mismo con curl</h2>
-<div class="cmd"><pre><code>curl.exe -v http://localhost:8080/api/v1/incidencias/&lt;tu-incidencia&gt; 2&gt;&amp;1 | tee curl-get.txt
-curl.exe -v -X POST http://localhost:8080/api/v1/incidencias -H 'Content-Type: application/json' --data '{"titulo": "…", "prioridad": "baja"}' 2&gt;&amp;1 | tee curl-post.txt</code></pre></div>
-<p>El <code>2&gt;&amp;1</code> junta en el fichero lo que <code>curl.exe -v</code> escribe aparte: las líneas <code>&gt;</code> y <code>&lt;</code>.</p>
+{"titulo": "Monitor del aula 3 sin señal", "prioridad": "baja"}</code></pre>
+<p><code>Content-Length</code> son los <b>bytes</b> del JSON, no las letras: ese cuerpo tiene 63 caracteres, pero la <code>ñ</code> ocupa dos bytes, así que son 64. Cada tilde o <code>ñ</code> suma uno más. Para contarlos sin equivocarte, copia tu JSON entre las comillas simples de esta orden:</p>
+<div class="cmd"><pre><code>[Text.Encoding]::UTF8.GetByteCount('{"titulo": "Monitor del aula 3 sin señal", "prioridad": "baja"}')</code></pre></div>
+<p>Envíala:</p>
+<div class="cmd"><pre><code>py enviar.py peticion-post.txt | tee respuesta-post.txt</code></pre></div>
+<p>Una respuesta válida es <code>201 Created</code> con la cabecera <code>Location</code>, que dice dónde ha quedado la incidencia nueva:</p>
+<pre><code>--- Respuesta ---
+HTTP/1.1 201 Created
+Server: BaseHTTP/0.6 Python/3.13.14
+Date: Tue, 17 Nov 2026 19:52:03 GMT
+Location: /api/v1/incidencias/13
+Content-Type: application/json
+Content-Length: 112
+
+{"id": 13, "titulo": "Monitor del aula 3 sin señal", "prioridad": "baja", "estado": "abierta", "tecnico": null}</code></pre>
+<p>Si se queda esperando cinco segundos, <code>Content-Length</code> dice más bytes de los que hay; si responde <code>400</code>, el JSON no está bien o dice menos. Prueba a propósito un <code>Content-Length</code> erróneo para ver qué pasa, y deja al final en <code>respuesta-post.txt</code> la salida del envío bueno.</p>
+
+<h2 class="step"><span class="n">4</span>Lo mismo con curl.exe</h2>
+<p>Primero escribe el cuerpo del alta en un fichero: PowerShell quita las comillas dobles de un JSON escrito en la propia orden, y <code>curl.exe</code> lo lee mejor de un fichero.</p>
+<div class="cmd"><pre><code>code alta.json</code></pre></div>
+<pre><code>{"titulo": "Monitor del aula 3 sin señal", "prioridad": "baja"}</code></pre>
+<p>Después las dos peticiones. Cambia el <code>11</code> por tu incidencia:</p>
+<div class="cmd"><pre><code>curl.exe -v --stderr curl-get.txt http://localhost:8080/api/v1/incidencias/11
+curl.exe -v --stderr curl-post.txt -H "Content-Type: application/json" --data-binary "@alta.json" http://localhost:8080/api/v1/incidencias</code></pre></div>
+<p><code>-v</code> enseña la conversación entera y <code>--stderr</code> la guarda en el fichero; en pantalla solo ves el cuerpo de la respuesta. <code>--data-binary "@alta.json"</code> manda el fichero tal cual como cuerpo y, por llevar cuerpo, <code>curl.exe</code> ya usa <code>POST</code>. En el fichero, las líneas con <code>&gt;</code> son lo que envió <code>curl.exe</code> y las de <code>&lt;</code>, lo que respondió la API. <code>curl-get.txt</code> tiene que contener estas líneas, con tu número:</p>
+<pre><code>&gt; GET /api/v1/incidencias/11 HTTP/1.1
+&gt; Host: localhost:8080
+&gt; User-Agent: curl/8.21.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Server: BaseHTTP/0.6 Python/3.13.14</code></pre>
+<p>Y <code>curl-post.txt</code>, una línea <code>&gt; POST /api/v1/incidencias HTTP/1.1</code> y otra <code>&lt; HTTP/1.1 201 Created</code>.</p>
 
 <h2 class="step"><span class="n">5</span>Compara</h2>
 <div class="cmd"><pre><code>code comparacion.md</code></pre></div>
-<p>Tres apartados cortos, cada uno con su título (<code>## …</code>):</p>
+<p>Tres apartados, cada uno con su título <code>##</code> y dos o tres frases tuyas:</p>
 <ul>
-<li><b>Qué añade curl.</b> Las cabeceras que envía <code>curl</code> y no escribiste tú, y para qué sirve cada una.</li>
-<li><b>Qué es igual.</b> Por qué la respuesta es la misma con tu fichero y con <code>curl</code>.</li>
+<li><b>Qué añade curl.</b> Las cabeceras que envía <code>curl.exe</code> y no escribiste tú (míralas en las líneas <code>&gt;</code>), y para qué sirve cada una.</li>
+<li><b>Qué es igual.</b> Por qué la respuesta es la misma con tu fichero y con <code>curl.exe</code>.</li>
 <li><b>Qué cuenta el servidor.</b> Qué dice la cabecera <code>Server</code> y por qué no debería decirlo (<a href="../temas/04-seguridad.html">API 4</a>).</li>
 </ul>
+<p>El esqueleto, para que veas la forma; el contenido lo escribes tú:</p>
+<pre><code>## Qué añade curl
+
+Yo solo escribí Host. curl añade User-Agent: … y Accept: …, que sirven para …
+
+## Qué es igual
+
+## Qué cuenta el servidor
+
+La cabecera Server dice … Eso le dice a un atacante …</code></pre>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
+<li>Falta alguno de los siete ficheros de la tabla, o tiene otro nombre.</li>
 <li><code>peticion-get.txt</code> no es una petición HTTP válida o no lee tu incidencia.</li>
 <li><code>peticion-post.txt</code> no crea una incidencia con <code>201</code>: método, cabeceras, <code>Content-Length</code> o JSON incorrectos.</li>
-<li>Faltan <code>respuesta-get.txt</code>, <code>respuesta-post.txt</code>, <code>curl-get.txt</code> o <code>curl-post.txt</code>, o no son la salida de esas órdenes.</li>
-<li><code>comparacion.md</code> no tiene los tres apartados.</li>
+<li><code>respuesta-get.txt</code> o <code>respuesta-post.txt</code> no son la salida de <code>enviar.py</code> con un <code>200</code> de tu incidencia y un <code>201</code> con <code>Location</code>.</li>
+<li><code>curl-get.txt</code> o <code>curl-post.txt</code> no son la salida de <code>curl.exe -v</code>, con sus líneas <code>&gt;</code> y <code>&lt;</code>.</li>
+<li><code>comparacion.md</code> no tiene los tres apartados con título o no habla de la cabecera <code>Server</code>.</li>
 </ul>
 
 <h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
