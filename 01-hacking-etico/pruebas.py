@@ -18,6 +18,7 @@ lo correcto. El U4·E2 necesita Docker Desktop en marcha; los demás, nada más 
 from __future__ import annotations
 
 import io
+import os
 import subprocess
 import sys
 import tarfile
@@ -62,6 +63,11 @@ def main(argv: list[str]) -> int:
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
             copia = Path(tmp) / "repo"
             tarfile.open(fileobj=io.BytesIO(archivo.stdout)).extractall(copia, filter="data")
+            # git archive pone a cada fichero la hora de su commit; con dos ejercicios subidos en el mismo segundo,
+            # Docker puede reaprovechar el contexto del anterior y construir código viejo. Se les pone la hora de ahora.
+            for f in Path(copia).rglob("*"):
+                if not f.is_symlink():
+                    os.utime(f)
             print(f"{ej.upper()} · {que} · comprobando…", flush=True)
             fallos: list[str] = []
             try:
