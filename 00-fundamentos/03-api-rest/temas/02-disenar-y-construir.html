@@ -149,7 +149,7 @@ uvicorn main:app --port 8000 --reload  # --reload rearranca al guardar</code></p
 npm install                    # baja Express a node_modules/
 node --watch main.js           # --watch rearranca al guardar</code></pre></div>
 </div>
-<p>En otra pestaña de Git Bash: <code>curl -i http://localhost:8000/api/v1/salud</code>. La respuesta es la misma en los tres.</p>
+<p>En otra pestaña de Git Bash: <code>curl.exe -i http://localhost:8000/api/v1/salud</code>. La respuesta es la misma en los tres.</p>
 
 <h3>Leer una incidencia</h3>
 <div class="lenguaje">
@@ -272,7 +272,7 @@ ENTRYPOINT ["node", "main.js"]</code></pre></div>
 </div>
 <pre><code>docker build -t api-incidencias:e3 .
 docker run -d --rm --name api -p 8000:8000 api-incidencias:e3
-curl -i http://localhost:8000/api/v1/salud
+curl.exe -i http://localhost:8000/api/v1/salud
 docker stop api</code></pre>
 <p class="note">Dentro del contenedor la API tiene que escuchar en todas las interfaces (<code>0.0.0.0</code>), no solo en <code>localhost</code>: si no, el puerto publicado no llega (<a href="../../02-docker/temas/03-datos-y-redes.html">Docker 3</a>). Go y Express ya lo hacen; uvicorn hay que pedírselo con <code>--host 0.0.0.0</code>.</p>
 </section>

@@ -72,12 +72,12 @@
 
 <section class="seccion">
 <h2>Docker en tu Windows</h2>
-<p>Los contenedores del curso son de Linux. Docker Desktop mantiene en tu Windows una máquina Linux ligera (WSL 2) y dentro de ella corre el motor de Docker. La orden <code>docker</code> que escribes en Git Bash es solo el mando a distancia de ese motor.</p>
+<p>Los contenedores del curso son de Linux. Docker Desktop mantiene en tu Windows una máquina Linux ligera (WSL 2) y dentro de ella corre el motor de Docker. La orden <code>docker</code> que escribes en PowerShell (en macOS y Linux, en el Terminal) es solo el mando a distancia de ese motor.</p>
 <figure>
-<svg class="diagrama" viewBox="0 0 720 252" role="img" aria-label="Git Bash envía las órdenes a Docker Desktop, que las pasa al motor de Docker dentro de WSL 2; el navegador llega a un contenedor por un puerto publicado en localhost">
+<svg class="diagrama" viewBox="0 0 720 252" role="img" aria-label="PowerShell o el Terminal envían las órdenes a Docker Desktop, que las pasa al motor de Docker dentro de WSL 2; el navegador llega a un contenedor por un puerto publicado en localhost">
 <defs><marker id="win-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="win-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
 <rect class="linea discontinua" x="1" y="1" width="718" height="250" rx="10"/><text class="tenue peq" x="16" y="22">Tu portátil con Windows</text>
-<rect class="caja" x="20" y="60" width="150" height="56" rx="8"/><text class="tit" x="95" y="84" text-anchor="middle">Git Bash</text><text class="tenue peq mono" x="95" y="103" text-anchor="middle">docker run …</text>
+<rect class="caja" x="20" y="60" width="150" height="56" rx="8"/><text class="tit peq" x="95" y="84" text-anchor="middle">PowerShell / Terminal</text><text class="tenue peq mono" x="95" y="103" text-anchor="middle">docker run …</text>
 <rect class="caja" x="214" y="60" width="150" height="56" rx="8"/><text class="tit" x="289" y="84" text-anchor="middle">Docker Desktop</text><text class="tenue peq" x="289" y="103" text-anchor="middle">la aplicación</text>
 <path class="linea" d="M170 88H212" marker-end="url(#win-f)"/><path class="linea" d="M364 88H418" marker-end="url(#win-f)"/>
 <rect class="linea discontinua" x="404" y="36" width="300" height="200" rx="8"/><text class="tenue peq" x="420" y="56">WSL 2 · una máquina Linux ligera</text>
@@ -90,31 +90,30 @@
 <rect class="caja" x="20" y="164" width="150" height="56" rx="8"/><text class="tit" x="95" y="188" text-anchor="middle">Navegador</text><text class="tenue peq mono" x="95" y="207" text-anchor="middle">localhost:4566</text>
 <path class="linea-acento" d="M170 204H460V188" marker-end="url(#win-fa)"/><text class="acento fuerte" x="290" y="196" text-anchor="middle">puerto publicado</text>
 </svg>
-<figcaption>Las órdenes van de Git Bash al motor; el navegador llega a un contenedor solo si este publica un puerto.</figcaption>
+<figcaption>Las órdenes van de PowerShell o el Terminal al motor; el navegador llega a un contenedor solo si este publica un puerto.</figcaption>
 </figure>
 <h3 id="instalacion">Instalación</h3>
 <ol>
-<li>Docker Desktop lo instalaste en <a href="../../../00-presentacion/temas/04-docker.html">Presentación · Docker</a>. Si no lo tienes, instálalo desde PowerShell y ábrelo; usa el motor WSL 2, que propone al arrancar la primera vez, y si te pide reiniciar, reinicia:
+<li>Docker Desktop lo instalaste en <a href="../../../00-presentacion/temas/04-docker.html">Presentación · Docker</a>. Si no lo tienes en Windows, instálalo desde PowerShell y ábrelo; usa el motor WSL 2, que propone al arrancar la primera vez, y si te pide reiniciar, reinicia. En macOS y Linux, sigue esa misma página.
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>winget install -e --id Docker.DockerDesktop</code></pre></div></li>
-<li>Crea una cuenta gratuita en <a href="https://hub.docker.com/signup">Docker Hub</a> e inicia sesión desde Git Bash. Docker Hub limita las descargas anónimas por dirección IP, y toda el aula sale a Internet por la misma; con sesión iniciada, cada uno tiene su propio cupo:
+<li>Crea una cuenta gratuita en <a href="https://hub.docker.com/signup">Docker Hub</a> e inicia sesión desde PowerShell (en macOS y Linux, desde el Terminal); la orden es la misma. Docker Hub limita las descargas anónimas por dirección IP, y toda el aula sale a Internet por la misma; con sesión iniciada, cada uno tiene su propio cupo:
 <div class="cmd"><pre><code>docker login</code></pre></div></li>
-<li>Git Bash convierte cualquier argumento que empiece por <code>/</code> en una ruta de Windows: <code>/usr/share</code> llegaría a Docker como <code>C:/Program Files/Git/usr/share</code>. Las rutas de dentro de un contenedor son de Linux y no se deben tocar. Esta función le dice a Git Bash que no convierta nada cuando la orden es <code>docker</code>; añádela una vez a tu <code>~/.bashrc</code>:
-<div class="cmd"><pre><code>echo 'docker() { MSYS_NO_PATHCONV=1 command docker "$@"; }' &gt;&gt; ~/.bashrc
-source ~/.bashrc</code></pre></div></li>
 <li>Comprueba que todo responde:
 <div class="cmd"><pre><code>docker run --rm hello-world
 docker compose version</code></pre></div></li>
 </ol>
 <p>La primera orden de la lista ya hace cinco cosas seguidas. Son las mismas que hará cualquier laboratorio del curso:</p>
 <figure>
-<svg class="diagrama" viewBox="0 0 720 236" role="img" aria-label="docker run --rm hello-world: Git Bash pasa la orden al motor, el motor descarga la imagen de Docker Hub si no la tiene, crea el contenedor, el programa escribe su saludo y termina, y --rm borra el contenedor">
+<svg class="diagrama" viewBox="0 0 720 236" role="img" aria-label="docker run --rm hello-world: PowerShell o el Terminal pasan la orden al motor, el motor descarga la imagen de Docker Hub si no la tiene, crea el contenedor, el programa escribe su saludo y termina, y --rm borra el contenedor">
 <defs><marker id="hw-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="hw-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
 <rect class="caja" x="148" y="0" width="128" height="44" rx="8"/><text class="tit" x="212" y="20" text-anchor="middle">Docker Hub</text><text class="tenue peq" x="212" y="36" text-anchor="middle">registro en Internet</text>
 <path class="linea-acento" d="M212 44V76" marker-end="url(#hw-fa)"/><text class="acento fuerte peq" x="222" y="64">solo la 1.ª vez</text>
 <rect class="caja" x="0" y="80" width="128" height="110" rx="8"/><text class="tit" x="64" y="104" text-anchor="middle">1 · Orden</text>
-<text class="peq" x="64" y="126" text-anchor="middle">Git Bash pasa</text>
-<text class="peq" x="64" y="144" text-anchor="middle">docker run al</text>
-<text class="peq" x="64" y="162" text-anchor="middle">motor de Docker</text>
+<text class="peq" x="64" y="122" text-anchor="middle">PowerShell /</text>
+<text class="peq" x="64" y="139" text-anchor="middle">Terminal pasa</text>
+<text class="peq" x="64" y="156" text-anchor="middle">docker run al</text>
+<text class="peq" x="64" y="173" text-anchor="middle">motor de Docker</text>
 <rect class="caja" x="148" y="80" width="128" height="110" rx="8"/><text class="tit" x="212" y="104" text-anchor="middle">2 · Imagen</text>
 <text class="peq" x="212" y="126" text-anchor="middle">¿Ya la tiene?</text>
 <text class="peq" x="212" y="144" text-anchor="middle">Si no, la baja</text>
@@ -222,7 +221,7 @@ docker compose version</code></pre></div></li>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 200" role="img" aria-label="curl envía GET / al puerto 8080 de tu equipo, que llega al 80 del contenedor; nginx responde 200 OK con la página">
 <defs><marker id="http-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker><marker id="http-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
-<rect class="caja" x="0" y="30" width="150" height="140" rx="8"/><text class="tit" x="75" y="94" text-anchor="middle">curl</text><text class="tenue peq" x="75" y="112" text-anchor="middle">en Git Bash</text>
+<rect class="caja" x="0" y="30" width="150" height="140" rx="8"/><text class="tit" x="75" y="94" text-anchor="middle">curl</text><text class="tenue peq" x="75" y="112" text-anchor="middle">PowerShell / Terminal</text>
 <rect class="caja-acento" x="570" y="30" width="150" height="140" rx="8"/><text class="tit" x="645" y="94" text-anchor="middle">nginx</text><text class="tenue peq" x="645" y="112" text-anchor="middle">contenedor web</text>
 <path class="linea-acento" d="M150 70H568" marker-end="url(#http-fa)"/><text class="mono acento fuerte" x="360" y="58" text-anchor="middle">GET / HTTP/1.1</text>
 <rect class="caja" x="270" y="88" width="180" height="26" rx="6"/><text class="mono" x="360" y="106" text-anchor="middle">127.0.0.1:8080 → 80</text>
@@ -230,12 +229,14 @@ docker compose version</code></pre></div></li>
 </svg>
 <figcaption>La petición sale de curl, entra por el puerto publicado y la contesta nginx. 200 es «todo bien»; 404 es «esa página no existe».</figcaption>
 </figure>
-<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine</code></pre>
-<p><b>Windows (PowerShell)</b></p>
-<pre><code>curl.exe -i http://localhost:8080/   # -i: muestra también la línea de estado y las cabeceras</code></pre>
-<p><b>macOS y Linux</b></p>
-<pre><code>curl -i http://localhost:8080/       # -i: muestra también la línea de estado y las cabeceras</code></pre>
-<pre><code>docker logs web                      # nginx anota cada petición recibida</code></pre>
+<p class="so">Windows · PowerShell</p>
+<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
+curl.exe -i http://localhost:8080/   # -i: muestra también la línea de estado y las cabeceras
+docker logs web                      # nginx anota cada petición recibida</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
+curl -i http://localhost:8080/       # -i: muestra también la línea de estado y las cabeceras
+docker logs web                      # nginx anota cada petición recibida</code></pre>
 <p>Así se lee esa primera orden, trozo a trozo:</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 180" role="img" aria-label="docker run es la orden; -d, --name web y -p 127.0.0.1:8080:80 son opciones; nginx:1.27-alpine es la imagen y va detrás de las opciones">
@@ -274,8 +275,6 @@ docker image prune          # borra las imágenes sin nombre que han quedado sue
 <tr><td><code>port is already allocated</code></td><td>Otro contenedor usa ese puerto de tu equipo.</td><td><code>docker ps</code> para ver cuál, y <code>docker stop</code> o elige otro puerto.</td></tr>
 <tr><td><code>Conflict. The container name "/web" is already in use</code></td><td>Ya existe un contenedor con ese nombre, quizá parado.</td><td><code>docker rm -f web</code> y repite.</td></tr>
 <tr><td><code>toomanyrequests</code></td><td>Límite de descargas de Docker Hub.</td><td><code>docker login</code> con tu cuenta.</td></tr>
-<tr><td>Rutas como <code>C:/Program Files/Git/usr/…</code></td><td>Git Bash ha convertido una ruta del contenedor.</td><td>Añade la función <code>docker()</code> de la instalación a <code>~/.bashrc</code>.</td></tr>
-<tr><td><code>the input device is not a TTY</code></td><td>Has usado <code>-it</code> y Git Bash no ofrece un terminal compatible.</td><td>Quita <code>-it</code> y pasa la orden completa: <code>docker exec web nginx -v</code>. En el curso no hace falta <code>-it</code>.</td></tr>
 </tbody></table></div>
 </section>
 

@@ -1,10 +1,11 @@
 """levantar.sh sin bash: se traduce a una lista de órdenes docker y solo se ejecuta si todas son de las
 permitidas. Así el script del alumno nunca corre en el equipo que corrige.
 
-Admite las líneas del principio que pide el enunciado (set, export MSYS_NO_PATHCONV=1 y el cd a su
-carpeta), comentarios, continuaciones con \\, y órdenes docker volume create, network create, run, rm,
-stop y pull, con redirecciones a /dev/null y un «|| true» final. Las carpetas montadas tienen que estar
-dentro de la del ejercicio.
+Admite las líneas del principio que pide el enunciado (set y el cd a su carpeta), comentarios y órdenes
+docker volume create, network create, run, rm, stop y pull. El enunciado pide una orden completa por línea,
+para que el mismo fichero se lance también desde PowerShell; por las entregas anteriores se siguen
+admitiendo export MSYS_NO_PATHCONV=1, continuaciones con \\, redirecciones a /dev/null y un «|| true»
+final. Las carpetas montadas tienen que estar dentro de la del ejercicio.
 """
 
 from __future__ import annotations

@@ -23,18 +23,24 @@
 </section>
 <section class="seccion">
 <h2>Pasos</h2>
-<p>En Git Bash, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<p>En la terminal (PowerShell en Windows, Terminal en macOS o Linux), cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub. Las órdenes sin etiqueta valen igual en todos los sistemas:</p>
 <ol>
 <li>Crea la carpeta del curso y clona los dos repositorios:
-<pre><code>mkdir ~/hacking-etico &amp;&amp; cd ~/hacking-etico
+<pre><code>mkdir ~/hacking-etico
+cd ~/hacking-etico
 git clone https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico.git
 git clone https://github.com/Oceano-Atlantico-Ciber/entregas-&lt;tu-usuario&gt;.git
 cd entregas-&lt;tu-usuario&gt;</code></pre></li>
 <li>Copia el <code>.gitignore</code> de la plantilla a la raíz de tu repositorio. Evita que subas secretos, estados de Terraform o capturas de red:
 <pre><code>cp ../documentacion-hacking-etico/plantilla-alumno/.gitignore .</code></pre></li>
 <li>Crea <code>fundamentos/puesto.txt</code> con la versión de tus herramientas:
+<p class="so">Windows · PowerShell</p>
 <pre><code>mkdir fundamentos
-{ git --version; py --version; docker compose version; } &gt; fundamentos/puesto.txt
+(git --version), (py --version), (docker compose version) | Set-Content -Encoding utf8 fundamentos/puesto.txt
+code fundamentos/puesto.txt</code></pre>
+<p class="so">macOS / Linux · Terminal</p>
+<pre><code>mkdir fundamentos
+{ git --version; python3 --version; docker compose version; } &gt; fundamentos/puesto.txt
 code fundamentos/puesto.txt</code></pre>
 En VS Code, añade al final la respuesta de tu IA a «qué es un escaneo de puertos» y guarda.</li>
 <li>Commit y push:
@@ -48,7 +54,8 @@ git push</code></pre>
 <section class="seccion">
 <h2>Cada vez que empieces a trabajar</h2>
 <p>El material se actualiza durante el curso. Tráete la última versión antes de cada sesión:</p>
-<pre><code>git -C ~/hacking-etico/documentacion-hacking-etico pull</code></pre>
+<pre><code>git -C "$HOME/hacking-etico/documentacion-hacking-etico" pull</code></pre>
+<p>Con <code>$HOME</code> y no <code>~</code>: PowerShell no cambia <code>~</code> por tu carpeta cuando se lo pasa a git.</p>
 </section>
 <section class="seccion">
 <h2>Comprobación</h2>

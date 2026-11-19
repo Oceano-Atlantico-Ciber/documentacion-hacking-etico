@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-19T17:43+00:00",
+ "actualizado": "2026-11-19T19:59+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -202,18 +202,18 @@ window.ENTREGAS = {
     },
     "alfaro-cmd": {
      "e1": "bien",
-     "e2": "sin",
+     "e2": "bien",
      "e3": "bien",
-     "e4": "sin",
+     "e4": "bien",
      "e5": "sin",
      "e6": "sin",
      "e7": "sin",
      "e8": "sin"
     },
     "dayx33": {
-     "e1": "sin",
-     "e2": "sin",
-     "e3": "sin",
+     "e1": "bien",
+     "e2": "bien",
+     "e3": "bien",
      "e4": "sin",
      "e5": "sin",
      "e6": "sin",
@@ -324,7 +324,7 @@ window.ENTREGAS = {
      "e1": "bien",
      "e2": "bien",
      "e3": "bien",
-     "e4": "mal",
+     "e4": "bien",
      "e5": "bien",
      "e6": "bien",
      "e7": "bien",
@@ -446,7 +446,7 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "pabloba1710": {
-     "e1": "sin",
+     "e1": "bien",
      "e2": "sin",
      "e3": "sin",
      "e4": "sin",
@@ -486,14 +486,14 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "vladukrisp-ctrl": {
-     "e1": "sin",
-     "e2": "sin",
-     "e3": "sin",
-     "e4": "sin",
-     "e5": "sin",
-     "e6": "sin",
-     "e7": "sin",
-     "e8": "sin"
+     "e1": "bien",
+     "e2": "bien",
+     "e3": "bien",
+     "e4": "bien",
+     "e5": "bien",
+     "e6": "bien",
+     "e7": "mal",
+     "e8": "mal"
     }
    }
   },

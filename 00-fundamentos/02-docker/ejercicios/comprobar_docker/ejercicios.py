@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import io
 import json
+import os
 import re
 import secrets
 import tarfile
@@ -110,10 +111,18 @@ def _montado(c: dict, destino: str) -> str:
                      for m in c["Mounts"] if m["Destination"] == destino) or "nada"
 
 
+def _carpeta(ruta: str | Path) -> str:
+    """Una carpeta del equipo, comparable: Docker Desktop en Windows puede dar C:\… o /run/desktop/mnt/host/c/…"""
+    if m := re.fullmatch(r"(?:/run/desktop/mnt/host|/host_mnt|/mnt)/([a-zA-Z])(/.*)?", str(ruta)):
+        if os.name == "nt":
+            ruta = f"{m[1]}:{m[2] or '/'}"
+    return os.path.normcase(str(Path(ruta).resolve()))
+
+
 def _monta(c: dict, tipo: str, origen: str | Path, destino: str, solo_lectura: bool = False) -> bool:
     clave = "Name" if tipo == "volume" else "Source"
     return any(m["Type"] == tipo and m["Destination"] == destino and (not solo_lectura or not m["RW"])
-               and (m.get(clave) == origen if tipo == "volume" else Path(m[clave]).resolve() == Path(origen).resolve())
+               and (m.get(clave) == origen if tipo == "volume" else _carpeta(m[clave]) == _carpeta(origen))
                for m in c["Mounts"])
 
 
@@ -228,7 +237,10 @@ def e3(caso: Caso) -> Iterator[str]:
     if busca.salida.strip():
         yield f".env o notas/ están dentro de la imagen: {', '.join(busca.salida.split())}. Exclúyelos en .dockerignore"
     app = caso.carpeta / "app.py"
-    app.write_text(app.read_text(encoding="utf-8") + "\n# cambio de un comentario, del corrector\n", encoding="utf-8")
+    # Un comentario que nunca se ha construido: si fuera siempre el mismo, la caché de BuildKit de una
+    # comprobación anterior (otro alumno, o pruebas.py en tu equipo) haría pasar por CACHED un Dockerfile mal ordenado.
+    app.write_text(app.read_text(encoding="utf-8") + f"\n# cambio de un comentario, del corrector {secrets.token_hex(8)}\n",
+                   encoding="utf-8")
     progreso = _construir(caso, "corrector-e3")
     pasos = re.findall(r"^#(\d+) \[[^\]]*\] RUN .*pip install", progreso, re.MULTILINE)
     if not pasos or not all(re.search(rf"^#{n} CACHED$", progreso, re.MULTILINE) for n in pasos):

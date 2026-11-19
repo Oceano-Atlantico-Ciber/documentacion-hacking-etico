@@ -16,9 +16,11 @@ from typing import Callable
 BASE = ("nginx:1.27-alpine", "postgres:16-alpine", "python:3.12-alpine", "curlimages/curl:8.11.1", "aquasec/trivy:0.58.0")
 # Solo PATH y HOME: ninguna variable del corrector puede acabar interpolada en un compose del alumno.
 # En Windows (pruebas.py en el equipo del alumno) docker necesita además las carpetas del usuario y del
-# sistema para encontrar Docker Desktop; en el corrector, que corre en Linux, no existen.
+# sistema para encontrar Docker Desktop y sus complementos (buildx y compose, en Program Files: sin ellos
+# docker build no conoce --progress); en el corrector, que corre en Linux, no existen.
 ENTORNO = {k: os.environ[k] for k in ("PATH", "HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "PROGRAMDATA",
-                                      "SYSTEMROOT", "TEMP", "TMP") if k in os.environ}
+                                      "PROGRAMFILES", "PROGRAMW6432", "SYSTEMROOT", "SYSTEMDRIVE", "WINDIR",
+                                      "TEMP", "TMP") if k in os.environ}
 
 
 class Fallo(Exception):

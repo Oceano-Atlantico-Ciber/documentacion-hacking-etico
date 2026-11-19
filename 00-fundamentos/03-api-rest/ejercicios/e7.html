@@ -45,7 +45,7 @@ cd fundamentos/api/e7</code></pre></div>
 
 <h2 class="step"><span class="n">4</span>Reprodúcelo con dos terminales</h2>
 <div class="cmd"><pre><code>code escenario.md</code></pre></div>
-<p>Abre dos pestañas de Git Bash, una por técnico. Las dos leen la misma incidencia y apuntan su <code>ETag</code>. Una la cierra con <code>PATCH</code> y <code>If-Match</code>; la otra intenta cambiarle la prioridad con el <code>ETag</code> viejo. Pega en <code>escenario.md</code> las órdenes <code>curl -i</code> y sus respuestas, y explica en dos frases qué habría pasado sin <code>If-Match</code>.</p>
+<p>Abre dos pestañas de Git Bash, una por técnico. Las dos leen la misma incidencia y apuntan su <code>ETag</code>. Una la cierra con <code>PATCH</code> y <code>If-Match</code>; la otra intenta cambiarle la prioridad con el <code>ETag</code> viejo. Pega en <code>escenario.md</code> las órdenes <code>curl.exe -i</code> y sus respuestas, y explica en dos frases qué habría pasado sin <code>If-Match</code>.</p>
 
 <h2 class="step"><span class="n">5</span>Pruébalo en las tres</h2>
 <div class="cmd"><pre><code>py go/pruebas.py e7 http://localhost:8001

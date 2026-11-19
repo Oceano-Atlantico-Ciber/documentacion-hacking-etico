@@ -17,8 +17,8 @@ from .repo import Repo
 
 
 class Api(Protocol):
-    def autor(self, repo: str, sha: str) -> str | None: ...
-    def commit(self, repo: str, sha: str) -> dict | None: ...
+    def commit(self, repo: str, sha: str) -> dict | None:
+        """El commit tal como lo da GET /repos/{repo}/commits/{sha}; None si GitHub no lo tiene."""
 
 
 @dataclass(frozen=True)
@@ -26,7 +26,9 @@ class Contexto:
     repo: Repo
     nombre: str  # Org/entregas-<usuario>
     usuario: str
-    api: Api
+    api: Api | None  # None: sin acceso a GitHub (pruebas.py sin gh); lo que depende de GitHub no se comprueba
+
+NO_SUBIDO = "no está en GitHub: súbelo con git push antes de comprobar lo que depende de GitHub"
 
 
 MARCADORES = re.compile(r"^(<{7}|={7}|>{7}).*", re.MULTILINE)
@@ -95,7 +97,12 @@ def e1(ctx: Contexto, ref: str) -> list[str]:
         if not p.CONVENTIONAL.match(asunto := ctx.repo.asunto(sha)):
             fallos.append(f"{corto}: el mensaje «{asunto}» no sigue Conventional Commits, tipo(ámbito): descripción, "
                           f"con tipo {TIPOS}")
-        autor = ctx.api.autor(ctx.nombre, sha)
+        if ctx.api is None:
+            continue
+        if (datos := ctx.api.commit(ctx.nombre, sha)) is None:
+            fallos.append(f"{corto} {NO_SUBIDO}")
+            continue
+        autor = (datos.get("author") or {}).get("login")
         if autor is None or autor.lower() != ctx.usuario:
             correo = ctx.repo.git("log", "-1", "--format=%ae", sha)
             donde = "ninguna cuenta" if autor is None else f"la cuenta {autor}"
@@ -114,8 +121,12 @@ def e2(ctx: Contexto, ref: str) -> list[str]:
     if subidos := ctx.repo.git("log", "--format=", "--name-only", ref, "--", *rutas):
         fallos.append(f"llegaron a subirse: {', '.join(sorted(set(subidos.split())))}: siguen en la historia "
                       "aunque los borres después")
-    if no_ignorados := set(rutas) - ctx.repo.ignorados(ref, rutas):
-        fallos.append(f"el .gitignore no ignora: {', '.join(sorted(no_ignorados))}: compruébalo con git check-ignore -v")
+    gitignore = p.ruta("e2", ".gitignore")
+    if ctx.repo.fichero(ref, gitignore) is None:
+        fallos.append(f"falta {gitignore}: no está en el commit evaluado")
+    elif no_ignorados := set(rutas) - ctx.repo.ignorados(ref, rutas, gitignore):
+        fallos.append(f"{gitignore} no ignora: {', '.join(sorted(no_ignorados))}. Tiene que ignorarlos él solo, "
+                      "sin contar el .gitignore de la raíz: compruébalo con git check-ignore -v")
     return fallos
 
 
@@ -241,6 +252,8 @@ def e8(ctx: Contexto, ref: str) -> list[str]:
     sha = hallazgo.group()
     if sha in ctx.repo.commits(ref):
         fallos.append(f"{sha[:7]} sigue en la historia de la rama: al purgar, el commit que filtró la clave cambia de SHA")
+    if ctx.api is None:
+        return fallos
     commit = ctx.api.commit(ctx.nombre, sha)
     if not commit:
         fallos.append(f"{sha[:7]} no es el commit que subió la clave a GitHub: GitHub no lo conoce, "

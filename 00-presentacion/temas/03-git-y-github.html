@@ -12,50 +12,80 @@
 <header>
 <p class="eyebrow">Presentación · Semana 1</p>
 <h1>Git y GitHub</h1>
-<p class="lead">Deja tu portátil Windows listo para todo el curso: las herramientas, tu identidad en git y la sesión con GitHub. Se hace una vez y tarda unos quince minutos.</p>
+<p class="lead">Deja tu portátil listo para todo el curso: las herramientas, tu identidad en git y la sesión con GitHub. Se hace una vez y tarda unos quince minutos. Los pasos están para Windows, que es lo que usa casi toda la clase, y para macOS y Linux.</p>
 </header>
 <section class="seccion">
 <h2>1 · Instala las herramientas</h2>
-<p>Abre <b>PowerShell</b> e instala con <code>winget</code>, el gestor de paquetes de Windows:</p>
-<pre><code>winget install -e --id Git.Git
+<p>Git, Python, el GitHub CLI (<code>gh</code>), VS Code y <code>git-filter-repo</code>, la herramienta que usaremos en Git 4 para purgar secretos de la historia.</p>
+<p><b>Windows:</b> abre <b>PowerShell</b> desde el menú Inicio e instala con <code>winget</code>, el gestor de paquetes de Windows:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>winget install -e --id Git.Git
 winget install -e --id Python.Python.3.13
 winget install -e --id GitHub.cli
-winget install -e --id Microsoft.VisualStudioCode</code></pre>
-<p>Cierra PowerShell cuando acaben: los programas nuevos solo se ven en una terminal abierta después.</p>
+winget install -e --id Microsoft.VisualStudioCode</code></pre></div>
+<p>Cierra PowerShell cuando acaben y abre otro: los programas nuevos solo se ven en una terminal abierta después. Instala entonces <code>git-filter-repo</code> con el Python que acabas de instalar:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py -m pip install git-filter-repo</code></pre></div>
+<p><b>macOS:</b> con <a href="https://brew.sh">Homebrew</a>; si no lo tienes, instálalo antes con la orden que da su portada. El cask de VS Code deja también la orden <code>code</code> en la terminal.</p>
+<p class="so">macOS · Terminal</p>
+<div class="cmd"><pre><code>brew install git python gh git-filter-repo
+brew install --cask visual-studio-code</code></pre></div>
+<p><b>Linux:</b> en Debian o Ubuntu, con <code>apt</code>:</p>
+<p class="so">Linux (Debian, Ubuntu) · Terminal</p>
+<div class="cmd"><pre><code>sudo apt update
+sudo apt install git python3 python3-pip gh git-filter-repo
+sudo snap install code --classic</code></pre></div>
+<p>Si tu distribución no trae <code>gh</code> o <code>git-filter-repo</code> en sus paquetes, sigue las instrucciones de <a href="https://cli.github.com">cli.github.com</a> para el primero e instala el segundo con <code>pip3 install --user git-filter-repo</code>. Sin <code>snap</code>, descarga el <code>.deb</code> de VS Code de <a href="https://code.visualstudio.com">code.visualstudio.com</a>.</p>
 </section>
 <section class="seccion">
-<h2>2 · Tu terminal: Git Bash</h2>
-<p>Desde aquí, todas las órdenes del curso se escriben en <b>Git Bash</b>, que se instala con Git (menú Inicio → Git Bash, o en VS Code: Terminal → New Terminal → Git Bash). Es la misma terminal que en Linux y en los servidores que auditaremos: <code>cd</code>, <code>ls</code>, <code>cp</code>, <code>cat</code>, rutas con <code>/</code>.</p>
-<p>Python se ejecuta con <code>py</code>, no con <code>python3</code>: en Windows, <code>python3</code> abre la Microsoft Store. Instala ya la herramienta que usaremos en Git 4:</p>
-<pre><code>py -m pip install git-filter-repo</code></pre>
+<h2>2 · Tu terminal</h2>
+<p><b>Windows:</b> todas las órdenes del curso se escriben en <b>PowerShell</b>. La más cómoda es la de VS Code: <b>Terminal → New Terminal</b>, que en Windows abre PowerShell. Tres cosas que cambian respecto a lo que verás en tutoriales de Linux:</p>
+<ul>
+<li>Python se ejecuta con <code>py</code>, no con <code>python3</code>: en Windows, <code>python3</code> abre la Microsoft Store.</li>
+<li><code>curl</code> se escribe <code>curl.exe</code>: en PowerShell, <code>curl</code> a secas es otra orden (<code>Invoke-WebRequest</code>).</li>
+<li>Una orden por línea: en PowerShell de Windows no existe <code>&amp;&amp;</code> para encadenarlas. Los ficheros se crean y se editan con <code>code &lt;ruta&gt;</code>, no con <code>echo … &gt; fichero</code>, que en PowerShell los escribe en una codificación que git no entiende.</li>
+</ul>
+<p><b>macOS y Linux:</b> la aplicación <b>Terminal</b>, o la de VS Code. Python se ejecuta con <code>python3</code>. Cuando una orden cambia según el sistema, los enunciados la dan dos veces, con su etiqueta encima: <b>Windows · PowerShell</b> y <b>macOS / Linux · Terminal</b>. Si solo hay un bloque, vale igual para todos.</p>
 </section>
 <section class="seccion">
 <h2>3 · Configura git</h2>
-<pre><code>git config --global user.name "Tu Nombre"
+<p>Con tu nombre y tu correo, entre comillas:</p>
+<div class="cmd"><pre><code>git config --global user.name "Tu Nombre"
 git config --global user.email "un-correo-verificado-en-github"
 git config --global init.defaultBranch main
-git config --global core.editor "code --wait"
-git config --global core.autocrlf true</code></pre>
-<p>El correo tiene que ser uno de los verificados en GitHub (Settings → Emails), o tus commits no se asociarán a tu cuenta. Con <code>core.editor</code>, cuando git necesite un mensaje (un merge, un rebase) abrirá una pestaña de VS Code: escribe, guarda y cierra la pestaña para continuar. <code>core.autocrlf</code> convierte los finales de línea de Windows al subir, para que el repositorio quede igual que en Linux.</p>
+git config --global core.editor "code --wait"</code></pre></div>
+<p>El correo tiene que ser uno de los verificados en GitHub (Settings → Emails), o tus commits no se asociarán a tu cuenta. Con <code>core.editor</code>, cuando git necesite un mensaje (un merge, un rebase) abrirá una pestaña de VS Code: escribe, guarda y cierra la pestaña para continuar.</p>
+<p>Los finales de línea cambian entre sistemas. <code>core.autocrlf</code> hace que el repositorio guarde siempre los de Linux:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>git config --global core.autocrlf true</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>git config --global core.autocrlf input</code></pre></div>
 </section>
 <section class="seccion">
 <h2>4 · Conéctate a GitHub</h2>
 <ol>
 <li>Cuenta en <a href="https://github.com">github.com</a> si no la tienes. Pásale tu usuario al docente: con él se crea tu repositorio privado <code>entregas-&lt;tu-usuario&gt;</code> en la organización de la asignatura.</li>
 <li>Inicia sesión desde la terminal. Elige <b>GitHub.com</b>, <b>HTTPS</b>, autenticar git con tus credenciales y <b>login with a web browser</b>:
-<pre><code>gh auth login</code></pre>
+<div class="cmd"><pre><code>gh auth login</code></pre></div>
 Así <code>git clone</code> y <code>git push</code> de tus repositorios privados funcionan sin pedir contraseña. GitHub ya no acepta la contraseña de la cuenta desde git.</li>
 </ol>
 <p>Los fundamentos de git (commits, ramas, conflictos, rebase y cómo deshacer) se trabajan en la semana 2, en los <a href="../../00-fundamentos/01-git/temas/01-modelo-y-commits.html">temas de git de Fundamentos</a>. El siguiente paso práctico es el <a href="06-primer-commit.html">primer commit</a>.</p>
 </section>
 <section class="seccion">
 <h2>Comprobación</h2>
-<p>En Git Bash, cada orden responde sin error:</p>
-<pre><code>git --version
+<p>Abre una terminal nueva. Cada orden responde sin error:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>git --version
 py --version
 py -m git_filter_repo --version
 gh auth status
-git config --global --list</code></pre>
+git config --global --list</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>git --version
+python3 --version
+git filter-repo --version
+gh auth status
+git config --global --list</code></pre></div>
 <ul class="check">
 <li><code>gh auth status</code> dice que has iniciado sesión con tu usuario</li>
 <li><code>git config --global --list</code> muestra tu nombre, tu correo verificado y <code>core.editor=code --wait</code></li>
@@ -66,5 +96,6 @@ git config --global --list</code></pre>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
 </body>
 </html>
