@@ -27,7 +27,7 @@
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e1
 cd fundamentos/api/e1</code></pre></div>
 <p>Construye y arranca la API de incidencias del laboratorio en <code>http://localhost:8080</code>, con datos generados para tu usuario, y deja <code>enviar.py</code> y un <code>LEEME.md</code> que dice cuál es <b>tu incidencia</b>. Comprueba que responde:</p>
-<div class="cmd"><pre><code>curl -i http://localhost:8080/api/v1/incidencias</code></pre></div>
+<div class="cmd"><pre><code>curl.exe -i http://localhost:8080/api/v1/incidencias</code></pre></div>
 
 <h2 class="step"><span class="n">2</span>Escribe una lectura</h2>
 <div class="cmd"><pre><code>code peticion-get.txt</code></pre></div>
@@ -42,9 +42,9 @@ cd fundamentos/api/e1</code></pre></div>
 <p>Tiene que responder <code>201 Created</code> con la cabecera <code>Location</code>. Si se queda esperando cinco segundos, <code>Content-Length</code> dice más bytes de los que hay; si responde <code>400</code>, el JSON no está bien o dice menos. Prueba a propósito un <code>Content-Length</code> erróneo para ver qué pasa.</p>
 
 <h2 class="step"><span class="n">4</span>Lo mismo con curl</h2>
-<div class="cmd"><pre><code>curl -v http://localhost:8080/api/v1/incidencias/&lt;tu-incidencia&gt; 2&gt;&amp;1 | tee curl-get.txt
-curl -v -X POST http://localhost:8080/api/v1/incidencias -H 'Content-Type: application/json' --data '{"titulo": "…", "prioridad": "baja"}' 2&gt;&amp;1 | tee curl-post.txt</code></pre></div>
-<p>El <code>2&gt;&amp;1</code> junta en el fichero lo que <code>curl -v</code> escribe aparte: las líneas <code>&gt;</code> y <code>&lt;</code>.</p>
+<div class="cmd"><pre><code>curl.exe -v http://localhost:8080/api/v1/incidencias/&lt;tu-incidencia&gt; 2&gt;&amp;1 | tee curl-get.txt
+curl.exe -v -X POST http://localhost:8080/api/v1/incidencias -H 'Content-Type: application/json' --data '{"titulo": "…", "prioridad": "baja"}' 2&gt;&amp;1 | tee curl-post.txt</code></pre></div>
+<p>El <code>2&gt;&amp;1</code> junta en el fichero lo que <code>curl.exe -v</code> escribe aparte: las líneas <code>&gt;</code> y <code>&lt;</code>.</p>
 
 <h2 class="step"><span class="n">5</span>Compara</h2>
 <div class="cmd"><pre><code>code comparacion.md</code></pre></div>
