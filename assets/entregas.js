@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-19T22:22+00:00",
+ "actualizado": "2026-11-19T23:06+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -173,7 +173,7 @@ window.ENTREGAS = {
        "resumen": "se esperaban 3 commits en e1/ y hay 2 (e49fc61 «docs(e1): objetivo de la auditoría», f9f64e8 «Guarda cambios antes del ejercicio e4»): cada fichero va en su propio commit"
       },
       {
-       "resumen": "f9f64e8 debe cambiar un solo fichero de e1/ y cambia 6: e1/herramientas.md, e1/notas.md, …, ….py, ….md, ….txt"
+       "resumen": "f9f64e8 debe cambiar un solo fichero de e1/ y cambia 6: e1/herramientas.md, e1/notas.md, fundamentos/docker/e3/Dockerfile, fundamentos/docker/e3/app.py, fundamentos/docker/e3/notas/pendiente.md, fundamentos/docker/e3/requirements.txt"
       },
       {
        "resumen": "f9f64e8: el mensaje «Guarda cambios antes del ejercicio e4» no sigue Conventional Commits, tipo(ámbito): descripción, con tipo feat, fix, docs, style, refactor, test o chore"
@@ -223,13 +223,13 @@ window.ENTREGAS = {
      ],
      "e6": [
       {
-       "resumen": "el último commit debe llamarse «docs(e6): informe de alcance» y se llama «Merge branch 'git/e6-wip' of https://github.… into git/e6-wip»"
+       "resumen": "el último commit debe llamarse «docs(e6): informe de alcance» y se llama «Merge branch 'git/e6-wip' of https://github.com/Oceano-Atlantico-Ciber/entregas-juanadiego into git/e6-wip»"
       },
       {
        "resumen": "quedan commits wip en la historia (1): fúndelos con squash o fixup en git rebase -i"
       },
       {
-       "resumen": "debe quedar un único commit que cree ….md y nada más: el último commit es un merge"
+       "resumen": "debe quedar un único commit que cree fundamentos/git/e6/informe.md y nada más: el último commit es un merge"
       }
      ],
      "e7": [
@@ -237,7 +237,7 @@ window.ENTREGAS = {
        "resumen": "no hay un commit que deshaga exactamente «feat(e7): activar modo depuración»: un arreglo a mano no deja el mismo cambio inverso, hazlo con git revert a6ff69c"
       },
       {
-       "resumen": "….ini no tiene el contenido esperado: la línea 3 es «debug = true» y debería ser «debug = false»"
+       "resumen": "fundamentos/git/e7/config.ini no tiene el contenido esperado: la línea 3 es «debug = true» y debería ser «debug = false»"
       }
      ],
      "e8": [
@@ -268,13 +268,13 @@ window.ENTREGAS = {
        "resumen": "se esperaban 3 commits en e1/ y hay 1 (3d357fd «docs(e1): objetivo de la auditoría»): cada fichero va en su propio commit"
       },
       {
-       "resumen": "sin commit: ….md, ….md: ningún commit lo añade"
+       "resumen": "sin commit: fundamentos/git/e1/herramientas.md, fundamentos/git/e1/notas.md: ningún commit lo añade"
       },
       {
-       "resumen": "falta ….md: no está en el commit evaluado"
+       "resumen": "falta fundamentos/git/e1/herramientas.md: no está en el commit evaluado"
       },
       {
-       "resumen": "falta ….md: no está en el commit evaluado"
+       "resumen": "falta fundamentos/git/e1/notas.md: no está en el commit evaluado"
       }
      ],
      "e3": [
@@ -469,7 +469,7 @@ window.ENTREGAS = {
     "adrian47gg": {
      "e2": [
       {
-       "resumen": "falta …, ….txt"
+       "resumen": "falta fundamentos/docker/e2/Dockerfile, fundamentos/docker/e2/sondeo.txt"
       }
      ],
      "e3": [
