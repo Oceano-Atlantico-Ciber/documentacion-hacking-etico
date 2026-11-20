@@ -11,7 +11,7 @@
 <nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Redes inalámbricas</a> · <a href="index.html">Prácticas</a></nav>
 
 <h1>P4 · Informe de auditoría</h1>
-<p class="lead">Cierra el bloque como se cierra una auditoría de verdad: con un informe. Reúne lo de la P1, la P2 y la P3 en hallazgos con evidencia, riesgo y recomendaciones, y añade un apartado teórico sobre otros inalámbricos. Es la entrega que corrige el docente y el producto que de verdad demuestra que has entendido el bloque.</p>
+<p class="lead">Cierra el bloque como se cierra una auditoría profesional: con un informe. Reúne lo de la P1, la P2 y la P3 en hallazgos con evidencia, riesgo y recomendaciones, y añade un apartado teórico sobre otros inalámbricos. Es la entrega que corrige el docente y la prueba real de que has entendido el bloque.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/03-otros-inalambricos-e-informe.html">Tema 3 · Otros inalámbricos e informe</a></dd>
 <dt>Aprendes</dt><dd>A caracterizar otros sistemas inalámbricos y sus vulnerabilidades (criterio e) y a redactar un informe de auditoría (criterio g).</dd>
@@ -20,6 +20,18 @@
 </dl>
 <p class="note"><b>No hay corrector automático en este bloque.</b> La entrega es este informe con sus evidencias, que corrige el docente. Por eso importa la claridad y que cada hallazgo lleve su prueba real.</p>
 
+<h2>Qué entregas</h2>
+<p>En <code>redes-inalambricas/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>informe.html</code></td><td>El informe con sus seis apartados (también vale <code>.md</code> o <code>.pdf</code>). Las evidencias van enlazadas desde los hallazgos.</td></tr>
+</tbody></table></div>
+<p>Un ejemplo de hallazgo del apartado 4 (con datos inventados; los tuyos salen de tu laboratorio):</p>
+<div class="cmd"><pre><code>Título: Red WPA2 con contraseña débil
+Descripción: la red OficinaDemo usa una contraseña que está en un diccionario corto.
+Evidencia: p2/clave-encontrada.png (KEY FOUND en el intento 17).
+Riesgo: alto. Cualquiera cerca de la red puede capturar el handshake y probar contraseñas sin conexión.
+Recomendación: contraseña larga y aleatoria, activar PMF y migrar a WPA3.</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Reúne tus evidencias</h2>
 <p>Junta lo que guardaste en las prácticas anteriores: el mapa de redes de <a href="p1.html">P1</a>, las capturas del handshake y del <b>KEY FOUND</b> y la prueba de que WPA3 resiste de <a href="p2.html">P2</a>, y las alertas y contramedidas de <a href="p3.html">P3</a>. Cada una será la evidencia de un hallazgo.</p>
 
@@ -27,21 +39,21 @@
 <p>Sigue la estructura del <a href="../temas/03-otros-inalambricos-e-informe.html#plantilla">Tema 3</a>. Seis apartados, cada uno breve:</p>
 <div class="tabla"><table><thead><tr><th>Apartado</th><th>Qué pones</th></tr></thead><tbody>
 <tr><td>1. Resumen ejecutivo</td><td>Qué auditaste y lo más urgente, para alguien no técnico.</td></tr>
-<tr><td>2. Alcance y autorización</td><td>Solo el laboratorio, con permiso del docente, en estas fechas.</td></tr>
+<tr><td>2. Alcance y autorización</td><td>Solo el laboratorio, con permiso del docente.</td></tr>
 <tr><td>3. Metodología</td><td>Reconocimiento (P1), captura y acceso (P2), revisión del WIDS (P3).</td></tr>
 <tr><td>4. Hallazgos</td><td>Uno por debilidad, con la ficha de abajo.</td></tr>
 <tr><td>5. Otros inalámbricos</td><td>BLE, Zigbee/Thread/Matter y RFID/NFC y sus debilidades (teórico).</td></tr>
-<tr><td>6. Conclusiones y recomendaciones</td><td>Las defensas priorizadas, de lo más urgente a lo menos.</td></tr>
+<tr><td>6. Conclusiones y recomendaciones</td><td>Las defensas priorizadas, de lo más urgente a lo menos, y la conclusión del equipo azul de la P3.</td></tr>
 </tbody></table></div>
 
 <h2 class="step"><span class="n">3</span>Redacta cada hallazgo</h2>
 <p>En el apartado 4, escribe al menos estos hallazgos, cada uno con su ficha (título, descripción, evidencia, riesgo, recomendación):</p>
 <ul>
-<li><b>Red WPA2 con contraseña débil</b> — evidencia: el <b>KEY FOUND</b> de la P2. Riesgo alto. Recomendación: clave larga y aleatoria, PMF, migrar a WPA3.</li>
+<li><b>Red WPA2 con contraseña débil</b> — evidencia: el <b>KEY FOUND</b> de la P2. Riesgo alto. Recomendación: contraseña larga y aleatoria, PMF, migrar a WPA3.</li>
 <li><b>Deauth posible sin PMF</b> — evidencia: la alerta <code>DEAUTH_FLOOD</code> de la P3. Riesgo medio. Recomendación: activar PMF (802.11w).</li>
 <li><b>Red abierta sin cifrado</b> — evidencia: la OPN del mapa de la P1. Riesgo según su uso. Recomendación: no usarla para nada sensible; OWE o portal con cifrado.</li>
 </ul>
-<p>Si el laboratorio lo permite, añade el hallazgo del <b>downgrade</b> WPA2/WPA3. La <b>WPA3</b> que resistió no es un hallazgo: es tu control de que el método tiene límites, y puedes mencionarlo como contraste.</p>
+<p>Si el laboratorio lo permite, añade el hallazgo del <b>downgrade</b> WPA2/WPA3. La <b>WPA3</b> que resistió no es un hallazgo: es tu punto de comparación, porque demuestra que el método tiene límites. Menciónala como contraste.</p>
 
 <h2 class="step"><span class="n">4</span>Añade el apartado de otros inalámbricos</h2>
 <p>En el apartado 5, describe brevemente qué otras radios tendría una organización real (Bluetooth/BLE en periféricos y cerraduras, Zigbee/Thread/Matter en domótica, RFID/NFC en control de acceso) y una o dos debilidades de cada una. Es teórico: no hay que montarlas.</p>
@@ -60,10 +72,10 @@ git push origin entrega-redes-inalambricas</code></pre></div>
 <li>Cada hallazgo bien documentado: descripción clara, <b>evidencia real</b> de tu laboratorio, riesgo justificado y recomendación concreta.</li>
 <li>El informe se entiende sin ser experto: el resumen ejecutivo y los riesgos en lenguaje llano.</li>
 <li>El apartado de alcance deja claro que todo fue en el laboratorio, con autorización.</li>
-<li>El apartado de otros inalámbricos cubre BLE, Zigbee/IoT y RFID/NFC a nivel conceptual.</li>
+<li>El apartado de otros inalámbricos cubre BLE, Zigbee/Thread/Matter y RFID/NFC a nivel teórico.</li>
 </ul>
 
-<nav class="ejercicios" aria-label="Prácticas de Redes inalámbricas"><a href="p3.html">← P3 · Equipo azul con nzyme</a><span></span></nav>
+<nav class="ejercicios" aria-label="Prácticas de redes inalámbricas"><a href="p3.html">← P3 · Equipo azul con nzyme</a><span></span></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../../assets/nav.js" defer></script>

@@ -12,7 +12,7 @@
 <header>
 <p class="eyebrow">Redes inalámbricas · RA2 · Tema 1 de 3</p>
 <h1>Cómo funciona y cómo se protege una Wi-Fi</h1>
-<p class="lead">Una red Wi-Fi es radio: un punto de acceso y sus clientes se mandan tramas por el aire, y cualquiera que esté cerca puede oírlas. Lo que impide que un vecino lea tu tráfico no es el secreto de las ondas, sino el cifrado. En este tema ves cómo habla una Wi-Fi, qué modos puede adoptar una tarjeta y qué protege (y qué no) cada tipo de cifrado, de la red abierta al WPA3.</p>
+<p class="lead">Una red Wi-Fi es radio: un punto de acceso y sus clientes se mandan tramas por el aire, y cualquiera que esté cerca puede oírlas. Lo que impide que un vecino lea tu tráfico no es que las ondas sean secretas, sino el cifrado. En este tema ves cómo habla una Wi-Fi, qué modos puede adoptar una tarjeta y qué protege (y qué no) cada tipo de cifrado, de la red abierta a WPA3.</p>
 <div class="meta"><span>Antes: <a href="guia-laboratorio.html">Guía del laboratorio</a></span><span>Práctica: <a href="../ejercicios/p1.html">P1 · Modos de la tarjeta y reconocimiento</a></span></div>
 </header>
 
@@ -21,17 +21,21 @@
 <dl class="ficha">
 <dt>AP</dt><dd>El punto de acceso (<i>access point</i>): el equipo que crea la red Wi-Fi y al que se conectan los clientes.</dd>
 <dt>Cliente / estación</dt><dd>Cada dispositivo conectado al AP: un portátil, un móvil. También se le llama <i>STA</i>.</dd>
-<dt>SSID</dt><dd>El nombre de la red, el que ves en la lista de Wi-Fi. El <i>BSSID</i> es la dirección MAC del AP, que la identifica sin ambigüedad.</dd>
+<dt>Trama</dt><dd>La unidad de datos de la radio: cada mensaje suelto que viaja por el aire, con su origen, su destino y su contenido.</dd>
+<dt>MAC</dt><dd>La dirección de 6 pares de cifras (como <code>aa:bb:cc:11:22:33</code>) que identifica a cada tarjeta de red.</dd>
+<dt>SSID</dt><dd>El nombre de la red, el que ves en la lista de Wi-Fi. El <i>BSSID</i> es la dirección MAC del AP, que lo identifica sin ambigüedad.</dd>
 <dt>Beacon</dt><dd>La trama que el AP emite varias veces por segundo anunciando su existencia: nombre, canal, cifrado. Por eso una red «aparece» sin que hagas nada.</dd>
 <dt>Canal</dt><dd>La frecuencia concreta en la que habla la red, dentro de una banda. Dos canales distintos no se oyen entre sí.</dd>
+<dt>PSK</dt><dd><i>Pre-Shared Key</i>: la contraseña compartida que conoce toda la red. Es lo que escribes al conectarte a una Wi-Fi doméstica.</dd>
 <dt>Handshake</dt><dd>El saludo de cuatro mensajes con el que un cliente y el AP acuerdan las claves de sesión al conectarse en WPA2/WPA3.</dd>
+<dt>802.1X, EAP y RADIUS</dt><dd>La forma de autenticar a cada usuario por separado: el estándar 802.1X exige que el cliente se identifique, mediante el protocolo <b>EAP</b>, ante un servidor <b>RADIUS</b> que decide si le deja entrar.</dd>
 </dl>
 </section>
 
 <section class="seccion">
 <h2>Bandas y canales</h2>
-<p>El Wi-Fi usa dos bandas principales: <b>2,4 GHz</b>, que llega más lejos y atraviesa mejor las paredes pero va más lenta y está saturada, y <b>5 GHz</b>, más rápida y con más canales pero de menor alcance (los equipos recientes añaden 6 GHz). Cada banda se divide en <b>canales</b>. Un AP emite en un canal, y una tarjeta solo oye un canal a la vez: para encontrar todas las redes del entorno hay que ir saltando de canal en canal, que es justo lo que hacen las herramientas de rastreo.</p>
-<p class="note">Esto importa en el reconocimiento: si capturas en un canal fijo, solo verás las redes y los clientes de ese canal. El «salto de canal» (<i>channel hopping</i>) es lo que te deja barrer todo el espectro.</p>
+<p>El Wi-Fi usa dos bandas principales: <b>2,4 GHz</b>, que llega más lejos y atraviesa mejor las paredes pero va más lenta y está saturada, y <b>5 GHz</b>, más rápida y con más canales pero de menor alcance (los equipos recientes añaden 6 GHz). Cada banda se divide en <b>canales</b>. Un AP emite en un canal, y una tarjeta solo oye un canal a la vez: para encontrar todas las redes del entorno hay que ir saltando de canal en canal, que es justo lo que hacen las herramientas de escaneo.</p>
+<p class="note">Esto importa en el reconocimiento: si capturas en un canal fijo, solo verás las redes y los clientes de ese canal. El salto de canal (<i>channel hopping</i>) permite recorrer todas las frecuencias.</p>
 </section>
 
 <section class="seccion" id="modos">
@@ -42,18 +46,29 @@
 <tr><td><b>Ad-hoc</b></td><td>Varios equipos se hablan entre sí sin AP, de igual a igual.</td><td>Redes pequeñas sin infraestructura. Hoy se usa poco.</td></tr>
 <tr><td><b>Monitor</b></td><td>La tarjeta no se asocia a nada: escucha <b>todas</b> las tramas que pasan por su canal, incluidas las de otras redes.</td><td>Reconocimiento y captura. Es el modo del auditor.</td></tr>
 </tbody></table></div>
-<p>El modo <b>monitor</b> es la clave de todo lo que viene después: sin asociarte a ninguna red, oyes los beacons de los AP, las sondas (<i>probes</i>) de los clientes que buscan sus redes conocidas y, si tienes suerte y timing, los handshakes. A su lado está el modo <b>AP</b>, con el que tu propia tarjeta crea una red: es lo que usa un «gemelo malvado» (<i>evil twin</i>) para suplantar una red legítima, algo que verás en el <a href="02-atacante-y-deteccion.html">Tema 2</a>.</p>
-<p class="note">En el laboratorio, poner una interfaz simulada en modo monitor es un comando; con hardware real no todos los adaptadores lo permiten. Como aquí la radio es simulada con <code>mac80211_hwsim</code>, no dependes de ningún chip concreto.</p>
+<p>El modo <b>monitor</b> es la clave de todo lo que viene después: sin asociarte a ninguna red, oyes los beacons de los AP, las sondas (<i>probes</i>) de los clientes que buscan sus redes conocidas y, si tienes suerte con el momento, los handshakes. A su lado está el modo <b>AP</b>, con el que tu propia tarjeta crea una red: es lo que usa un «gemelo malvado» (<i>evil twin</i>) para suplantar una red legítima, algo que verás en el <a href="02-atacante-y-deteccion.html">Tema 2</a>.</p>
+<p class="note">En el laboratorio, poner una interfaz simulada en modo monitor basta un comando; con hardware real no todos los adaptadores lo permiten. Como aquí la radio es simulada con <code>mac80211_hwsim</code>, no dependes de ningún chip concreto.</p>
 </section>
 
 <section class="seccion" id="cifrados">
 <h2>Qué protege cada cifrado</h2>
 <p>El nombre de la red no dice nada de su seguridad; lo que importa es cómo cifra. De menos a más (criterio <b>b</b>):</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 292" role="img" aria-label="Escalera de cifrados: la red abierta no protege nada, WPA2-Personal usa una contraseña compartida, WPA3-Personal impide probar contraseñas sin conexión y Enterprise autentica a cada usuario">
+<defs><marker id="esc-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja-peligro" x="0" y="170" width="168" height="76" rx="8"/><text class="tit" x="84" y="196" text-anchor="middle">Abierta</text><text class="peq" x="84" y="216" text-anchor="middle">Nada cifrado: todo</text><text class="peq" x="84" y="232" text-anchor="middle">se lee en el aire</text>
+<rect class="caja" x="184" y="124" width="168" height="122" rx="8"/><text class="tit" x="268" y="150" text-anchor="middle">WPA2-Personal</text><text class="peq" x="268" y="172" text-anchor="middle">Cifra con una</text><text class="peq" x="268" y="188" text-anchor="middle">contraseña común.</text><text class="peq" x="268" y="208" text-anchor="middle">Si es débil, se prueba</text><text class="peq" x="268" y="224" text-anchor="middle">sin conexión y cae</text>
+<rect class="caja" x="368" y="78" width="168" height="168" rx="8"/><text class="tit" x="452" y="104" text-anchor="middle">WPA3-Personal</text><text class="peq" x="452" y="126" text-anchor="middle">Cada intento de clave</text><text class="peq" x="452" y="142" text-anchor="middle">exige hablar con el AP:</text><text class="peq" x="452" y="158" text-anchor="middle">no hay diccionario</text><text class="peq" x="452" y="174" text-anchor="middle">sin conexión. Trae PMF</text><text class="peq" x="452" y="190" text-anchor="middle">y sigue siendo</text><text class="peq" x="452" y="206" text-anchor="middle">una clave compartida</text>
+<rect class="caja-ok" x="552" y="32" width="168" height="214" rx="8"/><text class="tit" x="636" y="58" text-anchor="middle">Enterprise</text><text class="peq" x="636" y="80" text-anchor="middle">Cada usuario entra</text><text class="peq" x="636" y="96" text-anchor="middle">con sus credenciales</text><text class="peq" x="636" y="112" text-anchor="middle">contra un servidor</text><text class="peq" x="636" y="128" text-anchor="middle">RADIUS. No hay clave</text><text class="peq" x="636" y="144" text-anchor="middle">común que se filtre.</text><text class="peq" x="636" y="168" text-anchor="middle">Su punto débil: el</text><text class="peq" x="636" y="184" text-anchor="middle">certificado del</text><text class="peq" x="636" y="200" text-anchor="middle">servidor</text>
+<path class="linea-acento" d="M0 266H700" marker-end="url(#esc-f)"/><text class="acento fuerte peq" x="360" y="280" text-anchor="middle">más protección</text>
+</svg>
+<figcaption>De izquierda a derecha, cada escalón protege más que el anterior. Cuanto más alto, más difícil para el atacante.</figcaption>
+</figure>
 <dl class="ficha">
 <dt>Abierta (OPN)</dt><dd>Sin cifrado. Todo el tráfico va en claro por el aire; cualquiera en modo monitor lo lee. Es el típico Wi-Fi gratis de un bar. <b>OWE</b> (<i>Opportunistic Wireless Encryption</i>) es una mejora moderna que cifra incluso una red «abierta» sin contraseña, pero no autentica al AP.</dd>
-<dt>WPA2-Personal (PSK)</dt><dd>Una contraseña compartida para toda la red. Al conectarse, cliente y AP hacen el <b>handshake</b> del que se derivan las claves. Su punto débil: quien captura ese handshake puede probar contraseñas contra él sin conexión, todas las que quiera y tan rápido como dé su equipo. Si la contraseña es débil, cae.</dd>
+<dt>WPA2-Personal (PSK)</dt><dd>Una contraseña compartida para toda la red. Al conectarse, cliente y AP hacen el <b>handshake</b> del que se derivan las claves. Su punto débil: quien captura ese handshake puede probar contraseñas contra él sin conexión, todas las que quiera y tan rápido como se lo permita su equipo. Si la contraseña es débil, cae.</dd>
 <dt>WPA3-Personal (SAE)</dt><dd>Sustituye el handshake vulnerable por <b>SAE</b> (<i>Simultaneous Authentication of Equals</i>, también llamado <i>Dragonfly</i>). Cada intento de contraseña exige hablar con el AP, así que no sirve de nada capturar y probar sin conexión: el ataque de diccionario clásico deja de funcionar. Además trae <b>PMF</b> obligatorio.</dd>
-<dt>Enterprise (802.1X / MGT)</dt><dd>No hay contraseña común: cada usuario se autentica con sus credenciales contra un servidor <b>RADIUS</b> (por EAP). Se usa en empresas y centros. Elimina la clave compartida, pero añade su propia superficie de ataque (credenciales, certificados mal validados).</dd>
+<dt>Enterprise (802.1X / MGT)</dt><dd>No hay contraseña común: cada usuario se autentica con sus credenciales contra un servidor <b>RADIUS</b>, mediante <b>EAP</b>. Se usa en empresas y centros. Elimina la clave compartida, pero tiene sus propios puntos débiles (credenciales, certificados mal validados).</dd>
 </dl>
 <p class="note"><b>PMF (802.11w)</b>, <i>Protected Management Frames</i>, protege las tramas de gestión (las de asociar, desasociar, desautenticar). Sin él, un atacante puede enviar tramas de <b>deauth</b> falsas que echan a los clientes de la red para forzar una reconexión (y capturar el handshake) o simplemente molestar. WPA3 lo exige; en WPA2 es opcional y conviene activarlo.</p>
 </section>
@@ -61,25 +76,30 @@
 <section class="seccion">
 <h2>Dónde falla cada uno</h2>
 <div class="tabla"><table><thead><tr><th>Cifrado</th><th>Punto débil principal</th><th>Defensa</th></tr></thead><tbody>
-<tr><td>Abierta</td><td>Todo en claro; cualquiera lee el tráfico.</td><td>No usarla para nada sensible; VPN; OWE si el equipo lo soporta.</td></tr>
+<tr><td>Abierta</td><td>Todo en claro; cualquiera lee el tráfico.</td><td>No usarla para nada sensible; VPN; OWE si el equipo lo admite.</td></tr>
 <tr><td>WPA2-PSK</td><td>Handshake atacable sin conexión; contraseñas débiles.</td><td>Contraseña larga y aleatoria; activar PMF; pasar a WPA3.</td></tr>
-<tr><td>WPA3-SAE</td><td>Errores de implementación puntuales; posible <b>downgrade</b> a WPA2 si el AP admite ambos.</td><td>Modo solo-WPA3 donde se pueda; PMF; equipos actualizados.</td></tr>
-<tr><td>Enterprise</td><td>Clientes que no validan el certificado del servidor RADIUS (AP falso que recoge credenciales).</td><td>Validación estricta del certificado; configuración gestionada de los clientes.</td></tr>
+<tr><td>WPA3-SAE</td><td>Errores de implementación puntuales; posible <b>degradación (downgrade)</b> a WPA2 si el AP admite ambos.</td><td>Modo solo WPA3 donde se pueda; PMF; equipos actualizados.</td></tr>
+<tr><td>Enterprise</td><td>Clientes que no validan el certificado del servidor RADIUS (un AP falso recoge las credenciales).</td><td>Validación estricta del certificado; configuración gestionada de los clientes.</td></tr>
 </tbody></table></div>
-<p>El <b>downgrade</b> merece una palabra: muchas redes anuncian a la vez WPA2 y WPA3 para no dejar fuera a los equipos viejos (modo «transición»). Un atacante puede forzar a un cliente a usar el WPA2, más débil, y atacar ese. La defensa es ofrecer solo WPA3 cuando el parque de equipos lo permita.</p>
+<p>Conviene explicar el downgrade. Muchas redes anuncian a la vez WPA2 y WPA3 para no dejar fuera a los equipos viejos (es el modo «transición»). Un atacante puede forzar a un cliente a usar WPA2, más débil, y atacar ese. La defensa es ofrecer solo WPA3 cuando todos los equipos lo admitan.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 240" role="img" aria-label="Downgrade en modo transición: el atacante impide que el cliente use WPA3, el cliente se conecta con WPA2 y el atacante captura su handshake">
+<defs><marker id="dg-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="dg-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="50" width="150" height="60" rx="8"/><text class="tit" x="75" y="76" text-anchor="middle">Cliente</text><text class="tenue peq" x="75" y="96" text-anchor="middle">admite WPA3</text>
+<rect class="caja-ok" x="570" y="50" width="150" height="60" rx="8"/><text class="tit" x="645" y="76" text-anchor="middle">AP en transición</text><text class="tenue peq" x="645" y="96" text-anchor="middle">ofrece WPA3 y WPA2</text>
+<rect class="caja-peligro" x="285" y="160" width="150" height="60" rx="8"/><text class="tit" x="360" y="186" text-anchor="middle">Atacante</text><text class="tenue peq" x="360" y="206" text-anchor="middle">en modo monitor</text>
+<path class="linea discontinua" d="M150 70H568" marker-end="url(#dg-f)"/><text class="tenue peq" x="360" y="62" text-anchor="middle">Lo normal: se conectaría con WPA3</text>
+<path class="linea-peligro" d="M300 160L110 112" marker-end="url(#dg-fp)"/><text class="peligro fuerte peq" x="150" y="152">1 · le impide usar WPA3</text>
+<path class="linea-peligro" d="M150 94H568" marker-end="url(#dg-fp)"/><text class="peligro fuerte peq" x="360" y="110" text-anchor="middle">2 · se conecta con WPA2</text>
+<path class="linea-peligro" d="M420 160L600 112" marker-end="url(#dg-fp)"/><text class="peligro fuerte peq" x="590" y="152" text-anchor="end">3 · captura el handshake WPA2</text>
+</svg>
+<figcaption>Aunque el AP ofrezca WPA3, el cliente acaba usando WPA2 y el atacante ataca esa. Con el modo solo WPA3, el paso 2 no existe.</figcaption>
+</figure>
 </section>
 
 <section class="seccion">
-<h2>WEP y WPS: solo historia</h2>
-<p>Antes de WPA2 estuvo <b>WEP</b>, roto desde 2001: su cifrado se rompe en minutos capturando tráfico. Y <b>WPS</b>, el botón/PIN para conectar fácil, tenía un fallo que permitía adivinar el PIN por fuerza bruta. Hoy no se usan: solo los nombramos para que, si te los encuentras en una auditoría real, sepas que son un hallazgo grave por sí mismos. En este bloque trabajamos con WPA2, WPA3 y Enterprise.</p>
-</section>
-
-<section class="seccion">
-<h2>Notas para el docente</h2>
-<p class="note"><b>Objetivo del tema:</b> que el alumno sepa leer la «ficha» de una red (nombre, canal, cifrado) y entienda por qué una WPA2 con clave débil es atacable y una WPA3 no lo es con el mismo método. Es la base conceptual de las prácticas P1 y P2.</p>
-<p class="note"><b>Nivel justo.</b> SAE, EAP/RADIUS, OWE y PMF se presentan como conceptos, no como protocolos a implementar. Basta con que el alumno distinga los cuatro cifrados y asocie a cada uno su debilidad y su defensa. Evita entrar en la criptografía de Dragonfly: no es objetivo del módulo.</p>
-<p class="note"><b>Enlace con la práctica.</b> El modo monitor (criterio a) y la identificación del cifrado (criterio b) se comprueban en <a href="../ejercicios/p1.html">P1</a>. Conviene dar este tema justo antes de P1 para que el alumno reconozca OPN/WPA2/WPA3/MGT en la salida del escáner.</p>
-<p class="note"><b>Marco ético.</b> Recuerda que todo se ejerce dentro del laboratorio simulado. Deja claro que escuchar o romper redes de terceros es ilegal; el modo monitor sobre redes ajenas reales no es una práctica del curso.</p>
+<h2>WEP y WPS: ya no se usan</h2>
+<p>Antes de WPA2 estuvo <b>WEP</b>, roto desde 2001: su cifrado se rompe en minutos capturando tráfico. Y <b>WPS</b>, el botón o PIN para conectar fácil, tenía un fallo que permitía adivinar el PIN por fuerza bruta. Hoy no se usan: solo los nombramos para que, si te los encuentras en una auditoría real, sepas que son un hallazgo grave por sí mismos. En este bloque trabajamos con WPA2, WPA3 y Enterprise.</p>
 </section>
 
 <nav class="temas" aria-label="Temas de la unidad"><a href="guia-laboratorio.html">← Guía del laboratorio</a><a href="02-atacante-y-deteccion.html">Tema 2 · Qué ve y hace un atacante →</a></nav>
