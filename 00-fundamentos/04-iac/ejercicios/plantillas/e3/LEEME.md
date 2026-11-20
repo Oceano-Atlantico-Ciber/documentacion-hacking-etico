@@ -1,4 +1,4 @@
-# E3 · Del clic al código
+# E3 · De la CLI al código
 
 Lo que tienes que adoptar con import, tal como lo creaste en el E1, y el id de cada bloque import:
 

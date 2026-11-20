@@ -79,7 +79,7 @@
         ["Ejercicios", "00-fundamentos/04-iac/index.html#ejercicios", [
           ["E1 · A mano, una vez", "00-fundamentos/04-iac/ejercicios/e1.html"],
           ["E2 · Inventario de una cuenta", "00-fundamentos/04-iac/ejercicios/e2.html"],
-          ["E3 · Del clic al código", "00-fundamentos/04-iac/ejercicios/e3.html"],
+          ["E3 · De la CLI al código", "00-fundamentos/04-iac/ejercicios/e3.html"],
           ["E4 · Variables y deriva", "00-fundamentos/04-iac/ejercicios/e4.html"],
           ["E5 · Un laboratorio completo", "00-fundamentos/04-iac/ejercicios/e5.html"],
           ["E6 · Un módulo, dos laboratorios", "00-fundamentos/04-iac/ejercicios/e6.html"],

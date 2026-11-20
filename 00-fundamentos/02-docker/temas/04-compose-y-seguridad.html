@@ -26,8 +26,10 @@
 <dt>Proyecto</dt><dd>Todo lo que levanta un compose: servicios, redes y volúmenes. Su nombre es el prefijo de cada pieza.</dd>
 <dt>Perfil</dt><dd>Un grupo de servicios que no arranca con los demás, solo cuando lo pides.</dd>
 <dt>Variable de entorno</dt><dd>Un dato con nombre que un programa recibe al arrancar, como <code>POSTGRES_PASSWORD</code>.</dd>
-<dt><code>.env</code></dt><dd>Un fichero con los valores de esas variables. Puede llevar secretos, así que no se sube a git.</dd>
+<dt><code>.env</code></dt><dd>Un fichero con los valores de esas variables. Puede llevar secretos, así que no se sube a Git.</dd>
 <dt>Privilegio</dt><dd>Poder sobre tu equipo que se le concede a un contenedor. Cuanto menos, mejor.</dd>
+<dt>Capacidad</dt><dd>Un permiso suelto de administrador que se da a un contenedor con <code>cap_add</code>. <code>NET_RAW</code> le deja leer y enviar paquetes de red tal cual; <code>NET_ADMIN</code>, cambiar la configuración de red.</dd>
+<dt>Socket de Docker</dt><dd>El fichero <code>docker.sock</code>, la puerta por la que se dan órdenes al motor de Docker. Quien lo tiene manda en Docker.</dd>
 </dl>
 </section>
 
@@ -76,7 +78,7 @@
 <text class="mono" x="16" y="24">services:</text>
 <text class="mono" x="32" y="44">floci:</text>
 <text class="mono tenue peq" x="48" y="62">image: floci/floci:latest</text>
-<text class="mono tenue peq" x="48" y="80">ports: ["4566:4566"]</text>
+<text class="mono tenue peq" x="48" y="80">ports: ["127.0.0.1:4566:4566"]</text>
 <text class="mono tenue peq" x="48" y="98">volumes: [floci-data:/app/data]</text>
 <text class="mono tenue peq" x="48" y="116">networks: [lab]</text>
 <text class="mono" x="32" y="140">terraform:</text>
@@ -103,17 +105,17 @@
 <tr><td><code>entrypoint:</code> / <code>command:</code></td><td>Sustituyen al <code>ENTRYPOINT</code> y al <code>CMD</code> de la imagen.</td><td>2</td></tr>
 <tr><td><code>volumes:</code></td><td><code>-v</code>: volumen con nombre o carpeta relativa al compose.</td><td>3</td></tr>
 <tr><td><code>ports:</code></td><td><code>-p</code></td><td>3</td></tr>
-<tr><td><code>networks:</code>, <code>ipv4_address:</code>, <code>network_mode: service:web</code></td><td><code>--network</code>, <code>--ip</code>, <code>--network container:web</code></td><td>3</td></tr>
-<tr><td><code>environment:</code></td><td><code>-e</code>: variables de entorno.</td><td>4</td></tr>
+<tr><td><code>networks:</code>, <code>ipv4_address:</code></td><td><code>--network</code>, <code>--ip</code></td><td>3</td></tr>
+<tr><td><code>environment:</code></td><td><code>-e</code>: variables de entorno.</td><td>3</td></tr>
 <tr><td><code>depends_on: [web]</code></td><td>Arranca antes ese servicio.</td><td>4</td></tr>
-<tr><td><code>restart: unless-stopped</code></td><td>Lo rearranca si se cae o reinicias Docker, salvo que lo pares tú.</td><td>4</td></tr>
+<tr><td><code>restart: unless-stopped</code></td><td><code>--restart unless-stopped</code></td><td>3</td></tr>
 <tr><td><code>profiles: [herramientas]</code></td><td>No se levanta con <code>up</code>: solo con <code>run</code> o <code>--profile</code>.</td><td>4</td></tr>
 </tbody></table></div>
 </section>
 
 <section class="seccion">
 <h2>up, run y exec</h2>
-<p>Las tres órdenes ejecutan algo en un servicio, pero no en el mismo contenedor. Confundirlas es el error más común con los laboratorios.</p>
+<p>Las tres órdenes ejecutan algo en un servicio, pero no de la misma forma: <code>up</code> deja los contenedores en marcha, <code>run</code> crea uno nuevo y <code>exec</code> entra en uno que ya existe. Confundirlas es el error más común con los laboratorios.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 230" role="img" aria-label="up -d deja los servicios en marcha; run --rm crea un contenedor de un solo uso que se borra al terminar; exec entra en un contenedor que ya está en marcha">
 <defs><marker id="urx-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -128,7 +130,7 @@
 <rect class="caja-ok" x="260" y="166" width="460" height="44" rx="8"/><text x="276" y="193">la orden corre dentro del contenedor web en marcha</text>
 <path class="linea" d="M220 188H258" marker-end="url(#urx-f)"/>
 </svg>
-<figcaption>Las herramientas del curso (Terraform, Trivy, la CLI de AWS, nmap, curl) se usan con <code>run --rm</code>: hacen su trabajo y no dejan contenedores parados.</figcaption>
+<figcaption>Las herramientas del curso (Terraform, Trivy, la herramienta <code>aws</code>, nmap, curl) se usan con <code>run --rm</code>: hacen su trabajo y no dejan contenedores parados.</figcaption>
 </figure>
 <div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
 <tr><td><code>docker compose up -d</code></td><td>Crea y arranca los servicios sin perfil. Si cambias el fichero y repites, recrea solo lo que cambió.</td></tr>
@@ -136,7 +138,7 @@
 <tr><td><code>docker compose run --rm curl -i http://web/</code></td><td>Contenedor de un solo uso del servicio <code>curl</code>; lo de detrás son sus argumentos.</td></tr>
 <tr><td><code>docker compose restart suricata</code></td><td>Reinicia un servicio, por ejemplo tras cambiar sus reglas.</td></tr>
 <tr><td><code>docker compose up -d --force-recreate floci</code></td><td>Lo recrea aunque no haya cambiado.</td></tr>
-<tr><td><code>docker compose down</code> / <code>down -v</code></td><td>Para y borra contenedores y redes / también los volúmenes.</td></tr>
+<tr><td><code>docker compose down</code> / <code>down -v</code></td><td>Para y borra contenedores y redes / también los volúmenes: con <code>-v</code>, Floci pierde todo lo que desplegaste.</td></tr>
 <tr><td><code>docker compose config</code></td><td>El fichero tal como lo entiende Docker, con las variables ya sustituidas. Sirve para revisar.</td></tr>
 </tbody></table></div>
 </section>
@@ -163,7 +165,7 @@
 
 <section class="seccion">
 <h2>Variables y secretos</h2>
-<p>Un compose puede leer valores de fuera con <code>${VARIABLE}</code>. Docker las busca en tu entorno y en un fichero <code>.env</code> junto al compose. Así la contraseña no se escribe en un fichero que se sube a git.</p>
+<p>Un compose puede leer valores de fuera con <code>${VARIABLE}</code>. Docker las busca en tu entorno y en un fichero <code>.env</code> junto al compose. Así la contraseña no se escribe en un fichero que se sube a Git.</p>
 <div class="tabla"><table><thead><tr><th>Forma</th><th>Si la variable no existe</th></tr></thead><tbody>
 <tr><td><code>${POSTGRES_PASSWORD}</code></td><td>Queda vacía, y Docker solo avisa.</td></tr>
 <tr><td><code>${POSTGRES_PASSWORD:-cambiar-en-clase}</code></td><td>Usa el valor por defecto. Es lo que hace este laboratorio de ejemplo.</td></tr>
@@ -174,7 +176,9 @@ POSTGRES_PASSWORD=una-larga-y-solo-tuya
 
 # .env.ejemplo: este sí se sube, para que otro sepa qué variables hacen falta
 POSTGRES_PASSWORD=</code></pre>
-<p>Los compose del curso repiten las credenciales de AWS en tres servicios con un <b>ancla</b> de YAML: <code>&amp;aws</code> pone nombre a un bloque y <code>*aws</code> lo reutiliza. No es de Docker, es del formato YAML.</p>
+<div class="flow"><span><code>.env</code> (no se sube)</span><i>→</i><span><code>${POSTGRES_PASSWORD}</code> en el compose</span><i>→</i><span>contenedor</span></div>
+<div class="flow"><span><code>.env.ejemplo</code></span><i>→</i><span>Git</span></div>
+<p>Para no repetir las credenciales de AWS en tres servicios, los compose del curso usan un <b>ancla</b> de YAML: <code>&amp;aws</code> pone nombre a un bloque y <code>*aws</code> lo reutiliza. No es de Docker, es del formato YAML.</p>
 <pre><code>environment: &amp;aws          # el bloque se llama aws
   AWS_ENDPOINT_URL: http://floci:4566
 …
@@ -183,7 +187,7 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 
 <section class="seccion">
 <h2>El mapa de un laboratorio</h2>
-<p>Con todo lo anterior ya se lee un laboratorio completo de la empresa ficticia: una red con subred fija, cada servidor de la empresa en su IP, el sensor pegado a la web y el auditor entrando en la misma red.</p>
+<p>Con todo lo anterior ya se lee un laboratorio completo de la empresa ficticia: una red con subred fija, cada servidor de la empresa en su IP, el sensor pegado a la web y el auditor entrando en la misma red. El sensor es Suricata, un programa que vigila el tráfico: comparte la conexión de red de la web, así que ve todo lo que le llega.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 276" role="img" aria-label="Red 172.28.0.0/24: floci en .10, web en .20 con suricata pegado, datos en .30; auditor, curl y aws con IP dinámica; solo floci publica el puerto 4566">
 <defs><marker id="mapa-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -196,10 +200,10 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 <rect class="caja" x="260" y="152" width="200" height="44" rx="8"/><text class="tit" x="276" y="179">curl</text><text class="mono tenue peq" x="444" y="179" text-anchor="end">dinámica</text>
 <rect class="caja" x="496" y="152" width="200" height="44" rx="8"/><text class="tit" x="512" y="179">aws, terraform</text><text class="mono tenue peq" x="680" y="179" text-anchor="end">dinámica</text>
 <rect class="caja" x="24" y="226" width="200" height="44" rx="8"/><text class="tit" x="124" y="253" text-anchor="middle">tu equipo</text>
-<path class="linea-acento" d="M224 248H242V68H228" marker-end="url(#mapa-fa)"/><text class="mono acento fuerte" x="252" y="230">-p 4566:4566</text>
+<path class="linea-acento" d="M224 248H242V68H228" marker-end="url(#mapa-fa)"/><text class="mono acento fuerte" x="252" y="230">-p 127.0.0.1:4566:4566</text>
 <text class="tenue peq" x="380" y="252">Arriba, la empresa con IP fija; abajo, tus herramientas.</text>
 </svg>
-<figcaption>Lo que nmap encuentre en <code>172.28.0.0/24</code> es exactamente lo que dice este mapa. Suricata ve todo lo que llega a <code>.20</code>.</figcaption>
+<figcaption>Lo que nmap, un escáner de puertos, encuentre en <code>172.28.0.0/24</code> es exactamente lo que dice este mapa. Suricata ve todo lo que llega a <code>.20</code>.</figcaption>
 </figure>
 </section>
 
@@ -212,7 +216,7 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 <path class="linea-peligro" d="M0 20H710" marker-end="url(#pu-fp)"/><text class="tenue peq" x="0" y="44">menos poder</text><text class="peligro fuerte" x="720" y="44" text-anchor="end">control de tu equipo</text>
 <rect class="caja-ok" x="0" y="60" width="132" height="160" rx="8"/><text class="tit" x="12" y="84">Nada</text><text class="tenue peq" x="12" y="106">solo sus ficheros</text><text class="tenue peq" x="12" y="122">y su red</text>
 <rect class="caja" x="146" y="60" width="132" height="160" rx="8"/><text class="tit" x="158" y="84">cap_add</text><text class="mono tenue peq" x="158" y="106">NET_RAW</text><text class="mono tenue peq" x="158" y="122">NET_ADMIN</text><text class="tenue peq" x="158" y="146">lo justo para</text><text class="tenue peq" x="158" y="162">capturar tráfico</text><text class="tenue peq" x="158" y="196">Suricata</text>
-<rect class="caja" x="292" y="60" width="132" height="160" rx="8"/><text class="tit" x="304" y="84">Carpeta rw</text><text class="mono tenue peq" x="304" y="106">./web:/web</text><text class="tenue peq" x="304" y="130">puede cambiar</text><text class="tenue peq" x="304" y="146">tus ficheros</text><text class="tenue peq" x="304" y="196">usa :ro</text>
+<rect class="caja" x="292" y="60" width="132" height="160" rx="8"/><text class="tit" x="304" y="80">Carpeta</text><text class="tit" x="304" y="98">con escritura</text><text class="mono tenue peq" x="304" y="118">./web:/web</text><text class="tenue peq" x="304" y="140">puede cambiar</text><text class="tenue peq" x="304" y="156">tus ficheros</text><text class="tenue peq" x="304" y="196">usa :ro</text>
 <rect class="caja-peligro" x="438" y="60" width="132" height="160" rx="8"/><text class="tit" x="450" y="84">privileged</text><text class="mono tenue peq" x="450" y="106">privileged</text><text class="tenue peq" x="450" y="130">todos los permisos</text><text class="tenue peq" x="450" y="146">y dispositivos</text><text class="peligro fuerte" x="450" y="196">casi nunca</text>
 <rect class="caja-peligro" x="584" y="60" width="136" height="160" rx="8"/><text class="tit" x="596" y="84">Socket</text><text class="mono tenue peq" x="596" y="106">docker.sock</text><text class="tenue peq" x="596" y="130">manda en Docker:</text><text class="tenue peq" x="596" y="146">puede lanzar otro</text><text class="tenue peq" x="596" y="162">contenedor con todo</text><text class="peligro fuerte" x="596" y="196">Floci, a propósito</text>
 </svg>
@@ -224,14 +228,14 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 <li><b>Puertos en <code>127.0.0.1</code></b>, y solo los que se usan desde fuera; las bases de datos, ninguno.</li>
 <li><b>Sin <code>docker.sock</code> ni <code>privileged</code></b>; si hace falta un permiso, el <code>cap_add</code> concreto.</li>
 <li><b>Carpetas en <code>:ro</code></b> salvo que el contenedor deba escribir en ellas.</li>
-<li><b>Secretos en <code>.env</code></b>, con <code>${VAR:?…}</code>, y el <code>.env</code> fuera de git.</li>
+<li><b>Secretos en <code>.env</code></b>, con <code>${VAR:?…}</code>, y el <code>.env</code> fuera de Git.</li>
 <li><b>Usuario no root</b> en las imágenes propias (<code>USER</code> en el <code>Dockerfile</code>).</li>
 </ul>
-<p>Para el <code>Dockerfile</code>, <code>trivy config</code> revisa la mayoría de estos puntos solo, igual que hiciste con Terraform:</p>
+<p>En un <code>Dockerfile</code>, <code>trivy config</code> revisa la mayoría de estos puntos automáticamente. Lo volverás a usar con Terraform en <a href="../../04-iac/temas/04-seguridad-de-la-infraestructura.html">IaC 4</a>. Lánzalo desde la carpeta que quieras revisar:</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>docker run --rm -v "${PWD}:/work:ro" aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre>
+<div class="cmd"><pre><code>docker run --rm -v "${PWD}:/work:ro" aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>docker run --rm -v "$PWD:/work:ro" aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre>
+<div class="cmd"><pre><code>docker run --rm -v "$PWD:/work:ro" aquasec/trivy:0.58.0 config --severity HIGH,CRITICAL /work</code></pre></div>
 </section>
 
 <section class="seccion">
@@ -258,7 +262,7 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 <li>Sabes cuándo usar <code>up -d</code>, <code>run --rm</code> y <code>exec</code></li>
 <li>Sabes leer el compose de un laboratorio y dibujar su mapa</li>
 <li>Sabes señalar las líneas peligrosas de un compose y cómo cerrarlas</li>
-<li>E7 y E8 superados en el check <b>Corrector docker</b> y con su etiqueta</li>
+<li>E7 y E8 superados en la comprobación <b>Corrector docker</b> de GitHub y con su etiqueta</li>
 </ul>
 </section>
 
@@ -266,5 +270,6 @@ environment: *aws          # el mismo bloque, sin copiarlo</code></pre>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>

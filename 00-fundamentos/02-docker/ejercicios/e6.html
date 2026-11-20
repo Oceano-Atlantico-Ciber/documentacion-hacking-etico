@@ -11,7 +11,7 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">02 · Docker</a></nav>
 
 <h1>E6 · Red y puertos</h1>
-<p class="lead">Una web y una base de datos en una red propia: se encuentran por su nombre, la base de datos no se publica y la web solo para ti.</p>
+<p class="lead">Una web y una base de datos en una red propia: se encuentran por su nombre, la base de datos no se publica y la web, solo para ti.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/03-datos-y-redes.html">Docker 3 · Datos y redes</a></dd>
 <dt>Aprendes</dt><dd>A decidir quién llega a cada contenedor: la base de datos, solo desde su red.</dd>
@@ -26,7 +26,7 @@
 <tr><td><code>sondeo.txt</code></td><td>Lo que imprime el sondeo del paso 4: exactamente cuatro líneas, en este orden: <code>e6-web</code> puerto 80, <code>e6-web</code> puerto 443, <code>e6-datos</code> puerto 5432 y <code>e6-datos</code> puerto 80.</td></tr>
 </tbody></table></div>
 <p>Cada línea de <code>sondeo.txt</code> tiene la forma <code>equipo:puerto estado</code>; la primera, por ejemplo, es:</p>
-<div class="cmd"><pre><code>e6-web:80 abierto</code></pre></div>
+<pre><code>e6-web:80 abierto</code></pre>
 
 <h2 class="step"><span class="n">1</span>Prepara la carpeta</h2>
 <p>E6 no tiene ficheros de partida. Desde tu repositorio, crea la carpeta y entra en ella:</p>
@@ -52,7 +52,23 @@ cd "$(dirname "$0")"</code></pre></div>
 <li>Arrancar en segundo plano el contenedor <code>e6-web</code> desde <code>nginx:1.27-alpine</code>, en la red <code>e6-red</code> (<code>--network</code>) y publicado en <code>127.0.0.1:8086</code> (puerto 80 del contenedor).</li>
 <li>Arrancar en segundo plano el contenedor <code>e6-datos</code> desde <code>postgres:16-alpine</code>, en la red <code>e6-red</code>, con la variable <code>POSTGRES_PASSWORD</code> (sin ella Postgres se para nada más arrancar) y <b>sin publicar ningún puerto</b>.</li>
 </ol>
-<p>Valen las mismas órdenes y opciones que en <a href="e5.html">E5</a>: completas, sin <code>\</code>, sin variables ni redirecciones, y sin <code>docker rm</code>.</p>
+<p>Valen las mismas órdenes y opciones que en <a href="e5.html">E5</a>: completas, sin <code>\</code>, sin variables ni redirecciones, y sin <code>docker rm</code>. Esto es lo que vas a montar:</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 260" role="img" aria-label="Red e6-red con e6-web publicado en 127.0.0.1:8086, e6-datos sin publicar y el sondeo dentro de la red, que llega a los dos por su nombre; un curl fuera de la red no llega a e6-web">
+<defs><marker id="e6-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="e6-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker><marker id="e6-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="linea discontinua" x="200" y="4" width="519" height="180" rx="10"/><text class="tenue peq mono" x="216" y="26">red e6-red</text>
+<rect class="caja-acento" x="230" y="44" width="170" height="56" rx="8"/><text class="tit" x="246" y="68">e6-web</text><text class="mono tenue peq" x="246" y="86">nginx · puerto 80</text>
+<rect class="caja-ok" x="496" y="44" width="210" height="56" rx="8"/><text class="tit" x="512" y="68">e6-datos</text><text class="tenue peq" x="512" y="86">postgres · 5432, sin publicar</text>
+<rect class="caja" x="390" y="120" width="160" height="48" rx="8"/><text class="tit" x="470" y="141" text-anchor="middle">sondeo</text><text class="tenue peq" x="470" y="158" text-anchor="middle">dentro de la red</text>
+<path class="linea-acento" d="M430 120L360 102" marker-end="url(#e6-fa)"/><path class="linea-acento" d="M510 120L580 102" marker-end="url(#e6-fa)"/>
+<text class="acento fuerte peq" x="330" y="128" text-anchor="middle">por su nombre</text>
+<rect class="caja" x="0" y="44" width="150" height="56" rx="8"/><text class="tit" x="75" y="68" text-anchor="middle">tu equipo</text><text class="mono tenue peq" x="75" y="86" text-anchor="middle">127.0.0.1:8086</text>
+<path class="linea-acento" d="M150 72H228" marker-end="url(#e6-fa)"/><text class="mono acento fuerte peq" x="189" y="62" text-anchor="middle">-p</text>
+<rect class="caja-peligro" x="0" y="200" width="200" height="48" rx="8"/><text class="tit" x="100" y="221" text-anchor="middle">curl fuera de la red</text><text class="mono tenue peq" x="100" y="238" text-anchor="middle">http://e6-web/</text>
+<path class="linea-peligro discontinua" d="M200 224H300V188"/><path class="linea-peligro" d="M286 192H314"/><text class="peligro fuerte" x="316" y="230">no llega: ese nombre no existe fuera</text>
+</svg>
+<figcaption>Solo la web se publica, y solo para ti. La base de datos responde dentro de la red, pero nadie de fuera llega a ella.</figcaption>
+</figure>
 
 <h2 class="step"><span class="n">3</span>Comprueba quién llega a quién</h2>
 <p>Lanza el script y mira qué puertos publica cada contenedor:</p>
@@ -67,7 +83,8 @@ docker port e6-datos</code></pre></div>
 <p>En Windows, la primera línea lanza una a una las órdenes <code>docker</code> del script, igual que hace el corrector, que no lo ejecuta con bash. <code>docker port e6-web</code> muestra <code>80/tcp -&gt; 127.0.0.1:8086</code> y <code>docker port e6-datos</code> no muestra nada. Ahora pide la web por su nombre desde un contenedor dentro de la red y desde otro fuera de ella (el <code>curl</code> corre dentro del contenedor, así que la orden es la misma en todos los sistemas):</p>
 <div class="cmd"><pre><code>docker run --rm --network e6-red curlimages/curl:8.11.1 -s -o /dev/null -w '%{http_code}\n' http://e6-web/
 docker run --rm curlimages/curl:8.11.1 -s -m 3 http://e6-web/</code></pre></div>
-<p>Dentro de la red, <code>curl</code> llega por el nombre e imprime <code>200</code>. Fuera de ella no imprime nada y acaba con error: el nombre <code>e6-web</code> no existe en la red por defecto.</p>
+<p>En la primera orden, <code>-o /dev/null</code> descarta la página y <code>-w '%{http_code}
+'</code> imprime solo el código de estado. Dentro de la red, <code>curl</code> llega por el nombre e imprime <code>200</code>. Fuera de ella no imprime nada y acaba con error: el nombre <code>e6-web</code> no existe en la red por defecto.</p>
 
 <h2 class="step"><span class="n">4</span>Sondea desde dentro de la red</h2>
 <p>Espera a que Postgres acepte conexiones, sondea los dos contenedores con tu imagen de E2 y guarda las cuatro líneas en <code>sondeo.txt</code>; después quita el laboratorio:</p>
@@ -83,7 +100,9 @@ docker run --rm --network e6-red sondeo:1.0 e6-web 80 443 | tee sondeo.txt
 docker run --rm --network e6-red sondeo:1.0 e6-datos 5432 80 | tee -a sondeo.txt
 docker rm -f e6-web e6-datos
 docker network rm e6-red</code></pre></div>
-<p>Abre <code>sondeo.txt</code> con <code>code sondeo.txt</code>: tiene cuatro líneas, con <code>e6-web:80</code> y <code>e6-datos:5432</code> abiertos y los otros dos cerrados. El 5432 de la base de datos está abierto <b>para quien esté en la red</b>, aunque no se haya publicado: es lo que verá nmap en la Mini auditoría. Si quieres volver a lanzar <code>levantar.sh</code>, quita antes los contenedores y la red con esas dos últimas órdenes: <code>docker network create</code> falla si la red ya existe.</p>
+<p>Abre <code>sondeo.txt</code> con <code>code sondeo.txt</code>: tiene cuatro líneas, con <code>e6-web:80</code> y <code>e6-datos:5432</code> abiertos y los otros dos cerrados. El 5432 de la base de datos está abierto <b>para quien esté en la red</b>, aunque no se haya publicado: es lo que verá un escáner de puertos como nmap más adelante, en la miniauditoría. Si quieres volver a lanzar <code>levantar.sh</code>, quita antes los contenedores y la red con esas dos últimas órdenes: <code>docker network create</code> falla si la red ya existe.</p>
+
+<h2>Qué mira el corrector</h2>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta <code>levantar.sh</code> o <code>sondeo.txt</code>.</li>
@@ -94,20 +113,19 @@ docker network rm e6-red</code></pre></div>
 <li>La web no publica en <code>127.0.0.1:8086</code>, o la base de datos publica algún puerto.</li>
 </ul>
 
-
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
 <p>Primero guarda tu trabajo en un commit, desde la raíz de tu repositorio: las pruebas solo ven lo que está en commits.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add .
 git commit -m "feat(docker-e6): red propia y puertos solo donde hacen falta"</code></pre></div>
-<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta, si existe; si no, <code>main</code>) y construyen y levantan contenedores como él.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e6</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e6</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar, se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push</code></pre></div>

@@ -12,7 +12,7 @@
 <header>
 <p class="eyebrow">Fundamentos · Terraform y AWS 4 de 4</p>
 <h1>Seguridad de la infraestructura</h1>
-<p class="lead">En la nube, la mayoría de los incidentes no empiezan con un exploit: empiezan con una configuración. Un permiso de más, una clave en un repositorio, un puerto abierto a todo el mundo. Como la configuración está escrita en código, se puede auditar leyéndolo, se puede comprobar preguntando a la API y se corrige con un commit.</p>
+<p class="lead">En la nube, la mayoría de los incidentes no empiezan con un exploit (un programa que aprovecha un fallo del software para entrar): empiezan con una configuración. Un permiso de más, una clave en un repositorio, un puerto abierto a todo el mundo. Como la configuración está escrita en código, se puede auditar leyéndolo, se puede comprobar preguntando a la API y se corrige con un commit.</p>
 <div class="meta"><span>Antes: <a href="03-redes-y-servidores.html">IaC 3 · Redes y servidores</a></span><span>Ejercicios: <a href="../ejercicios/e7.html">E7</a> y <a href="../ejercicios/e8.html">E8</a></span></div>
 </header>
 
@@ -20,10 +20,11 @@
 <h2>Palabras de este tema</h2>
 <dl class="ficha">
 <dt>Responsabilidad compartida</dt><dd>AWS protege sus centros de datos y su software; lo que configuras en tu cuenta (permisos, redes, datos) es tuyo.</dd>
+<dt>Rol</dt><dd>Identidad sin contraseña que se presta a un servidor o servicio para que actúe con sus permisos.</dd>
 <dt>Menor privilegio</dt><dd>Cada identidad tiene solo los permisos que necesita para su trabajo, sobre los recursos de su trabajo.</dd>
 <dt>Escalada de privilegios</dt><dd>Conseguir más permisos de los que te dieron, por ejemplo usando un permiso para darte otros.</dd>
 <dt>Simulación de políticas</dt><dd>Preguntar a IAM «¿esta identidad podría hacer esto?» sin hacerlo: <code>aws iam simulate-principal-policy</code>.</dd>
-<dt>CWE</dt><dd>El catálogo común de tipos de debilidad. Nombrar el CWE de un hallazgo dice de qué clase de fallo se trata y enlaza con cómo se corrige.</dd>
+<dt>CWE</dt><dd><i>Common Weakness Enumeration</i>: el catálogo público que da un número a cada tipo de debilidad del software o de su configuración (por ejemplo, CWE-269 es la gestión incorrecta de privilegios). Nombrar el CWE de un hallazgo dice de qué clase de fallo se trata y enlaza con cómo se corrige.</dd>
 </dl>
 </section>
 
@@ -35,6 +36,23 @@
 <li>Si alguna sentencia <b>permite</b>, se permite.</li>
 <li>Si ninguna dice nada, se deniega: es la <b>denegación implícita</b>.</li>
 </ol>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 200" role="img" aria-label="Una petición llega a IAM. Si alguna sentencia es un Deny explícito, se deniega (explicitDeny). Si no, y alguna sentencia la permite, se permite (allowed). Si ninguna la permite, se deniega (implicitDeny).">
+<defs><marker id="iam-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="iam-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="20" width="146" height="56" rx="8"/><text class="tit" x="73" y="44" text-anchor="middle">Petición</text><text class="tenue peq" x="73" y="64" text-anchor="middle">quién, acción, recurso</text>
+<path class="linea" d="M146 48H168" marker-end="url(#iam-f)"/>
+<rect class="caja-acento" x="170" y="20" width="170" height="56" rx="8"/><text class="tit" x="255" y="53" text-anchor="middle">¿Deny explícito?</text>
+<path class="linea" d="M340 48H388" marker-end="url(#iam-f)"/><text class="tenue peq" x="364" y="40" text-anchor="middle">No</text>
+<rect class="caja-acento" x="390" y="20" width="150" height="56" rx="8"/><text class="tit" x="465" y="53" text-anchor="middle">¿Algún Allow?</text>
+<path class="linea-peligro" d="M540 48H578" marker-end="url(#iam-fp)"/><text class="tenue peq" x="559" y="40" text-anchor="middle">No</text>
+<rect class="caja-peligro" x="580" y="20" width="140" height="56" rx="8"/><text class="tit" x="650" y="44" text-anchor="middle">Denegado</text><text class="mono peq" x="650" y="64" text-anchor="middle">implicitDeny</text>
+<path class="linea-peligro" d="M255 76V128" marker-end="url(#iam-fp)"/><text class="tenue peq" x="268" y="106">Sí</text>
+<rect class="caja-peligro" x="170" y="130" width="170" height="56" rx="8"/><text class="tit" x="255" y="154" text-anchor="middle">Denegado</text><text class="mono peq" x="255" y="174" text-anchor="middle">explicitDeny</text>
+<path class="linea" d="M465 76V128" marker-end="url(#iam-f)"/><text class="tenue peq" x="478" y="106">Sí</text>
+<rect class="caja-ok" x="390" y="130" width="150" height="56" rx="8"/><text class="tit" x="465" y="154" text-anchor="middle">Permitido</text><text class="mono peq" x="465" y="174" text-anchor="middle">allowed</text>
+</svg>
+<figcaption>Un <code>Deny</code> explícito gana siempre. Lo que ninguna sentencia permite queda denegado. Los tres nombres de abajo son los <code>EvalDecision</code> que verás al simular.</figcaption>
+</figure>
 <p>Los comodines amplían una sentencia: <code>"Action": "s3:*"</code> son todas las acciones de S3; <code>"Resource": "*"</code>, todos los recursos; <code>"Action": "*"</code> con <code>"Resource": "*"</code> es administrador de la cuenta. Un comodín casi nunca es lo que alguien necesita para su trabajo.</p>
 </section>
 
@@ -48,6 +66,17 @@
 <tr><td><code>iam:CreateAccessKey</code></td><td>Crear claves para otro usuario y actuar como él.</td></tr>
 <tr><td><code>iam:PassRole</code> con <code>ec2:RunInstances</code></td><td>Arrancar un servidor con un rol más poderoso que tú y usar sus permisos.</td></tr>
 </tbody></table></div>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 110" role="img" aria-label="El becario, que tiene iam:PutUserPolicy sobre sí mismo, se escribe una política nueva con Action asterisco y Resource asterisco, y pasa a ser administrador de la cuenta, como si tuviera AdministratorAccess.">
+<defs><marker id="esc-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="20" width="140" height="60" rx="8"/><text class="tit" x="70" y="46" text-anchor="middle">Becario</text><text class="mono tenue peq" x="70" y="66" text-anchor="middle">becario-trabajo</text>
+<path class="linea-peligro" d="M140 50H298" marker-end="url(#esc-fp)"/><text class="mono peq" x="219" y="40" text-anchor="middle">iam:PutUserPolicy</text><text class="tenue peq" x="219" y="70" text-anchor="middle">sobre sí mismo</text>
+<rect class="caja-peligro" x="300" y="20" width="180" height="60" rx="8"/><text class="tit" x="390" y="46" text-anchor="middle">Política nueva</text><text class="mono peq" x="390" y="66" text-anchor="middle">Action * · Resource *</text>
+<path class="linea-peligro" d="M480 50H548" marker-end="url(#esc-fp)"/>
+<rect class="caja-peligro" x="550" y="20" width="170" height="60" rx="8"/><text class="tit" x="635" y="46" text-anchor="middle">Administrador</text><text class="peq" x="635" y="66" text-anchor="middle">como AdministratorAccess</text>
+</svg>
+<figcaption>Un solo permiso de IAM sobre uno mismo basta para quedarse con toda la cuenta.</figcaption>
+</figure>
 <p>Es la debilidad <b>CWE-269</b>, gestión incorrecta de privilegios. Suele aparecer con buena intención: «que el becario se ajuste los permisos si le falta algo». El arreglo nunca es vigilar mejor al becario: es quitarle la acción, y que los permisos los dé otra persona, en el código, con revisión.</p>
 </section>
 
@@ -58,7 +87,7 @@
 aws iam list-user-policies --user-name becario-1a2b3c4d
 aws iam get-user-policy --user-name becario-1a2b3c4d --policy-name becario-trabajo
 aws iam list-access-keys --user-name becario-1a2b3c4d</code></pre>
-<p>Y la simulación, con el ARN del usuario (lo da la primera orden), las acciones que te preocupan y el recurso:</p>
+<p>Y la simulación, con el ARN del usuario (lo da <code>get-user</code>, la primera orden de este bloque), las acciones que te preocupan y el recurso:</p>
 <pre><code>aws iam get-user --user-name becario-1a2b3c4d --query User.Arn
 aws iam simulate-principal-policy --policy-source-arn arn:aws:iam::000000000000:user/becario-1a2b3c4d --action-names iam:PutUserPolicy iam:AttachUserPolicy --resource-arns arn:aws:iam::000000000000:user/becario-1a2b3c4d</code></pre>
 <p>La segunda es una sola orden, larga: escríbela en una línea. Pregunta si el becario puede hacer esas dos acciones <b>sobre su propio usuario</b>. Para los datos se hace la misma pregunta con otra acción y otro recurso: <code>--action-names s3:GetObject --resource-arns "arn:aws:s3:::secretos-1a2b3c4d/*"</code>. La respuesta, recortada:</p>
@@ -76,21 +105,21 @@ aws iam simulate-principal-policy --policy-source-arn arn:aws:iam::000000000000:
 </section>
 
 <section class="seccion" id="hallazgos">
-<h2>Los fallos de configuración más vistos</h2>
+<h2>Los fallos de configuración más frecuentes</h2>
 <div class="tabla"><table><thead><tr><th>Hallazgo</th><th>CWE</th><th>Cómo se corrige en el código</th></tr></thead><tbody>
 <tr><td>Un usuario puede cambiar sus propios permisos</td><td>CWE-269</td><td>Quitar las acciones de IAM de su política.</td></tr>
 <tr><td>Política con <code>Action: "*"</code> o <code>Resource: "*"</code> sin necesidad</td><td>CWE-250, CWE-732</td><td>Escribir solo las acciones y los recursos de su trabajo.</td></tr>
 <tr><td>Clave de acceso publicada en un repositorio</td><td>CWE-798</td><td>Revocarla (borrarla), no solo «dejar de usarla». Si hace falta otra, se crea nueva y no se guarda en el código.</td></tr>
-<tr><td>Contraseña en <code>user_data</code> o en el código</td><td>CWE-312</td><td>Variable <code>sensitive</code> o un gestor de secretos.</td></tr>
+<tr><td>Contraseña en <code>user_data</code> o en el código</td><td>CWE-312</td><td>Generarla con <code>random_password</code> o leerla de un gestor de secretos; nunca en <code>user_data</code>. Marcarla <code>sensitive</code> solo la oculta en pantalla: sigue guardada en el estado.</td></tr>
 <tr><td>SSH, RDP o la base de datos abiertos a <code>0.0.0.0/0</code></td><td>CWE-284</td><td>Abrir solo a la red de administración, o a otro grupo de seguridad.</td></tr>
 <tr><td>Bucket sin bloqueo de acceso público</td><td>CWE-284</td><td><code>aws_s3_bucket_public_access_block</code> con todo a <code>true</code>.</td></tr>
 </tbody></table></div>
-<p>Muchos de estos fallos los encuentra también un analizador del código, como <b>Trivy</b> (la familia de los analizadores de código, en <a href="../../../01-hacking-etico/04-herramientas-y-monitorizacion/temas/01-clasificacion-de-herramientas.html">Clasificación de herramientas</a>). El analizador lee el texto; la simulación pregunta a la cuenta. Una auditoría usa los dos.</p>
+<p>Muchos de estos fallos los encuentra también <b>Trivy</b>, un analizador de código (ver <a href="../../../01-hacking-etico/04-herramientas-y-monitorizacion/temas/01-clasificacion-de-herramientas.html">Clasificación de herramientas</a>). El analizador lee el texto; la simulación pregunta a la cuenta. Una auditoría usa los dos.</p>
 </section>
 
 <section class="seccion">
 <h2>Corregir en el código</h2>
-<p>Un permiso quitado a mano vuelve en el siguiente <code>apply</code> (es la <a href="02-terraform.html#deriva">deriva</a> al revés). Por eso la corrección se hace en el <code>.tf</code>, se pasa el plan para ver exactamente qué cambia y se aplica. Corregir no es borrar: el becario tiene que seguir leyendo sus informes y operaciones administrando sus servidores. Después, la misma simulación tiene que dar <code>implicitDeny</code> donde antes daba <code>allowed</code>: esa es la prueba de que el arreglo funciona.</p>
+<p>Un permiso quitado a mano vuelve en el siguiente <code>apply</code> (es la <a href="02-terraform.html#deriva">deriva</a> al revés). Por eso la corrección se hace en el <code>.tf</code>, se pasa el plan para ver exactamente qué cambia y se aplica. Corregir no es borrar: el becario debe seguir leyendo sus informes y el usuario de operaciones, administrando sus servidores. Después, la misma simulación debe dar <code>implicitDeny</code> donde antes daba <code>allowed</code>: esa es la prueba de que el arreglo funciona.</p>
 </section>
 
 <nav class="temas" aria-label="Temas de la unidad"><a href="03-redes-y-servidores.html">← IaC 3 · Redes y servidores</a><a href="../../../01-hacking-etico/index.html">RA1 · Hacking ético →</a></nav>

@@ -22,14 +22,14 @@
 <h2>Qué entregas</h2>
 <p>En <code>fundamentos/docker/e2/</code>:</p>
 <div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>sondeo.py</code></td><td>Tal como lo deja <code>preparar.py</code>, sin cambios. Se sube porque tu <code>Dockerfile</code> lo copia.</td></tr>
 <tr><td><code>Dockerfile</code></td><td>Lo escribes tú. Parte de <code>python:3.12-alpine</code> y arranca el contenedor con <code>python sondeo.py</code> mediante <code>ENTRYPOINT</code>, de modo que lo que escribas tras el nombre de la imagen llegue al sondeo como argumentos.</td></tr>
 <tr><td><code>sondeo.txt</code></td><td>Lo que imprimió el sondeo del paso 4: exactamente tres líneas, una por puerto y en este orden: 22, 80 y 443.</td></tr>
-<tr><td><code>sondeo.py</code></td><td>Tal como lo deja <code>preparar.py</code>, sin cambios. Se sube porque tu <code>Dockerfile</code> lo copia.</td></tr>
 </tbody></table></div>
 <p>Cada línea de <code>sondeo.txt</code> tiene la forma <code>equipo:puerto estado</code>, con el estado <code>abierto</code> o <code>cerrado</code>. El equipo es la IP de <code>e2-diana</code>, la que te salga a ti; por ejemplo:</p>
-<div class="cmd"><pre><code>172.17.0.2:22 cerrado
+<pre><code>172.17.0.2:22 cerrado
 172.17.0.2:80 abierto
-172.17.0.2:443 cerrado</code></pre></div>
+172.17.0.2:443 cerrado</code></pre>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
 <p>Desde tu repositorio, con Docker Desktop en marcha:</p>
@@ -41,11 +41,18 @@ cd fundamentos/docker/e2</code></pre></div>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/preparar.py e2
 cd fundamentos/docker/e2</code></pre></div>
-<p>Deja <code>sondeo.py</code>, que dice qué puertos TCP de un equipo aceptan conexiones. No hace falta que lo cambies, ni Python en tu equipo: correrá en la imagen. Todas las órdenes que siguen se lanzan desde <code>fundamentos/docker/e2</code>.</p>
+<p>Deja <code>sondeo.py</code>, que dice qué puertos de un equipo aceptan conexiones. No hace falta que lo cambies, ni Python en tu equipo: correrá en la imagen. Todas las órdenes que siguen se lanzan desde <code>fundamentos/docker/e2</code>.</p>
 
 <h2 class="step"><span class="n">2</span>Escribe el Dockerfile</h2>
 <div class="cmd"><pre><code>code Dockerfile</code></pre></div>
-<p>El fichero se llama exactamente <code>Dockerfile</code>, sin extensión. Cuatro instrucciones, en este orden: parte de <code>python:3.12-alpine</code>, trabaja en <code>/app</code>, copia <code>sondeo.py</code> y haz que el contenedor arranque con <code>python sondeo.py</code> mediante <code>ENTRYPOINT</code> en forma de lista (<code>["…", "…"]</code>), para que los argumentos de <code>docker run</code> se añadan detrás. La tabla de instrucciones está en <a href="../temas/02-construir-imagenes.html">Docker 2</a>.</p>
+<p>El fichero se llama exactamente <code>Dockerfile</code>, sin extensión. Lleva cuatro instrucciones, en este orden:</p>
+<ol>
+<li>Parte de <code>python:3.12-alpine</code>.</li>
+<li>Trabaja en <code>/app</code>.</li>
+<li>Copia <code>sondeo.py</code>.</li>
+<li>Arranca el contenedor con <code>python sondeo.py</code> mediante <code>ENTRYPOINT</code> en forma de lista (<code>["…", "…"]</code>), para que los argumentos de <code>docker run</code> se añadan detrás.</li>
+</ol>
+<p>La tabla de instrucciones está en <a href="../temas/02-construir-imagenes.html">Docker 2</a>.</p>
 
 <h2 class="step"><span class="n">3</span>Construye la imagen</h2>
 <div class="cmd"><pre><code>docker build -t sondeo:1.0 .
@@ -66,7 +73,9 @@ ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}
 echo "$ip"
 docker run --rm sondeo:1.0 "$ip" 22 80 443 | tee sondeo.txt
 docker rm -f e2-diana</code></pre></div>
-<p>La IP es del tipo <code>172.17.0.2</code>. El 80 sale <code>abierto</code> y los otros dos, <code>cerrado</code>. Si la IP sale vacía, el contenedor aún no estaba listo: vuelve a lanzar desde la línea del <code>inspect</code>. Por IP funciona; por el nombre <code>e2-diana</code>, no. El motivo, en <a href="../temas/03-datos-y-redes.html">Docker 3</a>.</p>
+<p>La plantilla <code>{{range …}}{{.IPAddress}}{{end}}</code> pide a <code>docker inspect</code> solo la IP del contenedor en cada red a la que está conectado; aquí, una. La IP es del tipo <code>172.17.0.2</code>. El 80 sale <code>abierto</code> y los otros dos, <code>cerrado</code>. Si la IP sale vacía, el contenedor aún no estaba listo: vuelve a lanzar desde la línea del <code>inspect</code>. Por IP funciona; por el nombre <code>e2-diana</code>, no. El motivo, en <a href="../temas/03-datos-y-redes.html">Docker 3</a>.</p>
+
+<h2>Qué mira el corrector</h2>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta el <code>Dockerfile</code> o <code>sondeo.txt</code>.</li>
@@ -75,20 +84,19 @@ docker rm -f e2-diana</code></pre></div>
 <li>Con los argumentos <code>equipo puerto</code>, la imagen no imprime lo mismo que <code>python sondeo.py</code>.</li>
 </ul>
 
-
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
 <p>Primero guarda tu trabajo en un commit, desde la raíz de tu repositorio: las pruebas solo ven lo que está en commits.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add .
 git commit -m "feat(docker-e2): imagen del sondeo de puertos"</code></pre></div>
-<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta, si existe; si no, <code>main</code>) y construyen y levantan contenedores como él.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e2</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e2</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar, se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push</code></pre></div>

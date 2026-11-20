@@ -70,7 +70,7 @@ td.codigo { font: 600 15px var(--f-mono); white-space: nowrap; }
 <header>
 <p class="eyebrow">Fundamentos · API 1 de 4</p>
 <h1>REST es HTTP</h1>
-<p class="lead">Una API REST no es una tecnología ni una biblioteca: es HTTP usado con unas reglas. El navegador, <code>curl</code>, Go, Python o Node solo escriben y leen el mismo texto. Este tema enseña a leer y escribir ese texto; los siguientes, a generarlo desde un programa.</p>
+<p class="lead">Una API REST no es una tecnología ni una biblioteca: es HTTP usado con unas reglas. El navegador, <code>curl</code>, Go, Python o Node solo escriben y leen el mismo texto. Este tema muestra cómo leer y escribir ese texto; los siguientes, cómo generarlo desde un programa.</p>
 <div class="meta"><span>Antes: <a href="../../02-docker/temas/04-compose-y-seguridad.html">Docker 4</a></span><span>Ejercicio: <a href="../ejercicios/e1.html">E1 · HTTP a mano</a></span></div>
 </header>
 
@@ -82,7 +82,7 @@ td.codigo { font: 600 15px var(--f-mono); white-space: nowrap; }
 <dt>Servidor</dt><dd>Quien contesta. Escucha en un puerto y responde a cada petición.</dd>
 <dt>HTTP</dt><dd>El protocolo de la conversación: un texto con un orden fijo, de petición y de respuesta.</dd>
 <dt>Recurso</dt><dd>Cada cosa que maneja la API (una incidencia, sus comentarios), con su propia URL.</dd>
-<dt>REST</dt><dd>Una forma de usar HTTP: recursos con URL propia, el método dice qué se hace y cada petición va sola.</dd>
+<dt>REST</dt><dd>Una forma de usar HTTP: recursos con URL propia, el método dice qué se hace y cada petición es independiente.</dd>
 <dt>JSON</dt><dd>El formato de texto en que viajan los datos.</dd>
 <dt>Contrato</dt><dd>Lo que la API promete: rutas, métodos, datos y códigos. Lo verás en <a href="02-disenar-y-construir.html">API 2</a>.</dd>
 </dl>
@@ -91,7 +91,7 @@ td.codigo { font: 600 15px var(--f-mono); white-space: nowrap; }
 <section class="seccion">
 <h2>Qué es una API</h2>
 <p>Piensa en el mostrador de una cafetería: no entras a la cocina, pides en el mostrador con unas palabras acordadas y te devuelven lo que has pedido. Una <b>API</b> es ese mostrador para programas.</p>
-<p>Un mismo servidor suele atender a dos tipos de cliente. A una persona con su navegador le devuelve páginas en HTML, pensadas para leerse. A un programa le devuelve datos en JSON, pensados para procesarse. Las dos conversaciones son HTTP.</p>
+<p>Un servidor puede atender a dos tipos de cliente. A una persona con su navegador le devuelve páginas en HTML, pensadas para leerse. A un programa (el JavaScript de una web, una app o curl) le devuelve datos en JSON, pensados para procesarse. Las dos conversaciones son HTTP.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 680 195" role="img" aria-label="Una web: el navegador pide GET /incidencias y el servidor devuelve HTML, una página para leer. Una API: un programa pide GET /api/v1/incidencias y el servidor devuelve JSON, datos para programas.">
 <defs><marker id="qa-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -102,7 +102,7 @@ td.codigo { font: 600 15px var(--f-mono); white-space: nowrap; }
 <path class="linea" d="M410 58L518 58" marker-end="url(#qa-f)"/><text class="tenue" x="465" y="50" text-anchor="middle">responde</text>
 <rect class="caja" x="520" y="28" width="160" height="60" rx="8"/><text class="tit" x="600" y="54" text-anchor="middle">HTML</text><text class="tenue" x="600" y="74" text-anchor="middle">una página para leer</text>
 <text class="tenue mono" x="0" y="118">UNA API</text>
-<rect class="caja" x="0" y="128" width="140" height="60" rx="8"/><text class="tit" x="70" y="154" text-anchor="middle">Programa</text><text class="tenue" x="70" y="174" text-anchor="middle">JS, app o curl</text>
+<rect class="caja" x="0" y="128" width="140" height="60" rx="8"/><text class="tit" x="70" y="154" text-anchor="middle">Programa</text><text class="tenue" x="70" y="174" text-anchor="middle">web, app o curl</text>
 <path class="linea" d="M140 158L268 158" marker-end="url(#qa-f)"/><text class="mono" x="205" y="150" text-anchor="middle">GET /api/v1/incidencias</text>
 <rect class="caja-acento" x="270" y="128" width="140" height="60" rx="8"/><text class="tit" x="340" y="154" text-anchor="middle">Servidor</text><text class="tenue" x="340" y="174" text-anchor="middle">API</text>
 <path class="linea" d="M410 158L518 158" marker-end="url(#qa-f)"/><text class="tenue" x="465" y="150" text-anchor="middle">responde</text>
@@ -125,11 +125,11 @@ td.codigo { font: 600 15px var(--f-mono); white-space: nowrap; }
 <g data-pasos="2"><path class="linea" d="M130 88L188 88" marker-end="url(#vi-f)"/><path class="linea" d="M320 88L378 88" marker-end="url(#vi-f)"/></g>
 <g data-pasos="3"><path class="linea" d="M510 88L568 88" marker-end="url(#vi-f)"/><path class="linea" d="M570 112L512 112" marker-end="url(#vi-f)"/></g>
 <g data-pasos="4"><path class="linea" d="M380 112L322 112" marker-end="url(#vi-f)"/><path class="linea" d="M190 112L132 112" marker-end="url(#vi-f)"/></g>
-<text class="mono" x="65" y="44" text-anchor="middle" data-pasos="1 2">GET /api/v1/incidencias/7</text>
+<text class="mono" x="0" y="44" data-pasos="1 2">GET /api/v1/incidencias/7</text>
 <text x="445" y="44" text-anchor="middle" data-pasos="3">¿existe la ruta? ¿y la 7?</text>
 <text x="635" y="44" text-anchor="middle" data-pasos="3">busca la incidencia 7</text>
 <text class="mono" x="255" y="170" text-anchor="middle" data-pasos="4">200 OK + JSON</text>
-<text x="65" y="170" text-anchor="middle" data-pasos="5">enseña la incidencia</text>
+<text x="65" y="170" text-anchor="middle" data-pasos="5">muestra la incidencia</text>
 </svg>
 <figcaption class="note" id="viaje-texto" aria-live="polite"></figcaption>
 </figure>
@@ -156,23 +156,23 @@ Content-Length: 98
 <li>Después van las <b>cabeceras</b>, una por línea con la forma <code>Nombre: valor</code>: datos sobre el mensaje.</li>
 <li>Una <b>línea en blanco</b> separa las cabeceras del <b>cuerpo</b>, los datos. <code>Content-Length</code> dice cuánto ocupa el cuerpo, para que quien lee sepa dónde acaba.</li>
 </ul>
-<p>Con <b>HTTPS</b> el texto es el mismo, pero viaja cifrado. El cifrado protege el viaje; lo que se envía lo sigue decidiendo el cliente.</p>
+<p>Con <b>HTTPS</b> el texto es el mismo, pero viaja cifrado. El cifrado impide que otros lean el mensaje por el camino, pero no impide que el cliente envíe lo que quiera: el servidor tiene que comprobarlo todo.</p>
 </section>
 
 <section class="seccion">
 <h2>Míralo en crudo</h2>
-<p>Con <code>-v</code>, <code>curl</code> enseña la conversación entera: las líneas que empiezan por <code>&gt;</code> son lo que envía y las que empiezan por <code>&lt;</code>, lo que recibe. Con la API del laboratorio del E1 en marcha:</p>
+<p>Con <code>-v</code>, <code>curl</code> muestra la conversación entera: las líneas que empiezan por <code>&gt;</code> son lo que envía y las que empiezan por <code>&lt;</code>, lo que recibe. Con la API del laboratorio del E1 en marcha (la arranca el <a href="../ejercicios/e1.html#paso-1">paso 1 del E1</a>):</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>curl.exe -v http://localhost:8080/api/v1/incidencias/7</code></pre>
+<div class="cmd"><pre><code>curl.exe -v http://localhost:8080/api/v1/incidencias/7</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>curl -v http://localhost:8080/api/v1/incidencias/7</code></pre>
+<div class="cmd"><pre><code>curl -v http://localhost:8080/api/v1/incidencias/7</code></pre></div>
 <pre><code>&gt; GET /api/v1/incidencias/7 HTTP/1.1
 &gt; Host: localhost:8080
-&gt; User-Agent: curl/8.10.1
+&gt; User-Agent: curl/8.21.0
 &gt; Accept: */*
 &gt;
 &lt; HTTP/1.1 200 OK
-&lt; Server: BaseHTTP/0.6 Python/3.12.8
+&lt; Server: BaseHTTP/0.6 Python/3.13.14
 &lt; Content-Type: application/json
 &lt; Content-Length: 98
 &lt;
@@ -227,8 +227,8 @@ Location: /api/v1/incidencias/13</span>
 <ol>
 <li><b>Cada cosa es un recurso con su URL.</b> Las rutas son nombres, no acciones.</li>
 <li><b>El método dice qué se hace con el recurso</b>: leer, crear, sustituir, cambiar o borrar. Lo ves más abajo.</li>
-<li><b>Cada petición va sola.</b> El servidor no recuerda la anterior: cada una lleva todo lo que hace falta, también quién la envía.</li>
-<li><b>Lo que viaja es una representación</b> del recurso, casi siempre en JSON, con su <code>Content-Type</code>.</li>
+<li><b>Cada petición es independiente.</b> El servidor no recuerda las anteriores: cada una lleva todo lo que hace falta, también quién la envía.</li>
+<li><b>Lo que viaja es una copia de los datos del recurso (su representación)</b>, casi siempre en JSON, con su <code>Content-Type</code>, que dice el formato.</li>
 <li><b>El código y las cabeceras dicen cómo ha ido</b>, igual que en cualquier otra respuesta HTTP.</li>
 </ol>
 <figure>
@@ -314,7 +314,7 @@ Location: /api/v1/incidencias/13</span>
 
 <section class="seccion">
 <h2>Seguro e idempotente</h2>
-<p>Un método es <b>seguro</b> si solo lee: llamarlo no cambia nada. Es <b>idempotente</b> si repetirlo una o diez veces deja el servidor igual que hacerlo una vez. Los navegadores, los proxys y las librerías confían en esto: repiten solos una petición idempotente si la red falla, y nunca un <code>POST</code>.</p>
+<p>Un método es <b>seguro</b> si solo lee: llamarlo no cambia nada. Es <b>idempotente</b> si repetirlo una o diez veces deja el servidor igual que hacerlo una vez. Los navegadores, los intermediarios de la red (proxis) y las bibliotecas de HTTP confían en esto: repiten solos una petición idempotente si la red falla, y nunca un <code>POST</code>.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 680 170" role="img" aria-label="POST repetido dos veces crea dos incidencias, la 13 y la 14: no es idempotente. PUT repetido dos veces deja la incidencia 7 igual que con una vez: es idempotente.">
 <defs><marker id="id-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -340,11 +340,12 @@ Location: /api/v1/incidencias/13</span>
 <tr><td><code>PATCH</code></td><td>No</td><td>No siempre</td></tr>
 <tr><td><code>DELETE</code></td><td>No</td><td>Sí</td></tr>
 </tbody></table></div>
+<p><code>PATCH</code> depende de lo que envíes. <code>{"estado": "cerrada"}</code> deja lo mismo aunque lo repitas: es idempotente. En cambio, un <code>PATCH</code> que dice «añade un comentario» o «suma 1 a las visitas» cambia el recurso cada vez que llega: no lo es.</p>
 </section>
 
 <section class="seccion">
 <h2>Códigos de estado: cómo ha ido</h2>
-<p>La primera línea de la respuesta lleva un número de tres cifras. La primera cifra ya dice de quién es el problema.</p>
+<p>La primera línea de la respuesta lleva un código de tres cifras: dice cómo ha ido y, si falla, de quién es la culpa. Basta con mirar la primera cifra.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 700 105" role="img" aria-label="Familias de códigos: 1xx informativo, 2xx ha ido bien, 3xx está en otro sitio, 4xx error del cliente, 5xx error del servidor.">
 <rect class="caja" x="0" y="4" width="132" height="64" rx="8"/><text class="tit mono" x="66" y="32" text-anchor="middle">1xx</text><text class="tenue mono" x="66" y="54" text-anchor="middle">101</text>
@@ -383,10 +384,10 @@ Location: /api/v1/incidencias/13</span>
 <tr><td><code>Content-Type</code></td><td>Las dos</td><td>Formato del cuerpo. En APIs, <code>application/json</code>.</td></tr>
 <tr><td><code>Content-Length</code></td><td>Las dos</td><td>Cuánto ocupa el cuerpo.</td></tr>
 <tr><td><code>Accept</code></td><td>Petición</td><td>Qué formatos entiende el cliente.</td></tr>
-<tr><td><code>Authorization</code></td><td>Petición</td><td>Quién eres: un token. Cada petición lo lleva, porque el servidor no recuerda.</td></tr>
+<tr><td><code>Authorization</code></td><td>Petición</td><td>Quién eres: un <b>token</b>, un texto secreto que el servidor te da al iniciar sesión y que hace de pase. Cada petición lo lleva, porque el servidor no recuerda.</td></tr>
 <tr><td><code>Location</code></td><td>Respuesta</td><td>Dónde está el recurso recién creado.</td></tr>
 <tr><td><code>Allow</code></td><td>Respuesta</td><td>Qué métodos admite la ruta, junto a un <code>405</code>.</td></tr>
-<tr><td><code>ETag</code>, <code>If-None-Match</code>, <code>If-Match</code></td><td>Las dos</td><td>Versiones de un recurso, para la caché y para no pisar cambios (<a href="03-buenas-practicas.html">API 3</a>).</td></tr>
+<tr><td><code>ETag</code>, <code>If-None-Match</code>, <code>If-Match</code></td><td>Las dos</td><td>Versiones de un recurso, para la <b>caché</b> (la copia que guarda el cliente para no pedir otra vez lo mismo) y para no pisar cambios (<a href="03-buenas-practicas.html">API 3</a>).</td></tr>
 </tbody></table></div>
 </section>
 
@@ -423,7 +424,7 @@ Location: /api/v1/incidencias/13</span>
 
 <section class="seccion">
 <h2>curl: la petición desde la terminal</h2>
-<p><b>curl</b> envía peticiones HTTP desde la terminal. Viene instalado en Windows 10 y 11, en macOS y en casi todas las distribuciones de Linux. En Windows se trabaja en PowerShell y se escribe siempre <code>curl.exe</code>: <code>curl</code> a secas es otra orden de PowerShell (<code>Invoke-WebRequest</code>) que no entiende estas opciones. En macOS y Linux, en la Terminal, es <code>curl</code>. Elige un método, una URL y el cuerpo, y mira cómo se escribe la orden en cada sistema y qué hace cada pieza.</p>
+<p><b>curl</b> envía peticiones HTTP desde la terminal. Viene instalado en Windows 10 y 11, en macOS y en casi todas las distribuciones de Linux. En Windows se trabaja en PowerShell y se escribe siempre <code>curl.exe</code>: <code>curl</code> a secas es otra orden de PowerShell que no entiende estas opciones. En macOS y Linux, en la Terminal, es <code>curl</code>. Elige un método, una URL y el cuerpo, y mira cómo se escribe la orden en cada sistema y qué hace cada pieza.</p>
 <div class="panel">
 <div class="opciones" id="c-metodos">
 <button type="button" aria-pressed="true">GET</button>
@@ -435,17 +436,17 @@ Location: /api/v1/incidencias/13</span>
 <label>URL <input id="c-url" type="url" spellcheck="false" autocomplete="off" value="http://localhost:8080/api/v1/incidencias/7"></label>
 <label>Cuerpo en JSON <textarea id="c-cuerpo" rows="2" spellcheck="false">{"prioridad": "alta"}</textarea></label>
 <p class="so">Windows · PowerShell</p>
-<pre><code id="c-orden-win"></code></pre>
+<div class="cmd"><pre><code id="c-orden-win"></code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code id="c-orden"></code></pre>
+<div class="cmd"><pre><code id="c-orden"></code></pre></div>
 <ul class="ordenes" id="c-piezas"></ul>
 </div>
-<p class="note">En las dos terminales, todo lo que lleve espacios, comillas dobles, <code>?</code> o <code>&amp;</code> va entre <b>comillas simples</b>: así la terminal no lo interpreta. En macOS y Linux eso basta para el JSON, <code>'{"prioridad": "alta"}'</code>: las simples protegen a las dobles. Windows PowerShell, en cambio, quita las comillas dobles de dentro al pasarle el texto a <code>curl.exe</code>, y la API recibiría <code>{prioridad: alta}</code>, que no es JSON. Por eso en Windows el cuerpo se escribe antes en un fichero con <code>New-Item</code> y <code>curl.exe</code> lo manda con <code>--data-binary "@cuerpo.json"</code>.</p>
+<p class="note">La URL va entre <b>comillas simples</b>, para que la terminal no interprete el <code>?</code> ni el <code>&amp;</code>. En macOS y Linux el JSON también va en la orden, entre comillas simples. En Windows el JSON va siempre en un fichero: PowerShell estropea las comillas si lo escribes en la orden.</p>
 <p>Si la respuesta es un JSON largo, cambia <code>-i</code> por <code>-s</code> (solo el cuerpo, sin cabeceras) y pásala a un programa que la imprima ordenada:</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>curl.exe -s http://localhost:8080/api/v1/incidencias | ConvertFrom-Json | ConvertTo-Json -Depth 5</code></pre>
+<div class="cmd"><pre><code>curl.exe -s http://localhost:8080/api/v1/incidencias | ConvertFrom-Json | ConvertTo-Json -Depth 5</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>curl -s http://localhost:8080/api/v1/incidencias | python3 -m json.tool</code></pre>
+<div class="cmd"><pre><code>curl -s http://localhost:8080/api/v1/incidencias | python3 -m json.tool</code></pre></div>
 <p>En PowerShell, con esta orden alguna tilde puede salir con símbolos raros: es solo cómo la pinta la terminal, los datos de la API están bien.</p>
 </section>
 
@@ -455,7 +456,7 @@ Location: /api/v1/incidencias/13</span>
 <div class="flow"><span>F12 → Network</span><i>→</i><span>botón derecho en la petición</span><i>→</i><span>Copy → <b>Copy as cURL</b> o <b>Copy as PowerShell</b></span><i>→</i><span>pegar en la terminal</span></div>
 <ul>
 <li>En macOS y Linux, elige <b>Copy as cURL</b> (en Chrome para Windows y Linux se llama <b>Copy as cURL (bash)</b>) y pégala en la Terminal tal cual.</li>
-<li>En Windows, ninguna copia de cURL funciona tal cual en PowerShell: la <i>(bash)</i> escribe <code>curl</code> y parte las líneas con <code>\</code>, y la <i>(cmd)</i> usa las comillas de cmd. Elige <b>Copy as PowerShell</b>: es la misma petición, con su método, cabeceras, cookies y cuerpo, escrita con <code>Invoke-WebRequest</code>, y se pega tal cual en PowerShell. Si quieres leerla como curl, copia la <i>(bash)</i> y pégala en el editor, no en la terminal.</li>
+<li>En Windows elige <b>Copy as PowerShell</b>: se pega tal cual. Es la misma petición, con su método, cabeceras, cookies y cuerpo. Las copias de cURL no funcionan en PowerShell; si quieres leerla como curl, copia la <i>(bash)</i> y pégala en el editor, no en la terminal.</li>
 <li>La orden copiada lleva tus cookies y tus tokens: son tu sesión. No la pegues en una IA en la nube, en un chat ni en tu repositorio sin borrarlos antes.</li>
 </ul>
 </section>
@@ -489,9 +490,9 @@ Location: /api/v1/incidencias/13</span>
   const PASOS = [
     "1 · El cliente prepara la petición: qué quiere (leer) y sobre qué (la incidencia 7).",
     "2 · La petición sale por la red hasta el servidor. Con HTTPS viaja cifrada.",
-    "3 · El servidor busca qué código atiende esa ruta y ese método, y ese código busca el dato.",
+    "3 · El servidor mira qué función atiende esa ruta y ese método, y esa función busca el dato.",
     "4 · El servidor responde con un código (200, ha ido bien) y los datos en JSON.",
-    "5 · El cliente usa la respuesta: la página enseña la incidencia.",
+    "5 · El cliente usa la respuesta: la página muestra la incidencia.",
   ];
   const marcables = [...document.querySelectorAll(".viaje [data-pasos]")]
     .map((el) => [el, new Set(el.dataset.pasos.split(" ").map(Number))]);
@@ -764,7 +765,7 @@ Location: /api/v1/incidencias/13</span>
     $("c-orden").textContent = `curl -i${metodo} ${comillas(url)}` + (conCuerpo ? `${cabecera} --data ${comillas(cCuerpo.value)}` : "");
     const piezas = [
       ["curl.exe · curl", "el programa: curl.exe en PowerShell, curl en macOS y Linux"],
-      ["-i", "enseña el código y las cabeceras de la respuesta, no solo el cuerpo"],
+      ["-i", "muestra el código y las cabeceras de la respuesta, no solo el cuerpo"],
     ];
     if (cMetodo !== "GET") piezas.push([`-X ${cMetodo}`, "el método; sin -X, curl hace GET"]);
     piezas.push([comillas(url), "la URL, entre comillas simples"]);
@@ -791,5 +792,6 @@ Location: /api/v1/incidencias/13</span>
 })();
 </script>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>

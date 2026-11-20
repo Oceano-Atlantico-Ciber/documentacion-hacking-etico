@@ -27,7 +27,7 @@
 Content-Type: application/problem+json
 
 {"type": "about:blank", "title": "Unprocessable Entity", "status": 422, "detail": "Falta el campo prioridad"}</code></pre>
-<p><code>status</code> es el mismo número que el código de la respuesta, y <code>detail</code> lo entiende una persona sin decir nada de cómo está hecha la API. <code>title</code> es la frase del código, y cada lenguaje la escribe a su manera: para el <code>422</code>, Go y Node dicen <code>Unprocessable Entity</code> y Python 3.13, <code>Unprocessable Content</code>, el nombre nuevo de la RFC 9110. Vale cualquiera de las dos. Las pruebas comprueban que <code>title</code> sea un texto, no cuál; el cliente decide por <code>status</code>.</p>
+<p><code>status</code> es el mismo número que el código de la respuesta, y <code>detail</code> lo entiende una persona sin decir nada de cómo está hecha la API. El <code>title</code> puede variar entre lenguajes; el cliente decide por <code>status</code>.</p>
 
 <h2 class="step" id="paso-1"><span class="n">1</span>Prepara el escenario</h2>
 <p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
@@ -43,7 +43,7 @@ cd fundamentos/api/e6</code></pre></div>
 <pre><code>POST /api/v1/incidencias | {"titulo": "Falta la prioridad"} | 422</code></pre>
 
 <h2 class="step" id="paso-2"><span class="n">2</span>Antes de tocar nada, mira qué responden hoy</h2>
-<p>Arranca las tres APIs como en el E5, pero construidas desde <code>e6/</code>: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden para los contenedores del E5, si siguen en marcha (si no, da un error que puedes ignorar). Desde <code>fundamentos/api/e6/</code>, en cualquier sistema:</p>
+<p>Arranca las tres APIs como en el E5, pero construidas desde <code>e6/</code>: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden detiene los contenedores del E5, si siguen en marcha (si no, da un error que puedes ignorar). Desde <code>fundamentos/api/e6/</code>, en cualquier sistema:</p>
 <div class="cmd"><pre><code>docker stop e5-go e5-python e5-node
 docker build -t api-e6-go go
 docker build -t api-e6-python python
@@ -65,10 +65,10 @@ curl -i -X POST http://localhost:8001/api/v1/incidencias -H "Content-Type: appli
 curl -i -X POST http://localhost:8002/api/v1/incidencias -H "Content-Type: application/json" --data-binary "@roto.json"
 curl -i -X POST http://localhost:8003/api/v1/incidencias -H "Content-Type: application/json" --data-binary "@roto.json"
 curl -i http://localhost:8003/api/v1/no-existe</code></pre></div>
-<p>El cuerpo va en un fichero porque Windows PowerShell quita las comillas dobles de un JSON escrito en la propia orden. Para probar otro caso de <code>casos.txt</code>, repite la primera orden con su cuerpo entre las comillas simples y después un <code>curl</code> con su método (<code>-X</code>) y su ruta. Si el cuerpo lleva comillas simples, como <code>['titulo', 'baja']</code>, escríbelo mejor en el editor: <code>code roto.json</code>, una sola línea, y guarda.</p>
+<p>Escribe el cuerpo en un fichero, como en el <a href="e1.html#paso-4">E1</a>. Para probar otro caso de <code>casos.txt</code>, repite la primera orden con su cuerpo entre las comillas simples y después un <code>curl</code> con su método (<code>-X</code>) y su ruta. Si el cuerpo lleva comillas simples, como <code>['titulo', 'baja']</code>, escríbelo mejor en el editor: <code>code roto.json</code>, una sola línea, y guarda.</p>
 <p>Apunta lo que delata cada una: es justo lo que tienes que cambiar.</p>
 
-<h2 class="step" id="paso-3"><span class="n">3</span>Valida y uniforma los errores</h2>
+<h2 class="step" id="paso-3"><span class="n">3</span>Valida y unifica los errores</h2>
 <ul>
 <li>Un <code>problema</code> por lenguaje, como en <a href="../temas/03-buenas-practicas.html">API 3</a>, y todos los errores pasan por él: también el <code>404</code> de una ruta que no existe y el <code>405</code>.</li>
 <li><code>400</code> si el cuerpo no es JSON; <code>422</code> si es JSON pero no vale: no es un objeto, falta un campo obligatorio, sobra un campo que el contrato no tiene, un tipo no cuadra, el título está vacío o pasa de 120 caracteres, la prioridad o el estado no son de la lista, o un comentario está vacío o pasa de 500.</li>
@@ -81,7 +81,7 @@ curl -i http://localhost:8003/api/v1/no-existe</code></pre></div>
 <div class="cmd"><pre><code>py go/pruebas.py e6 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 go/pruebas.py e6 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
-<p>Es lo mismo que hace el corrector: pasa a cada API sus pruebas y, después, compara las tres; al final, «Qué arreglar» agrupa los fallos por causa, con el arreglo, la orden para repetirlo y el paso de este enunciado. Las pruebas cambian datos: reinicia los contenedores (<code>docker stop e6-go e6-python e6-node</code> y sus tres <code>docker run</code> del paso 1) antes de cada pasada. Está listo cuando termina en <code>0 mal</code>.</p>
+<p>Es lo mismo que hace el corrector: pasa a cada API sus pruebas y, después, compara las tres; al final, «Qué arreglar» agrupa los fallos por causa, con el arreglo, la orden para repetirlo y el paso de este enunciado. Las pruebas cambian datos: reinicia los contenedores (<code>docker stop e6-go e6-python e6-node</code> y sus tres <code>docker run</code> del paso 2) antes de cada pasada. Está listo cuando termina en <code>0 mal</code>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Algún caso de <code>casos.txt</code>, u otro parecido, no da su código en <code>application/problem+json</code> con <code>type</code>, <code>title</code>, <code>status</code> y <code>detail</code>.</li>

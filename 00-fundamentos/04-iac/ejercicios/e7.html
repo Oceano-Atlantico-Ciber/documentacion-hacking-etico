@@ -53,10 +53,10 @@ git switch main</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e7</code></pre></div>
 <pre><code>e7 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e7/. Sigue el enunciado.</code></pre>
-<p>Deja en <code>e7/empresa/</code> la misma cuenta del E2 y un <code>LEEME.md</code> con los usuarios y buckets que importan.</p>
+<p><code>preparar.py</code> ha dejado en <code>e7/empresa/</code> el mismo código de la empresa del E2 (<code>empresa.tf</code> y <code>proveedor.tf</code>), y en <code>e7/</code> un <code>LEEME.md</code> con los usuarios y buckets que importan.</p>
 
 <h2 class="step"><span class="n">2</span>Ten la empresa desplegada</h2>
-<p>La empresa ya está en tu Floci desde el E2, y quien sabe qué creó Terraform es el estado de <code>e2/empresa/</code>. Esta carpeta nueva empieza sin estado: si lanzaras <code>apply</code> sin más, intentaría crearlo todo otra vez y chocaría con lo que ya existe. Copia el estado del E2 y comprueba que código y cuenta coinciden (con tu Floci en marcha). <code>cp</code> vale igual en PowerShell que en macOS y Linux:</p>
+<p>La empresa ya está en tu Floci desde el E2, y lo que creó Terraform está apuntado en el estado de <code>e2/empresa/</code>. Esta carpeta nueva empieza sin estado: si lanzaras <code>apply</code> sin más, intentaría crearlo todo otra vez y chocaría con lo que ya existe. Copia el estado del E2 y comprueba que código y cuenta coinciden (con tu Floci en marcha). <code>cp</code> vale igual en PowerShell que en macOS y Linux:</p>
 <div class="cmd"><pre><code>cd fundamentos/iac/e7/empresa
 cp ../../e2/empresa/terraform.tfstate .
 terraform init
@@ -64,13 +64,14 @@ terraform plan</code></pre></div>
 <pre><code>No changes. Your infrastructure matches the configuration.</code></pre>
 <ul>
 <li>Si el plan quiere crear cosas (<code>to add</code>), es que borraste tu Floci después del E2: lanza <code>terraform apply</code> y escribe <code>yes</code>.</li>
-<li>Si <code>cp</code> dice que no encuentra el fichero, no tienes el estado del E2. Lanza <code>terraform apply</code>. Si falla con <code>already exists</code>, la empresa está en tu Floci pero nadie sabe que es de este código: empieza con una Floci vacía (<code>docker compose down -v</code> y <code>docker compose up -d</code> en <code>fundamentos/iac/</code>; borra todo lo de la unidad, que ya no necesitas) y repite <code>terraform apply</code>.</li>
+<li>Si <code>cp</code> dice que no encuentra el fichero, no tienes el estado del E2: lanza <code>terraform apply</code> y escribe <code>yes</code>.</li>
+<li>Si ese <code>apply</code> falla con <code>already exists</code>, la empresa está en tu Floci pero ningún estado dice que es de este código: empieza con una Floci vacía (<code>docker compose down -v</code> y <code>docker compose up -d</code> en <code>fundamentos/iac/</code>; borra todo lo de la unidad, que ya no necesitas) y repite <code>terraform apply</code>.</li>
 </ul>
 <p>El <code>terraform.tfstate</code> copiado no se sube: el <code>.gitignore</code> lo deja fuera.</p>
 
 <h2 class="step"><span class="n">3</span>Lee el código</h2>
 <div class="cmd"><pre><code>code empresa.tf</code></pre></div>
-<p>Lee las dos políticas de IAM, <code>operaciones-todo</code> y <code>becario-trabajo</code>, con la tabla de <a href="../temas/04-seguridad-de-la-infraestructura.html#escalada">IaC 4 · Permisos que dan permisos</a> al lado. Fíjate en cada sentencia: qué acciones (<code>Action</code>) y sobre qué recursos (<code>Resource</code>). Los comentarios cuentan lo que el equipo anterior quería hacer; el código, lo que hace de verdad. Mira también qué otros recursos tocan a los usuarios.</p>
+<p>Lee las dos políticas de IAM, <code>operaciones-todo</code> y <code>becario-trabajo</code>, con la tabla de <a href="../temas/04-seguridad-de-la-infraestructura.html#escalada">IaC 4 · Permisos que dan permisos</a> al lado. Fíjate en cada sentencia: qué acciones (<code>Action</code>) y sobre qué recursos (<code>Resource</code>). Los comentarios cuentan lo que el equipo anterior quería hacer; el código, lo que hace de verdad. Mira también qué otros recursos van ligados a los usuarios (por ejemplo, claves de acceso) y lo que dicen sus comentarios.</p>
 
 <h2 class="step"><span class="n">4</span>Pregunta a la cuenta</h2>
 <p>Lo que dice el código hay que comprobarlo en la cuenta. Como administrador (tu configuración por defecto, la clave <code>test</code>), lee lo que hay. Vuelve a <code>e7/</code>, que es donde va <code>simulacion.json</code>, y cambia <code>&lt;huella&gt;</code> por la tuya:</p>
@@ -85,8 +86,8 @@ Get-Content simulacion.json</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --action-names iam:PutUserPolicy iam:AttachUserPolicy --resource-arns &lt;ARN del becario&gt; &gt; simulacion.json
 cat simulacion.json</code></pre></div>
-<p>La primera orden es una sola línea. No escribe nada en pantalla; la segunda enseña el fichero. Busca el <code>EvalDecision</code> de cada acción: <code>iam:PutUserPolicy</code> tiene que salir <code>allowed</code>. Esa es la prueba del riesgo. Si sale un error en vez de JSON, revisa el ARN y repite la orden: reescribe el fichero.</p>
-<p>Ahora el usuario de operaciones y los datos de dirección. Estas no van a ningún fichero (no las guardes en <code>simulacion.json</code>, o perderías la del becario): lee la respuesta en pantalla y apunta lo que veas.</p>
+<p>La primera orden es una sola línea. No escribe nada en pantalla; la segunda enseña el fichero. Busca el <code>EvalDecision</code> de cada acción: <code>iam:PutUserPolicy</code> debe salir <code>allowed</code>. Esa es la prueba del riesgo. Si sale un error en vez de JSON, revisa el ARN y repite la orden: reescribe el fichero.</p>
+<p>Ahora el usuario de operaciones y los datos de la dirección de la empresa (el bucket <code>secretos-…</code>). Estas no van a ningún fichero (no las guardes en <code>simulacion.json</code>, o perderías la del becario): lee la respuesta en pantalla y apunta lo que veas.</p>
 <div class="cmd"><pre><code>aws iam get-user --user-name operaciones-&lt;huella&gt; --query User.Arn
 aws iam get-user-policy --user-name operaciones-&lt;huella&gt; --policy-name operaciones-todo
 aws iam simulate-principal-policy --policy-source-arn &lt;ARN de operaciones&gt; --action-names iam:PutUserPolicy iam:CreateAccessKey --resource-arns &lt;ARN de operaciones&gt;
@@ -98,11 +99,11 @@ aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --
 <p>Con la forma de <a href="#que-entregas">Qué entregas</a>, un apartado por hallazgo de IAM con cuatro respuestas:</p>
 <ul>
 <li><b>Dónde</b> está: el recurso de <code>empresa.tf</code> y, si es una política, su nombre y la sentencia (su <code>Sid</code>, si tiene).</li>
-<li><b>Fallo</b>: qué está mal configurado y su CWE, de la tabla de <a href="../temas/04-seguridad-de-la-infraestructura.html#hallazgos">IaC 4 · Los fallos de configuración más vistos</a>.</li>
+<li><b>Fallo</b>: qué está mal configurado y su CWE, de la tabla de <a href="../temas/04-seguridad-de-la-infraestructura.html#hallazgos">IaC 4 · Los fallos de configuración más frecuentes</a>.</li>
 <li><b>Riesgo</b>: qué podría hacer alguien con esa identidad, apoyado en lo que dio la simulación (cita la acción y su <code>EvalDecision</code>).</li>
 <li><b>Corrección</b>: cómo se arregla en el código. La harás en el E8.</li>
 </ul>
-<p>Como mínimo, tres hallazgos: la política <code>becario-trabajo</code> (nombra la acción <code>iam:PutUserPolicy</code>), la política <code>operaciones-todo</code> y la clave del becario que acabó en un repositorio público. Si ves otros fallos fuera de IAM, añádelos al final en una lista corta. Guarda.</p>
+<p>Como mínimo, tres hallazgos: la política <code>becario-trabajo</code> (nombra la acción <code>iam:PutUserPolicy</code>), la política <code>operaciones-todo</code> y la clave del becario (<code>aws_iam_access_key.becario</code>), que, según su comentario en <code>empresa.tf</code>, acabó copiada en un repositorio público. Si ves otros fallos fuera de IAM, añádelos al final en una lista corta. Guarda.</p>
 <p class="note">No uses la clave del becario aunque la tengas en la salida <code>becario_clave</code> de Terraform: sería entrar con una identidad que no es tuya. La simulación demuestra lo mismo sin tocar nada.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
@@ -113,7 +114,7 @@ aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --
 <li>No responde a dónde está, qué riesgo tiene y cómo se corrige (con esas palabras: dónde, riesgo, corrección).</li>
 </ul>
 
-<h2 class="step"><span class="n">6</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">6</span>Haz commit y pruébalo</h2>
 <p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git status --short -uall fundamentos/iac/e7</code></pre></div>
@@ -122,10 +123,11 @@ git status --short -uall fundamentos/iac/e7</code></pre></div>
 ?? fundamentos/iac/e7/empresa/empresa.tf
 ?? fundamentos/iac/e7/empresa/proveedor.tf
 ?? fundamentos/iac/e7/simulacion.json</code></pre>
-<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<p>No debe salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
 <div class="cmd"><pre><code>git add fundamentos/iac/e7
 git commit -m "docs(iac-e7): auditoría de los permisos de la empresa"</code></pre></div>
-<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e7</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p><code>pruebas.py</code> evalúa tu etiqueta <code>entrega-fundamentos-iac-e7</code>, o la rama <code>main</code> si aún no la tienes, con las mismas comprobaciones que el corrector. Solo cuentan los commits: lo que no esté en un commit no se evalúa. Trabaja en una Floci aparte y vacía, así que no toca tu repositorio ni tu Floci.</p>
+<p>Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e7</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -150,10 +152,13 @@ git push origin entrega-fundamentos-iac-e7</code></pre></div>
 <p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
 <pre><code>E7 · etiqueta entrega-fundamentos-iac-e7 · 7a8b9c0 · comprobando…
   ✓ superado</code></pre>
-<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
 <p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
 <h3>Si hay que corregir algo después de etiquetar</h3>
-<p>Corrige en <code>fundamentos/iac/e7/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<ul>
+<li><b>Si has cambiado ficheros</b>: corrige en <code>fundamentos/iac/e7/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo con las dos órdenes de abajo. Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua.</li>
+<li><b>Si solo falla la etiqueta</b>, porque <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit: muévela, sin hacer ningún commit.</li>
+</ul>
+<p>Para mover la etiqueta, <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>):</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e7 main -m "E7 resuelto"
 git push -f origin entrega-fundamentos-iac-e7</code></pre></div>
 <p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>

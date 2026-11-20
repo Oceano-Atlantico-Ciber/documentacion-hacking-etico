@@ -11,7 +11,7 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">04 · Terraform y AWS</a></nav>
 
 <h1>E4 · Variables y deriva</h1>
-<p class="lead">Saca los nombres del E3 a una variable y da salidas útiles. Después, «un compañero» borra a mano la política del lector: tu código lo tiene que detectar y deshacer.</p>
+<p class="lead">Saca los nombres del E3 a una variable y define dos salidas. Después, «un compañero» borra a mano la política del lector: tu código debe detectarlo y deshacerlo.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/02-terraform.html#variables">IaC 2 · Variables y salidas</a> y <a href="../temas/02-terraform.html#deriva">Deriva</a></dd>
 <dt>Aprendes</dt><dd>Variables, salidas, y que el código es la fuente de verdad de la cuenta.</dd>
@@ -44,11 +44,11 @@ git switch main</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e4</code></pre></div>
 <pre><code>e4 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e4/. Sigue el enunciado.</code></pre>
-<p>Copia tu E3 (sin estado ni <code>.terraform/</code>) a <code>e4/</code> y cambia el <code>LEEME.md</code> por uno con la orden del «compañero». Entra y léelo:</p>
+<p><code>preparar.py</code> ha copiado tu E3 en <code>e4/</code> (no tienes que copiar nada): todos sus ficheros, sin el estado ni <code>.terraform/</code>. Ha cambiado el <code>LEEME.md</code> por uno con la orden del «compañero». Entra y léelo:</p>
 <div class="cmd"><pre><code>cd fundamentos/iac/e4
 code LEEME.md</code></pre></div>
 <p class="note"><code>code LEEME.md</code> lo abre en VS Code: léelo ahí y copia de ahí tus nombres.</p>
-<p>Como el estado no se copia, esta carpeta empieza sin saber nada de la cuenta: los bloques <code>import</code> del E3 vuelven a hacer falta aquí. Déjalos. Lo del E1 tiene que seguir en tu Floci, como en el E3.</p>
+<p>Como el estado no se copia, esta carpeta empieza sin saber nada de la cuenta: los bloques <code>import</code> del E3 vuelven a hacer falta aquí. Déjalos. Lo del E1 debe seguir en tu Floci, como en el E3.</p>
 
 <h2 class="step"><span class="n">2</span>Variables y salidas</h2>
 <p>Crea <code>variables.tf</code> con una variable para tu huella, que es lo que se repite en los nombres:</p>
@@ -58,7 +58,11 @@ code LEEME.md</code></pre></div>
   type        = string
   default     = "&lt;huella&gt;"
 }</code></pre>
-<p>El <code>default</code> es obligatorio aquí: el corrector no responde preguntas, y sin él <code>terraform apply</code> se pararía a pedir el valor. En <code>main.tf</code>, cambia tu huella escrita a mano por la variable en los nombres y en los <code>id</code> de los <code>import</code>: <code>"e1-notas-&lt;huella&gt;"</code> pasa a ser <code>"e1-notas-${var.huella}"</code>, <code>"lector-&lt;huella&gt;"</code> pasa a ser <code>"lector-${var.huella}"</code> y <code>"lector-&lt;huella&gt;:lectura-notas"</code>, <code>"lector-${var.huella}:lectura-notas"</code>. Después, las salidas:</p>
+<p>El <code>default</code> es obligatorio aquí: el corrector no puede contestar si Terraform pregunta un valor, y sin <code>default</code> <code>terraform apply</code> se pararía a pedirlo. En <code>main.tf</code>, cambia tu huella escrita a mano por la variable, en los nombres y en los <code>id</code> de los <code>import</code> (antes → después):</p>
+<pre><code>"e1-notas-&lt;huella&gt;"              →  "e1-notas-${var.huella}"
+"lector-&lt;huella&gt;"                →  "lector-${var.huella}"
+"lector-&lt;huella&gt;:lectura-notas"  →  "lector-${var.huella}:lectura-notas"</code></pre>
+<p>Después, las salidas:</p>
 <div class="cmd"><pre><code>code outputs.tf</code></pre></div>
 <pre><code>output "bucket" {
   value = aws_s3_bucket.notas.bucket
@@ -70,7 +74,7 @@ output "usuario" {
 <p>Guarda los tres ficheros y, desde <code>fundamentos/iac/e4/</code>:</p>
 <div class="cmd"><pre><code>terraform init
 terraform plan</code></pre></div>
-<p>Como en el E3, tiene que decir <code>Plan: 3 to import, 0 to add, 0 to change, 0 to destroy.</code> y, además, <code>Changes to Outputs:</code> con tus dos salidas. Si no, revisa lo que has cambiado en <code>main.tf</code>. Aplica (<code>yes</code>) y mira las salidas y otro plan:</p>
+<p>Como en el E3, debe decir <code>Plan: 3 to import, 0 to add, 0 to change, 0 to destroy.</code> y, además, <code>Changes to Outputs:</code> con tus dos salidas. Si no, revisa lo que has cambiado en <code>main.tf</code>. Aplica (<code>yes</code>) y mira las salidas y otro plan:</p>
 <div class="cmd"><pre><code>terraform apply
 terraform output
 terraform plan</code></pre></div>
@@ -111,7 +115,7 @@ terraform plan</code></pre></div>
 <li><code>deriva.md</code> no nombra la política <code>lectura-notas</code>.</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">5</span>Haz commit y pruébalo</h2>
 <p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git status --short -uall fundamentos/iac/e4</code></pre></div>
@@ -121,10 +125,11 @@ git status --short -uall fundamentos/iac/e4</code></pre></div>
 ?? fundamentos/iac/e4/outputs.tf
 ?? fundamentos/iac/e4/proveedor.tf
 ?? fundamentos/iac/e4/variables.tf</code></pre>
-<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<p>No debe salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
 <div class="cmd"><pre><code>git add fundamentos/iac/e4
 git commit -m "feat(iac-e4): variables, salidas y deriva corregida"</code></pre></div>
-<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e4</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p><code>pruebas.py</code> evalúa tu etiqueta <code>entrega-fundamentos-iac-e4</code>, o la rama <code>main</code> si aún no la tienes, con las mismas comprobaciones que el corrector. Solo cuentan los commits: lo que no esté en un commit no se evalúa. Trabaja en una Floci aparte y vacía, así que no toca tu repositorio ni tu Floci.</p>
+<p>Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e4</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -148,15 +153,18 @@ git push origin entrega-fundamentos-iac-e4</code></pre></div>
 <p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
 <pre><code>E4 · etiqueta entrega-fundamentos-iac-e4 · 7a8b9c0 · comprobando…
   ✓ superado</code></pre>
-<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
 <p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
 <h3>Si hay que corregir algo después de etiquetar</h3>
-<p>Corrige en <code>fundamentos/iac/e4/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<ul>
+<li><b>Si has cambiado ficheros</b>: corrige en <code>fundamentos/iac/e4/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo con las dos órdenes de abajo. Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua.</li>
+<li><b>Si solo falla la etiqueta</b>, porque <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit: muévela, sin hacer ningún commit.</li>
+</ul>
+<p>Para mover la etiqueta, <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>):</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e4 main -m "E4 resuelto"
 git push -f origin entrega-fundamentos-iac-e4</code></pre></div>
 <p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
 
-<nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e3.html">← E3 · Del clic al código</a><a href="e5.html">E5 · Un laboratorio completo →</a></nav>
+<nav class="ejercicios" aria-label="Ejercicios de Terraform y AWS"><a href="e3.html">← E3 · De la CLI al código</a><a href="e5.html">E5 · Un laboratorio completo →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../../../assets/nav.js" defer></script>

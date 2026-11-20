@@ -196,7 +196,7 @@ def e2(caso: Caso) -> Iterator[str]:
         yield "inventario.md no señala, en una lista, al menos tres cosas que un atacante miraría primero"
 
 
-# --- E3 · Del clic al código --------------------------------------------------------------
+# --- E3 · De la CLI al código --------------------------------------------------------------
 
 def _con_import(caso: Caso) -> Iterator[str]:
     codigo = "\n".join(caso.leer(f.name) for f in caso.carpeta.glob("*.tf"))

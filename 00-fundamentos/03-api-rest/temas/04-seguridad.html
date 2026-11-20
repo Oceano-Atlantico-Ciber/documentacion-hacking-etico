@@ -28,7 +28,7 @@ tr.e8 td:first-child { font-weight: 700; }
 <dl class="ficha">
 <dt>Autenticación</dt><dd>Saber quién hace la petición. Si falla: <code>401</code>.</dd>
 <dt>Autorización</dt><dd>Saber si quien la hace puede hacer eso, sobre eso. Si falla: <code>403</code>, o <code>404</code> para no confirmar que existe.</dd>
-<dt>Token</dt><dd>Un texto secreto que el cliente manda en cada petición para demostrar quién es: <code>Authorization: Bearer &lt;token&gt;</code>.</dd>
+<dt>Token</dt><dd>Un texto secreto que el cliente manda en cada petición para demostrar quién es: <code>Authorization: Bearer &lt;token&gt;</code>. <i>Bearer</i> significa «portador»: el token vale para quien lo lleve, así que se guarda como una clave.</dd>
 <dt>Rol</dt><dd>Lo que un usuario puede hacer en general: aquí, <code>tecnico</code> o <code>admin</code>.</dd>
 <dt>OWASP</dt><dd>Fundación abierta que publica, entre otras cosas, la lista de los diez riesgos más frecuentes en APIs.</dd>
 </dl>
@@ -45,15 +45,43 @@ tr.e8 td:first-child { font-weight: 700; }
 <tr class="e8"><td>API5 · BFLA</td><td>Autorización a nivel de función: usar una operación de administrador sin serlo.</td><td>E8</td></tr>
 <tr><td>API6 · Flujos de negocio sensibles</td><td>Automatizar algo que solo debía hacer una persona (comprar todas las entradas).</td><td>Aplicaciones web</td></tr>
 <tr><td>API7 · SSRF</td><td>Hacer que el servidor pida una URL que elige el atacante.</td><td>Aplicaciones web</td></tr>
-<tr class="e8"><td>API8 · Mala configuración</td><td>Trazas en los errores, cabeceras que delatan la tecnología, CORS abierto.</td><td>E6 y E8</td></tr>
-<tr><td>API9 · Inventario descuidado</td><td>Versiones antiguas o rutas de pruebas que siguen vivas.</td><td>la versión en la ruta, API 2</td></tr>
+<tr class="e8"><td>API8 · Mala configuración</td><td>Trazas en los errores, cabeceras que delatan la tecnología, dejar que cualquier web llame a la API desde el navegador de sus visitantes (CORS abierto).</td><td>E6 y E8</td></tr>
+<tr><td>API9 · Inventario descuidado</td><td>Versiones antiguas o rutas de pruebas que siguen vivas.</td><td>API 2 (la versión en la ruta)</td></tr>
 <tr><td>API10 · Consumo inseguro de APIs</td><td>Fiarse sin comprobar de lo que devuelve otra API.</td><td>Aplicaciones web</td></tr>
 </tbody></table></div>
+<p>Las cinco filas en negrita se reducen a unas preguntas que el servidor se hace con cada petición, en este orden:</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 760 175" role="img" aria-label="Cada petición pasa cuatro preguntas en orden. ¿Token válido? Si no, 401. ¿El recurso es tuyo? Si no, 404. ¿Tu rol puede hacerlo? Si no, 403. ¿Demasiados intentos? Si sí, 429. Si pasa las cuatro, 200.">
+<defs><marker id="dc-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="dc-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="20" width="130" height="54" rx="8"/>
+<text class="tit" x="65" y="52" text-anchor="middle">¿Token válido?</text>
+<path class="linea" d="M130 47H163" marker-end="url(#dc-f)"/><text class="tenue peq" x="147" y="40" text-anchor="middle">sí</text>
+<path class="linea-peligro" d="M65 74V116" marker-end="url(#dc-fp)"/><text class="peligro peq" x="73" y="100">no</text>
+<rect class="caja-peligro" x="0" y="118" width="130" height="50" rx="8"/><text class="tit mono" x="65" y="139" text-anchor="middle">401</text><text class="peq" x="65" y="158" text-anchor="middle">no sé quién eres</text>
+<rect class="caja" x="165" y="20" width="130" height="54" rx="8"/>
+<text class="tit" x="230" y="43" text-anchor="middle">¿El recurso</text><text class="tit" x="230" y="62" text-anchor="middle">es tuyo?</text>
+<path class="linea" d="M295 47H328" marker-end="url(#dc-f)"/><text class="tenue peq" x="312" y="40" text-anchor="middle">sí</text>
+<path class="linea-peligro" d="M230 74V116" marker-end="url(#dc-fp)"/><text class="peligro peq" x="238" y="100">no</text>
+<rect class="caja-peligro" x="165" y="118" width="130" height="50" rx="8"/><text class="tit mono" x="230" y="139" text-anchor="middle">404</text><text class="peq" x="230" y="158" text-anchor="middle">no existe para ti</text>
+<rect class="caja" x="330" y="20" width="130" height="54" rx="8"/>
+<text class="tit" x="395" y="52" text-anchor="middle">¿Tu rol puede?</text>
+<path class="linea" d="M460 47H493" marker-end="url(#dc-f)"/><text class="tenue peq" x="477" y="40" text-anchor="middle">sí</text>
+<path class="linea-peligro" d="M395 74V116" marker-end="url(#dc-fp)"/><text class="peligro peq" x="403" y="100">no</text>
+<rect class="caja-peligro" x="330" y="118" width="130" height="50" rx="8"/><text class="tit mono" x="395" y="139" text-anchor="middle">403</text><text class="peq" x="395" y="158" text-anchor="middle">no tienes permiso</text>
+<rect class="caja" x="495" y="20" width="130" height="54" rx="8"/>
+<text class="tit" x="560" y="43" text-anchor="middle">¿Demasiados</text><text class="tit" x="560" y="62" text-anchor="middle">intentos?</text>
+<path class="linea" d="M625 47H658" marker-end="url(#dc-f)"/><text class="tenue peq" x="642" y="40" text-anchor="middle">no</text>
+<path class="linea-peligro" d="M560 74V116" marker-end="url(#dc-fp)"/><text class="peligro peq" x="568" y="100">sí</text>
+<rect class="caja-peligro" x="495" y="118" width="130" height="50" rx="8"/><text class="tit mono" x="560" y="139" text-anchor="middle">429</text><text class="peq" x="560" y="158" text-anchor="middle">espera: Retry-After</text>
+<rect class="caja-ok" x="660" y="20" width="100" height="54" rx="8"/><text class="tit mono" x="710" y="44" text-anchor="middle">200</text><text class="peq" x="710" y="63" text-anchor="middle">adelante</text>
+</svg>
+<figcaption>Las preguntas que el servidor se hace con cada petición. Cada una que falla corta el camino con su código; las secciones siguientes las ven una a una.</figcaption>
+</figure>
 </section>
 
 <section class="seccion">
 <h2>¿Quién eres? Autenticación</h2>
-<p>Una API REST no recuerda nada entre peticiones, así que cada una tiene que demostrar quién la envía. En el contrato del curso, el cliente cambia usuario y clave por un token una vez y después lo manda en cada petición:</p>
+<p>Una API REST no recuerda nada entre peticiones, así que cada una tiene que demostrar quién la envía. En el contrato del curso, el cliente canjea una vez su usuario y clave por un token, y después lo manda en cada petición:</p>
 <div class="par">
 <figure><figcaption>Abrir sesión</figcaption><pre><code>POST /api/v1/sesiones
 Content-Type: application/json
@@ -104,7 +132,7 @@ def usuario_actual(authorization: str | None = Header(default=None)):
 @app.get("/api/v1/incidencias/{id}")
 def leer(id: str, yo: dict = Depends(usuario_actual)):
     ...</code></pre></div>
-<div data-leng="node" hidden><pre><code>// Un middleware: se ejecuta antes que las rutas que cuelgan de esa ruta.
+<div data-leng="node" hidden><pre><code>// Un middleware (una función intermedia): se ejecuta antes que las rutas que cuelgan de esa ruta.
 const autenticar = (req, res, next) =&gt; {
   const [tipo, token] = (req.get("Authorization") ?? "").split(" ");
   const usuario = tipo === "Bearer" &amp;&amp; usuariosPorToken.get(token);
@@ -123,7 +151,7 @@ app.use("/api/v1/usuarios", autenticar);</code></pre></div>
 
 <section class="seccion">
 <h2>¿Es tuyo? Autorización por objeto</h2>
-<p>Saber quién eres no basta. Si la ruta es <code>/api/v1/incidencias/7</code>, cualquiera con un token válido puede probar con el 8, el 9 y el 10. Es el fallo número uno de la lista, <b>BOLA</b> (<a href="https://cwe.mitre.org/data/definitions/639.html">CWE-639</a>): el servidor comprueba que la incidencia existe, pero no de quién es.</p>
+<p>Saber quién eres no basta. Si la ruta es <code>/api/v1/incidencias/7</code>, cualquiera con un token válido puede probar con el 8, el 9 y el 10. Es el fallo número uno de la lista, <b>BOLA</b> (<a href="https://cwe.mitre.org/data/definitions/639.html">CWE-639</a>): el servidor comprueba que la incidencia existe, pero no de quién es. Un <b>CWE</b> es el número que un catálogo público da a cada tipo de fallo; con él, cualquiera sabe de qué fallo hablas.</p>
 <div class="par">
 <figure><figcaption>Solo comprueba que existe</figcaption><pre><code>inc = incidencias.get(id)
 if not inc:
@@ -135,7 +163,7 @@ if not inc or (yo["rol"] != "admin"
     return problema(404, "No existe")
 return inc</code></pre></figure>
 </div>
-<p>Un técnico recibe <code>404</code> por la incidencia de otro, igual que por una que no existe: así no confirma ni que existe. La misma comprobación va en la lista (solo las suyas), en <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code> y en los comentarios. Basta con olvidarla en una ruta.</p>
+<p>Un técnico recibe <code>404</code> por la incidencia de otro, igual que por una que no existe: así no confirma ni que existe. La misma comprobación va en la lista (solo las suyas), en <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code> y en los comentarios. Basta con olvidarla en una sola ruta para que el fallo exista.</p>
 </section>
 
 <section class="seccion">
@@ -150,19 +178,19 @@ Authorization: Bearer &lt;token de lucia&gt;
 
 <section class="seccion">
 <h2>¿Puedes usar esa función? Autorización por función</h2>
-<p>Algunas operaciones son solo de administración: en el contrato del curso, borrar incidencias. Que la web no enseñe el botón no protege nada; la ruta sigue ahí para quien la llame con <code>curl</code>. El servidor comprueba el rol en la propia operación y, si no es <code>admin</code>, responde <code>403</code> (<b>BFLA</b>, <a href="https://cwe.mitre.org/data/definitions/285.html">CWE-285</a>).</p>
+<p>Algunas operaciones son solo de administración: en el contrato del curso, borrar incidencias. Que la web no muestre el botón no protege nada; la ruta sigue ahí para quien la llame con <code>curl</code>. El servidor comprueba el rol en la propia operación y, si no es <code>admin</code>, responde <code>403</code> (<b>BFLA</b>, <a href="https://cwe.mitre.org/data/definitions/285.html">CWE-285</a>).</p>
 </section>
 
 <section class="seccion">
 <h2>¿Cuántas veces? Limitar</h2>
-<p>Un login que acepta intentos sin fin deja probar claves hasta acertar (<a href="https://cwe.mitre.org/data/definitions/307.html">CWE-307</a>). En el contrato del curso, tras cinco claves erróneas para un usuario en un minuto, la API responde <code>429</code> a ese usuario, aunque la sexta sea buena, con la cabecera <code>Retry-After</code>, que dice los segundos que hay que esperar:</p>
+<p>Un inicio de sesión que acepta intentos sin fin deja probar claves hasta acertar (<a href="https://cwe.mitre.org/data/definitions/307.html">CWE-307</a>). En el contrato del curso, tras cinco claves erróneas para un usuario en un minuto, la API responde <code>429</code> a ese usuario, aunque la sexta sea buena, con la cabecera <code>Retry-After</code>, que dice los segundos que hay que esperar:</p>
 <pre><code>HTTP/1.1 429 Too Many Requests
 Retry-After: 41
 Content-Type: application/problem+json
 
 {"type": "about:blank", "title": "Too Many Requests", "status": 429,
  "detail": "Demasiados intentos fallidos"}</code></pre>
-<p>Lo mismo que el máximo de <code>limit</code> en <a href="03-buenas-practicas.html">API 3</a>: cualquier cosa que el cliente pueda pedir sin coste, tiene un límite.</p>
+<p>Lo mismo que el máximo de <code>limit</code> en <a href="03-buenas-practicas.html">API 3</a>: cualquier cosa que el cliente pueda pedir sin coste tiene un límite.</p>
 </section>
 
 <section class="seccion">

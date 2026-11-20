@@ -38,7 +38,7 @@ cd fundamentos/api/e3</code></pre></div>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e3 --lenguaje go
 cd fundamentos/api/e3</code></pre></div>
-<p>Cambia <code>go</code> por <code>python</code> o <code>node</code> si eliges otro. Deja un proyecto que ya arranca y responde en <code>/api/v1/salud</code>, tus datos en <code>incidencias.json</code>, el contrato de referencia en <code>contrato.yaml</code>, <code>pruebas.py</code> y un <code>Dockerfile</code> a medias. Arráncalo desde <code>fundamentos/api/e3/</code> con las órdenes de tu lenguaje y déjalo en marcha en esa pestaña de la terminal: mientras la API esté arrancada, esa pestaña no acepta más órdenes.</p>
+<p>Cambia <code>go</code> por <code>python</code> o <code>node</code> si eliges otro. <code>preparar.py</code> deja un proyecto que ya arranca y responde en <code>/api/v1/salud</code>, tus datos en <code>incidencias.json</code>, el contrato de referencia en <code>contrato.yaml</code>, <code>pruebas.py</code> y un <code>Dockerfile</code> a medias. Arráncalo desde <code>fundamentos/api/e3/</code> con las órdenes de tu lenguaje y déjalo en marcha en esa pestaña de la terminal: mientras la API esté arrancada, esa pestaña no acepta más órdenes.</p>
 <p><b>Go</b>, en cualquier sistema:</p>
 <div class="cmd"><pre><code>go run .</code></pre></div>
 <p><b>Node</b>, en cualquier sistema (<code>npm install</code> solo hace falta la primera vez):</p>
@@ -55,7 +55,7 @@ node --watch main.js</code></pre></div>
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m uvicorn main:app --port 8000 --reload</code></pre></div>
 <p>Está listo cuando escribe <code>Uvicorn running on http://127.0.0.1:8000</code>. Se llama al Python de dentro de <code>.venv</code> por su ruta, así que no hace falta activar el entorno. En Debian o Ubuntu, si <code>python3 -m venv</code> dice que falta <code>ensurepip</code>, instala antes el paquete <code>python3-venv</code> (<code>sudo apt install python3-venv</code>).</p>
-<p>Para pararla, <kbd>Ctrl</kbd>+<kbd>C</kbd> en su pestaña. Abre otra pestaña de la terminal, ve a la misma carpeta <code>fundamentos/api/e3/</code> y comprueba que responde:</p>
+<p>No la pares: abre otra pestaña de la terminal, ve a la misma carpeta <code>fundamentos/api/e3/</code> y comprueba que responde. (Cuando quieras pararla, <kbd>Ctrl</kbd>+<kbd>C</kbd> en su pestaña.)</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -i http://localhost:8000/api/v1/salud</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -73,13 +73,14 @@ Content-Type: application/json
 <li><code>GET /api/v1/incidencias/{id}</code> devuelve la incidencia tal cual, o <code>404</code> en JSON si no existe. También si el id no es un número.</li>
 <li><code>GET /api/v1/incidencias/{id}/comentarios</code> devuelve <code>{"datos": [sus comentarios], "siguiente": null}</code>, o <code>404</code> si la incidencia no existe.</li>
 </ul>
-<p>Todas con <code>Content-Type: application/json</code>. Usa la función <code>responder</code> del esqueleto. Así se ven bien, con tus datos en lugar de estos:</p>
+<p>Todas con <code>Content-Type: application/json</code>. Usa la función <code>responder</code> del esqueleto. Pruébalas:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -i http://localhost:8000/api/v1/incidencias/1
 curl.exe -i http://localhost:8000/api/v1/incidencias/abc</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>curl -i http://localhost:8000/api/v1/incidencias/1
 curl -i http://localhost:8000/api/v1/incidencias/abc</code></pre></div>
+<p>Una API que lo hace bien responde así (con tus datos):</p>
 <pre><code>HTTP/1.1 200 OK
 Content-Type: application/json
 
@@ -108,7 +109,7 @@ Content-Type: application/json
 <p>Si una prueba falla, repite con <code>curl -i</code> la petición que hace y compara con el contrato.</p>
 
 <h2 class="step" id="paso-4"><span class="n">4</span>Completa el Dockerfile</h2>
-<p>Los comentarios del <code>Dockerfile</code> dicen qué falta. Para la API que arrancaste en el paso 1 (<kbd>Ctrl</kbd>+<kbd>C</kbd> en su pestaña), porque el contenedor usa el mismo puerto, el 8000. Con Docker Desktop en marcha y desde <code>fundamentos/api/e3/</code>, construye la imagen, arráncala y pasa las pruebas contra el contenedor:</p>
+<p>Los comentarios del <code>Dockerfile</code> dicen qué falta. Detén la API que arrancaste en el paso 1 (<kbd>Ctrl</kbd>+<kbd>C</kbd> en su pestaña), porque el contenedor usa el mismo puerto, el 8000. Con Docker Desktop en marcha y desde <code>fundamentos/api/e3/</code>, construye la imagen, arráncala y pasa las pruebas contra el contenedor:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker build -t api-incidencias:e3 .
 docker image inspect api-incidencias:e3 --format "usuario: {{.Config.User}}"
@@ -121,7 +122,7 @@ docker image inspect api-incidencias:e3 --format "usuario: {{.Config.User}}"
 docker run -d --rm --name api -p 8000:8000 api-incidencias:e3
 python3 pruebas.py e3 http://localhost:8000
 docker stop api</code></pre></div>
-<p>La segunda orden tiene que decir un usuario, por ejemplo <code>usuario: app</code>. Si sale <code>usuario: </code> vacío o <code>root</code>, falta la línea <code>USER</code>. Las pruebas, otra vez <code>0 mal</code>.</p>
+<p>La segunda orden tiene que decir un usuario que no sea root, como <code>usuario: nobody</code> en Go y Python o <code>usuario: node</code> en Node, los de <a href="../temas/02-disenar-y-construir.html">API 2</a>. Si sale <code>usuario: </code> vacío o <code>root</code>, falta la línea <code>USER</code>. Las pruebas, otra vez <code>0 mal</code>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>El <code>Dockerfile</code> no construye, la imagen no escucha en el 8000 o se ejecuta como root.</li>
@@ -136,7 +137,7 @@ git commit -m "feat(api-e3): rutas de lectura de la API de incidencias"
 git push
 git tag -a entrega-fundamentos-api-e3 -m "E3 resuelto"
 git push origin entrega-fundamentos-api-e3</code></pre></div>
-<p class="note">Mira en lo que dice <code>git status</code> que no subes <code>node_modules/</code> ni <code>.venv/</code>: el <code>.gitignore</code> del esqueleto ya los deja fuera. Con Node, <code>npm install</code> crea además <code>package-lock.json</code>. Súbelo con lo demás, no estorba: apunta las versiones exactas que instalaste. Ni el <code>Dockerfile</code> de la plantilla (copia solo <code>package.json</code>) ni el corrector lo usan.</p>
+<p class="note">Mira en lo que dice <code>git status</code> que no subes <code>node_modules/</code> ni <code>.venv/</code>: el <code>.gitignore</code> del esqueleto ya los deja fuera. Con Node, <code>npm install</code> crea además <code>package-lock.json</code>: súbelo con lo demás, solo apunta las versiones exactas que instalaste.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de API REST"><a href="e2.html">← E2 · Diseña el contrato</a><a href="e4.html">E4 · Escribir bien →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
