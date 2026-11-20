@@ -143,7 +143,7 @@ from pathlib import Path
 
 
 def comprobar(ruta: str) -> int:
-    if not re.fullmatch(r"oa-[0-9a-f]{32}", Path(ruta).read_text(encoding="utf-8").strip()):
+    if not re.fullmatch(r"oa-[0-9a-f]{32}", Path(ruta).read_text(encoding="utf-8-sig").strip()):
         print("clave de la API con formato incorrecto", file=sys.stderr)
         return 1
     print("clave de la API válida")

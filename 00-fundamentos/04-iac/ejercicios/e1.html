@@ -51,7 +51,7 @@ docker compose up -d
 aws sts get-caller-identity
 cd e1
 code LEEME.md</code></pre></div>
-<p class="note"><code>code LEEME.md</code> lo abre en VS Code. Léelo y copia de ahí, no de la terminal: PowerShell de Windows muestra mal los acentos y el punto medio (<code>Â·</code>) de un fichero UTF-8.</p>
+<p class="note"><code>code LEEME.md</code> lo abre en VS Code: léelo ahí y copia de ahí tus nombres.</p>
 <p>La primera vez, <code>docker compose up -d</code> descarga la imagen de Floci. <code>aws sts get-caller-identity</code> tiene que responder un JSON con <code>"Account"</code>; si dice <code>Could not connect to the endpoint URL</code>, espera unos segundos y repite. <code>LEEME.md</code> tiene tus nombres:</p>
 <pre><code># E1 · A mano, una vez
 
@@ -149,7 +149,7 @@ git status --short -uall fundamentos/iac</code></pre></div>
 ?? fundamentos/iac/e1/politica.json</code></pre>
 <div class="cmd"><pre><code>git add fundamentos/iac
 git commit -m "feat(iac-e1): bucket y lector creados a mano"</code></pre></div>
-<p>En Windows, <code>git add</code> avisa <code>LF will be replaced by CRLF</code> por cada fichero: es normal y no cambia lo que se sube.</p>
+<p>En Windows, <code>git add</code> puede avisar <code>LF will be replaced by CRLF</code>: no es un error, puedes ignorarlo.</p>
 <p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e1</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e1</code></pre></div>

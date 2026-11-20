@@ -51,7 +51,7 @@ git status</code></pre></div>
 <p class="note"><b>Nunca <code>git add .</code> ni <code>git add -A</code> en la raíz del repositorio.</b> Añade cada fichero por su ruta, como en los pasos: un <code>git add .</code> mete en el commit lo de otros ejercicios y lo estropea.</p>
 
 <h2 class="step"><span class="n">2</span>Escribe el <code>.gitignore</code></h2>
-<p>Créalo con VS Code. No lo crees con <code>echo</code> ni con <code>&gt;</code>: en PowerShell escriben el fichero en UTF-16 y git no entiende sus reglas.</p>
+<p>Créalo y escríbelo en VS Code:</p>
 <div class="cmd"><pre><code>code fundamentos/git/e2/.gitignore</code></pre></div>
 <p>Escribe una regla por línea. Las rutas son relativas a la carpeta del <code>.gitignore</code>, <code>e2/</code>, así que no lleven <code>fundamentos/git/e2/</code> delante. Una carpeta entera se ignora con su nombre y una barra al final:</p>
 <pre><code>build/

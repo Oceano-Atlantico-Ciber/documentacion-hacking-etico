@@ -26,7 +26,7 @@
 <tr><td><code>inspect.json</code></td><td>La salida de <code>docker container inspect e1-web</code> sacada en el paso 6, es decir, <b>después</b> de parar y volver a arrancar el contenedor. Empieza por <code>[</code> y dentro tiene <code>"Name": "/e1-web"</code>.</td></tr>
 <tr><td><code>logs.txt</code></td><td>La salida de <code>docker logs e1-web</code>, sacada también en el paso 6. Tiene que haber al menos una petición a <code>/</code> respondida con <code>200</code> y con el tamaño de tu página.</td></tr>
 </tbody></table></div>
-<p>Una línea de <code>logs.txt</code> que sirve tu página tiene esta forma; el número tras el <code>200</code> es lo que mide tu <code>index.html</code> en bytes (el tuyo será otro):</p>
+<p>Una línea de <code>logs.txt</code> que sirve tu página tiene esta forma; el número tras el <code>200</code> es el tamaño de tu <code>index.html</code> (el tuyo será otro):</p>
 <div class="cmd"><pre><code>172.17.0.1 - - [12/Nov/2026:10:15:02 +0000] "GET / HTTP/1.1" 200 214 "-" "curl/8.9.1" "-"</code></pre></div>
 <p>Si en todas las líneas ese número es <code>615</code>, nginx solo sirvió su página de bienvenida: no copiaste tu página antes de pedirla.</p>
 

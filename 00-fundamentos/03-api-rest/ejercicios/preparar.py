@@ -221,8 +221,10 @@ def preparar(ejercicio: str, lenguaje: str | None, cwd: Path) -> None:
     if destino.exists() and not (ejercicio == "e1" and (destino / "laboratorio").is_dir()):
         raise Error(f"{ejercicio} ya está preparado (existe {destino})")
     if destino.exists():
-        # E1 ya preparado (por ejemplo, Docker estaba parado la primera vez): no toca tus ficheros, solo el laboratorio.
-        print("e1 ya estaba preparado: no toco tus ficheros, solo vuelvo a levantar el laboratorio.")
+        # E1 ya preparado (por ejemplo, Docker estaba parado la primera vez): no toca tus ficheros, solo el laboratorio
+        # y enviar.py, que es una herramienta y no parte de tu entrega (así siempre tienes la última versión).
+        _escribir(destino / "enviar.py", _plantilla("e1", "enviar.py"))
+        print("e1 ya estaba preparado: no toco tus ficheros, solo actualizo enviar.py y vuelvo a levantar el laboratorio.")
         arrancar_laboratorio(destino)
         print(f"La API del laboratorio escucha en http://localhost:8080. Tu incidencia es la {incidencia_e1(usuario)}.")
         return

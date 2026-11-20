@@ -80,12 +80,12 @@ aws iam get-user-policy --user-name becario-&lt;huella&gt; --policy-name becario
 aws iam list-access-keys --user-name becario-&lt;huella&gt;</code></pre></div>
 <p>La primera da el ARN del becario, por ejemplo <code>"arn:aws:iam::000000000000:user/becario-1a2b3c4d"</code>. Úsalo, sin comillas, donde pone <code>&lt;ARN del becario&gt;</code> (dos veces). Esta orden pregunta a IAM si el becario puede cambiarse sus propios permisos, sin hacerlo, y guarda la respuesta en <code>simulacion.json</code>:</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --action-names iam:PutUserPolicy iam:AttachUserPolicy --resource-arns &lt;ARN del becario&gt; | Out-File -Encoding utf8 simulacion.json
+<div class="cmd"><pre><code>aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --action-names iam:PutUserPolicy iam:AttachUserPolicy --resource-arns &lt;ARN del becario&gt; &gt; simulacion.json
 Get-Content simulacion.json</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>aws iam simulate-principal-policy --policy-source-arn &lt;ARN del becario&gt; --action-names iam:PutUserPolicy iam:AttachUserPolicy --resource-arns &lt;ARN del becario&gt; &gt; simulacion.json
 cat simulacion.json</code></pre></div>
-<p>La primera orden es una sola línea. No escribe nada en pantalla; la segunda enseña el fichero. En PowerShell se guarda con <code>Out-File -Encoding utf8</code> y no con <code>&gt;</code>, que en Windows guarda el fichero en UTF-16 y git lo trataría como binario. Busca el <code>EvalDecision</code> de cada acción: <code>iam:PutUserPolicy</code> tiene que salir <code>allowed</code>. Esa es la prueba del riesgo. Si sale un error en vez de JSON, revisa el ARN y repite la orden: reescribe el fichero.</p>
+<p>La primera orden es una sola línea. No escribe nada en pantalla; la segunda enseña el fichero. Busca el <code>EvalDecision</code> de cada acción: <code>iam:PutUserPolicy</code> tiene que salir <code>allowed</code>. Esa es la prueba del riesgo. Si sale un error en vez de JSON, revisa el ARN y repite la orden: reescribe el fichero.</p>
 <p>Ahora el usuario de operaciones y los datos de dirección. Estas no van a ningún fichero (no las guardes en <code>simulacion.json</code>, o perderías la del becario): lee la respuesta en pantalla y apunta lo que veas.</p>
 <div class="cmd"><pre><code>aws iam get-user --user-name operaciones-&lt;huella&gt; --query User.Arn
 aws iam get-user-policy --user-name operaciones-&lt;huella&gt; --policy-name operaciones-todo

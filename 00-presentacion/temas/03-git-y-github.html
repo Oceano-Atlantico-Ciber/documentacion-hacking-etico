@@ -43,7 +43,7 @@ sudo snap install code --classic</code></pre></div>
 <ul>
 <li>Python se ejecuta con <code>py</code>, no con <code>python3</code>: en Windows, <code>python3</code> abre la Microsoft Store.</li>
 <li><code>curl</code> se escribe <code>curl.exe</code>: en PowerShell, <code>curl</code> a secas es otra orden (<code>Invoke-WebRequest</code>).</li>
-<li>Una orden por línea: en PowerShell de Windows no existe <code>&amp;&amp;</code> para encadenarlas. Los ficheros se crean y se editan con <code>code &lt;ruta&gt;</code>, no con <code>echo … &gt; fichero</code>, que en PowerShell los escribe en una codificación que git no entiende.</li>
+<li>Una orden por línea: en PowerShell de Windows no existe <code>&amp;&amp;</code> para encadenarlas. Los ficheros se crean y se editan en VS Code, con <code>code &lt;ruta&gt;</code>.</li>
 </ul>
 <p><b>macOS y Linux:</b> la aplicación <b>Terminal</b>, o la de VS Code. Python se ejecuta con <code>python3</code>. Cuando una orden cambia según el sistema, los enunciados la dan dos veces, con su etiqueta encima: <b>Windows · PowerShell</b> y <b>macOS / Linux · Terminal</b>. Si solo hay un bloque, vale igual para todos.</p>
 </section>
@@ -55,7 +55,7 @@ git config --global user.email "un-correo-verificado-en-github"
 git config --global init.defaultBranch main
 git config --global core.editor "code --wait"</code></pre></div>
 <p>El correo tiene que ser uno de los verificados en GitHub (Settings → Emails), o tus commits no se asociarán a tu cuenta. Con <code>core.editor</code>, cuando git necesite un mensaje (un merge, un rebase) abrirá una pestaña de VS Code: escribe, guarda y cierra la pestaña para continuar.</p>
-<p>Los finales de línea cambian entre sistemas. <code>core.autocrlf</code> hace que el repositorio guarde siempre los de Linux:</p>
+<p>Windows, macOS y Linux no guardan igual el final de cada línea de un fichero de texto. Con <code>core.autocrlf</code>, git lo ajusta solo al subir y al bajar, y así todos veis los mismos ficheros sin cambios fantasma:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>git config --global core.autocrlf true</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>

@@ -243,7 +243,7 @@ PISTAS = [
     Pista("e1-get", r"^peticion-get\.txt", "La petición GET no lee tu incidencia",
           "Primera línea GET /api/v1/incidencias/<tu número> HTTP/1.1, cabecera Host y una línea en blanco al final.", "e1#2", False),
     Pista("e1-post", r"^peticion-post\.txt", "La petición POST no crea la incidencia",
-          "Método y ruta de crear, Content-Type: application/json y Content-Length con los bytes exactos del cuerpo.", "e1#3", False),
+          "Método y ruta de crear, Content-Type: application/json y Content-Length con el tamaño exacto del cuerpo (enviar.py te avisa si no cuadra).", "e1#3", False),
     Pista("e1-salidas", r"^(respuesta|curl)-(get|post)\.txt", "Falta una salida o no es la de la petición",
           "Guarda la salida de enviar.py y de curl.exe -v de cada petición, sin editarla.", "e1#4", False),
     Pista("e1-comparacion", r"^comparacion\.md", "La comparación está incompleta",

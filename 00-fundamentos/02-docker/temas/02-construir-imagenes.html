@@ -190,7 +190,7 @@ for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep -q ap
 <tr><td><code>failed to read dockerfile: open Dockerfile: no such file</code></td><td>No estás en la carpeta del <code>Dockerfile</code>, o se llama distinto.</td><td><code>cd</code> a su carpeta; se llama exactamente <code>Dockerfile</code>, sin extensión.</td></tr>
 <tr><td><code>COPY failed: … not found</code></td><td>El fichero no está en el contexto, o <code>.dockerignore</code> lo excluye.</td><td>Revisa la ruta, relativa a la carpeta del contexto, y tu <code>.dockerignore</code>.</td></tr>
 <tr><td>Cada construcción tarda lo mismo</td><td>Una capa de abajo cambia siempre, a menudo un <code>COPY . .</code>.</td><td>Copia primero lo que cambia poco.</td></tr>
-<tr><td><code>exec format error</code> o <code>no such file</code> al arrancar</td><td>Un script con saltos de línea de Windows.</td><td>Guárdalo con LF en VS Code (esquina inferior derecha, <b>CRLF</b> → <b>LF</b>).</td></tr>
+<tr><td><code>exec format error</code> o <code>no such file</code> al arrancar</td><td>Un script guardado en Windows: Linux no lo entiende tal cual.</td><td>En VS Code, haz clic en <b>CRLF</b>, abajo a la derecha, elige <b>LF</b> y guarda.</td></tr>
 </tbody></table></div>
 </section>
 

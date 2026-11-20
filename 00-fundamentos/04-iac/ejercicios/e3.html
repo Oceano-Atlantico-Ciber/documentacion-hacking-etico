@@ -44,7 +44,7 @@ git switch main</code></pre></div>
 <p>Deja <code>proveedor.tf</code>, que apunta a tu Floci, y un <code>LEEME.md</code> con los tres recursos que tienes que adoptar. Entra en la carpeta y léelo:</p>
 <div class="cmd"><pre><code>cd fundamentos/iac/e3
 code LEEME.md</code></pre></div>
-<p class="note"><code>code LEEME.md</code> lo abre en VS Code. Léelo y copia de ahí, no de la terminal: PowerShell de Windows muestra mal los acentos y el punto medio (<code>Â·</code>) de un fichero UTF-8.</p>
+<p class="note"><code>code LEEME.md</code> lo abre en VS Code: léelo ahí y copia de ahí tus nombres.</p>
 <p>Tu Floci tiene que seguir teniendo lo del E1. Con Floci en marcha (si no, <code>docker compose up -d</code> en <code>fundamentos/iac/</code>), compruébalo:</p>
 <div class="cmd"><pre><code>aws s3 ls
 aws iam list-users --query "Users[].UserName"</code></pre></div>
