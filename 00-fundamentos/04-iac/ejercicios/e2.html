@@ -20,7 +20,12 @@
 </dl>
 
 <h2 id="que-entregas">Qué entregas</h2>
-<p>En <code>fundamentos/iac/e2/</code> de <code>main</code>, <code>inventario.md</code>, y la carpeta <code>empresa/</code> tal como la deja <code>preparar.py</code>. El inventario recorre la cuenta por servicio y termina con lo que un atacante miraría primero. Su forma (tu huella será otra; lo de los <code>…</code> lo escribes tú):</p>
+<p>En <code>fundamentos/iac/e2/</code> de <code>main</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>inventario.md</code></td><td>Lo escribes tú: los recursos de la cuenta, servicio a servicio, y lo que un atacante miraría primero.</td></tr>
+<tr><td><code>empresa/empresa.tf</code>, <code>empresa/proveedor.tf</code></td><td>El Terraform de la empresa, tal como lo deja <code>preparar.py</code>. No lo cambies.</td></tr>
+</tbody></table></div>
+<p>Un ejemplo de la forma de <code>inventario.md</code> (tu huella será otra; lo de los <code>…</code> lo escribes tú):</p>
 <pre><code># Inventario de la cuenta de la empresa
 
 ## S3
@@ -53,10 +58,10 @@ git switch main</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e2</code></pre></div>
 <pre><code>e2 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e2/. Sigue el enunciado.</code></pre>
-<p>Deja en <code>fundamentos/iac/e2/empresa/</code> el Terraform de la cuenta (<code>empresa.tf</code>) y su <code>proveedor.tf</code>. Los nombres llevan tu huella. Es la base de este ejercicio, del E7 y del E8. Todavía no lo leas: hoy miras la cuenta desde fuera, con la CLI, como si no tuvieras el código.</p>
+<p><code>preparar.py</code> ha dejado en <code>fundamentos/iac/e2/empresa/</code> el Terraform de la cuenta (<code>empresa.tf</code>) y su <code>proveedor.tf</code>. Los nombres llevan tu huella, ocho caracteres que salen de tu usuario de GitHub. Es la base de este ejercicio, del E7 y del E8. Todavía no lo leas: en este ejercicio miras la cuenta desde fuera, con la CLI, como si no tuvieras el código.</p>
 
 <h2 class="step"><span class="n">2</span>Despliega la empresa en tu nube</h2>
-<p>Tu Floci tiene que estar en marcha. Si reiniciaste el equipo o la paraste, levántala otra vez (desde la carpeta de tu repositorio, con Docker Desktop abierto):</p>
+<p>Tu Floci debe estar en marcha. Si reiniciaste el equipo o la paraste, levántala otra vez (desde la carpeta de tu repositorio, con Docker Desktop abierto):</p>
 <div class="cmd"><pre><code>cd fundamentos/iac
 docker compose up -d
 cd ../..</code></pre></div>
@@ -74,19 +79,24 @@ becario_secreto = &lt;sensitive&gt;</code></pre>
 <p>En <a href="../temas/02-terraform.html">IaC 2</a> verás qué ha hecho Terraform; aquí solo lo usas para tener la cuenta. No borres el <code>terraform.tfstate</code> que aparece en <code>empresa/</code>: en el E7 lo reutilizas.</p>
 
 <h2 class="step"><span class="n">3</span>Recorre la cuenta</h2>
-<p>Lanza estas órdenes una a una, desde cualquier carpeta, y lee cada respuesta. Donde pone <code>&lt;…&gt;</code>, escribe un nombre que te haya dado la respuesta anterior, sin los <code>&lt; &gt;</code>, y repite la orden con cada bucket o usuario:</p>
+<p>Lanza estas órdenes una a una, desde cualquier carpeta, y lee cada respuesta. Donde pone <code>&lt;bucket&gt;</code>, <code>&lt;usuario&gt;</code>, <code>&lt;política&gt;</code> o <code>&lt;id-del-servidor&gt;</code>, escribe el nombre que te haya dado la respuesta anterior, sin los <code>&lt; &gt;</code>. Repite la orden con cada bucket y con cada usuario:</p>
 <div class="cmd"><pre><code>aws s3 ls
-aws s3 ls s3://&lt;cada-bucket&gt;</code></pre></div>
-<p>Los tres buckets de la empresa y lo que guarda cada uno. Como la Floci es la misma de toda la unidad, también sale <code>e1-notas-…</code> del E1: no es de la empresa; puedes nombrarlo aparte o dejarlo fuera.</p>
+aws s3 ls s3://&lt;bucket&gt;</code></pre></div>
+<p>Los tres buckets de la empresa y lo que guarda cada uno. Como la Floci es la misma de toda la unidad, también sale <code>e1-notas-…</code> del E1: no es de la empresa; puedes nombrarlo aparte o dejarlo fuera. Si <code>aws s3 ls</code> no devuelve nada, ese bucket está vacío: anótalo así.</p>
 <div class="cmd"><pre><code>aws iam list-users --query "Users[].UserName"
-aws iam list-user-policies --user-name &lt;cada-usuario&gt;
-aws iam get-user-policy --user-name &lt;usuario&gt; --policy-name &lt;su-política&gt;
-aws iam list-access-keys --user-name &lt;cada-usuario&gt;</code></pre></div>
+aws iam list-user-policies --user-name &lt;usuario&gt;
+aws iam get-user-policy --user-name &lt;usuario&gt; --policy-name &lt;política&gt;
+aws iam list-access-keys --user-name &lt;usuario&gt;</code></pre></div>
 <p>Los dos usuarios de la empresa (el <code>lector-…</code> es tuyo, del E1), el nombre de su política en línea, lo que dice (<code>Action</code> y <code>Resource</code> de cada sentencia) y si tienen claves de acceso.</p>
 <div class="cmd"><pre><code>aws ec2 describe-security-groups --query "SecurityGroups[].[GroupName,IpPermissions]"
 aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceId,Tags]"
 aws ec2 describe-instance-attribute --instance-id &lt;id-del-servidor&gt; --attribute userData</code></pre></div>
-<p>Los grupos de seguridad con sus reglas de entrada: <code>FromPort</code> es el puerto y <code>CidrIp</code>, desde dónde se admite (<code>0.0.0.0/0</code> es todo internet). El grupo <code>default</code> lo tiene toda cuenta: céntrate en el de la empresa. Y los servidores, con su etiqueta <code>Name</code>. La última orden, con el <code>InstanceId</code> que da la anterior, enseña el script de arranque del servidor (<code>user_data</code>) codificado en base64: un atacante lo descodificaría buscando contraseñas.</p>
+<p>Los grupos de seguridad con sus reglas de entrada: <code>FromPort</code> es el puerto y <code>CidrIp</code>, desde dónde se admite (<code>0.0.0.0/0</code> es todo internet). El grupo <code>default</code> lo tiene toda cuenta: céntrate en el de la empresa. Y los servidores, con su etiqueta <code>Name</code>. La última orden, con el <code>InstanceId</code> que da la anterior, enseña el script de arranque del servidor (<code>user_data</code>) codificado en base64, una forma de escribir cualquier dato solo con letras, números y algún signo. Un atacante lo descodificaría buscando contraseñas. Hazlo tú: copia el texto de <code>Value</code> y cambia <code>&lt;value&gt;</code> por él, dentro de las comillas:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("&lt;value&gt;"))</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>echo "&lt;value&gt;" | base64 -d</code></pre></div>
+<p>Sale el script tal como lo escribió el equipo anterior. Apunta lo que veas en él para tu inventario.</p>
 
 <h2 class="step"><span class="n">4</span>Escribe el inventario</h2>
 <div class="cmd"><pre><code>cd ..
@@ -96,21 +106,22 @@ code inventario.md</code></pre></div>
 <ul class="falla">
 <li>Falta <code>inventario.md</code>.</li>
 <li>No aparecen, con su nombre exacto, todos los recursos: los tres buckets (<code>copias-…</code>, <code>informes-…</code>, <code>secretos-…</code>), los dos usuarios (<code>operaciones-…</code>, <code>becario-…</code>) y el grupo de seguridad <code>web-…</code> (el servidor se llama igual).</li>
-<li>No dice qué puertos abre el grupo de seguridad y a quién: tiene que aparecer el rango <code>0.0.0.0/0</code> y el puerto <code>22</code>.</li>
+<li>No dice qué puertos abre el grupo de seguridad y a quién: deben aparecer el rango <code>0.0.0.0/0</code> y el puerto <code>22</code>.</li>
 <li>No habla de lo que miraría un <b>atacante</b> (con esa palabra), o no tiene una lista con al menos tres puntos (líneas que empiezan por <code>-</code> o <code>*</code>, o numeradas: <code>1.</code>, <code>2.</code>…).</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">5</span>Haz commit y pruébalo</h2>
 <p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git status --short -uall fundamentos/iac/e2</code></pre></div>
 <pre><code>?? fundamentos/iac/e2/empresa/empresa.tf
 ?? fundamentos/iac/e2/empresa/proveedor.tf
 ?? fundamentos/iac/e2/inventario.md</code></pre>
-<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<p>No debe salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
 <div class="cmd"><pre><code>git add fundamentos/iac/e2
 git commit -m "docs(iac-e2): inventario de la cuenta de la empresa"</code></pre></div>
-<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e2</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p><code>pruebas.py</code> evalúa tu etiqueta <code>entrega-fundamentos-iac-e2</code>, o la rama <code>main</code> si aún no la tienes, con las mismas comprobaciones que el corrector. Solo cuentan los commits: lo que no esté en un commit no se evalúa. Trabaja en una Floci aparte y vacía, así que no toca tu repositorio ni tu Floci.</p>
+<p>Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e2</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -135,10 +146,13 @@ git push origin entrega-fundamentos-iac-e2</code></pre></div>
 <p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
 <pre><code>E2 · etiqueta entrega-fundamentos-iac-e2 · 7a8b9c0 · comprobando…
   ✓ superado</code></pre>
-<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
 <p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
 <h3>Si hay que corregir algo después de etiquetar</h3>
-<p>Corrige en <code>fundamentos/iac/e2/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<ul>
+<li><b>Si has cambiado ficheros</b>: corrige en <code>fundamentos/iac/e2/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo con las dos órdenes de abajo. Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua.</li>
+<li><b>Si solo falla la etiqueta</b>, porque <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit: muévela, sin hacer ningún commit.</li>
+</ul>
+<p>Para mover la etiqueta, <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>):</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e2 main -m "E2 resuelto"
 git push -f origin entrega-fundamentos-iac-e2</code></pre></div>
 <p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>
