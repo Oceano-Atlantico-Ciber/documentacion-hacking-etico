@@ -11,15 +11,17 @@
 <nav class="top"><a href="../index.html">Hacking ético</a></nav>
 
 <h1>Fundamentos</h1>
-<p class="lead">Las herramientas con las que se trabaja el resto del curso: git, Docker, APIs REST y Terraform sobre una cuenta AWS emulada. No es un bloque con criterios propios, sino la base de los bloques <a href="../01-hacking-etico/index.html">RA1</a> a RA5.</p>
+<p class="lead">Las herramientas con las que trabajas el resto del curso. No es un bloque con criterios propios: es la base de los bloques <a href="../01-hacking-etico/index.html">RA1</a> a RA5.</p>
+<ul>
+<li><b>Git</b>: guarda el historial de tu trabajo y es como entregas.</li>
+<li><b>Docker</b>: arranca programas aislados, sin instalarlos en tu equipo.</li>
+<li><b>API REST</b>: la forma en que se hablan los programas por HTTP, la misma que usa la web.</li>
+<li><b>Terraform y AWS</b>: crear servidores, redes y permisos desde ficheros de texto, sobre una copia simulada de AWS que se ejecuta en tu portátil con Floci.</li>
+</ul>
 
 <h2>Itinerario</h2>
-<table><thead><tr><th>Semana</th><th>Unidad</th></tr></thead><tbody>
-<tr><td>1 · 21 y 22 oct</td><td><a href="../00-presentacion/index.html">Presentación</a>.</td></tr>
-<tr><td>2 · 28 y 29 oct</td><td><a href="01-git/index.html">01 · Git</a> y <a href="02-docker/index.html">02 · Docker</a>.</td></tr>
-<tr><td>Por anunciar</td><td><a href="03-api-rest/index.html">03 · API REST</a>, con sus ocho ejercicios en Go, Python y Node.</td></tr>
-<tr><td>Por anunciar</td><td><a href="04-iac/index.html">04 · Terraform y AWS</a>, con sus ocho ejercicios en Floci.</td></tr>
-</tbody></table>
+<p>Empieza por la <a href="../00-presentacion/index.html">Presentación</a> y sigue las unidades en orden: cada una usa lo de la anterior.</p>
+<div class="flow"><span><a href="../00-presentacion/index.html">Presentación</a></span><i>→</i><span><a href="01-git/index.html">01 · Git</a></span><i>→</i><span><a href="02-docker/index.html">02 · Docker</a></span><i>→</i><span><a href="03-api-rest/index.html">03 · API REST</a></span><i>→</i><span><a href="04-iac/index.html">04 · Terraform y AWS</a></span></div>
 
 <h2 id="unidades">Unidades</h2>
 <p>Cada unidad tiene su carpeta con dos partes: <code>temas/</code>, la teoría, y <code>ejercicios/</code>, los enunciados y los ficheros de partida.</p>
@@ -31,13 +33,14 @@
 </div>
 
 <h2>Cómo conseguir los ficheros</h2>
-<p>Ya los tienes en el clon del material que hiciste en <a href="../00-presentacion/temas/06-primer-commit.html">Primer commit</a>: los de cada unidad están en su carpeta <code>ejercicios/</code>, por ejemplo <code>~/hacking-etico/documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/</code>. Actualízalo antes de cada sesión:</p>
-<pre><code>git -C ~/hacking-etico/documentacion-hacking-etico pull</code></pre>
+<p>Ya los tienes en la copia del material que descargaste en <a href="../00-presentacion/temas/06-primer-commit.html">Primer commit</a>. Los de cada unidad están en su carpeta <code>ejercicios/</code>, por ejemplo <code>hacking-etico/documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/</code> dentro de tu carpeta de usuario.</p>
+<p>Actualízala antes de cada sesión. La orden es la misma en PowerShell y en el Terminal de macOS o Linux, y se lanza desde cualquier carpeta:</p>
+<div class="cmd"><pre><code>git -C "$HOME/hacking-etico/documentacion-hacking-etico" pull</code></pre></div>
 
 <h2 id="repositorio">Dónde va cada unidad en tu repositorio</h2>
 <p>Todo va en la carpeta <code>fundamentos/</code> de tu repositorio de entregas. Cada ejercicio se entrega con su propia etiqueta anotada, explicada en su unidad.</p>
 <table><thead><tr><th>Ruta</th><th>Contenido</th><th>Unidad</th></tr></thead><tbody>
-<tr><td><code>fundamentos/git/</code></td><td>Los ocho ejercicios de git, con etiquetas <code>entrega-fundamentos-git-eN</code>.</td><td><a href="01-git/index.html#ejercicios">01 · Git</a></td></tr>
+<tr><td><code>fundamentos/git/</code></td><td>Los ocho ejercicios de Git, con etiquetas <code>entrega-fundamentos-git-eN</code>.</td><td><a href="01-git/index.html#ejercicios">01 · Git</a></td></tr>
 <tr><td><code>fundamentos/docker/</code></td><td>Los ocho ejercicios de Docker, con etiquetas <code>entrega-fundamentos-docker-eN</code>.</td><td><a href="02-docker/index.html#ejercicios">02 · Docker</a></td></tr>
 <tr><td><code>fundamentos/api/</code></td><td>Los ocho ejercicios de API REST, con etiquetas <code>entrega-fundamentos-api-eN</code>.</td><td><a href="03-api-rest/index.html#ejercicios">03 · API REST</a></td></tr>
 <tr><td><code>fundamentos/iac/</code></td><td>Los ocho ejercicios de Terraform y AWS, con etiquetas <code>entrega-fundamentos-iac-eN</code>.</td><td><a href="04-iac/index.html#ejercicios">04 · Terraform y AWS</a></td></tr>
@@ -47,5 +50,6 @@
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../assets/nav.js" defer></script>
+<script src="../assets/copiar.js" defer></script>
 </body>
 </html>

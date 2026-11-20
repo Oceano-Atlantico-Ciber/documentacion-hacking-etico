@@ -72,6 +72,8 @@ th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: upp
 .check li { position: relative; padding-left: 30px; min-width: 0; }
 .check li::before { content: ""; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border: 1.5px solid var(--accent); border-radius: 3px; }
 .seccion { display: grid; gap: 14px; }
+.seccion > * { min-width: 0; }
+:not(pre) > code { overflow-wrap: anywhere; }
 .seccion > h2 { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
 nav.top { font-size: 14px; color: var(--muted); }
 nav.temas, nav.ejercicios { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 18px; font-size: 15px; }

@@ -12,8 +12,7 @@
       ["05 · IA: local o en la nube", "00-presentacion/temas/05-ia.html"],
       ["06 · Primer commit", "00-presentacion/temas/06-primer-commit.html"],
       ["07 · Hackea el ranking", "00-presentacion/temas/07-hackea-el-ranking.html"],
-      ["Hackea el ranking · Solución", "00-presentacion/hackea-el-ranking/solucion.html"],
-      ["Cómo se corrige tu entrega", "00-presentacion/temas/08-como-se-corrige.html"],
+      ["08 · Cómo se corrige tu entrega", "00-presentacion/temas/08-como-se-corrige.html"],
     ]],
     ["Fundamentos", "00-fundamentos/index.html", [
       ["01 · Git", "00-fundamentos/01-git/index.html", [
@@ -132,7 +131,7 @@
           ["4.3 · ClearNet, Deep Web y Dark Web", "01-hacking-etico/04-herramientas-y-monitorizacion/temas/03-clearnet-deep-dark-web.html"],
         ]],
         ["Ejercicios", "01-hacking-etico/04-herramientas-y-monitorizacion/index.html#ejercicios", [
-          ["U4·E1 · Elige su monitorización", "01-hacking-etico/04-herramientas-y-monitorizacion/ejercicios/e1.html"],
+          ["U4·E1 · ¿Qué monitorización necesita cada una?", "01-hacking-etico/04-herramientas-y-monitorizacion/ejercicios/e1.html"],
           ["U4·E2 · Un sensor vigilando la web", "01-hacking-etico/04-herramientas-y-monitorizacion/ejercicios/e2.html"],
           ["U4·E3 · Cuatro darknets", "01-hacking-etico/04-herramientas-y-monitorizacion/ejercicios/e3.html"],
         ]],

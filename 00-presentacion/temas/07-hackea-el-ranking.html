@@ -69,55 +69,55 @@ button{font:inherit}
 <section class="section" aria-labelledby="objetivo">
 <p class="eyebrow">La misión</p>
 <h2 id="objetivo">Jugar, investigar y explicar</h2>
-<p class="intro">El docente os dará la dirección del juego. Escribid vuestro nombre, pulsad <strong>Start game</strong> y haced clic en <strong>Click</strong> durante diez segundos. <strong>Leaderboard</strong> muestra el ranking y, junto a cada nombre, sus <strong>flags</strong>.</p>
-<div class="callout"><h3>Qué es una flag</h3><p>Una <strong>flag</strong> es la prueba de que has encontrado un fallo. El servidor te la apunta junto a tu nombre en el ranking cuando consigues algo que no debería permitir. No se gana jugando bien: se gana atacando. En el curso usamos siempre la palabra en inglés, como en las competiciones de seguridad (CTF, <em>Capture The Flag</em>).</p></div>
+<p class="intro">El docente te dará la dirección del juego. Escribe tu nombre, pulsa <strong>Start game</strong> y haz clic en <strong>Click</strong> durante diez segundos. <strong>Leaderboard</strong> muestra el ranking y, junto a cada nombre, sus <strong>flags</strong>.</p>
+<div class="callout"><h3>Qué es una flag</h3><p>Una <strong>flag</strong> es la prueba de que has encontrado un fallo. El servidor te la apunta junto a tu nombre en el ranking cuando consigues algo que no debería permitir. No se gana jugando bien, sino atacando. En el curso usamos la palabra en inglés, como en las competiciones de seguridad (CTF, <em>Capture The Flag</em>).</p></div>
 <p class="intro">El reto son <a href="#objetivos">cuatro objetivos</a>, uno por cada propiedad de la seguridad, y explicar qué comprobación le faltaba al servidor en cada uno.</p>
 <div class="facts" aria-label="Datos esenciales de la práctica">
   <div class="fact"><strong>10 segundos</strong><p>Dura una partida normal. El marcador conserva la mejor puntuación de cada nombre.</p></div>
-  <div class="fact"><strong>2 herramientas</strong><p>Usaréis el navegador con F12 y la terminal con <code>curl</code>.</p></div>
-  <div class="fact"><strong>1 evidencia</strong><p>Por cada hallazgo, guardad petición, respuesta, cambio observado y explicación.</p></div>
+  <div class="fact"><strong>2 herramientas</strong><p>Las herramientas de desarrollo del navegador (tecla F12) y la terminal con <code>curl.exe</code>.</p></div>
+  <div class="fact"><strong>1 evidencia</strong><p>Por cada hallazgo, unas notas que otra persona pueda seguir: <a href="#evidencia">qué anotar</a>.</p></div>
 </div>
-<div class="callout"><h3>Alcance</h3><p>Autorizado: <strong>solo</strong> la dirección del juego que proyecta el docente, <strong>solo</strong> durante la clase. Es un enlace público <code>https://…pinggy.link</code> que apunta al equipo del docente; el resto de ese equipo y del dominio de Pinggy queda fuera. Nada de atacar la red del aula, los equipos de compañeros ni ningún otro servicio. Fuera de esto, lo mismo sería delito.</p><p>Dentro del alcance todo está permitido, también vaciar el ranking: basta con volver a jugar para llenarlo.</p></div>
+<div class="callout"><h3>Alcance</h3><p>Autorizado: <strong>solo</strong> la dirección del juego que proyecta el docente, <strong>solo</strong> durante la clase. Es un enlace público <code>https://…pinggy.link</code> que lleva al juego en el equipo del docente; el resto de ese equipo y de Pinggy queda fuera. Nada de atacar la red del aula, los equipos de tus compañeros ni ningún otro servicio: fuera del alcance, lo mismo sería delito.</p><p>Dentro del alcance todo está permitido, también vaciar el ranking: basta con volver a jugar para llenarlo.</p></div>
 </section>
 
 <section class="section" id="objetivos" aria-labelledby="cuatro">
 <p class="eyebrow">Qué hay que conseguir</p>
 <h2 id="cuatro">Cuatro objetivos, uno por propiedad</h2>
-<p class="intro">La seguridad protege cuatro cosas. Cada objetivo rompe una de ellas en el juego; cuando lo consigáis, escribid cuál y por qué.</p>
+<p class="intro">La seguridad protege cuatro cosas. Cada objetivo rompe una de ellas en el juego; cuando lo consigas, escribe cuál y por qué.</p>
 <div class="activity-grid">
-  <div class="activity"><span class="number">1</span><h3>Integridad: una puntuación imposible</h3><p>Aparecer en el ranking con más puntos de los que caben en diez segundos. Flags: <strong>Impossible score</strong>, y <strong>No browser</strong> si lo hacéis sin la web.</p></div>
-  <div class="activity"><span class="number">2</span><h3>Confidencialidad: lo que no debíais ver</h3><p>Encontrar en el código que recibe vuestro navegador las rutas que el equipo de desarrollo olvidó quitar. Sin flag: la evidencia es la línea del código.</p></div>
+  <div class="activity"><span class="number">1</span><h3>Integridad: una puntuación imposible</h3><p>Aparecer en el ranking con más puntos de los que caben en diez segundos. Flags: <strong>Impossible score</strong>, y <strong>No browser</strong> si lo haces sin la web.</p></div>
+  <div class="activity"><span class="number">2</span><h3>Confidencialidad: lo que no debías ver</h3><p>Encontrar en el código que recibe tu navegador las rutas que el equipo de desarrollo olvidó quitar. Sin flag: la evidencia es la línea del código.</p></div>
   <div class="activity"><span class="number">3</span><h3>Autenticidad: hacerse pasar por otro</h3><p>Cambiar la puntuación de otra persona de la clase sin ser ella. Flag: <strong>Changed another player's score</strong>.</p></div>
-  <div class="activity"><span class="number">4</span><h3>Disponibilidad: vaciar el ranking</h3><p>Dejar el marcador en blanco para toda la clase. Flag: <strong>Hidden admin route</strong>. Avisad en voz alta cuando lo hagáis.</p></div>
+  <div class="activity"><span class="number">4</span><h3>Disponibilidad: vaciar el ranking</h3><p>Dejar el marcador en blanco para toda la clase. Flag: <strong>Hidden admin route</strong>. Avísalo en voz alta cuando lo hagas.</p></div>
 </div>
 </section>
 
 <section class="section" id="ataques" aria-labelledby="tipos">
 <p class="eyebrow">Qué buscar</p>
 <h2 id="tipos">Tipos de ataque que funcionan en el juego</h2>
-<p class="intro">Son ataques reales que se ven a diario en aplicaciones web. Antes de la lista, los dos catálogos con los que el mundo de la seguridad les pone nombre y número.</p>
+<p class="intro">Son ataques reales que se ven a diario en aplicaciones web. Antes de la lista, los dos catálogos con los que la seguridad les pone nombre y número.</p>
 <div class="facts" aria-label="CWE y CVE">
   <div class="fact"><strong>CWE · el tipo de fallo</strong><p><em>Common Weakness Enumeration</em>. Un catálogo de <b>tipos</b> de error de programación o de diseño, cada uno con un número. Ejemplo: <code>CWE-639</code> es «dejar que el usuario elija a qué datos accede». Describe una familia de fallos, no un programa concreto.</p></div>
   <div class="fact"><strong>CVE · un fallo concreto</strong><p><em>Common Vulnerabilities and Exposures</em>. Un número para <b>cada fallo real</b> encontrado en un producto y una versión concretos. Ejemplo: <code>CVE-2021-44228</code> es Log4Shell, en la biblioteca Log4j. Cada CVE dice a qué CWE pertenece.</p></div>
-  <div class="fact"><strong>En el juego</strong><p>Los fallos del juego tienen CWE, porque son tipos de error conocidos. No tienen CVE: el juego no es un producto publicado. Si lo fuera y alguien lo reportase, cada fallo recibiría el suyo.</p></div>
+  <div class="fact"><strong>En el juego</strong><p>Los fallos del juego tienen CWE, porque son tipos de error conocidos. No tienen CVE: el juego no es un producto publicado. Si lo fuera y alguien lo notificase, cada fallo recibiría el suyo.</p></div>
 </div>
-<p class="intro">Entre paréntesis va el nombre con el que encontraréis cada ataque en internet y su CWE.</p>
+<p class="intro">Entre paréntesis va el nombre con el que encontrarás cada ataque en Internet y su CWE.</p>
 <ol class="note-list">
-  <li><strong>Leer el código del cliente</strong> (<em>source code review</em>, CWE-615). Todo lo que la web manda a vuestro navegador se puede leer: el JavaScript, los comentarios, las rutas a las que llama. Si el equipo de desarrollo dejó una nota, la veréis. <em>Objetivo 2.</em></li>
-  <li><strong>Cambiar los datos que envía el navegador</strong> (<em>parameter tampering</em>, CWE-602). El navegador es vuestro: podéis modificar lo que manda antes de que llegue al servidor. Si el servidor no lo comprueba, se lo cree. <em>Objetivo 1.</em></li>
-  <li><strong>Hablar con el servidor sin pasar por la web</strong> (<em>client-side bypass</em>, CWE-602). Los botones de la página solo son una forma de enviar peticiones. Con <code>curl</code> o desde la consola podéis enviar la misma petición, o una distinta, sin jugar. <em>Objetivo 1.</em></li>
+  <li><strong>Leer el código del cliente</strong> (<em>source code review</em>, CWE-615). Todo lo que la web manda a tu navegador se puede leer: el JavaScript, los comentarios y las rutas a las que llama. Si el equipo de desarrollo dejó una nota, la verás. <em>Objetivo 2.</em></li>
+  <li><strong>Cambiar los datos que envía el navegador</strong> (<em>parameter tampering</em>, CWE-602). El navegador es tuyo: puedes modificar lo que manda antes de que llegue al servidor. Si el servidor no lo comprueba, se lo cree. <em>Objetivo 1.</em></li>
+  <li><strong>Hablar con el servidor sin pasar por la web</strong> (<em>client-side bypass</em>, CWE-602). Los botones de la página solo son una forma de enviar peticiones. Con <code>curl.exe</code> o desde la consola del navegador puedes enviar la misma petición, o una distinta, sin jugar. <em>Objetivo 1.</em></li>
   <li><strong>Falsificar una cabecera</strong> (<em>header spoofing</em>, CWE-290). Las cabeceras de una petición las escribe quien la envía. Si el servidor decide algo por una cabecera, cualquiera puede escribir la que le convenga. <em>Objetivo 1.</em></li>
-  <li><strong>Tocar los datos de otra persona</strong> (<em>IDOR</em>, referencia directa insegura a objetos, CWE-639). Si para cambiar algo basta con saber su nombre, podéis cambiar lo de cualquiera. El servidor tendría que comprobar quién lo pide, no solo qué pide. <em>Objetivo 3.</em></li>
-  <li><strong>Usar una función de administración sin permiso</strong> (<em>broken access control</em>, CWE-306). Una ruta que «nadie conoce» no está protegida: si alguien la encuentra y el servidor no pide credenciales, cualquiera puede usarla. <em>Objetivo 4.</em></li>
+  <li><strong>Tocar los datos de otra persona</strong> (<em>IDOR</em>, referencia directa insegura a objetos, CWE-639). Si para cambiar algo basta con saber su nombre, puedes cambiar lo de cualquiera. El servidor tendría que comprobar quién lo pide, no solo qué pide. <em>Objetivo 3.</em></li>
+  <li><strong>Usar una función de administración sin permiso</strong> (<em>missing authentication</em>, falta de autenticación en una función crítica, CWE-306). Una ruta que «nadie conoce» no está protegida: si alguien la encuentra y el servidor no pide credenciales, cualquiera puede usarla. <em>Objetivo 4.</em></li>
 </ol>
 <p class="intro">Cada CWE se puede buscar en <a href="https://cwe.mitre.org/">cwe.mitre.org</a> y cada CVE en <a href="https://www.cve.org/">cve.org</a>.</p>
-<p class="intro">No busquéis inyección SQL ni XSS: este juego no tiene base de datos y escapa los nombres. Llegarán en Aplicaciones web.</p>
+<p class="intro">No busques inyección SQL ni XSS: el juego no tiene base de datos y trata los nombres para que no se ejecuten como código. Los verás en Aplicaciones web.</p>
 </section>
 
 <section class="section" id="recorrido" aria-labelledby="flujo">
 <p class="eyebrow">Mapa interactivo</p>
 <h2 id="flujo">Qué ocurre al jugar</h2>
-<p class="intro">Selecciona un modo y recorre los pasos. El jueves compararéis ambos comportamientos.</p>
+<p class="intro">Elige un modo y recorre los pasos. Al final de la práctica compararás los dos.</p>
 <div class="mode-picker" role="group" aria-label="Modo del servidor">
   <button type="button" data-mode="trusted" aria-pressed="true">trusted <small>Primero: el servidor se fía del cliente</small></button>
   <button type="button" data-mode="validated" aria-pressed="false">validated <small>Después: el servidor lleva la cuenta</small></button>
@@ -144,11 +144,16 @@ button{font:inherit}
 <h2 id="hacer">Cuatro movimientos, una explicación</h2>
 <div class="activity-grid">
   <div class="activity"><span class="number">1</span><h3>Juega una partida normal</h3><p>Aprende qué se ve en pantalla y qué cambia en el ranking. Si el docente usa <code>?scoreboard</code> en el proyector, esa vista solo muestra el marcador.</p></div>
-  <div class="activity"><span class="number">2</span><h3>Descubre las rutas</h3><p>En F12 → <strong>Network/Red</strong> → <strong>Fetch/XHR</strong> verás las peticiones normales. Después, en <strong>Ver código fuente</strong>, busca las llamadas a <code>fetch(</code> y los comentarios sobre rutas antiguas.</p></div>
-  <div class="activity"><span class="number">3</span><h3>Formula una hipótesis y pruébala</h3><p>Mira el método y los datos de cada petición. A partir de las pistas, prueba una variación con la consola del navegador o con <code>curl</code> y comprueba el efecto en el ranking.</p></div>
-  <div class="activity"><span class="number">4</span><h3>Explica el resultado</h3><p>Describe qué aceptó el servidor, por qué era posible y qué validación faltaba. El jueves, repite la prueba cuando el docente cambie a <code>validated</code>.</p></div>
+  <div class="activity"><span class="number">2</span><h3>Descubre las rutas</h3><p>Abre las herramientas de desarrollo con F12. En <strong>Network/Red</strong> → <strong>Fetch/XHR</strong> verás las peticiones normales. Después, en <strong>Ver código fuente</strong>, busca las llamadas a <code>fetch(</code> y los comentarios sobre rutas antiguas.</p></div>
+  <div class="activity"><span class="number">3</span><h3>Formula una hipótesis y pruébala</h3><p>Mira el método y los datos de cada petición. A partir de las pistas, prueba una variación con la consola del navegador o con <code>curl.exe</code> y mira el efecto en el ranking.</p></div>
+  <div class="activity"><span class="number">4</span><h3>Explica el resultado</h3><p>Describe qué aceptó el servidor, por qué era posible y qué comprobación faltaba. Cuando el docente cambie a <code>validated</code>, repite la prueba.</p></div>
 </div>
-<div class="callout"><h3>Primera comprobación útil</h3><p>El endpoint <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Añádelo a la dirección exacta que te haya dado el docente. Un código HTTP <code>200</code> indica que la consulta ha funcionado.</p><pre><code>curl.exe -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre><p>Reemplaza <code>https://DIRECCION-DEL-JUEGO</code> por el enlace de Pinggy que proyecta el docente, sin puerto. Si el enlace cambia durante la clase, usad el nuevo. Escribe siempre <code>curl.exe</code>, no <code>curl</code>: en PowerShell, <code>curl</code> a secas es otra orden (<code>Invoke-WebRequest</code>) y falla. <code>curl.exe</code> funciona igual en PowerShell y en Git Bash. Si no sabes qué son un método, una cabecera o un código de estado, lo verás con calma en <a href="../../00-fundamentos/03-api-rest/temas/01-rest-es-http.html">API 1 · REST es HTTP</a>; para el juego basta con copiar la orden.</p></div>
+<div class="callout"><h3>Primera comprobación útil</h3><p>La ruta <code>/api/leaderboard</code> devuelve el modo y el ranking actual. Cambia <code>DIRECCION-DEL-JUEGO</code> por el enlace de Pinggy que proyecta el docente, sin puerto. Si el enlace cambia durante la clase, usa el nuevo.</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>curl.exe -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -i https://DIRECCION-DEL-JUEGO/api/leaderboard</code></pre></div>
+<p>Un código HTTP <code>200</code> en la primera línea de la respuesta indica que la consulta ha funcionado. En PowerShell escribe siempre <code>curl.exe</code>: <code>curl</code> a secas es otra orden y falla. Qué son un método, una cabecera o un código de estado lo verás con calma en <a href="../../00-fundamentos/03-api-rest/temas/01-rest-es-http.html">API 1 · REST es HTTP</a>; para el juego basta con copiar la orden.</p></div>
 </section>
 
 <section class="section" aria-labelledby="evidencia">
@@ -164,7 +169,7 @@ button{font:inherit}
 </section>
 
 <section class="section" id="documentar" aria-labelledby="vulnerabilidad">
-<p class="eyebrow">Semana 2</p>
+<p class="eyebrow">Después de jugar</p>
 <h2 id="vulnerabilidad">De truco a vulnerabilidad</h2>
 <p class="intro">Repasamos el marcador. Para cada flag respondemos a las cuatro preguntas con las que se documenta cualquier vulnerabilidad:</p>
 <div class="tabla"><table><thead><tr><th>Pregunta</th><th>Ejemplo con el juego</th></tr></thead><tbody>
@@ -178,7 +183,7 @@ button{font:inherit}
 </section>
 </main>
 
-<nav class="temas" aria-label="Temas de la presentación"><a href="06-primer-commit.html">← Primer commit</a><a href="../../00-fundamentos/index.html">Fundamentos →</a></nav>
+<nav class="temas" aria-label="Temas de la presentación"><a href="06-primer-commit.html">← Primer commit</a><a href="08-como-se-corrige.html">Cómo se corrige tu entrega →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script>
@@ -228,5 +233,6 @@ button{font:inherit}
 })();
 </script>
 <script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
 </body>
 </html>
