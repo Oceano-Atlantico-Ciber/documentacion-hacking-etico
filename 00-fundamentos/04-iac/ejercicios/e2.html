@@ -82,7 +82,7 @@ becario_secreto = &lt;sensitive&gt;</code></pre>
 <p>Lanza estas órdenes una a una, desde cualquier carpeta, y lee cada respuesta. Donde pone <code>&lt;bucket&gt;</code>, <code>&lt;usuario&gt;</code>, <code>&lt;política&gt;</code> o <code>&lt;id-del-servidor&gt;</code>, escribe el nombre que te haya dado la respuesta anterior, sin los <code>&lt; &gt;</code>. Repite la orden con cada bucket y con cada usuario:</p>
 <div class="cmd"><pre><code>aws s3 ls
 aws s3 ls s3://&lt;bucket&gt;</code></pre></div>
-<p>Los tres buckets de la empresa y lo que guarda cada uno. Como la Floci es la misma de toda la unidad, también sale <code>e1-notas-…</code> del E1: no es de la empresa; puedes nombrarlo aparte o dejarlo fuera.</p>
+<p>Los tres buckets de la empresa y lo que guarda cada uno. Como la Floci es la misma de toda la unidad, también sale <code>e1-notas-…</code> del E1: no es de la empresa; puedes nombrarlo aparte o dejarlo fuera. Si <code>aws s3 ls</code> no devuelve nada, ese bucket está vacío: anótalo así.</p>
 <div class="cmd"><pre><code>aws iam list-users --query "Users[].UserName"
 aws iam list-user-policies --user-name &lt;usuario&gt;
 aws iam get-user-policy --user-name &lt;usuario&gt; --policy-name &lt;política&gt;
