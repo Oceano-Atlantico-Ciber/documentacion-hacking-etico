@@ -84,11 +84,11 @@ docker compose logs -f suricata</code></pre></div>
 docker compose run --rm auditor -sV 172.28.0.20</code></pre></div>
 <p>Con <code>-sn</code>, nmap solo busca qué equipos de la red responden, sin mirar sus puertos. Con <code>-sV</code>, mira los puertos abiertos del servidor y averigua qué programa y qué versión hay detrás de cada uno.</p>
 <p>Después, mira la web: la portada, su <code>robots.txt</code> y lo que aparezca allí. El <code>robots.txt</code> es el fichero donde una web pide a los buscadores que no indexen ciertas rutas; a quien audita le dice justo qué rutas pueden ser interesantes.</p>
-<div class="cmd"><pre><code>docker compose run --rm curl -i http://172.28.0.20/
-docker compose run --rm curl -i http://172.28.0.20/robots.txt
-docker compose run --rm curl -i http://172.28.0.20/admin/</code></pre></div>
+<div class="cmd"><pre><code>docker compose run --rm curl -s -i http://172.28.0.20/
+docker compose run --rm curl -s -i http://172.28.0.20/robots.txt
+docker compose run --rm curl -s -i http://172.28.0.20/admin/</code></pre></div>
 <p>En el <code>robots.txt</code> aparece, además de <code>/admin/</code>, un directorio de copias de seguridad, con un nombre distinto para cada alumno. Pídelo, cambiando <code>&lt;copias&gt;</code> por ese nombre (sin las barras):</p>
-<div class="cmd"><pre><code>docker compose run --rm curl -i http://172.28.0.20/&lt;copias&gt;/</code></pre></div>
+<div class="cmd"><pre><code>docker compose run --rm curl -s -i http://172.28.0.20/&lt;copias&gt;/</code></pre></div>
 
 <h2 class="step"><span class="n">3</span>Mira qué ha visto el sensor</h2>
 <p class="so">Windows · PowerShell</p>
@@ -102,18 +102,18 @@ cat alertas.txt</code></pre></div>
 <p>Cada regla tiene un <code>msg</code> (el mensaje de la alerta, que empieza por la fase) y un <code>sid</code>, el número que la identifica: no puede haber dos reglas con el mismo.</p>
 
 <h2 class="step"><span class="n">4</span>Escribe tu regla</h2>
-<p>Añade al final de <code>suricata/local.rules</code> una regla que salte cuando alguien pida tu directorio de copias, y solo entonces. Copia la de <code>/admin</code> como punto de partida, cambia lo que haga falta y usa un <code>sid</code> desde <code>1000100</code>. Empieza el mensaje por la fase, en mayúsculas y sin tildes, para que <code>etiquetar.py</code> la cuente bien; por ejemplo, para otra ruta: <code>msg:"ENUMERACION ruta /phpmyadmin";</code>.</p>
-<p>Después, reinicia Suricata y espera de nuevo a <code>Engine started</code> (<b>Ctrl+C</b> para salir del registro). Pide otra vez tu directorio de copias y vuelve a resumir:</p>
+<p>Añade al final de <code>suricata/local.rules</code> una regla que salte cuando alguien pida tu directorio de copias, y solo entonces. Copia la de <code>/admin</code> como punto de partida, cambia lo que haga falta y usa un <code>sid</code> desde <code>1000100</code>. Empieza el mensaje por la fase, en mayúsculas y sin tildes, para que <code>etiquetar.py</code> la cuente bien. Las reglas del laboratorio usan dos: <code>RECONOCIMIENTO</code> (descubrir qué equipos y servicios hay) y <code>ENUMERACION</code> (pedir rutas concretas de la web para ver qué expone, dentro del escaneo del tema 3.2); por ejemplo, para otra ruta: <code>msg:"ENUMERACION ruta /phpmyadmin";</code>.</p>
+<p>Después, reinicia Suricata y espera de nuevo a <code>Engine started</code> (<b>Ctrl+C</b> para salir del registro; <code>--since 1m</code> muestra solo el último minuto, para no confundirte con el arranque anterior). Pide otra vez tu directorio de copias y vuelve a resumir:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker compose restart suricata
-docker compose logs -f suricata
-docker compose run --rm curl -i http://172.28.0.20/&lt;copias&gt;/
+docker compose logs -f --since 1m suricata
+docker compose run --rm curl -s -i http://172.28.0.20/&lt;copias&gt;/
 py etiquetar.py alertas.txt
 Get-Content alertas.txt</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>docker compose restart suricata
-docker compose logs -f suricata
-docker compose run --rm curl -i http://172.28.0.20/&lt;copias&gt;/
+docker compose logs -f --since 1m suricata
+docker compose run --rm curl -s -i http://172.28.0.20/&lt;copias&gt;/
 python3 etiquetar.py alertas.txt
 cat alertas.txt</code></pre></div>
 <p>Tu alerta tiene que aparecer en <code>alertas.txt</code>. Si Suricata no arranca, el registro dice qué línea no entiende.</p>

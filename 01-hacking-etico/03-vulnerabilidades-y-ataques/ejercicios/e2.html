@@ -68,16 +68,16 @@ curl -s https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabi
 <h2 class="step"><span class="n">3</span>Consulta NVD</h2>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>$r = Invoke-RestMethod "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$cve"
-$r.vulnerabilities[0].cve.metrics.cvssMetricV31.cvssData | Select-Object baseScore, vectorString
+$r.vulnerabilities[0].cve.metrics.cvssMetricV31 | Select-Object source, @{n='nota'; e={$_.cvssData.baseScore}}, @{n='vector'; e={$_.cvssData.vectorString}} | Format-List
 $r.vulnerabilities[0].cve.weaknesses.description
 $r.vulnerabilities[0].cve.descriptions | Where-Object lang -eq en</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<div class="cmd"><pre><code>curl -s "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$cve" | python3 -c "import json,sys; c=json.load(sys.stdin)['vulnerabilities'][0]['cve']; [print(m['cvssData']['baseScore'], m['cvssData']['vectorString']) for m in c['metrics'].get('cvssMetricV31', [])]; [print(d['value']) for w in c.get('weaknesses', []) for d in w['description']]; [print(d['value']) for d in c['descriptions'] if d['lang']=='en']"</code></pre></div>
-<p>Salen, por este orden, las notas CVSS 3.1 con su vector, los CWE y la descripción en inglés. Si NVD responde con un error, espera unos segundos y repite: limita las consultas seguidas.</p>
+<div class="cmd"><pre><code>curl -s "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$cve" | python3 -c "import json,sys; c=json.load(sys.stdin)['vulnerabilities'][0]['cve']; [print(m['source'], m['cvssData']['baseScore'], m['cvssData']['vectorString']) for m in c['metrics'].get('cvssMetricV31', [])]; [print(d['value']) for w in c.get('weaknesses', []) for d in w['description']]; [print(d['value']) for d in c['descriptions'] if d['lang']=='en']"</code></pre></div>
+<p>Salen, por este orden, las notas CVSS 3.1 con quién las dio (<code>nvd@nist.gov</code> es NVD) y su vector, los CWE y la descripción en inglés. Si NVD responde con un error, espera unos segundos y repite: limita las consultas seguidas.</p>
 <ul>
-<li><b>Nota</b>: usa la de <b>CVSS 3.1</b>, no la de CVSS 4.0, aunque NVD muestre las dos en su web: el corrector solo acepta la 3.1. Puede haber dos notas 3.1, la de NVD y la del fabricante: elige una y copia su <code>baseScore</code> en <code>cvss.nota</code> (un número, sin comillas) y su <code>vectorString</code> completo en <code>cvss.vector</code>.</li>
-<li><b>CWE</b>: uno de los que salen, en <code>cwe</code>.</li>
-<li><b>Versiones</b>: las afectadas y la corregida están en la descripción o en el aviso del fabricante, enlazado en la ficha web de NVD (<code>https://nvd.nist.gov/vuln/detail/</code> seguido de tu CVE).</li>
+<li><b>Nota</b>: usa la de <b>CVSS 3.1</b>, no la de CVSS 4.0, aunque NVD muestre las dos en su web: el corrector solo acepta la 3.1. Puede haber dos notas 3.1, la de NVD y la del fabricante: elige una y copia su <code>baseScore</code> en <code>cvss.nota</code> (un número, sin comillas) y su <code>vectorString</code> completo en <code>cvss.vector</code>. Con Windows en español, PowerShell enseña la nota con coma (<code>7,5</code>): en el JSON escríbela con punto (<code>7.5</code>). Las propiedades que marques deben cuadrar con el vector que elijas.</li>
+<li><b>CWE</b>: uno de los que salen, en <code>cwe</code>. Ignora <code>NVD-CWE-noinfo</code> y <code>NVD-CWE-Other</code>: significan que NVD no lo ha clasificado.</li>
+<li><b>Versiones</b>: las afectadas y la corregida están en la descripción o en el aviso del fabricante, enlazado en la ficha web de NVD (<code>https://nvd.nist.gov/vuln/detail/</code> seguido de tu CVE). Ábrelo en el navegador: muchas webs de fabricantes no se leen con <code>curl.exe</code>. Si hay varias ramas, escríbelas separadas por comas.</li>
 </ul>
 
 <h2 class="step"><span class="n">4</span>Completa la ficha</h2>

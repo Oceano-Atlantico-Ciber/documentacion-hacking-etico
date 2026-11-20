@@ -55,12 +55,13 @@ code LEEME.md</code></pre></div>
 <div class="cmd"><pre><code>curl.exe -s https://github.com/.well-known/security.txt</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>curl -s https://github.com/.well-known/security.txt</code></pre></div>
-<p>Fíjate en el formato: una línea por campo, <code>Campo: valor</code>, y comentarios con <code>#</code>. Los campos están en el <a href="https://www.rfc-editor.org/rfc/rfc9116">RFC 9116</a>.</p>
+<p>Fíjate en el formato: una línea por campo, <code>Campo: valor</code>, y comentarios con <code>#</code>. Los campos están en el <a href="https://www.rfc-editor.org/rfc/rfc9116">RFC 9116</a>. GitHub añade alguno propio, como <code>Hiring</code>, que no es del estándar: no lo copies.</p>
 
 <h2 class="step"><span class="n">3</span>Escribe el de tu empresa</h2>
 <div class="cmd"><pre><code>mkdir web/.well-known
 code web/.well-known/security.txt</code></pre></div>
-<p>Escribe estos campos con los valores de <code>LEEME.md</code>: <code>Contact</code>, <code>Policy</code>, <code>Canonical</code>, <code>Preferred-Languages</code> con <code>es</code>, y un <code>Expires</code> de dentro de menos de un año en formato RFC 3339 (como <code>2027-10-31T23:59:59Z</code>). Puedes añadir comentarios.</p>
+<p>Escribe estos campos con los valores de <code>LEEME.md</code>: <code>Contact</code>, <code>Policy</code>, <code>Canonical</code>, <code>Preferred-Languages</code> con <code>es</code>, y un <code>Expires</code> de dentro de menos de un año en formato RFC 3339 (fecha y hora en UTC con una <code>Z</code> al final, por ejemplo <code>2027-06-30T23:59:59Z</code>; elige una que caiga dentro de los próximos doce meses). Puedes añadir comentarios.</p>
+<p class="note"><code>mkdir</code> muestra la carpeta que acaba de crear: es normal.</p>
 
 <h2 class="step"><span class="n">4</span>Sírvelo</h2>
 <p>Con Docker Desktop en marcha:</p>

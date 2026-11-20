@@ -76,11 +76,11 @@ code respuestas.json</code></pre></div>
 <h2 class="step"><span class="n">3</span>Investiga el registro</h2>
 <p>Desde <code>ra1/u3-e3</code>. En las dos últimas órdenes, cambia <code>&lt;ip&gt;</code> por la dirección sospechosa que encuentres con la segunda.</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>$r = Import-Csv registro.csv
-$r | Group-Object Id | Sort-Object Count -Descending
-$r | Where-Object Id -eq 5152 | Group-Object Ip | Sort-Object Count -Descending
-$r | Where-Object { $_.Id -eq 4625 -and $_.Ip -eq "&lt;ip&gt;" } | Measure-Object
-$r | Where-Object { $_.Ip -eq "&lt;ip&gt;" -or $_.Id -in 4720,7045,1102 } | Format-Table</code></pre></div>
+<div class="cmd"><pre><code>$r = Import-Csv registro.csv -Encoding UTF8
+$r | Group-Object Id | Sort-Object Count -Descending | Select-Object Count, Name
+$r | Where-Object Id -eq 5152 | Group-Object Ip | Sort-Object Count -Descending | Select-Object Count, Name
+$r | Where-Object { $_.Id -eq 4625 -and $_.Ip -eq "&lt;ip&gt;" } | Measure-Object | Select-Object Count
+$r | Where-Object { $_.Ip -eq "&lt;ip&gt;" -or $_.Id -in 4720,7045,1102 } | Format-Table -AutoSize -Wrap</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>head -3 registro.csv
 cut -d, -f3 registro.csv | sort | uniq -c | sort -rn
