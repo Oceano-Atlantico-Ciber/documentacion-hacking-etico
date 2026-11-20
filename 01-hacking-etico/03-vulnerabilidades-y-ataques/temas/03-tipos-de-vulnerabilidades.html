@@ -20,7 +20,7 @@
 <h2>Dónde nace el fallo</h2>
 <div class="tabla"><table><thead><tr><th>Tipo</th><th>Qué es</th><th>Ejemplo</th><th>Cómo se corrige</th></tr></thead><tbody>
 <tr><td><b>De diseño</b></td><td>La idea está mal, aunque el código haga exactamente lo que se pensó.</td><td>Hackea el ranking se fiaba de la puntuación que calculaba el navegador.</td><td>Cambiando cómo funciona. Un parche no basta.</td></tr>
-<tr><td><b>De configuración</b></td><td>El software está bien, pero se ha montado mal.</td><td>Un bucket público, una contraseña por defecto, un puerto abierto a todo Internet.</td><td>Cambiando la configuración. Los analizadores como Trivy las encuentran leyendo el código de la infraestructura.</td></tr>
+<tr><td><b>De configuración</b></td><td>El software está bien, pero se ha montado mal.</td><td>Un bucket (un almacén de ficheros en la nube, como los de Amazon S3) abierto a cualquiera, una contraseña por defecto, un puerto abierto a todo Internet.</td><td>Cambiando la configuración. Los analizadores como Trivy las encuentran leyendo el código de la infraestructura.</td></tr>
 <tr><td><b>De software</b></td><td>Un error de programación en una versión concreta de un producto.</td><td>PHP2Shell en el motor de PHP; Log4Shell en Log4j.</td><td>Actualizando a la versión corregida. Suelen tener CVE.</td></tr>
 <tr><td><b>Humanas</b></td><td>El fallo está en lo que hace una persona.</td><td>Reutilizar contraseñas, abrir un adjunto, contar algo por teléfono.</td><td>Formación, procedimientos y medidas técnicas que no dependan solo de la persona, como el segundo factor.</td></tr>
 </tbody></table></div>
@@ -30,23 +30,24 @@
 <h2>Las listas de referencia</h2>
 <ul>
 <li><a href="https://owasp.org/Top10/">OWASP Top 10</a>: los diez riesgos más frecuentes en aplicaciones web. El primero, desde 2021, es el <b>control de acceso roto</b>: usuarios que llegan a datos o acciones que no son suyos. Lo trabajarás en RA5.</li>
-<li><a href="https://cwe.mitre.org/top25/">CWE Top 25</a>: los tipos de debilidad más peligrosos del año, sacados de los CVE publicados. Siempre aparecen la inyección SQL (CWE-89), el cross-site scripting (CWE-79) y la falta de autenticación en funciones críticas (CWE-306).</li>
+<li><a href="https://cwe.mitre.org/top25/">CWE Top 25</a>: los tipos de debilidad más peligrosos del año, sacados de los CVE publicados. Suelen aparecer la inyección SQL (CWE-89), el cross-site scripting (CWE-79: meter código JavaScript en una página para que se ejecute en el navegador de otro usuario) y la falta de autenticación en funciones críticas (CWE-306).</li>
 </ul>
 </section>
 
 <section class="seccion" id="cvss">
 <h2>Cómo de grave: CVSS</h2>
 <p>La nota CVSS va de 0 a 10: <b>baja</b> hasta 3,9; <b>media</b> hasta 6,9; <b>alta</b> hasta 8,9; <b>crítica</b> desde 9,0. Lo importante es el <b>vector</b>, la cadena que explica de dónde sale la nota. El de Log4Shell, en CVSS 3.1:</p>
-<pre><code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H     → 10,0</code></pre>
+<div class="cmd"><pre><code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H     → 10,0</code></pre></div>
 <div class="tabla"><table><thead><tr><th>Letra</th><th>Pregunta</th><th>Aquí</th></tr></thead><tbody>
 <tr><td><code>AV</code></td><td>¿Desde dónde se ataca? Red, red adyacente, local o físico.</td><td><code>N</code>: desde Internet.</td></tr>
 <tr><td><code>AC</code></td><td>¿Es difícil? Baja o alta complejidad.</td><td><code>L</code>: fácil.</td></tr>
 <tr><td><code>PR</code></td><td>¿Hacen falta privilegios?</td><td><code>N</code>: ninguno.</td></tr>
 <tr><td><code>UI</code></td><td>¿Tiene que hacer algo la víctima?</td><td><code>N</code>: nada.</td></tr>
-<tr><td><code>S</code></td><td>¿Afecta a más sistemas que el vulnerable?</td><td><code>C</code>: sí, cambia de ámbito.</td></tr>
+<tr><td><code>S</code></td><td>¿Afecta a más sistemas que el vulnerable?</td><td><code>C</code>: sí, el daño salta a otros componentes.</td></tr>
 <tr><td><code>C</code> <code>I</code> <code>A</code></td><td>Impacto en confidencialidad, integridad y disponibilidad.</td><td><code>H</code>: alto en las tres.</td></tr>
 </tbody></table></div>
 <p>CVSS 4.0, la versión actual, separa el impacto en el sistema vulnerable (<code>VC</code>, <code>VI</code>, <code>VA</code>) del impacto en otros sistemas (<code>SC</code>, <code>SI</code>, <code>SA</code>) y añade <code>AT</code>, condiciones previas del ataque. En NVD verás las dos versiones según el CVE.</p>
+<p class="note">En el texto, las notas llevan coma decimal (9,8), como se escribe en español. En un fichero JSON, como la ficha del U3·E2, van con punto y sin comillas: <code>9.8</code>.</p>
 </section>
 
 <section class="seccion" id="kev">
@@ -56,10 +57,13 @@
 <li><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA KEV</a>: el catálogo de vulnerabilidades que se sabe que se están explotando. Si un CVE está en KEV, se parchea antes que cualquier otro.</li>
 <li><a href="https://www.first.org/epss/">EPSS</a>: la probabilidad de que un CVE se explote en los próximos 30 días, calculada con datos reales.</li>
 </ul>
-<p>La ficha de cada CVE está en <a href="https://nvd.nist.gov/">NVD</a>. Se puede pedir también por su API desde PowerShell, que es lo que harás en el U3·E2:</p>
-<pre><code>$r = Invoke-RestMethod "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228"
+<p>La ficha de cada CVE está en <a href="https://nvd.nist.gov/">NVD</a>. También se puede pedir a su API (la dirección que devuelve los datos en JSON, para programas), que es lo que harás en el U3·E2:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>$r = Invoke-RestMethod "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228"
 $r.vulnerabilities[0].cve.metrics.cvssMetricV31.cvssData
-$r.vulnerabilities[0].cve.weaknesses.description</code></pre>
+$r.vulnerabilities[0].cve.weaknesses.description</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -s "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-44228" | python3 -m json.tool | less</code></pre></div>
 </section>
 
 <section class="seccion check">
@@ -75,5 +79,6 @@ $r.vulnerabilities[0].cve.weaknesses.description</code></pre>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>

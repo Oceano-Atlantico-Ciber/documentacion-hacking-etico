@@ -38,21 +38,45 @@
 <tr><td>Datos personales</td><td>Se demuestran sin copiarlos y se borran al terminar.</td><td>«Se copian como prueba».</td></tr>
 <tr><td>Entregable</td><td>Qué informe se entrega, a quién y cómo.</td><td>Nada.</td></tr>
 </tbody></table></div>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 260" role="img" aria-label="Un alcance de ejemplo: la red 192.168.10.0/24 entra salvo dos equipos excluidos; se prueba cada noche de 22:00 a 06:00, una franja que cruza la medianoche">
+<text class="tit" x="0" y="18">Qué se toca</text>
+<rect class="caja-ok" x="0" y="30" width="330" height="150" rx="8"/><text class="tit" x="16" y="54">Dentro: <tspan class="mono">192.168.10.0/24</tspan></text>
+<text class="tenue peq" x="16" y="74">de 192.168.10.1 a 192.168.10.254…</text>
+<rect class="caja" x="16" y="88" width="90" height="34" rx="6"/><text class="mono" x="61" y="110" text-anchor="middle">.10 web</text>
+<rect class="caja" x="118" y="88" width="90" height="34" rx="6"/><text class="mono" x="163" y="110" text-anchor="middle">.11 correo</text>
+<rect class="caja-peligro" x="220" y="88" width="96" height="34" rx="6"/><text class="mono" x="268" y="110" text-anchor="middle">.200 datáfono</text>
+<rect class="caja-peligro" x="220" y="132" width="96" height="34" rx="6"/><text class="mono" x="268" y="154" text-anchor="middle" textLength="88" lengthAdjust="spacingAndGlyphs">.250 centralita</text>
+<text class="peligro peq" x="16" y="154">…menos las que están en «fuera»</text>
+<rect class="caja-peligro" x="0" y="192" width="330" height="40" rx="8"/><text x="165" y="217" text-anchor="middle"><tspan class="tit">Tampoco:</tspan> <tspan class="mono">198.51.100.7</tspan>, del proveedor</text>
+<text class="tit" x="380" y="18">Cuándo</text>
+<text class="tenue peq" x="380" y="44">Horario: de 22:00 a 06:00, del 1 al 12 de febrero</text>
+<rect class="caja" x="380" y="70" width="340" height="40" rx="6"/>
+<rect class="caja-ok" x="692" y="70" width="28" height="40" rx="0"/><rect class="caja-ok" x="380" y="70" width="85" height="40" rx="0"/>
+<text class="mono peq" x="380" y="128">00:00</text><text class="mono peq" x="465" y="128" text-anchor="middle">06:00</text><text class="mono peq" x="550" y="128" text-anchor="middle">12:00</text><text class="mono peq" x="692" y="128" text-anchor="middle">22:00</text>
+<text class="bien fuerte peq" x="422" y="95" text-anchor="middle">sí</text><text class="tenue peq" x="578" y="95" text-anchor="middle">no: horario de trabajo</text><text class="bien fuerte peq" x="706" y="95" text-anchor="middle">sí</text>
+<text class="peq" x="380" y="160">La franja cruza la medianoche: la noche del 1</text>
+<text class="peq" x="380" y="180">va del 1 a las 22:00 al 2 a las 06:00.</text>
+<text class="peq" x="380" y="206">La madrugada del 13 (00:00 a 06:00) aún cuenta:</text>
+<text class="peq" x="380" y="226">es el final de la noche del 12, la última.</text>
+</svg>
+<figcaption>Un alcance de ejemplo. Para saber si algo se puede probar, mira tres cosas: que la dirección esté dentro, que no esté fuera y que el momento caiga en una noche del encargo.</figcaption>
+</figure>
 </section>
 
 <section class="seccion" id="terceros">
 <h2>Lo que no es del cliente</h2>
-<p>El cliente solo puede autorizar lo que es suyo. Si su web está en un hosting, su correo en Microsoft 365 o sus servidores en AWS, una parte es del proveedor:</p>
+<p>El cliente solo puede autorizar lo que es suyo. Si su web está en un alojamiento web (hosting) contratado a otra empresa, su correo en Microsoft 365 o sus servidores en AWS, una parte es del proveedor:</p>
 <ul>
 <li>Los grandes proveedores de nube publican qué se puede probar sin pedirles permiso. Por ejemplo, la <a href="https://aws.amazon.com/security/penetration-testing/">política de pruebas de AWS</a> permite probar tus propias instancias, pero prohíbe la denegación de servicio sin su aprobación.</li>
-<li>Un hosting pequeño o un proveedor de servicios gestionados tiene que dar su permiso por escrito.</li>
+<li>Una empresa de alojamiento pequeña o un proveedor de servicios gestionados tiene que dar su permiso por escrito.</li>
 <li>Lo que comparte infraestructura con otros clientes (un servidor de correo, una red compartida) suele quedar fuera.</li>
 </ul>
 </section>
 
 <section class="seccion">
 <h2>En el curso</h2>
-<p>Todo lo que hagáis en el curso cabe en un alcance: vuestro propio equipo, los contenedores de los laboratorios y, en clase, la dirección que proyecte el docente durante la práctica. Nada más. Ni la red del instituto ni las webs de otros.</p>
+<p>Todo lo que hagas en el curso cabe en un alcance: tu propio equipo, los contenedores de los laboratorios y, en clase, la dirección que proyecte el docente durante la práctica. Nada más: ni la red del instituto ni las webs de otros.</p>
 </section>
 
 <section class="seccion check">

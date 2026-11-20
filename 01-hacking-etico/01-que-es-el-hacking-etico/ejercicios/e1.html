@@ -11,22 +11,44 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">01 · Qué es el hacking ético</a></nav>
 
 <h1>U1·E1 · ¿Hacking ético o delito?</h1>
-<p class="lead">Ocho situaciones, distintas para cada alumno. Para cada una decides si es hacking ético, hacktivismo o ciberdelito, y qué artículo del Código Penal se aplica.</p>
+<p class="lead">Clasifica ocho situaciones, distintas para cada alumno: decide si cada una es hacking ético, hacktivismo o ciberdelito, y qué artículo del Código Penal se aplica.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-terminologia.html">1.1 · Terminología</a> y <a href="../temas/02-etica-y-ley.html">1.2 · Ética y ley</a></dd>
+<dt>Aprendes</dt><dd>A distinguir lo que hace legal una prueba de seguridad (el permiso y el alcance) y a poner nombre al delito cuando falta.</dd>
 <dt>Criterios</dt><dd>a, b</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u1-e1/casos.md</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u1-e1/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u1-e1</code> sobre <code>main</code></dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u1-e1/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>casos.md</code></td><td>Tus ocho casos, tal como los deja <code>preparar.py</code>, y la tabla de debajo rellena: una fila por caso con su figura y su artículo.</td></tr>
+</tbody></table></div>
+<p>Cada fila lleva el código del caso, una figura y un artículo, escritos tal cual aparecen en las listas. Por ejemplo, para un caso inventado, el X01 («alguien entra en el correo de un famoso con una contraseña filtrada»), la fila quedaría así:</p>
+<div class="cmd"><pre><code>| Caso | Figura | Artículo |
+|---|---|---|
+| X01 | ciberdelito | 197 bis |</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1
+code ra1/u1-e1/casos.md</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1
 code ra1/u1-e1/casos.md</code></pre></div>
 <p><code>preparar.py</code> elige tus ocho casos de un banco de veinte y los escribe al principio de <code>casos.md</code>, con la tabla vacía debajo.</p>
 
 <h2 class="step"><span class="n">2</span>Clasifica cada caso</h2>
-<p>En cada fila, un valor de cada lista escrito tal cual. <b>Figura</b>: hacking ético, hacktivismo o ciberdelito. <b>Artículo</b>: ninguno, 197 bis, 197 ter, 264 o 264 bis. El hacktivismo sin permiso también es delito, así que lleva su artículo. Si dudas entre dos artículos, quédate con el que describe lo principal que se hizo.</p>
+<p>Rellena cada fila con un valor de cada lista, escrito tal cual:</p>
+<ul>
+<li><b>Figura</b>: hacking ético, hacktivismo o ciberdelito.</li>
+<li><b>Artículo</b>: ninguno, 197 bis, 197 ter, 264 o 264 bis.</li>
+</ul>
+<p>El hacktivismo sin permiso también es delito, así que lleva su artículo. Si dudas entre dos artículos, quédate con el que describe lo principal que se hizo.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta o sobra una fila, o cambias los códigos de los casos.</li>
@@ -35,16 +57,26 @@ code ra1/u1-e1/casos.md</code></pre></div>
 </ul>
 
 <h2 class="step"><span class="n">3</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git add ra1/u1-e1
+git commit -m "docs(ra1-u1-e1): casos clasificados"</code></pre></div>
+<p>Después pasa las mismas comprobaciones públicas que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e1</code></pre></div>
-<p>Comprueba el formato. La comparación con la clave solo la hace el corrector.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e1</code></pre></div>
+<p>Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite. La comparación con la clave solo la hace el corrector.</p>
 
-<h2 class="step"><span class="n">4</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add ra1/u1-e1
-git commit -m "docs(ra1-u1-e1): casos clasificados"
-git push</code></pre></div>
-<p>Cuando la fila de U1·E1 de <b>Corrector ra1</b> salga sin fallos:</p>
+<h2 class="step"><span class="n">4</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">5</span>Etiqueta</h2>
+<p>Cuando la fila de U1·E1 salga sin fallos:</p>
 <div class="cmd"><pre><code>git tag -a entrega-ra1-u1-e1 -m "U1·E1 resuelto"
 git push origin entrega-ra1-u1-e1</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>. El corrector evalúa siempre lo que haya en la etiqueta.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="../temas/02-etica-y-ley.html">← 1.2 · Ética y ley</a><a href="e2.html">U1·E2 · El security.txt de la empresa →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

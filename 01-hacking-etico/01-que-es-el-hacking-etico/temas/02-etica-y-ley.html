@@ -31,11 +31,11 @@
 
 <section class="seccion">
 <h2>Los datos personales que encuentres</h2>
-<p>En casi cualquier auditoría aparecen datos de personas: clientes, empleados, pacientes. El <b>RGPD</b> y la <b>Ley Orgánica 3/2018</b> siguen aplicando aunque el acceso esté autorizado:</p>
+<p>En casi cualquier auditoría aparecen datos de personas: clientes, empleados, pacientes. El <b>RGPD</b> y la <b>Ley Orgánica 3/2018</b> se siguen aplicando aunque el acceso esté autorizado:</p>
 <ul>
 <li>Se demuestra el acceso con lo mínimo: el nombre de la tabla y cuántas filas tiene, no una copia de la tabla.</li>
 <li>No se copian datos personales a tu equipo. Si hace falta una evidencia, se anonimiza.</li>
-<li>El contrato del encargo dice qué se hace con los datos y cuándo se borra lo que quede. El auditor actúa como <b>encargado del tratamiento</b>.</li>
+<li>El contrato del encargo dice qué se hace con los datos y cuándo se borra lo que quede. El auditor actúa como <b>encargado del tratamiento</b>: trata datos por cuenta del cliente, solo para el encargo y con sus mismas obligaciones de protegerlos.</li>
 </ul>
 </section>
 
@@ -43,11 +43,12 @@
 <h2>Divulgación responsable</h2>
 <p>Si encuentras un fallo en algo que no es tuyo, por ejemplo usando una aplicación con normalidad, lo ético es avisar sin aprovecharlo:</p>
 <ol>
-<li>Buscas cómo quiere el dueño que le avisen. Muchas webs lo publican en <code>/.well-known/security.txt</code>, un fichero estándar (RFC 9116) con el contacto y la política.</li>
+<li>Buscas cómo quiere el dueño que le avisen. Muchas webs lo publican en <code>/.well-known/security.txt</code>, un fichero estándar con el contacto y la política. Lo define el RFC 9116; un RFC es el documento público que fija cómo funciona una norma de Internet.</li>
 <li>Avisas con lo justo para reproducirlo, sin publicar nada.</li>
 <li>Das un plazo razonable para corregirlo; 90 días es la costumbre más extendida.</li>
 <li>Si no responden, en España puede coordinarlo <a href="https://www.incibe.es/incibe-cert">INCIBE-CERT</a>.</li>
 </ol>
+<div class="flow"><span>Encuentras el fallo</span><i>→</i><span>Buscas el <code>security.txt</code></span><i>→</i><span>Avisas en privado</span><i>→</i><span>Esperas la corrección (unos 90 días)</span><i>→</i><span>Se publica, si el dueño está de acuerdo</span></div>
 <p>Un <b>programa de recompensas</b> (bug bounty) va más allá: la empresa te autoriza de antemano a buscar fallos dentro de unas reglas. Fuera de esas reglas, vuelves a no tener permiso.</p>
 </section>
 

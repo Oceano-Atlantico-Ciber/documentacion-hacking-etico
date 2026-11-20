@@ -49,10 +49,20 @@
 </ul>
 
 <h2 id="entrega">Entrega</h2>
-<p>Diez ejercicios en la carpeta <code>ra1/</code> de tu repositorio de entregas, todos en <code>main</code>. Antes de empezar: la Presentación y las unidades de git y Docker de Fundamentos. Cada ejercicio empieza con <code>preparar.py</code>, que deja su plantilla en <code>ra1/&lt;ejercicio&gt;/</code>:</p>
-<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1</code></pre>
-<p>Cada alumno tiene su propio escenario: casos, direcciones, fechas, registros y rutas salen de su usuario de GitHub. Antes de etiquetar, <code>pruebas.py</code> pasa las mismas comprobaciones públicas que el corrector: <code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e1</code>. Las respuestas con clave (casos, cláusulas, retos, fases…) solo las compara el corrector, y dice cuántas fallan, no cuáles. El resultado sale como check <b>Corrector ra1</b> en tu último commit de <code>main</code>.</p>
+<p>Diez ejercicios en la carpeta <code>ra1/</code> de tu repositorio de entregas, todos en <code>main</code>. Antes de empezar, termina la Presentación y las unidades de Git y Docker de Fundamentos.</p>
+<p>Cada ejercicio empieza con <code>preparar.py</code>, que deja su plantilla en <code>ra1/&lt;ejercicio&gt;/</code>. Lánzalo desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1</code></pre></div>
+<p>Cada alumno tiene su propio escenario: casos, direcciones, fechas, registros y rutas salen de su usuario de GitHub. Antes de etiquetar, <code>pruebas.py</code> pasa las mismas comprobaciones públicas que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e1</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e1</code></pre></div>
+<p>Algunas preguntas tienen una sola respuesta correcta, que guarda el docente: es la <b>clave</b> (qué figura es cada caso, qué cláusula falla, qué técnica es cada evento…). Esas respuestas solo las compara el corrector, que te dice cuántas fallan, pero no cuáles. El resultado lo ves en GitHub, en la comprobación <b>Corrector ra1</b> de tu último commit de <code>main</code> (el icono ✓ o ✗ junto al commit).</p>
 <p>Cada ejercicio se entrega con su etiqueta anotada sobre <code>main</code>. Si corriges algo después, mueve la etiqueta (<code>git tag -fa</code> y <code>git push --force origin &lt;etiqueta&gt;</code>). No hay fecha límite.</p>
 <div class="tabla"><table><thead><tr><th>Ejercicio</th><th>Carpeta</th><th>Etiqueta</th><th>Necesita</th></tr></thead><tbody>
 <tr><td><a href="01-que-es-el-hacking-etico/ejercicios/e1.html">U1·E1 · ¿Hacking ético o delito?</a></td><td><code>ra1/u1-e1/</code></td><td><code>entrega-ra1-u1-e1</code></td><td></td></tr>
@@ -62,7 +72,7 @@ py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1</code></pre
 <tr><td><a href="03-vulnerabilidades-y-ataques/ejercicios/e1.html">U3·E1 · Ficha de Hackea el ranking</a></td><td><code>ra1/u3-e1/</code></td><td><code>entrega-ra1-u3-e1</code></td><td></td></tr>
 <tr><td><a href="03-vulnerabilidades-y-ataques/ejercicios/e2.html">U3·E2 · Ficha de un CVE real</a></td><td><code>ra1/u3-e2/</code></td><td><code>entrega-ra1-u3-e2</code></td><td>Internet para consultar</td></tr>
 <tr><td><a href="03-vulnerabilidades-y-ataques/ejercicios/e3.html">U3·E3 · El registro de un incidente</a></td><td><code>ra1/u3-e3/</code></td><td><code>entrega-ra1-u3-e3</code></td><td></td></tr>
-<tr><td><a href="04-herramientas-y-monitorizacion/ejercicios/e1.html">U4·E1 · Elige su monitorización</a></td><td><code>ra1/u4-e1/</code></td><td><code>entrega-ra1-u4-e1</code></td><td></td></tr>
+<tr><td><a href="04-herramientas-y-monitorizacion/ejercicios/e1.html">U4·E1 · ¿Qué monitorización necesita cada una?</a></td><td><code>ra1/u4-e1/</code></td><td><code>entrega-ra1-u4-e1</code></td><td></td></tr>
 <tr><td><a href="04-herramientas-y-monitorizacion/ejercicios/e2.html">U4·E2 · Un sensor vigilando la web</a></td><td><code>ra1/u4-e2/</code></td><td><code>entrega-ra1-u4-e2</code></td><td>Docker Desktop</td></tr>
 <tr><td><a href="04-herramientas-y-monitorizacion/ejercicios/e3.html">U4·E3 · Cuatro darknets</a></td><td><code>ra1/u4-e3/</code></td><td><code>entrega-ra1-u4-e3</code></td><td></td></tr>
 </tbody></table></div>
@@ -71,5 +81,6 @@ py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e1</code></pre
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../assets/nav.js" defer></script>
+<script src="../assets/copiar.js" defer></script>
 </body>
 </html>

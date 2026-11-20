@@ -11,37 +11,77 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
 
 <h1>U3·E2 · Ficha de un CVE real</h1>
-<p class="lead">Cada alumno recibe una vulnerabilidad conocida que se ha explotado de verdad. Consultas sus datos oficiales desde PowerShell, en el catálogo de CISA y en NVD, y la documentas en una ficha JSON.</p>
+<p class="lead">Documenta en una ficha JSON una vulnerabilidad conocida que se ha explotado de verdad, distinta para cada alumno, con sus datos oficiales del catálogo de CISA y de NVD.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/03-tipos-de-vulnerabilidades.html#cvss">3.3 · CVSS y KEV</a> y <a href="../temas/05-documentar-una-vulnerabilidad.html#ficha">3.5 · La ficha</a></dd>
 <dt>Ejemplo resuelto</dt><dd><a href="php2shell.html">PHP2Shell</a></dd>
+<dt>Aprendes</dt><dd>A sacar de las fuentes oficiales los datos de un CVE y a separar lo que lo corrige de lo que solo reduce el riesgo.</dd>
 <dt>Criterios</dt><dd>d, f, h</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u3-e2/ficha.json</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u3-e2/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u3-e2</code> sobre <code>main</code></dd>
+<dt>Necesitas</dt><dd>Internet, para consultar CISA y NVD</dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u3-e2/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>ficha.json</code></td><td>La plantilla, con tu CVE ya puesto, y el resto de campos rellenos con los datos oficiales.</td></tr>
+</tbody></table></div>
+<p>Así quedaría la ficha de un CVE inventado; la tuya lleva los datos de tu CVE:</p>
+<div class="cmd"><pre><code>{
+  "cve": "CVE-2099-12345",
+  "producto": "Ejemplo Networks RX-100 (router)",
+  "cwe": "CWE-78",
+  "cvss": {"version": "3.1", "nota": 9.8, "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"},
+  "fecha_kev": "2099-03-15",
+  "propiedades": ["confidencialidad", "integridad", "disponibilidad"],
+  "versiones_afectadas": "firmware 2.0 a 2.4.1",
+  "version_corregida": "firmware 2.4.2",
+  "defensa": "Corrige: actualizar el firmware a la 2.4.2. Reduce el riesgo mientras tanto: cerrar el panel de administración a Internet.",
+  "fuentes": ["https://nvd.nist.gov/vuln/detail/CVE-2099-12345", "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"]
+}</code></pre></div>
+<p>La nota va con punto decimal y sin comillas (<code>9.8</code>), como todo número en JSON. Las listas van entre corchetes y cada texto entre comillas.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e2
+code ra1/u3-e2/ficha.json</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e2
 code ra1/u3-e2/ficha.json</code></pre></div>
 <p>Tu CVE ya está en el campo <code>cve</code>. No lo cambies.</p>
 
 <h2 class="step"><span class="n">2</span>Búscalo en el catálogo KEV</h2>
-<p>Todas las órdenes de este ejercicio son de PowerShell. Cambia el CVE por el tuyo:</p>
+<p>Guarda tu CVE en una variable (cambia el del ejemplo por el tuyo) y busca su entrada en el catálogo de CISA. Usa la misma ventana para el paso 3, porque la variable se pierde al cerrarla.</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>$cve = "CVE-2021-44228"
 $kev = Invoke-RestMethod https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 $kev.vulnerabilities | Where-Object cveID -eq $cve</code></pre></div>
-<p>De ahí salen el fabricante y el producto, y la fecha en que CISA lo añadió (<code>dateAdded</code>), que va en <code>fecha_kev</code>.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cve=CVE-2021-44228
+curl -s https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json | python3 -c "import json,sys; [print(json.dumps(v, indent=2)) for v in json.load(sys.stdin)['vulnerabilities'] if v['cveID']=='$cve']"</code></pre></div>
+<p>Sale una sola entrada. De ahí salen el fabricante (<code>vendorProject</code>) y el producto (<code>product</code>), que van en <code>producto</code>, y la fecha en que CISA lo añadió (<code>dateAdded</code>), que va en <code>fecha_kev</code>. Si no sale nada, revisa que el CVE esté bien escrito.</p>
 
 <h2 class="step"><span class="n">3</span>Consulta NVD</h2>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>$r = Invoke-RestMethod "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$cve"
 $r.vulnerabilities[0].cve.metrics.cvssMetricV31.cvssData | Select-Object baseScore, vectorString
 $r.vulnerabilities[0].cve.weaknesses.description
 $r.vulnerabilities[0].cve.descriptions | Where-Object lang -eq en</code></pre></div>
-<p>Puede haber dos notas CVSS 3.1, la de NVD y la del fabricante: elige una y copia su <code>baseScore</code> en <code>cvss.nota</code> (un número, sin comillas) y su <code>vectorString</code> completo en <code>cvss.vector</code>. El CWE va en <code>cwe</code>. Las versiones afectadas y la corregida están en el aviso del fabricante, enlazado en la ficha de NVD.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -s "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$cve" | python3 -c "import json,sys; c=json.load(sys.stdin)['vulnerabilities'][0]['cve']; [print(m['cvssData']['baseScore'], m['cvssData']['vectorString']) for m in c['metrics'].get('cvssMetricV31', [])]; [print(d['value']) for w in c.get('weaknesses', []) for d in w['description']]; [print(d['value']) for d in c['descriptions'] if d['lang']=='en']"</code></pre></div>
+<p>Salen, por este orden, las notas CVSS 3.1 con su vector, los CWE y la descripción en inglés. Si NVD responde con un error, espera unos segundos y repite: limita las consultas seguidas.</p>
+<ul>
+<li><b>Nota</b>: usa la de <b>CVSS 3.1</b>, no la de CVSS 4.0, aunque NVD muestre las dos en su web: el corrector solo acepta la 3.1. Puede haber dos notas 3.1, la de NVD y la del fabricante: elige una y copia su <code>baseScore</code> en <code>cvss.nota</code> (un número, sin comillas) y su <code>vectorString</code> completo en <code>cvss.vector</code>.</li>
+<li><b>CWE</b>: uno de los que salen, en <code>cwe</code>.</li>
+<li><b>Versiones</b>: las afectadas y la corregida están en la descripción o en el aviso del fabricante, enlazado en la ficha web de NVD (<code>https://nvd.nist.gov/vuln/detail/</code> seguido de tu CVE).</li>
+</ul>
 
 <h2 class="step"><span class="n">4</span>Completa la ficha</h2>
-<p><code>propiedades</code> es una lista con las que rompe, escritas como en el tema 3.1. En <code>defensa</code>, separa lo que corrige el fallo de lo que solo reduce el riesgo. En <code>fuentes</code>, al menos la ficha de NVD (<code>https://nvd.nist.gov/vuln/detail/…</code>). Si el JSON no es válido, VS Code lo marca en rojo.</p>
+<p>En <code>propiedades</code>, escribe una lista con las que rompe, como en el tema <a href="../temas/01-propiedades.html">3.1</a>. En <code>defensa</code>, separa lo que corrige el fallo de lo que solo reduce el riesgo. En <code>fuentes</code>, pon al menos la ficha web de NVD. Si el JSON no es válido, VS Code lo marca en rojo.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li><code>ficha.json</code> no es JSON válido, has cambiado el CVE o falta un campo.</li>
@@ -49,14 +89,27 @@ $r.vulnerabilities[0].cve.descriptions | Where-Object lang -eq en</code></pre></
 <li>La fecha en KEV, el CWE o la nota con su vector no coinciden con los datos oficiales de tu CVE.</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo, sube y etiqueta</h2>
-<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e2
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add ra1/u3-e2
-git commit -m "docs(ra1-u3-e2): ficha de un CVE del catálogo KEV"
-git push
-git tag -a entrega-ra1-u3-e2 -m "U3·E2 resuelto"
+git commit -m "docs(ra1-u3-e2): ficha de un CVE del catálogo KEV"</code></pre></div>
+<p>Después pasa las mismas comprobaciones públicas que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e2</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e2</code></pre></div>
+<p>Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite. Los datos (fecha en KEV, CWE, nota y vector) solo los compara el corrector.</p>
+
+<h2 class="step"><span class="n">6</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">7</span>Etiqueta</h2>
+<p>Cuando la fila de U3·E2 salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-ra1-u3-e2 -m "U3·E2 resuelto"
 git push origin entrega-ra1-u3-e2</code></pre></div>
-<p><code>pruebas.py</code> comprueba el formato; los datos los compara el corrector. Etiqueta cuando la fila de U3·E2 de <b>Corrector ra1</b> salga sin fallos.</p>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U3·E1 · Ficha de Hackea el ranking</a><a href="e3.html">U3·E3 · El registro de un incidente →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
