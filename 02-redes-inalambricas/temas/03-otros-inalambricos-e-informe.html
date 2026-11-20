@@ -12,7 +12,7 @@
 <header>
 <p class="eyebrow">Redes inalámbricas · RA2 · Tema 3 de 3</p>
 <h1>Otros inalámbricos e informe de auditoría</h1>
-<p class="lead">El Wi-Fi no es la única radio alrededor. Bluetooth y BLE, Zigbee, Thread y Matter, o el RFID/NFC de tarjetas y llaveros usan el mismo aire y arrastran sus propias debilidades. En este tema las conoces a nivel conceptual (sin montarlas), y aprendes a cerrar el trabajo del bloque como se cierra una auditoría de verdad: con un informe que convierte lo que has hecho en hallazgos, riesgo y recomendaciones.</p>
+<p class="lead">El Wi-Fi no es la única radio alrededor. Bluetooth y BLE, Zigbee/Thread/Matter o el RFID/NFC de tarjetas y llaveros usan el mismo aire y tienen sus propias debilidades. En este tema las conoces a nivel teórico (sin montarlas) y aprendes a cerrar el trabajo del bloque como se cierra una auditoría profesional: con un informe que convierte lo que has hecho en hallazgos, riesgo y recomendaciones.</p>
 <div class="meta"><span>Antes: <a href="02-atacante-y-deteccion.html">Tema 2</a></span><span>Práctica: <a href="../ejercicios/p4.html">P4 · Informe de auditoría</a></span></div>
 </header>
 
@@ -21,7 +21,8 @@
 <dl class="ficha">
 <dt>BLE</dt><dd><i>Bluetooth Low Energy</i>: la variante de bajo consumo de Bluetooth, la de pulseras, auriculares, sensores y cerraduras.</dd>
 <dt>Emparejamiento</dt><dd>El proceso por el que dos dispositivos Bluetooth acuerdan confiar el uno en el otro y cifrar su enlace.</dd>
-<dt>Zigbee</dt><dd>Una radio de malla de bajo consumo muy usada en domótica (bombillas, sensores). Thread y Matter son la evolución moderna hacia un estándar común.</dd>
+<dt>Pila</dt><dd>El conjunto de programas de un dispositivo que implementa un protocolo, por ejemplo la «pila Bluetooth». Un fallo en la pila afecta a todos los dispositivos que la usan.</dd>
+<dt>Zigbee</dt><dd>Una radio de malla de bajo consumo muy usada en domótica (bombillas, sensores). Thread y Matter son estándares más recientes que buscan unificarlo.</dd>
 <dt>RFID / NFC</dt><dd>Etiquetas y tarjetas que responden por radio a muy corta distancia. NFC es la variante de los móviles y el pago sin contacto.</dd>
 <dt>Hallazgo</dt><dd>En un informe, cada debilidad concreta encontrada, con su evidencia y su riesgo.</dd>
 <dt>Riesgo</dt><dd>La combinación de lo probable que es que se explote un hallazgo y el daño si ocurre. Ordena qué arreglar primero.</dd>
@@ -30,24 +31,27 @@
 
 <section class="seccion" id="otros">
 <h2>Otros sistemas inalámbricos y sus debilidades</h2>
-<p>A nivel conceptual (criterio <b>e</b>), estas son las radios que un auditor se encuentra además del Wi-Fi, y por dónde fallan:</p>
+<p>A nivel teórico (criterio <b>e</b>), estas son las radios que un auditor se encuentra además del Wi-Fi, y por dónde fallan:</p>
 <div class="tabla"><table><thead><tr><th>Tecnología</th><th>Dónde se usa</th><th>Debilidades típicas</th></tr></thead><tbody>
-<tr><td><b>Bluetooth / BLE</b></td><td>Auriculares, pulseras, cerraduras, sensores, teclados.</td><td>Emparejamientos débiles o «Just Works» sin verificar; dispositivos que anuncian su presencia y permiten seguir a su dueño; tráfico BLE sin cifrar; viejos fallos tipo BlueBorne en pilas sin actualizar.</td></tr>
-<tr><td><b>Zigbee / Thread / Matter</b></td><td>Domótica: bombillas, enchufes, sensores de una malla.</td><td>Claves de red compartidas que a veces viajan en claro al unir un dispositivo; reenvío de comandos capturados; dispositivos baratos sin actualizaciones.</td></tr>
-<tr><td><b>RFID / NFC</b></td><td>Tarjetas de acceso, abonos de transporte, llaveros, pago sin contacto.</td><td>Tarjetas clonables (las antiguas sin cifrar o con cifrado roto); lectura a distancia sin que el dueño lo note; reenvío (<i>relay</i>) de la señal para abrir a distancia.</td></tr>
+<tr><td><b>Bluetooth / BLE</b></td><td>Auriculares, pulseras, cerraduras, sensores, teclados.</td><td>Emparejamientos sin verificación (<i>Just Works</i>); dispositivos que emiten su identificador y permiten rastrear a su dueño; tráfico BLE sin cifrar; fallos antiguos como BlueBorne en pilas Bluetooth sin actualizar.</td></tr>
+<tr><td><b>Zigbee / Thread / Matter</b></td><td>Domótica: bombillas, enchufes, sensores de una malla.</td><td>Claves de red compartidas que a veces viajan en claro al unir un dispositivo; repetición de comandos capturados; dispositivos baratos sin actualizaciones.</td></tr>
+<tr><td><b>RFID / NFC</b></td><td>Tarjetas de acceso, abonos de transporte, llaveros, pago sin contacto.</td><td>Tarjetas clonables (las antiguas, sin cifrar o con cifrado roto); lectura a distancia sin que el dueño lo note; retransmisión (<i>relay</i>) de la señal para abrir a distancia.</td></tr>
 </tbody></table></div>
-<p class="note">En este bloque estas tecnologías son solo teoría: no se montan ni se atacan. El laboratorio Wi-Fi no las simula. Se incluyen para que el alumno sepa que el perímetro inalámbrico de una organización es más ancho que su Wi-Fi.</p>
+<p class="note">En este bloque estas tecnologías son solo teoría: no se montan ni se atacan. El laboratorio Wi-Fi no las simula. Se incluyen para que sepas que el perímetro inalámbrico de una organización es más ancho que su Wi-Fi.</p>
 </section>
 
 <section class="seccion" id="por-que-informe">
-<h2>El informe: el verdadero producto de una auditoría</h2>
+<h2>El informe es el producto real de una auditoría</h2>
 <p>Una auditoría no se entrega como una lista de comandos ni como «he roto la Wi-Fi». Se entrega como un <b>informe</b> que su destinatario (que no es técnico) pueda leer y usar para decidir qué arreglar. Ese informe es el entregable del bloque y cubre el criterio <b>g</b>. Un buen informe:</p>
 <ul>
 <li>Cuenta <b>qué se autorizó</b> y <b>qué alcance</b> tuvo (aquí: solo el laboratorio).</li>
 <li>Lista cada <b>hallazgo</b> con su <b>evidencia</b> (una captura de pantalla, una línea de salida) y su <b>riesgo</b>.</li>
 <li>Da <b>recomendaciones</b> concretas y priorizadas, no genéricas.</li>
 <li>Se entiende sin ser experto: el riesgo y el impacto en lenguaje llano.</li>
+<li>Usa solo evidencias de lo que hiciste de verdad en tu laboratorio. Un informe de seguridad sin evidencia no vale.</li>
 </ul>
+<div class="flow"><span>Hallazgo</span><i>→</i><span>Riesgo (probabilidad × impacto)</span><i>→</i><span>Prioridad</span></div>
+<p>Cada hallazgo recibe un riesgo según lo probable que sea que se explote y el daño que causaría. Ese riesgo decide el orden en que se arregla.</p>
 </section>
 
 <section class="seccion" id="plantilla">
@@ -55,11 +59,11 @@
 <p>Para la <a href="../ejercicios/p4.html">P4</a>, estructura el informe así. Cada apartado es corto; lo que vale es la claridad, no la extensión.</p>
 <div class="tabla"><table><thead><tr><th>Apartado</th><th>Qué va dentro</th></tr></thead><tbody>
 <tr><td><b>1. Resumen ejecutivo</b></td><td>Tres o cuatro frases para alguien no técnico: qué se auditó, qué se encontró y lo más urgente.</td></tr>
-<tr><td><b>2. Alcance y autorización</b></td><td>Qué se ha probado (el laboratorio), con qué permiso y en qué fechas. La regla de oro: solo lo autorizado.</td></tr>
+<tr><td><b>2. Alcance y autorización</b></td><td>Qué se ha probado (el laboratorio) y con qué permiso. La regla de oro: solo lo autorizado.</td></tr>
 <tr><td><b>3. Metodología</b></td><td>Qué pasos se siguieron: reconocimiento, captura, intento de acceso, revisión del WIDS.</td></tr>
 <tr><td><b>4. Hallazgos</b></td><td>Uno por debilidad. Cada uno con: descripción, evidencia, riesgo (alto/medio/bajo) y recomendación. Ver la ficha de abajo.</td></tr>
-<tr><td><b>5. Otros inalámbricos</b></td><td>Apartado teórico: qué otras radios (BLE, Zigbee, RFID/NFC) tendría la organización y sus debilidades.</td></tr>
-<tr><td><b>6. Conclusiones y recomendaciones</b></td><td>Las recomendaciones priorizadas, de lo más urgente a lo menos.</td></tr>
+<tr><td><b>5. Otros inalámbricos</b></td><td>Apartado teórico: qué otras radios (BLE, Zigbee/Thread/Matter, RFID/NFC) tendría la organización y sus debilidades.</td></tr>
+<tr><td><b>6. Conclusiones y recomendaciones</b></td><td>Las recomendaciones priorizadas, de lo más urgente a lo menos, y la conclusión del equipo azul sobre qué se detecta y qué no.</td></tr>
 </tbody></table></div>
 <p>Cada hallazgo del apartado 4 se escribe con la misma ficha:</p>
 <dl class="ficha">
@@ -70,13 +74,6 @@
 <dt>Recomendación</dt><dd>Qué hacer: «contraseña larga y aleatoria, activar PMF y migrar a WPA3».</dd>
 </dl>
 <p class="note">El informe conecta con <a href="../../01-hacking-etico/02-permisos-y-alcance/temas/02-autorizacion-y-alcance.html">Autorización y alcance</a> del RA1: el alcance y la autorización que allí aprendiste a definir son el apartado 2 de este informe.</p>
-</section>
-
-<section class="seccion">
-<h2>Notas para el docente</h2>
-<p class="note"><b>Peso del tema.</b> La parte de «otros inalámbricos» es deliberadamente ligera y conceptual (criterio e): no hay laboratorio para BLE/Zigbee/NFC y no conviene abrir ese melón con hardware. El grueso del tema y de la práctica P4 es el informe (criterio g), que es lo que de verdad evalúa si el alumno ha entendido el bloque.</p>
-<p class="note"><b>Sin corrector automático.</b> La entrega de este bloque es el informe con evidencias, que corrige el docente; no hay un script que lo valide (sería demasiado complejo con todo dentro de la VM). Usa la plantilla de hallazgos como rúbrica: cada hallazgo bien documentado (descripción, evidencia real, riesgo justificado, recomendación concreta) suma; los hallazgos sin evidencia o con recomendaciones genéricas, no.</p>
-<p class="note"><b>Evidencias honestas.</b> Insiste en que la evidencia debe venir de lo que el alumno hizo de verdad en su laboratorio (capturas, salidas), no de ejemplos copiados. Es la ocasión para enseñar que un informe de seguridad sin evidencia no vale.</p>
 </section>
 
 <nav class="temas" aria-label="Temas de la unidad"><a href="02-atacante-y-deteccion.html">← Tema 2 · Qué ve y hace un atacante</a><a href="../ejercicios/p4.html">P4 · Informe de auditoría →</a></nav>
