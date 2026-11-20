@@ -22,13 +22,13 @@
 <h2 id="que-entregas">Qué entregas</h2>
 <p>En <code>fundamentos/iac/e6/</code> de <code>main</code>:</p>
 <pre><code>e6/
-├── LEEME.md, proveedor.tf    # los que copia preparar.py, sin cambiar
+├── LEEME.md, proveedor.tf    # copiados del E5 por preparar.py, sin cambiar
 ├── main.tf                   # la raíz: dos bloques module y sus salidas, ningún resource
 └── modulos/lab/
     ├── main.tf               # tu laboratorio del E5, con lo que cambia sacado a variables
     ├── variables.tf          # nombre y cidr
     └── outputs.tf            # ip_web</code></pre>
-<p>Con <code>apply</code> quedan dos VPC, cada una con su etiqueta <code>Name</code> y su rango, y dentro de cada una un laboratorio que cumple lo mismo que el del E5 (salvo la página, que aquí no se mira: el <code>user_data</code> que copias del E5 puede quedarse como está). La etiqueta anotada <code>entrega-fundamentos-iac-e6</code> va sobre <code>main</code>, subida a GitHub.</p>
+<p>Con <code>apply</code> quedan dos VPC, cada una con su etiqueta <code>Name</code> y su rango, y dentro de cada una un laboratorio que cumple lo mismo que el del E5 (salvo la página, que aquí no se mira: el <code>user_data</code> que viene del E5 puede quedarse como está). La etiqueta anotada <code>entrega-fundamentos-iac-e6</code> va sobre <code>main</code>, subida a GitHub.</p>
 
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
 <p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material y vuelve a <code>main</code>. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
@@ -41,7 +41,7 @@ git switch main</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e6</code></pre></div>
 <pre><code>e6 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e6/. Sigue el enunciado.</code></pre>
-<p>Copia tu E5 (sin estado ni <code>.terraform/</code>) a <code>e6/</code> como punto de partida. Entra en la carpeta. Si el laboratorio del E5 sigue desplegado, no importa: este crea VPC nuevas.</p>
+<p><code>preparar.py</code> ha copiado tu E5 en <code>e6/</code> (no tienes que copiar nada): todos sus ficheros, sin el estado ni <code>.terraform/</code>. Es tu punto de partida. Si el laboratorio del E5 sigue desplegado, no importa: este crea VPC nuevas. Entra en la carpeta:</p>
 <div class="cmd"><pre><code>cd fundamentos/iac/e6</code></pre></div>
 
 <h2 class="step"><span class="n">2</span>Mueve el laboratorio a un módulo</h2>
@@ -116,7 +116,7 @@ ip_uno = "10.1.1.…"</code></pre>
 <li><code>terraform destroy</code> falla.</li>
 </ul>
 
-<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">4</span>Haz commit y pruébalo</h2>
 <p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git status --short -uall fundamentos/iac/e6</code></pre></div>
@@ -126,10 +126,11 @@ git status --short -uall fundamentos/iac/e6</code></pre></div>
 ?? fundamentos/iac/e6/modulos/lab/outputs.tf
 ?? fundamentos/iac/e6/modulos/lab/variables.tf
 ?? fundamentos/iac/e6/proveedor.tf</code></pre>
-<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<p>No debe salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
 <div class="cmd"><pre><code>git add fundamentos/iac/e6
 git commit -m "feat(iac-e6): módulo lab usado dos veces"</code></pre></div>
-<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e6</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p><code>pruebas.py</code> evalúa tu etiqueta <code>entrega-fundamentos-iac-e6</code>, o la rama <code>main</code> si aún no la tienes, con las mismas comprobaciones que el corrector. Solo cuentan los commits: lo que no esté en un commit no se evalúa. Trabaja en una Floci aparte y vacía, así que no toca tu repositorio ni tu Floci.</p>
+<p>Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e6</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -154,10 +155,13 @@ git push origin entrega-fundamentos-iac-e6</code></pre></div>
 <p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
 <pre><code>E6 · etiqueta entrega-fundamentos-iac-e6 · 7a8b9c0 · comprobando…
   ✓ superado</code></pre>
-<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
 <p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
 <h3>Si hay que corregir algo después de etiquetar</h3>
-<p>Corrige en <code>fundamentos/iac/e6/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<ul>
+<li><b>Si has cambiado ficheros</b>: corrige en <code>fundamentos/iac/e6/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo con las dos órdenes de abajo. Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua.</li>
+<li><b>Si solo falla la etiqueta</b>, porque <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit: muévela, sin hacer ningún commit.</li>
+</ul>
+<p>Para mover la etiqueta, <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>):</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e6 main -m "E6 resuelto"
 git push -f origin entrega-fundamentos-iac-e6</code></pre></div>
 <p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>

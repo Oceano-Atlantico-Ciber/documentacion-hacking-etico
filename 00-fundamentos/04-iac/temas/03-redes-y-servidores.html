@@ -19,9 +19,10 @@
 <section class="seccion">
 <h2>Palabras de este tema</h2>
 <dl class="ficha">
-<dt>VPC</dt><dd>Una red privada tuya dentro de la región, con un rango de direcciones como <code>10.0.0.0/16</code>.</dd>
-<dt>Subred</dt><dd>Un trozo de la VPC dentro de una zona de disponibilidad (un centro de datos), como <code>10.0.1.0/24</code> en <code>eu-west-1a</code>.</dd>
-<dt>Pública y privada</dt><dd>Una subred es pública si su tráfico sale a internet por una puerta de enlace; privada si no.</dd>
+<dt>CIDR</dt><dd>La forma de escribir un rango de direcciones IP: una dirección, una barra y cuántos bits quedan fijos. <code>10.0.0.0/16</code> fija los dos primeros números y deja libres los dos últimos: de <code>10.0.0.0</code> a <code>10.0.255.255</code>, 65 536 direcciones. <code>10.0.1.0/24</code> fija tres: de <code>10.0.1.0</code> a <code>10.0.1.255</code>, 256.</dd>
+<dt>VPC</dt><dd>Una red privada tuya dentro de la región, con un rango CIDR como <code>10.0.0.0/16</code>.</dd>
+<dt>Subred</dt><dd>Un trozo del rango de la VPC dentro de una zona de disponibilidad (un centro de datos), como <code>10.0.1.0/24</code> en <code>eu-west-1a</code>.</dd>
+<dt>Pública y privada</dt><dd>Una subred es pública si tiene salida a internet por una puerta de enlace (<i>internet gateway</i>); privada si no.</dd>
 <dt>Grupo de seguridad</dt><dd>El cortafuegos de cada servidor o base de datos: reglas de entrada (<code>ingress</code>) y de salida (<code>egress</code>).</dd>
 <dt>AMI</dt><dd>La imagen de disco con la que arranca un servidor EC2: un Ubuntu, un Debian…</dd>
 <dt>Módulo</dt><dd>Una carpeta de Terraform que se usa como una pieza, con sus variables de entrada y sus salidas.</dd>
@@ -35,9 +36,9 @@
 <defs><marker id="rs-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
 <rect class="caja" x="150" y="10" width="560" height="210" rx="10"/><text class="tit" x="170" y="34">VPC · 10.0.0.0/16</text>
 <rect class="caja-acento" x="170" y="50" width="220" height="150" rx="8"/><text class="tit" x="280" y="74" text-anchor="middle">Subred pública</text><text class="tenue peq mono" x="280" y="94" text-anchor="middle">10.0.1.0/24 · eu-west-1a</text>
-<rect class="caja-ok" x="200" y="110" width="160" height="70" rx="8"/><text class="tit" x="280" y="138" text-anchor="middle">Servidor web</text><text class="tenue peq" x="280" y="160" text-anchor="middle">grupo web: 80 desde 0.0.0.0/0</text>
+<rect class="caja-ok" x="200" y="110" width="160" height="70" rx="8"/><text class="tit" x="280" y="138" text-anchor="middle">Servidor web</text><text class="tenue peq" x="280" y="160" text-anchor="middle">abre el 80 a todos</text>
 <rect class="caja" x="420" y="50" width="270" height="150" rx="8"/><text class="tit" x="555" y="74" text-anchor="middle">Dos subredes privadas</text><text class="tenue peq mono" x="555" y="94" text-anchor="middle">10.0.2.0/24 · 10.0.3.0/24 · 1a y 1b</text>
-<rect class="caja-ok" x="465" y="110" width="180" height="70" rx="8"/><text class="tit" x="555" y="138" text-anchor="middle">Base de datos RDS</text><text class="tenue peq" x="555" y="160" text-anchor="middle">grupo db: 5432 desde el grupo web</text>
+<rect class="caja-ok" x="465" y="110" width="180" height="70" rx="8"/><text class="tit" x="555" y="138" text-anchor="middle">Base de datos RDS</text><text class="tenue peq" x="555" y="160" text-anchor="middle">5432 solo desde la web</text>
 <text class="tit" x="20" y="140">Internet</text>
 <path class="linea" d="M90 135H198" marker-end="url(#rs-f)"/><text class="tenue peq" x="140" y="125" text-anchor="middle">:80</text>
 <path class="linea" d="M360 145H463" marker-end="url(#rs-f)"/><text class="tenue peq" x="412" y="135" text-anchor="middle">:5432</text>
@@ -71,7 +72,9 @@ resource "aws_subnet" "privada_b" {
   cidr_block        = "10.0.3.0/24"
   availability_zone = "eu-west-1b"
 }</code></pre>
-<p>Cada subred dice a qué VPC pertenece (<code>vpc_id</code>) y qué trozo de su rango usa. La etiqueta <code>Name</code> es la que muestra la consola de AWS y la que usarás para encontrar tus recursos con la CLI. <code>cidrsubnet("10.0.0.0/16", 8, 1)</code> calcula <code>10.0.1.0/24</code>: útil cuando el rango de la VPC es una variable. En AWS real, para que la subred pública salga a internet hacen falta además una puerta de enlace (<code>aws_internet_gateway</code>) y una tabla de rutas; en esta unidad no las necesitas.</p>
+<p>Cada subred dice a qué VPC pertenece (<code>vpc_id</code>) y qué trozo de su rango usa. La etiqueta <code>Name</code> es la que muestra la consola de AWS y la que usarás para encontrar tus recursos con la CLI.</p>
+<p>Los rangos de las subredes también se pueden calcular. <code>cidrsubnet("10.0.0.0/16", 8, 1)</code> parte el rango de la VPC en trozos de /24 (16 + 8 bits fijos) y te da el trozo número 1: <code>10.0.1.0/24</code>. Con <code>2</code> da <code>10.0.2.0/24</code>, y así. Es útil cuando el rango de la VPC es una variable.</p>
+<p><code>map_public_ip_on_launch = true</code> da una IP pública a cada servidor que arranca en esa subred. Eso solo no la hace pública: en AWS real hacen falta además una puerta de enlace (<code>aws_internet_gateway</code>) y una tabla de rutas que lleve el tráfico hacia ella. En Floci no hay internet de verdad, así que en esta unidad no las necesitas: la subred pública es la que reservas para lo que se verá desde fuera.</p>
 </section>
 
 <section class="seccion" id="grupos">
@@ -141,7 +144,15 @@ resource "aws_db_instance" "db" {
 output "ip_web" {
   value = aws_instance.web.private_ip
 }</code></pre>
-<p><code>user_data</code> es un script que el servidor ejecuta al arrancar la primera vez: así se instala y configura sin entrar en él. Lo puede leer cualquiera con permiso para describir la instancia, así que <b>nunca lleva contraseñas</b>. La contraseña de la base de datos tampoco se escribe en el código: <code>random_password</code> (del proveedor <code>hashicorp/random</code>, que <code>terraform init</code> descarga solo) la genera en el primer <code>apply</code> y la guarda en el estado, que no se sube. <code>publicly_accessible = false</code> impide que la base de datos tenga una dirección pública. La base de datos necesita un grupo de subredes (<code>aws_db_subnet_group</code>) con subredes de dos zonas distintas. La salida <code>ip_web</code> da la IP privada del servidor, la que tiene siempre; en AWS real, para llegar desde internet usarías <code>public_ip</code>. <code>ami-ubuntu2204</code> es un nombre de imagen que entiende Floci; en AWS real las AMI tienen identificadores como <code>ami-0abc…</code> distintos en cada región.</p>
+<p>Pieza a pieza:</p>
+<ul>
+<li><b>El servidor</b> (<code>aws_instance</code>). <code>instance_type</code> es su tamaño: <code>t3.micro</code> es de los más pequeños, con 2 CPU virtuales y 1 GB de memoria. <code>ami-ubuntu2204</code> es un nombre de imagen que entiende Floci; en AWS real las AMI tienen identificadores como <code>ami-0abc…</code>, distintos en cada región.</li>
+<li><b>El script de arranque</b> (<code>user_data</code>). El servidor lo ejecuta la primera vez que arranca: así se instala y configura sin entrar en él. <code>&lt;&lt;-SH</code> abre un texto de varias líneas, que termina en la línea <code>SH</code>; el guion permite sangrarlo. Lo puede leer cualquiera con permiso para describir la instancia, así que <b>nunca lleva contraseñas</b>.</li>
+<li><b>La contraseña de la base de datos</b> tampoco se escribe en el código. <code>random_password</code> (del proveedor <code>hashicorp/random</code>, que <code>terraform init</code> descarga solo) la genera en el primer <code>apply</code> y la guarda en el estado, que no se sube.</li>
+<li><b>El grupo de subredes</b> (<code>aws_db_subnet_group</code>). Una base de datos RDS no se coloca en una subred, sino en un grupo de subredes: la lista de subredes donde AWS puede ponerla. Debe tener subredes de al menos dos zonas distintas.</li>
+<li><b>La base de datos</b> (<code>aws_db_instance</code>). <code>db.t3.micro</code> es su tamaño, de los más pequeños. <code>publicly_accessible = false</code> impide que tenga una dirección pública. <code>skip_final_snapshot = true</code> deja borrarla sin hacer antes una copia final; sin él, <code>terraform destroy</code> falla porque pide un nombre para esa copia. En un laboratorio es lo que quieres; en una base con datos reales, no.</li>
+<li><b>La salida</b> <code>ip_web</code> da la IP privada del servidor, la que tiene siempre. En AWS real, para llegar desde internet usarías <code>public_ip</code>.</li>
+</ul>
 <p class="note">En la Floci del curso, los servidores y bases de datos están simulados: <code>terraform apply</code> los crea con toda su configuración y la CLI los describe, pero no arranca ningún Ubuntu ni ningún PostgreSQL. Por eso los compruebas con <code>aws ec2 describe-instances</code> y <code>aws rds describe-db-instances</code>, no entrando en ellos.</p>
 <p>Para revisar lo que has creado (cambia <code>vpc-…</code> por el <code>VpcId</code> que da la primera orden):</p>
 <pre><code>aws ec2 describe-vpcs --query "Vpcs[].[VpcId,CidrBlock]"
@@ -189,6 +200,21 @@ module "dos" {
 output "ip_uno" {
   value = module.uno.ip_web
 }</code></pre>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 230" role="img" aria-label="El main.tf de la raíz tiene dos bloques module, uno y dos; los dos usan la misma carpeta modulos/lab con valores distintos, y cada uno crea su propia VPC: lab-uno con 10.1.0.0/16 y lab-dos con 10.2.0.0/16">
+<defs><marker id="mod-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="mod-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="85" width="130" height="60" rx="8"/><text class="tit" x="65" y="111" text-anchor="middle">Raíz</text><text class="mono tenue" x="65" y="131" text-anchor="middle">e6/main.tf</text>
+<path class="linea" d="M130 105L176 62" marker-end="url(#mod-f)"/><path class="linea" d="M130 125L176 168" marker-end="url(#mod-f)"/>
+<rect class="caja" x="180" y="20" width="170" height="60" rx="8"/><text class="tit mono" x="265" y="46" text-anchor="middle">module "uno"</text><text class="mono tenue" x="265" y="66" text-anchor="middle">cidr = 10.1.0.0/16</text>
+<rect class="caja" x="180" y="150" width="170" height="60" rx="8"/><text class="tit mono" x="265" y="176" text-anchor="middle">module "dos"</text><text class="mono tenue" x="265" y="196" text-anchor="middle">cidr = 10.2.0.0/16</text>
+<path class="linea discontinua" d="M350 50L396 100" marker-end="url(#mod-f)"/><path class="linea discontinua" d="M350 180L396 130" marker-end="url(#mod-f)"/><text class="tenue peq mono" x="374" y="120" text-anchor="middle">source</text>
+<rect class="caja-acento" x="400" y="85" width="150" height="60" rx="8"/><text class="tit mono" x="475" y="111" text-anchor="middle">modulos/lab</text><text class="tenue peq" x="475" y="131" text-anchor="middle">un solo código</text>
+<path class="linea-acento" d="M550 105L586 62" marker-end="url(#mod-fa)"/><path class="linea-acento" d="M550 125L586 168" marker-end="url(#mod-fa)"/>
+<rect class="caja-ok" x="590" y="20" width="130" height="60" rx="8"/><text class="tit" x="655" y="46" text-anchor="middle">VPC lab-uno</text><text class="mono tenue peq" x="655" y="66" text-anchor="middle">10.1.0.0/16</text>
+<rect class="caja-ok" x="590" y="150" width="130" height="60" rx="8"/><text class="tit" x="655" y="176" text-anchor="middle">VPC lab-dos</text><text class="mono tenue peq" x="655" y="196" text-anchor="middle">10.2.0.0/16</text>
+</svg>
+<figcaption>Un solo código en <code>modulos/lab</code>; cada bloque <code>module</code> le da sus valores y obtiene su propio laboratorio.</figcaption>
+</figure>
 <p>Dentro del módulo todo lo que cambia viene de <code>var.</code>; fuera solo se ven sus salidas (<code>module.uno.ip_web</code> es la salida <code>ip_web</code> del <code>outputs.tf</code> del módulo). Lo que tiene que ser único en la cuenta, como el <code>identifier</code> de la base de datos o el nombre de su grupo de subredes, se construye con la variable: <code>"${var.nombre}-db"</code>; si no, el segundo laboratorio choca con el primero. Las subredes salen del rango con <code>cidrsubnet(var.cidr, 8, 1)</code>, <code>2</code> y <code>3</code>. Tras añadir o cambiar un <code>module</code>, hay que repetir <code>terraform init</code>. Así se levantarán los laboratorios de los bloques siguientes: un módulo probado, un <code>apply</code>.</p>
 </section>
 

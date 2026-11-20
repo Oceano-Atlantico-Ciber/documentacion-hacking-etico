@@ -11,7 +11,9 @@
 <nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Fundamentos</a></nav>
 
 <h1>04 · Terraform y AWS</h1>
-<p class="lead">AWS como una API, Terraform, redes y servidores, y auditar permisos sin explotar nada. Cuatro temas y ocho ejercicios en Floci.</p>
+<p class="lead">Cómo se maneja AWS por su API, cómo describirlo con Terraform, cómo montar redes y servidores y cómo auditar permisos sin explotar nada. Cuatro temas y ocho ejercicios en Floci.</p>
+<p><b>Infraestructura como código</b> (IaC, <i>infrastructure as code</i>) es describir en ficheros de texto los servidores, las redes y los permisos de una nube, en vez de crearlos a mano. Una herramienta, aquí Terraform, lee esos ficheros y crea lo que describen. El código se revisa, se guarda en git y se repite igual cuantas veces haga falta.</p>
+<p><b>Floci</b> es una AWS simulada en tu equipo: un contenedor de Docker que responde como AWS. Trabajas como en la nube de verdad, sin cuenta, sin tarjeta y sin que nada salga de tu portátil.</p>
 
 <h2 id="temas">Temas</h2>
 <div class="cards">
@@ -23,14 +25,16 @@
 
 <h2 id="ejercicios">Ejercicios</h2>
 <p class="note">Antes de empezar: Docker Desktop en marcha, y la CLI de AWS y Terraform instalados y configurados como explica <a href="temas/01-la-nube-en-tu-portatil.html#instalar">IaC 1</a>.</p>
-<p>Ocho ejercicios en <code>fundamentos/iac/</code> de tu repositorio de entregas, todos en <code>main</code>. Son ejemplos pequeños para aprender, no los laboratorios de los bloques siguientes. Todo se despliega en una sola Floci, la cuenta AWS emulada de <code>fundamentos/iac/docker-compose.yml</code>, y se comprueba con la CLI. Cada ejercicio empieza con <code>preparar.py</code>, que escribe los ficheros de partida con nombres generados para tu usuario de GitHub:</p>
+<p>Ocho ejercicios en <code>fundamentos/iac/</code> de tu repositorio de entregas, todos en <code>main</code>. Son ejemplos pequeños para aprender, no los laboratorios de los bloques siguientes. Todo se despliega en una sola Floci, la que levanta <code>fundamentos/iac/docker-compose.yml</code>, y se comprueba con la CLI de AWS. Cada ejercicio empieza con <code>preparar.py</code>, que escribe los ficheros de partida con nombres generados para tu usuario de GitHub:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e1</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e1</code></pre></div>
-<p>Antes de etiquetar, <code>pruebas.py</code> (en la misma carpeta que <code>preparar.py</code>, y con la misma forma: <code>pruebas.py e1</code>) pasa las mismas comprobaciones que el corrector, en una Floci nueva y vacía. Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-iac-eN</code>, sobre <code>main</code>. No hay fecha límite. Los ejercicios van en orden: el E3 y el E4 parten de lo que creaste en el E1, el E6 del E5, y el E7 y el E8 de la empresa del E2.</p>
+<p>Antes de etiquetar, lanza <code>pruebas.py</code>: pasa las mismas comprobaciones que el corrector, en una Floci nueva y vacía. Está en la misma carpeta que <code>preparar.py</code> y se lanza igual: <code>pruebas.py e1</code>. Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-iac-eN</code>, sobre <code>main</code>. No hay fecha límite.</p>
+<p>Algunos ejercicios parten de otro, así que hazlos en este orden: el E3 y el E4 siguen lo que creaste en el E1; el E7 y el E8, la empresa del E2; el E6, tu laboratorio del E5.</p>
+<div class="flow"><span>E1</span><i>→</i><span>E3</span><i>→</i><span>E4</span><i>·</i><span>E2</span><i>→</i><span>E7</span><i>→</i><span>E8</span><i>·</i><span>E5</span><i>→</i><span>E6</span></div>
 <div class="tabla"><table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Aprendes</th><th>Tema</th></tr></thead><tbody>
 <tr><td><a href="ejercicios/e1.html">E1</a></td><td>Un bucket y un usuario de solo lectura, a mano con la CLI.</td><td>S3, IAM y políticas</td><td>IaC 1</td></tr>
 <tr><td><a href="ejercicios/e2.html">E2</a></td><td>Inventariar la cuenta de una empresa ficticia.</td><td>Recorrer una cuenta</td><td>IaC 1</td></tr>

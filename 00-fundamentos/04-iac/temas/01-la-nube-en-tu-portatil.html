@@ -19,12 +19,12 @@
 <section class="seccion">
 <h2>Palabras de este tema</h2>
 <dl class="ficha">
-<dt>Cuenta</dt><dd>El contenedor de todo lo que creas en AWS. Tiene un número de doce cifras y un usuario raíz que lo puede todo.</dd>
+<dt>Cuenta</dt><dd>Agrupa todo lo que creas en AWS. Tiene un número de doce cifras y un usuario raíz, el dueño de la cuenta, que lo puede todo.</dd>
 <dt>Región</dt><dd>Un grupo de centros de datos en una zona del mundo, como <code>eu-west-1</code> (Irlanda). Casi todo lo que creas vive en una región.</dd>
 <dt>Servicio</dt><dd>Cada producto de AWS, con su propia API: S3 guarda ficheros, IAM gestiona identidades y permisos, EC2 da servidores, RDS bases de datos.</dd>
-<dt>Clave de acceso</dt><dd>La pareja <code>AccessKeyId</code> y <code>SecretAccessKey</code> con la que un programa firma sus peticiones. Quien la tiene actúa como su dueño.</dd>
-<dt>ARN</dt><dd>El nombre completo de un recurso: <code>arn:aws:s3:::copias-1a2b3c4d</code>, <code>arn:aws:iam::000000000000:user/becario</code>.</dd>
-<dt>Endpoint</dt><dd>La dirección a la que se mandan las peticiones. En AWS es <code>https://s3.eu-west-1.amazonaws.com</code>; con Floci, <code>http://localhost:4566</code>.</dd>
+<dt>Clave de acceso</dt><dd>La pareja <code>AccessKeyId</code> y <code>SecretAccessKey</code> con la que un programa firma sus peticiones: el usuario y la contraseña de los programas. Quien la tiene actúa como su dueño.</dd>
+<dt>ARN</dt><dd><i>Amazon Resource Name</i>: el nombre completo y único de un recurso en AWS. Dice el servicio, la cuenta y el recurso: <code>arn:aws:s3:::copias-1a2b3c4d</code> es un bucket; <code>arn:aws:iam::000000000000:user/becario</code>, un usuario.</dd>
+<dt>Punto de acceso (endpoint)</dt><dd>La dirección a la que se mandan las peticiones. En AWS es, por ejemplo, <code>https://s3.eu-west-1.amazonaws.com</code>; con Floci, <code>http://localhost:4566</code>.</dd>
 </dl>
 </section>
 
@@ -32,7 +32,7 @@
 <h2>Cuatro servicios para empezar</h2>
 <p>AWS tiene más de doscientos servicios. En esta unidad usas cuatro, los que aparecen en casi cualquier auditoría de una cuenta:</p>
 <div class="tabla"><table><thead><tr><th>Servicio</th><th>Qué guarda</th><th>Lo que mira un auditor</th></tr></thead><tbody>
-<tr><td><b>S3</b></td><td>Ficheros (objetos) dentro de cubos (<i>buckets</i>) con un nombre único.</td><td>Cubos públicos, sin cifrar, con copias o datos personales.</td></tr>
+<tr><td><b>S3</b></td><td>Ficheros (objetos) dentro de <i>buckets</i>: contenedores de ficheros con un nombre único en todo AWS.</td><td>Buckets públicos, sin cifrar, con copias o datos personales.</td></tr>
 <tr><td><b>IAM</b></td><td>Usuarios, grupos, roles y las políticas que dicen qué puede hacer cada uno.</td><td>Permisos de más, claves viejas o filtradas, quién puede darse permisos.</td></tr>
 <tr><td><b>EC2</b></td><td>Servidores virtuales y las redes (VPC) y grupos de seguridad que los rodean.</td><td>Puertos abiertos a todo internet, secretos en el arranque.</td></tr>
 <tr><td><b>RDS</b></td><td>Bases de datos gestionadas: PostgreSQL, MySQL…</td><td>Bases accesibles desde fuera, sin cifrar, sin copias.</td></tr>
@@ -41,13 +41,28 @@
 
 <section class="seccion">
 <h2>Floci: una cuenta AWS en un contenedor</h2>
-<p>Floci habla el mismo protocolo que AWS, así que la CLI de AWS y Terraform funcionan con él sin cambiar nada, salvo el endpoint. En el curso lo usamos con tres ajustes, que ya trae el <code>docker-compose.yml</code> que te deja <code>preparar.py</code>:</p>
+<p>Floci habla el mismo protocolo que AWS, así que la CLI de AWS y Terraform funcionan con él sin cambiar nada, salvo el punto de acceso:</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 232" role="img" aria-label="La CLI de AWS o Terraform mandan una petición firmada al punto de acceso localhost:4566, que es Floci dentro de Docker en tu portátil; AWS real queda fuera, en discontinua, y en el curso no se usa">
+<defs><marker id="nube-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="nube-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="linea discontinua" x="1" y="1" width="718" height="150" rx="10"/><text class="tenue peq" x="16" y="22">Tu portátil</text>
+<rect class="caja" x="16" y="60" width="150" height="64" rx="8"/><text class="tit" x="91" y="86" text-anchor="middle">CLI de AWS</text><text class="tenue peq" x="91" y="106" text-anchor="middle">o Terraform</text>
+<path class="linea-acento" d="M166 92H266" marker-end="url(#nube-fa)"/><text class="acento fuerte peq" x="216" y="82" text-anchor="middle">petición firmada</text>
+<rect class="caja-acento" x="270" y="60" width="180" height="64" rx="8"/><text class="tit" x="360" y="86" text-anchor="middle">Punto de acceso</text><text class="mono" x="360" y="106" text-anchor="middle">localhost:4566</text>
+<path class="linea" d="M450 92H516" marker-end="url(#nube-f)"/>
+<rect class="caja-ok" x="520" y="44" width="184" height="96" rx="8"/><text class="tit" x="612" y="80" text-anchor="middle">Floci</text><text class="tenue peq" x="612" y="100" text-anchor="middle">un contenedor de Docker</text><text class="tenue peq" x="612" y="118" text-anchor="middle">que responde como AWS</text>
+<path class="linea discontinua" d="M91 124V198H516" marker-end="url(#nube-f)"/><text class="tenue peq" x="300" y="190" text-anchor="middle">sin el punto de acceso de Floci, iría a Amazon</text>
+<rect class="caja discontinua" x="520" y="174" width="184" height="48" rx="8"/><text class="tit" x="612" y="196" text-anchor="middle">AWS real</text><text class="tenue peq mono" x="612" y="213" text-anchor="middle">….amazonaws.com</text>
+</svg>
+<figcaption>Las órdenes son las mismas que en AWS; solo cambia a dónde van. En el curso, nada sale de tu portátil.</figcaption>
+</figure>
+<p>En el curso se usa con tres ajustes, que ya trae el <code>docker-compose.yml</code> que te deja <code>preparar.py</code>:</p>
 <ul>
 <li><b>Versión fija</b>, <code>floci/floci:2.4.0</code>. Con <code>latest</code>, una versión nueva podría cambiar el comportamiento a mitad de curso.</li>
-<li><b>Permisos de IAM aplicados</b> (<code>FLOCI_SERVICES_IAM_ENFORCEMENT_ENABLED</code>). Por defecto Floci deja hacer todo a cualquiera; así, cada usuario solo puede lo que dice su política, como en AWS.</li>
-<li><b>Servidores y bases de datos simulados</b> (<code>FLOCI_SERVICES_EC2_MOCK</code> y <code>FLOCI_SERVICES_RDS_MOCK</code>). Existen en la API con toda su configuración, pero no arrancan contenedores. Para aprender a describirlos con Terraform y revisarlos es lo que importa.</li>
+<li><b>Permisos de IAM aplicados.</b> Por defecto, Floci deja hacer todo a cualquiera. Con este ajuste, cada usuario solo puede lo que dice su política, como en AWS.</li>
+<li><b>Servidores y bases de datos simulados.</b> Existen en la API con toda su configuración, pero no arrancan ningún sistema de verdad. Para aprender a describirlos con Terraform y revisarlos, basta con eso.</li>
 </ul>
-<p>La clave <code>test</code> / <code>test</code> es la del usuario raíz de la cuenta emulada: puede con todo. Las claves que crees para otros usuarios solo podrán lo que les dé su política.</p>
+<p>Floci trae una clave ya hecha, <code>test</code> / <code>test</code>: es la del usuario raíz de la cuenta simulada y puede con todo. En esta unidad se llama <b>la clave de administrador</b>. Las claves que crees para otros usuarios solo podrán lo que les dé su política.</p>
 <p class="note">Floci emula la API, no la nube entera. Algunos detalles difieren de AWS y se dicen donde importan. Lo que aprendes (los recursos, sus opciones y sus fallos) es el de AWS.</p>
 </section>
 
@@ -72,12 +87,12 @@ on windows_amd64</code></pre>
 aws configure set aws_secret_access_key test
 aws configure set region eu-west-1
 aws configure set endpoint_url http://localhost:4566</code></pre></div>
-<p>No escriben nada en pantalla. <code>test</code> / <code>test</code> es la clave de administrador de Floci; <code>endpoint_url</code> manda las peticiones a tu equipo en vez de a Amazon.</p>
-<p class="note">Con esta configuración, cada orden <code>aws</code> va a Floci y nunca a AWS de verdad. Si algún día usas una cuenta real, créale otro perfil con <code>--profile</code>.</p>
+<p>No escriben nada en pantalla. Las dos primeras guardan la clave de administrador; la tercera, la región; la cuarta, <code>endpoint_url</code>, manda las peticiones a tu equipo en vez de a Amazon.</p>
+<p class="note">Con esta configuración, cada orden <code>aws</code> va a Floci y nunca a AWS de verdad. Si algún día usas una cuenta real, guarda su configuración en otro <b>perfil</b> (una configuración con nombre propio) con la opción <code>--profile</code>.</p>
 </section>
 
 <section class="seccion" id="levantar">
-<h2>Levantar la nube</h2>
+<h2>Levanta la nube</h2>
 <p>Toda la unidad usa una sola Floci, la de <code>fundamentos/iac/</code> de tu repositorio de entregas. <code>preparar.py</code> deja allí el <code>docker-compose.yml</code> la primera vez que lo lanzas (en el <a href="../ejercicios/e1.html">E1</a>). Con Docker Desktop abierto, desde la carpeta de tu repositorio:</p>
 <div class="cmd"><pre><code>cd fundamentos/iac
 docker compose up -d
@@ -93,7 +108,7 @@ aws sts get-caller-identity</code></pre></div>
 
 <section class="seccion">
 <h2>La CLI de AWS</h2>
-<p>Todas las órdenes tienen la misma forma: <code>aws &lt;servicio&gt; &lt;acción&gt; --opciones</code>. Las acciones son las de la API: <code>create-user</code> llama a <code>CreateUser</code>. Para S3 hay además unas órdenes cortas, <code>aws s3</code>, que se parecen a las de la shell:</p>
+<p>Todas las órdenes tienen la misma forma: <code>aws &lt;servicio&gt; &lt;acción&gt; --opciones</code>. Las acciones son las de la API: <code>create-user</code> llama a <code>CreateUser</code>. Para S3 hay además unas órdenes cortas, <code>aws s3</code>, que se parecen a las de la terminal:</p>
 <pre><code>aws s3 mb s3://pruebas-1a2b3c4d                    # crear un bucket
 aws s3 cp informe.txt s3://pruebas-1a2b3c4d/        # subir un fichero
 aws s3 ls s3://pruebas-1a2b3c4d                     # listar
@@ -114,8 +129,8 @@ aws iam list-user-policies --user-name ana          # sus políticas en línea</
     { "Effect": "Allow", "Action": "s3:GetObject",  "Resource": "arn:aws:s3:::informes-1a2b3c4d/*" }
   ]
 }</code></pre>
-<p>Este usuario puede listar un bucket y leer sus ficheros, y nada más: ni borrarlos, ni ver otros buckets, ni tocar IAM. Fíjate en los dos ARN: el bucket para listarlo, y <code>bucket/*</code> para los objetos de dentro.</p>
-<p>Una política se puede guardar <b>en línea</b>, dentro del usuario (<code>put-user-policy</code>), o como política <b>gestionada</b> aparte que se adjunta a varios (<code>attach-user-policy</code>). La regla que guía todo esto es la del <b>menor privilegio</b>: cada identidad, solo lo que necesita para su trabajo.</p>
+<p><code>"Version": "2012-10-17"</code> es la versión del lenguaje de las políticas, no una fecha tuya: se escribe siempre así. Este usuario puede listar un bucket y leer sus ficheros, y nada más: ni borrarlos, ni ver otros buckets, ni tocar IAM. Fíjate en los dos ARN: el del bucket, para listarlo, y <code>bucket/*</code>, para los objetos de dentro.</p>
+<p>Una política se puede guardar de dos formas. <b>En línea</b> (<i>inline</i>): va dentro del propio usuario y es solo suya (<code>put-user-policy</code>). <b>Gestionada</b>: es una política aparte, con su propio ARN, que se adjunta a varios usuarios (<code>attach-user-policy</code>). La regla que guía todo esto es la del <b>menor privilegio</b>: cada identidad, solo lo que necesita para su trabajo.</p>
 <p>El JSON de la política va en un fichero, por ejemplo <code>politica.json</code>, que creas con VS Code en la carpeta donde lanzas la orden. <code>file://</code> le dice a la CLI que lea el fichero:</p>
 <pre><code>aws iam put-user-policy --user-name ana --policy-name lectura-informes --policy-document file://politica.json
 aws iam create-access-key --user-name ana</code></pre>
