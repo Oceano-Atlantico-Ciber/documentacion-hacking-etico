@@ -11,24 +11,41 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
 
 <h1>U3·E1 · Ficha de Hackea el ranking</h1>
-<p class="lead">El juego del primer día tenía seis trucos. Ahora los conviertes en vulnerabilidades: qué debilidad del catálogo CWE es cada uno y qué propiedad de la seguridad rompe.</p>
+<p class="lead">Convierte en vulnerabilidades los seis retos del juego del primer día: di qué debilidad del catálogo CWE es cada reto y qué propiedad de la seguridad rompe.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-propiedades.html">3.1</a>, <a href="../temas/03-tipos-de-vulnerabilidades.html">3.3</a> y <a href="../temas/05-documentar-una-vulnerabilidad.html">3.5</a></dd>
+<dt>Aprendes</dt><dd>A poner nombre a un fallo con el catálogo CWE y a decir qué propiedad rompe.</dd>
 <dt>Criterios</dt><dd>d, f, h</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u3-e1/ranking.md</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u3-e1/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u3-e1</code> sobre <code>main</code></dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u3-e1/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>ranking.md</code></td><td>La tabla de la plantilla con las columnas <b>CWE</b> y <b>Propiedad</b> rellenas para los seis retos.</td></tr>
+</tbody></table></div>
+<p>Así quedaría una fila de un reto inventado, «entrar con la contraseña por defecto admin/admin»; en tu fichero solo están los seis retos del juego:</p>
+<div class="cmd"><pre><code>| Reto | Qué se hace | CWE | Propiedad |
+|---|---|---|---|
+| 7 | Entrar con la contraseña por defecto admin/admin | CWE-1392 | autenticidad |</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e1
 code ra1/u3-e1/ranking.md</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e1
+code ra1/u3-e1/ranking.md</code></pre></div>
 
 <h2 class="step"><span class="n">2</span>Repasa los retos</h2>
-<p>Tienes el juego, sus ficheros y la solución reto a reto en <a href="../../../00-presentacion/temas/07-hackea-el-ranking.html">Hackea el ranking</a>. Si guardaste tus notas de la partida, úsalas. Para cada reto busca su CWE en <a href="https://cwe.mitre.org/">cwe.mitre.org</a>: lee la descripción y comprueba que encaja con lo que pasaba en el juego.</p>
+<p>Tienes el juego, sus ficheros y la solución reto a reto en <a href="../../../00-presentacion/temas/07-hackea-el-ranking.html">Hackea el ranking</a>. Si guardaste tus notas de la partida, úsalas. Para cada reto, busca su CWE en <a href="https://cwe.mitre.org/">cwe.mitre.org</a>: lee la descripción y comprueba que encaja con lo que pasaba en el juego.</p>
 
 <h2 class="step"><span class="n">3</span>Rellena la ficha</h2>
-<p>Una fila por reto: <b>CWE</b> como <code>CWE-123</code> y <b>Propiedad</b>, una de las cuatro escrita tal cual.</p>
+<p>En cada fila, escribe el CWE con la forma <code>CWE-123</code> y una de las cuatro propiedades tal cual: confidencialidad, integridad, disponibilidad o autenticidad. No cambies las columnas <b>Reto</b> ni <b>Qué se hace</b>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta un reto o un valor no tiene el formato de su columna.</li>
@@ -36,15 +53,26 @@ code ra1/u3-e1/ranking.md</code></pre></div>
 </ul>
 
 <h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git add ra1/u3-e1
+git commit -m "docs(ra1-u3-e1): ficha de los fallos de Hackea el ranking"</code></pre></div>
+<p>Después pasa las mismas comprobaciones públicas que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e1</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e1</code></pre></div>
+<p>Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite. La comparación con la clave solo la hace el corrector.</p>
 
-<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add ra1/u3-e1
-git commit -m "docs(ra1-u3-e1): ficha de los fallos de Hackea el ranking"
-git push
-git tag -a entrega-ra1-u3-e1 -m "U3·E1 resuelto"
+<h2 class="step"><span class="n">5</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">6</span>Etiqueta</h2>
+<p>Cuando la fila de U3·E1 salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-ra1-u3-e1 -m "U3·E1 resuelto"
 git push origin entrega-ra1-u3-e1</code></pre></div>
-<p>Etiqueta cuando la fila de U3·E1 de <b>Corrector ra1</b> salga sin fallos.</p>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="../temas/05-documentar-una-vulnerabilidad.html">← 3.5 · Documentar una vulnerabilidad</a><a href="e2.html">U3·E2 · Ficha de un CVE real →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

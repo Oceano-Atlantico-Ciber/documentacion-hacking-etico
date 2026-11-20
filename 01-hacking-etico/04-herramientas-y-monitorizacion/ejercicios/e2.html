@@ -11,50 +11,112 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">04 · Herramientas y monitorización</a></nav>
 
 <h1>U4·E2 · Un sensor vigilando la web</h1>
-<p class="lead">El servidor web de una empresa ficticia tiene pegado un sensor Suricata. Haces una pequeña auditoría desde tu puesto, miras qué ha visto el sensor y escribes una regla para lo que se le escapó.</p>
+<p class="lead">El servidor web de una empresa ficticia tiene pegado un sensor Suricata. Haz una pequeña auditoría desde tu puesto, mira qué ha visto el sensor y escribe una regla para lo que se le escapó.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-clasificacion-de-herramientas.html">4.1 · Clasificación de herramientas</a> y <a href="../../03-vulnerabilidades-y-ataques/temas/02-fases-de-un-ataque.html">3.2 · Fases de un ataque</a></dd>
+<dt>Aprendes</dt><dd>A leer lo que detecta un IDS, a ver lo que no detecta y a escribirle una regla nueva.</dd>
 <dt>Criterios</dt><dd>a, i</dd>
 <dt>Trabajas en</dt><dd><code>ra1/u4-e2/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u4-e2</code> sobre <code>main</code></dd>
 <dt>Necesitas</dt><dd>Docker Desktop en marcha</dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u4-e2/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>suricata/local.rules</code></td><td>Las reglas de la plantilla, sin tocar, y al final tu regla, con un <code>sid</code> desde <code>1000100</code>.</td></tr>
+<tr><td><code>alertas.txt</code></td><td>El resumen que guarda <code>etiquetar.py</code> después de probar tu regla (paso 4).</td></tr>
+<tr><td>El resto</td><td><code>docker-compose.yml</code>, <code>etiquetar.py</code>, <code>web/</code>, <code>.gitignore</code> y <code>salidas/.gitkeep</code>, tal como los deja <code>preparar.py</code>.</td></tr>
+</tbody></table></div>
+<p><code>alertas.txt</code> tiene dos tablas: las alertas por fase y las alertas por origen. Con otros datos, se parece a esto:</p>
+<div class="cmd"><pre><code>FASE             ALERTAS
+ENUMERACION            7
+RECONOCIMIENTO         2
+
+ORIGEN          FASE             ALERTAS
+172.28.0.3      ENUMERACION            4
+172.28.0.4      ENUMERACION            3
+172.28.0.4      RECONOCIMIENTO         2</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Prepara el laboratorio</h2>
+<p>Desde tu repositorio de entregas, con Docker Desktop en marcha:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u4-e2
 cd ra1/u4-e2
 docker compose up -d
-docker compose logs suricata</code></pre></div>
-<p>Espera a ver <code>Engine started</code> en el registro de Suricata. El laboratorio es tuyo y está solo en tu equipo: es tu alcance.</p>
+docker compose logs -f suricata</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u4-e2
+cd ra1/u4-e2
+docker compose up -d
+docker compose logs -f suricata</code></pre></div>
+<p>La última orden va mostrando el registro de Suricata: pulsa <b>Ctrl+C</b> cuando veas <code>Engine started</code>. Las órdenes de los pasos 2 a 4 se lanzan desde <code>ra1/u4-e2</code>. El laboratorio es tuyo y está solo en tu equipo: es tu alcance.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 250" role="img" aria-label="El laboratorio: en la red 172.28.0.0/24 están tu puesto con nmap y curl y el servidor web en 172.28.0.20; Suricata comparte la conexión del servidor web, ve todo lo que le llega y escribe sus alertas en salidas/suricata/eve.json, que etiquetar.py resume en alertas.txt">
+<defs><marker id="lab-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="lab-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="linea discontinua" x="1" y="1" width="460" height="168" rx="10"/><text class="tenue peq" x="16" y="22">Red del laboratorio · <tspan class="mono">172.28.0.0/24</tspan></text>
+<rect class="caja" x="20" y="40" width="150" height="50" rx="8"/><text class="tit" x="95" y="62" text-anchor="middle">auditor</text><text class="mono tenue" x="95" y="80" text-anchor="middle">nmap</text>
+<rect class="caja" x="20" y="102" width="150" height="50" rx="8"/><text class="tit" x="95" y="124" text-anchor="middle">curl</text><text class="mono tenue" x="95" y="142" text-anchor="middle">pide páginas</text>
+<path class="linea" d="M170 65H262" marker-end="url(#lab-f)"/><path class="linea" d="M170 127H262" marker-end="url(#lab-f)"/>
+<text class="tenue peq" x="216" y="57" text-anchor="middle">tu puesto</text>
+<rect class="caja-acento" x="264" y="40" width="180" height="112" rx="8"/><text class="tit" x="354" y="64" text-anchor="middle">web</text><text class="mono" x="354" y="82" text-anchor="middle">172.28.0.20</text>
+<rect class="caja-ok" x="280" y="96" width="148" height="44" rx="6"/><text class="tit" x="354" y="116" text-anchor="middle">Suricata</text><text class="peq" x="354" y="132" text-anchor="middle">escucha su conexión</text>
+<path class="linea-acento" d="M428 118H520" marker-end="url(#lab-fa)"/>
+<rect class="caja" x="522" y="92" width="198" height="52" rx="8"/><text class="mono" x="621" y="114" text-anchor="middle">salidas/suricata/</text><text class="mono" x="621" y="132" text-anchor="middle">eve.json</text>
+<path class="linea" d="M621 144V188" marker-end="url(#lab-f)"/><text class="mono peq" x="629" y="172">etiquetar.py</text>
+<rect class="caja-acento" x="540" y="190" width="162" height="44" rx="8"/><text class="mono tit" x="621" y="217" text-anchor="middle">alertas.txt</text>
+<text class="tenue peq" x="20" y="200">Las tres cajas de la izquierda son contenedores de Docker.</text>
+<text class="tenue peq" x="20" y="220">Los ficheros de la derecha están en tu carpeta ra1/u4-e2.</text>
+</svg>
+<figcaption>Suricata comparte la conexión de red del servidor web: ve exactamente lo que le llega.</figcaption>
+</figure>
 <div class="tabla"><table><thead><tr><th>Contenedor</th><th>Dirección</th><th>Qué es</th></tr></thead><tbody>
 <tr><td><code>web</code></td><td><code>172.28.0.20</code></td><td>El servidor web de la empresa. Suricata escucha pegado a él.</td></tr>
-<tr><td><code>auditor</code></td><td>dinámica</td><td>Tu puesto: nmap dentro de la misma red.</td></tr>
-<tr><td><code>curl</code></td><td>dinámica</td><td>curl dentro de la misma red, para pedir páginas.</td></tr>
+<tr><td><code>auditor</code></td><td>la que le toque</td><td>Tu puesto: nmap dentro de la misma red.</td></tr>
+<tr><td><code>curl</code></td><td>la que le toque</td><td>curl dentro de la misma red, para pedir páginas.</td></tr>
 </tbody></table></div>
 
 <h2 class="step"><span class="n">2</span>Haz la auditoría</h2>
-<p>Reconocimiento y escaneo de la red y del servidor:</p>
+<p>Primero, el escaneo de la red y del servidor:</p>
 <div class="cmd"><pre><code>docker compose run --rm auditor -sn 172.28.0.0/24
 docker compose run --rm auditor -sV 172.28.0.20</code></pre></div>
-<p>Mira la web: la portada, lo que pide no indexar y lo que aparezca allí.</p>
-<div class="cmd"><pre><code>docker compose run --rm curl -i http://172.28.0.20/
-docker compose run --rm curl -i http://172.28.0.20/robots.txt
-docker compose run --rm curl -i http://172.28.0.20/admin/
-docker compose run --rm curl -i http://172.28.0.20/&lt;lo-que-diga-robots.txt&gt;/</code></pre></div>
+<p>Con <code>-sn</code>, nmap solo busca qué equipos de la red responden, sin mirar sus puertos. Con <code>-sV</code>, mira los puertos abiertos del servidor y averigua qué programa y qué versión hay detrás de cada uno.</p>
+<p>Después, mira la web: la portada, su <code>robots.txt</code> y lo que aparezca allí. El <code>robots.txt</code> es el fichero donde una web pide a los buscadores que no indexen ciertas rutas; a quien audita le dice justo qué rutas pueden ser interesantes.</p>
+<div class="cmd"><pre><code>docker compose run --rm curl -s -i http://172.28.0.20/
+docker compose run --rm curl -s -i http://172.28.0.20/robots.txt
+docker compose run --rm curl -s -i http://172.28.0.20/admin/</code></pre></div>
+<p>En el <code>robots.txt</code> aparece, además de <code>/admin/</code>, un directorio de copias de seguridad, con un nombre distinto para cada alumno. Pídelo, cambiando <code>&lt;copias&gt;</code> por ese nombre (sin las barras):</p>
+<div class="cmd"><pre><code>docker compose run --rm curl -s -i http://172.28.0.20/&lt;copias&gt;/</code></pre></div>
 
 <h2 class="step"><span class="n">3</span>Mira qué ha visto el sensor</h2>
-<div class="cmd"><pre><code>py etiquetar.py &gt; alertas.txt
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py etiquetar.py alertas.txt
+Get-Content alertas.txt</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 etiquetar.py alertas.txt
 cat alertas.txt</code></pre></div>
-<p><code>etiquetar.py</code> resume las alertas de <code>salidas/suricata/eve.json</code> por fase y por origen. Compáralo con lo que hiciste: la visita al directorio de copias que aparece en <code>robots.txt</code>, que expone copias de seguridad de la empresa, no tiene ninguna alerta propia. Su nombre es distinto para cada alumno. Las reglas están en <code>suricata/local.rules</code>; léelas para ver por qué.</p>
+<p><code>etiquetar.py</code> resume por fase y por origen las alertas de <code>salidas/suricata/eve.json</code>, y guarda el resumen en <code>alertas.txt</code>. Si preparaste el ejercicio antes de este cambio y la orden da un error, tu <code>etiquetar.py</code> es la versión anterior: en Windows usa <code>py etiquetar.py | Out-File -Encoding utf8 alertas.txt</code> y en macOS o Linux <code>python3 etiquetar.py &gt; alertas.txt</code>.</p>
+<p>Compáralo con lo que hiciste: la visita al directorio de copias, que expone copias de seguridad de la empresa, no tiene ninguna alerta propia. Lee las reglas de <code>suricata/local.rules</code> para ver por qué.</p>
+<p>Cada regla tiene un <code>msg</code> (el mensaje de la alerta, que empieza por la fase) y un <code>sid</code>, el número que la identifica: no puede haber dos reglas con el mismo.</p>
 
 <h2 class="step"><span class="n">4</span>Escribe tu regla</h2>
-<p>Añade al final de <code>suricata/local.rules</code> una regla que salte cuando alguien pida tu directorio de copias, y solo entonces. Copia la de <code>/admin</code> como punto de partida, cambia lo que haga falta y usa un <code>sid</code> desde <code>1000100</code>. Pon la fase al principio del mensaje para que <code>etiquetar.py</code> la cuente bien.</p>
+<p>Añade al final de <code>suricata/local.rules</code> una regla que salte cuando alguien pida tu directorio de copias, y solo entonces. Copia la de <code>/admin</code> como punto de partida, cambia lo que haga falta y usa un <code>sid</code> desde <code>1000100</code>. Empieza el mensaje por la fase, en mayúsculas y sin tildes, para que <code>etiquetar.py</code> la cuente bien. Las reglas del laboratorio usan dos: <code>RECONOCIMIENTO</code> (descubrir qué equipos y servicios hay) y <code>ENUMERACION</code> (pedir rutas concretas de la web para ver qué expone, dentro del escaneo del tema 3.2); por ejemplo, para otra ruta: <code>msg:"ENUMERACION ruta /phpmyadmin";</code>.</p>
+<p>Después, reinicia Suricata y espera de nuevo a <code>Engine started</code> (<b>Ctrl+C</b> para salir del registro; <code>--since 1m</code> muestra solo el último minuto, para no confundirte con el arranque anterior). Pide otra vez tu directorio de copias y vuelve a resumir:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker compose restart suricata
-docker compose run --rm curl -i http://172.28.0.20/&lt;lo-que-diga-robots.txt&gt;/
-py etiquetar.py &gt; alertas.txt
+docker compose logs -f --since 1m suricata
+docker compose run --rm curl -s -i http://172.28.0.20/&lt;copias&gt;/
+py etiquetar.py alertas.txt
+Get-Content alertas.txt</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>docker compose restart suricata
+docker compose logs -f --since 1m suricata
+docker compose run --rm curl -s -i http://172.28.0.20/&lt;copias&gt;/
+python3 etiquetar.py alertas.txt
 cat alertas.txt</code></pre></div>
-<p>Comprueba que tu alerta aparece. Si Suricata no arranca, <code>docker compose logs suricata</code> dice qué línea no entiende.</p>
+<p>Tu alerta tiene que aparecer en <code>alertas.txt</code>. Si Suricata no arranca, el registro dice qué línea no entiende.</p>
 <p class="ia">Si pides la regla a la IA, comprueba cada palabra clave en la <a href="https://docs.suricata.io/en/suricata-7.0.0/rules/intro.html">documentación de reglas de Suricata 7</a> y pruébala antes de darla por buena.</p>
 <p>El corrector levanta su propio laboratorio con tu <code>local.rules</code>, repite la portada, <code>robots.txt</code> y <code>/admin/</code>, y después pide tu directorio de copias. Marca fallo si:</p>
 <ul class="falla">
@@ -65,21 +127,30 @@ cat alertas.txt</code></pre></div>
 </ul>
 
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits. Lo que escribe Suricata en <code>salidas/</code> no se sube: ya lo excluye el <code>.gitignore</code> de la plantilla.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e2</code></pre></div>
-<p>Monta un laboratorio aparte, igual que el del corrector, y lo quita al terminar. Tarda un par de minutos.</p>
+git add ra1/u4-e2
+git commit -m "feat(ra1-u4-e2): regla de Suricata para las copias expuestas"</code></pre></div>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e2</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e2</code></pre></div>
+<p>Montan un laboratorio aparte, igual que el del corrector, y lo quitan al terminar; tardan un par de minutos. Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite.</p>
 
-<h2 class="step"><span class="n">6</span>Sube, etiqueta y apaga</h2>
-<div class="cmd"><pre><code>git add ra1/u4-e2
-git commit -m "feat(ra1-u4-e2): regla de Suricata para las copias expuestas"
-git push
-git tag -a entrega-ra1-u4-e2 -m "U4·E2 resuelto"
+<h2 class="step"><span class="n">6</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">7</span>Etiqueta y apaga</h2>
+<p>Cuando la fila de U4·E2 salga sin fallos, etiqueta y apaga el laboratorio:</p>
+<div class="cmd"><pre><code>git tag -a entrega-ra1-u4-e2 -m "U4·E2 resuelto"
 git push origin entrega-ra1-u4-e2
 cd ra1/u4-e2
 docker compose down</code></pre></div>
-<p>Lo que escribe Suricata en <code>salidas/</code> no se sube: ya lo excluye el <code>.gitignore</code> de la plantilla.</p>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
-<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U4·E1 · Elige su monitorización</a><a href="e3.html">U4·E3 · Cuatro darknets →</a></nav>
+<nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U4·E1 · ¿Qué monitorización necesita cada una?</a><a href="e3.html">U4·E3 · Cuatro darknets →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../../../assets/nav.js" defer></script>

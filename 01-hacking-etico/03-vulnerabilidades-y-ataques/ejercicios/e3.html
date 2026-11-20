@@ -11,37 +11,91 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">03 · Vulnerabilidades y ataques</a></nav>
 
 <h1>U3·E3 · El registro de un incidente</h1>
-<p class="lead">Una ferretería encontró sus servidores cifrados un lunes. Tienes el registro de eventos del servidor del fin de semana: con PowerShell reconstruyes qué hizo el atacante, fase a fase, y pones a cada paso su técnica de MITRE ATT&amp;CK.</p>
+<p class="lead">Una ferretería encontró sus servidores cifrados un lunes. Con el registro de eventos del servidor, reconstruye qué hizo el atacante, fase a fase, y pon a cada paso su técnica de MITRE ATT&amp;CK.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/02-fases-de-un-ataque.html">3.2 · Fases de un ataque</a> y <a href="../temas/04-tipos-de-ataques.html">3.4 · Tipos de ataques</a></dd>
+<dt>Aprendes</dt><dd>A seguir los pasos de un atacante en un registro de eventos y a nombrarlos con ATT&amp;CK.</dd>
 <dt>Criterios</dt><dd>e, g</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u3-e3/respuestas.json</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u3-e3/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u3-e3</code> sobre <code>main</code></dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u3-e3/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>respuestas.json</code></td><td>Lo rellenas tú con lo que encuentres en el registro.</td></tr>
+<tr><td><code>registro.csv</code></td><td>Tal como lo deja <code>preparar.py</code>, sin cambios.</td></tr>
+</tbody></table></div>
+<p>Así quedarían las respuestas de otro incidente inventado. Las técnicas del ejemplo solo muestran el formato: busca las de verdad en ATT&amp;CK.</p>
+<div class="cmd"><pre><code>{
+  "ip_atacante": "192.0.2.50",
+  "intentos_fallidos": 12,
+  "primer_acceso": "2026-05-10 03:14:07",
+  "cuenta_usada": "ana",
+  "cuenta_creada": "mantenimiento7",
+  "servicio_instalado": "EjemploRemote",
+  "registro_borrado": "2026-05-10 04:02:51",
+  "tecnicas": {
+    "5152": "T1234",
+    "4625": "T1234.001",
+    "4720": "T1234",
+    "7045": "T1234",
+    "1102": "T1234.001"
+  }
+}</code></pre></div>
+<p><code>intentos_fallidos</code> es un número, sin comillas. Las fechas van tal como aparecen en el registro.</p>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e3
 cd ra1/u3-e3
 code respuestas.json</code></pre></div>
-<p><code>registro.csv</code> es distinto para cada alumno: otro atacante, otras cuentas, otras horas.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u3-e3
+cd ra1/u3-e3
+code respuestas.json</code></pre></div>
+<p><code>registro.csv</code> es distinto para cada alumno: otro atacante, otras cuentas, otras horas. Es una tabla en texto, un evento por línea, con esta cabecera y filas como esta:</p>
+<div class="cmd"><pre><code>Fecha,Origen,Id,Ip,Usuario,Mensaje
+2026-11-01 08:07:31,Seguridad,4624,10.0.0.23,marta,"Inicio de sesión correcto (tipo 2)"</code></pre></div>
 
-<h2 class="step"><span class="n">2</span>Los eventos que importan</h2>
+<h2 class="step"><span class="n">2</span>Conoce los eventos que importan</h2>
 <div class="tabla"><table><thead><tr><th>Id</th><th>Qué registra</th></tr></thead><tbody>
 <tr><td><code>5152</code> / <code>5156</code></td><td>El cortafuegos bloquea o permite una conexión.</td></tr>
-<tr><td><code>4625</code> / <code>4624</code></td><td>Un inicio de sesión falla o funciona. Tipo 10 es escritorio remoto.</td></tr>
-<tr><td><code>4720</code> / <code>4732</code></td><td>Se crea una cuenta / se añade a un grupo.</td></tr>
+<tr><td><code>4625</code> / <code>4624</code></td><td>Un inicio de sesión falla o funciona.</td></tr>
+<tr><td><code>4720</code> / <code>4732</code></td><td>Se crea una cuenta / se añade una cuenta a un grupo.</td></tr>
 <tr><td><code>7045</code></td><td>Se instala un servicio.</td></tr>
 <tr><td><code>1102</code></td><td>Alguien borra el registro de auditoría.</td></tr>
 </tbody></table></div>
+<p>El mensaje de los inicios de sesión dice su tipo, que indica cómo se entró: el tipo 2 es en el propio equipo, con su teclado; el tipo 10, a distancia, por escritorio remoto.</p>
+<p>Un ataque así suele dejar este rastro, en este orden:</p>
+<div class="flow"><span>Escaneo de puertos</span><i>→</i><span>Contraseñas probadas</span><i>→</i><span>Entra</span><i>→</i><span>Crea una cuenta</span><i>→</i><span>Instala un acceso remoto</span><i>→</i><span>Borra el registro</span></div>
 
-<h2 class="step"><span class="n">3</span>Investiga con PowerShell</h2>
-<div class="cmd"><pre><code>$r = Import-Csv registro.csv
-$r | Group-Object Id | Sort-Object Count -Descending
-$r | Where-Object Id -eq 5152 | Group-Object Ip | Sort-Object Count -Descending
-$r | Where-Object { $_.Id -eq 4625 -and $_.Ip -eq "&lt;ip&gt;" } | Measure-Object
-$r | Where-Object { $_.Ip -eq "&lt;ip&gt;" -or $_.Id -in 4720,7045,1102 } | Format-Table</code></pre></div>
-<p>En el día normal también hay ruido: contraseñas mal escritas de los empleados y algún escaneo suelto de Internet. Busca la dirección que escanea muchos puertos seguidos y sigue sus pasos.</p>
+<h2 class="step"><span class="n">3</span>Investiga el registro</h2>
+<p>Desde <code>ra1/u3-e3</code>. En las dos últimas órdenes, cambia <code>&lt;ip&gt;</code> por la dirección sospechosa que encuentres con la segunda.</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>$r = Import-Csv registro.csv -Encoding UTF8
+$r | Group-Object Id | Sort-Object Count -Descending | Select-Object Count, Name
+$r | Where-Object Id -eq 5152 | Group-Object Ip | Sort-Object Count -Descending | Select-Object Count, Name
+$r | Where-Object { $_.Id -eq 4625 -and $_.Ip -eq "&lt;ip&gt;" } | Measure-Object | Select-Object Count
+$r | Where-Object { $_.Ip -eq "&lt;ip&gt;" -or $_.Id -in 4720,7045,1102 } | Format-Table -AutoSize -Wrap</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>head -3 registro.csv
+cut -d, -f3 registro.csv | sort | uniq -c | sort -rn
+grep ',5152,' registro.csv | cut -d, -f4 | sort | uniq -c | sort -rn
+grep -c ',4625,&lt;ip&gt;,' registro.csv
+grep -E ',&lt;ip&gt;,|,(4720|7045|1102),' registro.csv</code></pre></div>
+<p>Qué hace cada orden, en el mismo orden:</p>
+<ol>
+<li>Carga el registro (en macOS y Linux, enseña sus primeras líneas).</li>
+<li>Cuenta cuántos eventos hay de cada Id, de más a menos.</li>
+<li>Agrupa por dirección los bloqueos del cortafuegos (<code>5152</code>): la que más tiene es la que escaneó muchos puertos.</li>
+<li>Cuenta los inicios de sesión fallidos (<code>4625</code>) desde esa dirección: es <code>intentos_fallidos</code> (en PowerShell, el valor <code>Count</code>).</li>
+<li>Enseña todo lo que hizo esa dirección, más las cuentas creadas, los servicios instalados y el borrado del registro, en orden de hora.</li>
+</ol>
+<p>En el día normal también hay ruido: contraseñas mal escritas de los empleados y algún escaneo suelto desde Internet. Busca la dirección que escanea muchos puertos seguidos y sigue sus pasos.</p>
 
 <h2 class="step"><span class="n">4</span>Rellena las respuestas</h2>
 <div class="tabla"><table><thead><tr><th>Campo</th><th>Qué va</th></tr></thead><tbody>
@@ -60,15 +114,27 @@ $r | Where-Object { $_.Ip -eq "&lt;ip&gt;" -or $_.Id -in 4720,7045,1102 } | Form
 <li>Una técnica no tiene el formato, o hay técnicas que no coinciden con la clave. De estas dice cuántas, no cuáles.</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo, sube y etiqueta</h2>
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e3
 git add ra1/u3-e3
-git commit -m "docs(ra1-u3-e3): análisis del registro del incidente"
-git push
-git tag -a entrega-ra1-u3-e3 -m "U3·E3 resuelto"
+git commit -m "docs(ra1-u3-e3): análisis del registro del incidente"</code></pre></div>
+<p>Después pasa las mismas comprobaciones públicas que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e3</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u3-e3</code></pre></div>
+<p>Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite. Las pruebas ya comprueban los datos del registro; las técnicas solo las compara el corrector.</p>
+
+<h2 class="step"><span class="n">6</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">7</span>Etiqueta</h2>
+<p>Cuando la fila de U3·E3 salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-ra1-u3-e3 -m "U3·E3 resuelto"
 git push origin entrega-ra1-u3-e3</code></pre></div>
-<p><code>pruebas.py</code> ya comprueba los datos del registro; las técnicas las compara el corrector.</p>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e2.html">← U3·E2 · Ficha de un CVE real</a><a href="../../04-herramientas-y-monitorizacion/index.html">04 · Herramientas y monitorización →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

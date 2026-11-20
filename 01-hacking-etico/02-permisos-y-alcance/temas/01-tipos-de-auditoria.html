@@ -19,10 +19,23 @@
 <section class="seccion">
 <h2>Cuánto sabe el auditor</h2>
 <div class="tabla"><table><thead><tr><th>Tipo</th><th>Qué recibe el auditor</th><th>Qué responde</th><th>Ejemplo del curso</th></tr></thead><tbody>
-<tr><td><b>Caja negra</b></td><td>Nada más que el objetivo: una dirección o un nombre.</td><td>¿Qué puede hacer un atacante de fuera que no sabe nada?</td><td>Hackea el ranking: solo veíais lo que enseñaba el navegador.</td></tr>
+<tr><td><b>Caja negra</b></td><td>Nada más que el objetivo: una dirección o un nombre.</td><td>¿Qué puede hacer un atacante de fuera que no sabe nada?</td><td>Hackea el ranking: solo veías lo que enseñaba el navegador.</td></tr>
 <tr><td><b>Caja gris</b></td><td>Algo de información: una cuenta de usuario normal, un esquema de la red.</td><td>¿Qué puede hacer un cliente o un empleado sin privilegios?</td><td>Probar una web con un usuario de prueba que da la empresa.</td></tr>
 <tr><td><b>Caja blanca</b></td><td>Todo: código, configuración, documentación, cuentas de administración.</td><td>¿Qué fallos hay, encuentre o no el camino un atacante?</td><td>Leer el Terraform de la empresa en <a href="../../../00-fundamentos/04-iac/index.html">Terraform y AWS</a>.</td></tr>
 </tbody></table></div>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 170" role="img" aria-label="De caja negra a caja blanca, el auditor recibe cada vez más información del cliente: solo el objetivo, una cuenta normal y un esquema, o todo el código y la configuración">
+<defs><marker id="caj-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="10" width="220" height="110" rx="8"/><text class="tit" x="110" y="36" text-anchor="middle">Caja negra</text>
+<text class="peq" x="110" y="62" text-anchor="middle">Solo el objetivo:</text><text class="mono" x="110" y="84" text-anchor="middle">203.0.113.10</text>
+<rect class="caja" x="250" y="10" width="220" height="110" rx="8"/><text class="tit" x="360" y="36" text-anchor="middle">Caja gris</text>
+<text class="peq" x="360" y="62" text-anchor="middle">El objetivo, más</text><text class="peq" x="360" y="82" text-anchor="middle">una cuenta de usuario normal</text><text class="peq" x="360" y="102" text-anchor="middle">y un esquema de la red</text>
+<rect class="caja-acento" x="500" y="10" width="220" height="110" rx="8"/><text class="tit" x="610" y="36" text-anchor="middle">Caja blanca</text>
+<text class="peq" x="610" y="62" text-anchor="middle">Todo: código, configuración,</text><text class="peq" x="610" y="82" text-anchor="middle">documentación y cuentas</text><text class="peq" x="610" y="102" text-anchor="middle">de administración</text>
+<path class="linea-acento" d="M20 150H700" marker-end="url(#caj-fa)"/><text class="acento fuerte peq" x="360" y="143" text-anchor="middle">cada vez más información del cliente</text>
+</svg>
+<figcaption>Cuanta más información recibe el auditor, menos se parece a un ataque real, pero más fallos encuentra en el mismo tiempo.</figcaption>
+</figure>
 <p>La caja negra se parece más a un ataque real, pero gasta horas en descubrir lo que el cliente ya sabe. La caja blanca encuentra más fallos en menos tiempo. La gris es la más habitual.</p>
 </section>
 
@@ -47,7 +60,7 @@
 <h2>Comprobación</h2>
 <ul>
 <li>Sabes qué tipo de caja es una prueba en la que te dan un usuario normal y nada más.</li>
-<li>Sabes por qué una pyme pequeña empezaría por un análisis de vulnerabilidades y no por un red team.</li>
+<li>Sabes por qué una empresa pequeña empezaría por un análisis de vulnerabilidades y no por un red team.</li>
 </ul>
 </section>
 

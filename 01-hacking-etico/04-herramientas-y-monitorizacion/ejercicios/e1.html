@@ -3,28 +3,45 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>U4·E1 · Elige su monitorización · Hacking ético</title>
+<title>U4·E1 · ¿Qué monitorización necesita cada una? · Hacking ético</title>
 <link rel="stylesheet" href="../../../assets/estilo.css">
 </head>
 <body>
 <main>
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">04 · Herramientas y monitorización</a></nav>
 
-<h1>U4·E1 · Elige su monitorización</h1>
-<p class="lead">Tres organizaciones te piden consejo. Para cada una eliges qué herramientas de monitorización necesita y justificas por qué, pensando en lo que protege y en quién va a mirar las alertas.</p>
+<h1>U4·E1 · ¿Qué monitorización necesita cada una?</h1>
+<p class="lead">Tres organizaciones te piden consejo. Elige para cada una qué herramientas de monitorización necesita y justifica por qué, pensando en lo que protege y en quién va a mirar las alertas.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-clasificacion-de-herramientas.html#familias">4.1 · Herramientas por familia</a> y <a href="../temas/02-monitorizacion-segun-organizacion.html">4.2 · Monitorización según la organización</a></dd>
+<dt>Aprendes</dt><dd>A elegir herramientas de vigilancia que encajen con el tamaño, los datos y las personas de cada organización.</dd>
 <dt>Criterio</dt><dd>i</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u4-e1/herramientas.md</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u4-e1/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u4-e1</code> sobre <code>main</code></dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u4-e1/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>herramientas.md</code></td><td>La tabla de la plantilla rellena: al menos tres filas por organización (A, B y C), cada una con familia, herramienta y por qué.</td></tr>
+</tbody></table></div>
+<p>Así quedaría una fila de una organización inventada, D, una clínica veterinaria con su propio servidor de historiales y un técnico a media jornada; en tu fichero solo van A, B y C:</p>
+<div class="cmd"><pre><code>| Organización | Familia | Herramienta | Por qué |
+|---|---|---|---|
+| D | escáner de vulnerabilidades | OpenVAS | El técnico puede lanzarlo una vez al mes contra el servidor de historiales, que está en la propia clínica y nadie revisa a diario |</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u4-e1
 code ra1/u4-e1/herramientas.md</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u4-e1
+code ra1/u4-e1/herramientas.md</code></pre></div>
 
-<h2 class="step"><span class="n">2</span>Las tres organizaciones</h2>
+<h2 class="step"><span class="n">2</span>Lee las tres organizaciones</h2>
 <div class="panel">
 <ul>
 <li><b>A · Asesoría fiscal.</b> Seis personas con portátiles Windows. El correo y los documentos están en Microsoft 365. No hay nadie de informática: un técnico viene cuando algo se rompe.</li>
@@ -34,7 +51,7 @@ code ra1/u4-e1/herramientas.md</code></pre></div>
 </div>
 
 <h2 class="step"><span class="n">3</span>Elige y justifica</h2>
-<p>En <code>herramientas.md</code>, al menos tres filas por organización. La <b>Familia</b> se escribe como en la tabla del tema 4.1 y la <b>Herramienta</b> es una de esa familia. En <b>Por qué</b>, relaciona la herramienta con esa organización: no vale una frase que sirva para cualquiera. Puedes añadir filas.</p>
+<p>Rellena en <code>herramientas.md</code> al menos tres filas por organización. Escribe la <b>Familia</b> como en la tabla del tema 4.1 y elige como <b>Herramienta</b> una de esa familia. En <b>Por qué</b>, relaciona la herramienta con esa organización: no vale una frase que sirva para cualquiera. Puedes añadir filas.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Una organización tiene menos de tres herramientas, una familia no es de la tabla o la herramienta no es de su familia.</li>
@@ -43,14 +60,26 @@ code ra1/u4-e1/herramientas.md</code></pre></div>
 </ul>
 
 <h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+git add ra1/u4-e1
+git commit -m "docs(ra1-u4-e1): monitorización para tres organizaciones"</code></pre></div>
+<p>Después pasa las mismas comprobaciones públicas que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e1</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e1</code></pre></div>
+<p>Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite. Si a una organización le falta o le sobra una familia solo lo mira el corrector.</p>
 
-<h2 class="step"><span class="n">5</span>Sube y etiqueta</h2>
-<div class="cmd"><pre><code>git add ra1/u4-e1
-git commit -m "docs(ra1-u4-e1): monitorización para tres organizaciones"
-git push
-git tag -a entrega-ra1-u4-e1 -m "U4·E1 resuelto"
+<h2 class="step"><span class="n">5</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">6</span>Etiqueta</h2>
+<p>Cuando la fila de U4·E1 salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-ra1-u4-e1 -m "U4·E1 resuelto"
 git push origin entrega-ra1-u4-e1</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="../temas/03-clearnet-deep-dark-web.html">← 4.3 · ClearNet, Deep Web y Dark Web</a><a href="e2.html">U4·E2 · Un sensor vigilando la web →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

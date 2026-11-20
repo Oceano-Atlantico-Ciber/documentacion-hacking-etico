@@ -18,10 +18,26 @@
 
 <section class="seccion">
 <h2>Las tres capas</h2>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 280" role="img" aria-label="Un iceberg: por encima del agua, la web superficial que indexan los buscadores; bajo el agua, la web profunda, la parte más grande; en el fondo, la web oscura, a la que solo se llega con programas especiales">
+<path class="caja-ok" d="M300 20L420 20L470 70L250 70Z"/>
+<text class="tit" x="360" y="52" text-anchor="middle">Web superficial</text>
+<path class="linea-acento" d="M0 74H720"/><text class="acento peq" x="712" y="66" text-anchor="end">lo que ven los buscadores</text>
+<path class="caja-acento" d="M250 78L470 78L560 200L160 200Z"/>
+<text class="tit" x="360" y="130" text-anchor="middle">Web profunda</text>
+<text class="peq" x="360" y="152" text-anchor="middle">correo, banca, intranets, bases de datos</text>
+<text class="tenue peq" x="360" y="172" text-anchor="middle">la parte más grande, legal y cotidiana</text>
+<path class="caja-peligro" d="M160 208L560 208L520 268L200 268Z"/>
+<text class="tit" x="360" y="236" text-anchor="middle">Web oscura</text>
+<text class="peq" x="360" y="256" text-anchor="middle">solo con Tor, I2P, ZeroNet, Freenet…</text>
+<text class="mono peq" x="0" y="52">ClearNet</text><text class="mono peq" x="0" y="140">Deep Web</text><text class="mono peq" x="0" y="242">Dark Web</text>
+</svg>
+<figcaption>La imagen del iceberg: lo que se ve desde fuera es una parte pequeña. Bajo el agua casi todo es privado, no oscuro.</figcaption>
+</figure>
 <dl class="ficha">
-<dt>ClearNet</dt><dd>Lo que indexan los buscadores y cualquiera puede abrir con un navegador normal: periódicos, tiendas, esta documentación.</dd>
-<dt>Deep Web</dt><dd>Lo que no indexan los buscadores porque está detrás de un usuario o no se enlaza: tu correo, la intranet del instituto, la banca online, una base de datos. Es la capa más grande, y es legal y cotidiana.</dd>
-<dt>Dark Web</dt><dd>Sitios que solo se alcanzan con un programa especial, que esconde quién publica y quién visita. Hay mercados ilegales y foros de delincuentes, y también periodistas, activistas en países con censura y versiones .onion de medios como la BBC.</dd>
+<dt>ClearNet</dt><dd>La web superficial: lo que indexan los buscadores y cualquiera puede abrir con un navegador normal: periódicos, tiendas, esta documentación.</dd>
+<dt>Deep Web</dt><dd>La web profunda: lo que no indexan los buscadores porque está detrás de un usuario o no se enlaza: tu correo, la intranet del instituto, la banca online, una base de datos. Es la capa más grande, y es legal y cotidiana.</dd>
+<dt>Dark Web</dt><dd>La web oscura: sitios que solo se alcanzan con un programa especial, que esconde quién publica y quién visita. Hay mercados ilegales y foros de delincuentes, y también periodistas, activistas en países con censura y versiones .onion de medios como la BBC.</dd>
 <dt>Darknet</dt><dd>Cada una de las redes que forman la Dark Web: Tor, I2P, ZeroNet, Freenet. Funcionan por encima de Internet.</dd>
 </dl>
 </section>
@@ -34,6 +50,22 @@
 <tr><td><b>ZeroNet</b></td><td>Webs repartidas <b>P2P con BitTorrent</b>: cada visitante guarda una copia y la sirve a otros. Firmadas con claves como las de Bitcoin. El proyecto original no se mantiene desde 2022.</td><td>El cliente de ZeroNet.</td><td>Una dirección Bitcoin o un nombre <code>.bit</code>.</td></tr>
 <tr><td><b>Freenet</b></td><td>Un <b>almacén distribuido</b>: los ficheros se trocean, se cifran y se reparten entre los nodos. Desde 2023 la red clásica se llama <b>Hyphanet</b>.</td><td>Un nodo de Hyphanet.</td><td>Claves como <code>USK@</code>, <code>SSK@</code> o <code>CHK@</code>.</td></tr>
 </tbody></table></div>
+<p>P2P (de igual a igual) quiere decir que no hay un servidor central: los equipos de los usuarios se pasan los datos entre ellos.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 200" role="img" aria-label="Circuito de Tor: tu equipo cifra el mensaje en tres capas y lo envía a un nodo de entrada, que lo pasa a uno intermedio y este a uno de salida; cada nodo quita una capa y solo conoce al anterior y al siguiente">
+<defs><marker id="tor-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="60" width="110" height="60" rx="8"/><text class="tit" x="55" y="86" text-anchor="middle">Tu equipo</text><text class="tenue peq" x="55" y="106" text-anchor="middle">Tor Browser</text>
+<rect class="caja-acento" x="150" y="60" width="120" height="60" rx="8"/><text class="tit peq" x="210" y="86" text-anchor="middle">Nodo de entrada</text><text class="tenue peq" x="210" y="106" text-anchor="middle">sabe quién eres</text>
+<rect class="caja-acento" x="310" y="60" width="120" height="60" rx="8"/><text class="tit peq" x="370" y="86" text-anchor="middle">Nodo intermedio</text><text class="tenue peq" x="370" y="106" text-anchor="middle">no sabe nada</text>
+<rect class="caja-acento" x="470" y="60" width="120" height="60" rx="8"/><text class="tit peq" x="530" y="86" text-anchor="middle">Nodo de salida</text><text class="tenue peq" x="530" y="106" text-anchor="middle">sabe adónde vas</text>
+<rect class="caja" x="630" y="60" width="90" height="60" rx="8"/><text class="tit" x="675" y="94" text-anchor="middle">La web</text>
+<path class="linea-acento" d="M110 90H148" marker-end="url(#tor-f)"/><path class="linea-acento" d="M270 90H308" marker-end="url(#tor-f)"/><path class="linea-acento" d="M430 90H468" marker-end="url(#tor-f)"/><path class="linea" d="M590 90H628"/>
+<text class="mono peq" x="130" y="40" text-anchor="middle">3 capas</text><text class="mono peq" x="290" y="40" text-anchor="middle">2 capas</text><text class="mono peq" x="450" y="40" text-anchor="middle">1 capa</text><text class="mono peq tenue" x="610" y="40" text-anchor="middle">sin capa Tor</text>
+<text class="peq" x="360" y="160" text-anchor="middle">Cada nodo quita una capa de cifrado, como quien pela una cebolla.</text>
+<text class="peq tenue" x="360" y="182" text-anchor="middle">Ninguno conoce a la vez quién eres y qué visitas.</text>
+</svg>
+<figcaption>El circuito de Tor. Un servicio <code>.onion</code> no sale de la red: el último tramo también va cifrado dentro de Tor.</figcaption>
+</figure>
 </section>
 
 <section class="seccion">
@@ -54,7 +86,7 @@
 </ul>
 </section>
 
-<nav class="temas" aria-label="Temas de la unidad"><a href="02-monitorizacion-segun-organizacion.html">← 4.2 · Monitorización según la organización</a><a href="../ejercicios/e1.html">U4·E1 · Elige su monitorización →</a></nav>
+<nav class="temas" aria-label="Temas de la unidad"><a href="02-monitorizacion-segun-organizacion.html">← 4.2 · Monitorización según la organización</a><a href="../ejercicios/e1.html">U4·E1 · ¿Qué monitorización necesita cada una? →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script src="../../../assets/nav.js" defer></script>

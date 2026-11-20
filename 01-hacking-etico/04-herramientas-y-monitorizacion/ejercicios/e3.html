@@ -11,34 +11,71 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">04 · Herramientas y monitorización</a></nav>
 
 <h1>U4·E3 · Cuatro darknets</h1>
-<p class="lead">Comparas las cuatro darknets del currículo: con qué programa se entra, cómo son sus direcciones y cómo protegen a quien publica y a quien visita. Sin visitar ninguna.</p>
+<p class="lead">Compara las cuatro darknets del currículo, sin visitar ninguna: con qué programa se entra, cómo son sus direcciones y cómo protegen a quien publica y a quien visita.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/03-clearnet-deep-dark-web.html">4.3 · ClearNet, Deep Web y Dark Web</a></dd>
+<dt>Aprendes</dt><dd>A distinguir las darknets por cómo funcionan y a separar la Deep Web de la Dark Web.</dd>
 <dt>Criterio</dt><dd>a</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u4-e3/darknets.md</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u4-e3/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u4-e3</code> sobre <code>main</code></dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u4-e3/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>darknets.md</code></td><td>La tabla de la plantilla rellena, una fila por red, y al final, en «Deep Web no es Dark Web», tus dos frases.</td></tr>
+</tbody></table></div>
+<p>Así quedaría con una red que no está en el ejercicio, Lokinet; tus filas son Tor, I2P, ZeroNet y Freenet, con valores de las listas de la plantilla:</p>
+<div class="cmd"><pre><code>| Red | Programa | Direcciones | Cómo funciona |
+|---|---|---|---|
+| Lokinet | cliente de Lokinet | .loki | enrutamiento cebolla |
+
+## Deep Web no es Dark Web
+
+La Deep Web es todo lo que no sale en un buscador, como el historial de mi cuenta del gimnasio.
+La Dark Web solo se alcanza con programas especiales, como la versión .onion de un periódico.</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u4-e3
 code ra1/u4-e3/darknets.md</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u4-e3
+code ra1/u4-e3/darknets.md</code></pre></div>
 
 <h2 class="step"><span class="n">2</span>Rellena la tabla</h2>
-<p>Para cada red, un valor de cada lista de la plantilla, escrito tal cual. Contrasta el tema con la web oficial de cada proyecto: <a href="https://www.torproject.org/">torproject.org</a>, <a href="https://geti2p.net/">geti2p.net</a>, <a href="https://www.hyphanet.org/">hyphanet.org</a> y el repositorio de ZeroNet en GitHub. Termina con dos frases y un ejemplo tuyo de Deep Web y de Dark Web.</p>
+<p>Para cada red, elige un valor de cada lista de la plantilla y escríbelo tal cual. Contrasta el tema con la web oficial de cada proyecto: <a href="https://www.torproject.org/">torproject.org</a>, <a href="https://geti2p.net/">geti2p.net</a>, <a href="https://www.hyphanet.org/">hyphanet.org</a> y el <a href="https://github.com/HelloZeroNet/ZeroNet">repositorio de ZeroNet en GitHub</a>.</p>
+<p>Al final, escribe dos frases que expliquen la diferencia entre Deep Web y Dark Web, cada una con un ejemplo tuyo.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta una red o un valor no es de su lista.</li>
 <li>Hay valores que no corresponden a su red. Solo dice cuántos.</li>
 </ul>
 
-<h2 class="step"><span class="n">3</span>Pruébalo, sube y etiqueta</h2>
-<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e3
+<h2 class="step"><span class="n">3</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add ra1/u4-e3
-git commit -m "docs(ra1-u4-e3): comparación de cuatro darknets"
-git push
-git tag -a entrega-ra1-u4-e3 -m "U4·E3 resuelto"
+git commit -m "docs(ra1-u4-e3): comparación de cuatro darknets"</code></pre></div>
+<p>Después pasa las mismas comprobaciones públicas que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e3</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u4-e3</code></pre></div>
+<p>Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite. Si cada valor corresponde a su red solo lo mira el corrector.</p>
+
+<h2 class="step"><span class="n">4</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">5</span>Etiqueta</h2>
+<p>Cuando la fila de U4·E3 salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-ra1-u4-e3 -m "U4·E3 resuelto"
 git push origin entrega-ra1-u4-e3</code></pre></div>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e2.html">← U4·E2 · Un sensor vigilando la web</a><a href="../../index.html#entrega">Entrega del RA1 →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

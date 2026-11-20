@@ -12,7 +12,7 @@
 <header>
 <p class="eyebrow">RA1 · Herramientas y monitorización · Tema 1 de 3 · Criterios a e i</p>
 <h1>Clasificación de herramientas</h1>
-<p class="lead">Hay miles de herramientas, pero caben en pocas familias. Saber a qué familia pertenece una dice qué puede ver, en qué momento de un ataque, y qué necesita para funcionar.</p>
+<p class="lead">Hay miles de herramientas, pero caben en pocas familias. Saber a qué familia pertenece una herramienta te dice qué puede ver, en qué momento de un ataque y qué necesita para funcionar.</p>
 <div class="meta"><span>Ejercicios: <a href="../ejercicios/e1.html">U4·E1</a> y <a href="../ejercicios/e2.html">U4·E2</a></span></div>
 </header>
 
@@ -28,25 +28,26 @@
 <tr><td><b>escáner de red</b></td><td>Qué equipos, puertos, servicios y versiones hay.</td><td>nmap, masscan, Angry IP Scanner</td></tr>
 <tr><td><b>escáner de vulnerabilidades</b></td><td>Fallos conocidos (CVE) y configuraciones débiles en los equipos.</td><td>OpenVAS/Greenbone, Nessus, Qualys, Nuclei, Amazon Inspector</td></tr>
 <tr><td><b>analizador de código</b></td><td>Fallos en el código, en las dependencias y en la infraestructura como código, antes de desplegar.</td><td>Trivy, Semgrep, SonarQube, Checkov, Dependabot, CodeQL, Snyk</td></tr>
-<tr><td><b>cortafuegos</b></td><td>Deja pasar o bloquea tráfico según reglas, y registra lo que bloquea.</td><td>pfSense, OPNsense, FortiGate, Firewall de Windows, grupos de seguridad de AWS, AWS WAF</td></tr>
-<tr><td><b>IDS/IPS</b></td><td>Patrones de ataque en el tráfico de red. El IDS avisa; el IPS además corta.</td><td>Suricata, Snort, Zeek</td></tr>
-<tr><td><b>antivirus/EDR</b></td><td>Programas maliciosos y comportamientos raros en cada equipo. Un EDR registra lo que pasa y permite aislar el equipo.</td><td>Microsoft Defender, CrowdStrike Falcon, SentinelOne, Wazuh, ESET, Sophos, Bitdefender</td></tr>
-<tr><td><b>SIEM</b></td><td>Junta los registros de todo lo anterior, los relaciona y lanza alertas.</td><td>Wazuh, Elastic Security, Splunk, Microsoft Sentinel, Graylog, QRadar, Security Onion</td></tr>
+<tr><td><b>cortafuegos</b></td><td>Deja pasar o bloquea tráfico según reglas, y registra lo que bloquea. Un WAF (cortafuegos de aplicaciones web) hace lo mismo con las peticiones a una web.</td><td>pfSense, OPNsense, FortiGate, Firewall de Windows, grupos de seguridad de AWS, AWS WAF</td></tr>
+<tr><td><b>IDS/IPS</b></td><td>Patrones de ataque en el tráfico de red. El IDS (sistema de detección de intrusos) avisa; el IPS (sistema de prevención de intrusos) además corta.</td><td>Suricata, Snort, Zeek</td></tr>
+<tr><td><b>antivirus/EDR</b></td><td>Programas maliciosos y comportamientos raros en cada equipo. Un EDR (detección y respuesta en el equipo) registra lo que pasa y permite aislar el equipo.</td><td>Microsoft Defender, CrowdStrike Falcon, SentinelOne, Wazuh, ESET, Sophos, Bitdefender</td></tr>
+<tr><td><b>SIEM</b></td><td>Junta los registros de todo lo anterior, los relaciona y lanza alertas. Es la gestión de eventos de seguridad.</td><td>Wazuh, Elastic Security, Splunk, Microsoft Sentinel, Graylog, QRadar, Security Onion</td></tr>
 <tr><td><b>registro de la nube</b></td><td>Quién hizo qué en una cuenta de nube o de Microsoft 365, y detección de usos raros.</td><td>AWS CloudTrail, Amazon GuardDuty, AWS Security Hub, registro de auditoría de Microsoft 365, Microsoft Purview, Defender for Cloud</td></tr>
-<tr><td><b>SOC gestionado</b></td><td>No es una herramienta: es un servicio externo de personas que vigilan tus alertas las 24 horas.</td><td>Proveedores de ciberseguridad; en el sector público, los SOC que coordina el CCN.</td></tr>
+<tr><td><b>SOC gestionado</b></td><td>No es una herramienta: es un centro de operaciones de seguridad (SOC) externo, un equipo de personas que vigila tus alertas las 24 horas.</td><td>Proveedores de ciberseguridad; en el sector público, los SOC que coordina el CCN.</td></tr>
 </tbody></table></div>
 <p>En los bloques siguientes aparecerán otras familias de hacking: herramientas de explotación (Metasploit), de contraseñas (John the Ripper, Hashcat), de tráfico (Wireshark) y proxies web (Burp Suite, ZAP).</p>
 </section>
 
 <section class="seccion">
 <h2>En qué fase ve cada una</h2>
-<ul>
-<li>El <b>reconocimiento</b> pasivo no lo ve nadie: ocurre fuera de tus sistemas.</li>
-<li>El <b>escaneo</b> lo ven el cortafuegos y el IDS.</li>
-<li><b>Obtener y mantener el acceso</b> lo ven el EDR y, si el atacante toca la nube, el registro de la nube.</li>
-<li><b>Borrar huellas</b> solo falla si los registros ya estaban copiados en otro sitio, como un SIEM.</li>
-</ul>
-<p>Por eso ninguna familia basta sola: cada una ve una parte del ataque.</p>
+<div class="tabla"><table><thead><tr><th>Fase (tema 3.2)</th><th>Cortafuegos</th><th>IDS/IPS</th><th>Antivirus/EDR</th><th>Registro de la nube</th><th>SIEM</th></tr></thead><tbody>
+<tr><td>1. Reconocimiento pasivo</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>2. Escaneo</td><td>✓</td><td>✓</td><td>—</td><td>—</td><td>✓</td></tr>
+<tr><td>3. Obtener acceso</td><td>—</td><td>—</td><td>✓</td><td>✓ si es en la nube</td><td>✓</td></tr>
+<tr><td>4. Mantener el acceso</td><td>—</td><td>—</td><td>✓</td><td>✓ si es en la nube</td><td>✓</td></tr>
+<tr><td>5. Borrar huellas</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✓ si ya tenía copia</td></tr>
+</tbody></table></div>
+<p>El reconocimiento pasivo no lo ve nadie: ocurre fuera de tus sistemas. El SIEM ve lo que le cuentan los demás; por eso, si ya había copiado los registros, el borrado de huellas no le afecta. Ninguna familia basta sola: cada una ve una parte del ataque.</p>
 </section>
 
 <section class="seccion check">

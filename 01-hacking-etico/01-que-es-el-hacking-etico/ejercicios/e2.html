@@ -11,35 +11,67 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">01 · Qué es el hacking ético</a></nav>
 
 <h1>U1·E2 · El security.txt de la empresa</h1>
-<p class="lead">Una empresa que quiere que le avisen de sus fallos publica cómo hacerlo en <code>/.well-known/security.txt</code>. Lees el de una web real y escribes el de tu empresa ficticia, servido con nginx en Docker.</p>
+<p class="lead">Lee el <code>security.txt</code> de una web real y escribe el de tu empresa ficticia, servido con nginx en Docker. Es el fichero donde una empresa dice cómo quiere que le avisen de sus fallos.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/02-etica-y-ley.html#divulgacion">1.2 · Ética y ley · Divulgación responsable</a></dd>
+<dt>Aprendes</dt><dd>A publicar, con el formato estándar, por dónde y cómo debe llegar el aviso de un fallo.</dd>
 <dt>Criterio</dt><dd>b</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u1-e2/web/.well-known/security.txt</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u1-e2/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u1-e2</code> sobre <code>main</code></dd>
 <dt>Necesitas</dt><dd>Docker Desktop, solo para verlo servido</dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u1-e2/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>web/.well-known/security.txt</code></td><td>Lo escribes tú, con los valores de tu <code>LEEME.md</code>.</td></tr>
+<tr><td><code>LEEME.md</code>, <code>docker-compose.yml</code>, <code>web/index.html</code></td><td>Tal como los deja <code>preparar.py</code>, sin cambios.</td></tr>
+</tbody></table></div>
+<p>El fichero tiene una línea <code>Campo: valor</code> por campo y puede llevar comentarios con <code>#</code>. Así quedaría el de otra empresa inventada, <code>tienda-ejemplo.test</code>; el tuyo lleva los valores de tu <code>LEEME.md</code>:</p>
+<div class="cmd"><pre><code># Cómo avisar de un fallo de seguridad
+Contact: mailto:avisos@tienda-ejemplo.test
+Policy: https://tienda-ejemplo.test/avisos
+Canonical: https://tienda-ejemplo.test/.well-known/security.txt
+Preferred-Languages: es, en
+Expires: 2027-06-30T23:59:59Z</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e2
 cd ra1/u1-e2
 code LEEME.md</code></pre></div>
-<p><code>LEEME.md</code> trae el dominio de tu empresa y los valores que tiene que llevar su fichero. Hay también una web mínima en <code>web/</code> y un <code>docker-compose.yml</code> que la sirve.</p>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u1-e2
+cd ra1/u1-e2
+code LEEME.md</code></pre></div>
+<p><code>LEEME.md</code> trae el dominio de tu empresa y los valores que tiene que llevar su fichero. Hay también una web mínima en <code>web/</code> y un <code>docker-compose.yml</code> que la sirve. Las órdenes de los pasos 2 a 4 se lanzan desde <code>ra1/u1-e2</code>.</p>
 
 <h2 class="step"><span class="n">2</span>Lee uno de verdad</h2>
-<p>Pedir un fichero que una web publica para esto no es ninguna prueba de seguridad. En PowerShell:</p>
-<div class="cmd"><pre><code>(Invoke-WebRequest https://github.com/.well-known/security.txt).Content</code></pre></div>
-<p>Fíjate en el formato: una línea por campo, <code>Campo: valor</code>, y comentarios con <code>#</code>. Los campos están en la <a href="https://www.rfc-editor.org/rfc/rfc9116">RFC 9116</a>.</p>
+<p>Pedir un fichero que una web publica para esto no es ninguna prueba de seguridad:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>curl.exe -s https://github.com/.well-known/security.txt</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>curl -s https://github.com/.well-known/security.txt</code></pre></div>
+<p>Fíjate en el formato: una línea por campo, <code>Campo: valor</code>, y comentarios con <code>#</code>. Los campos están en el <a href="https://www.rfc-editor.org/rfc/rfc9116">RFC 9116</a>. GitHub añade alguno propio, como <code>Hiring</code>, que no es del estándar: no lo copies.</p>
 
 <h2 class="step"><span class="n">3</span>Escribe el de tu empresa</h2>
 <div class="cmd"><pre><code>mkdir web/.well-known
 code web/.well-known/security.txt</code></pre></div>
-<p>Con los valores de <code>LEEME.md</code>: <code>Contact</code>, <code>Policy</code>, <code>Canonical</code>, <code>Preferred-Languages</code> con <code>es</code>, y un <code>Expires</code> de dentro de menos de un año en formato RFC 3339 (como <code>2027-10-31T23:59:59Z</code>). Puedes añadir comentarios.</p>
+<p>Escribe estos campos con los valores de <code>LEEME.md</code>: <code>Contact</code>, <code>Policy</code>, <code>Canonical</code>, <code>Preferred-Languages</code> con <code>es</code>, y un <code>Expires</code> de dentro de menos de un año en formato RFC 3339 (fecha y hora en UTC con una <code>Z</code> al final, por ejemplo <code>2027-06-30T23:59:59Z</code>; elige una que caiga dentro de los próximos doce meses). Puedes añadir comentarios.</p>
+<p class="note"><code>mkdir</code> muestra la carpeta que acaba de crear: es normal.</p>
 
 <h2 class="step"><span class="n">4</span>Sírvelo</h2>
+<p>Con Docker Desktop en marcha:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker compose up -d
 curl.exe -i http://localhost:8081/.well-known/security.txt
+docker compose down</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>docker compose up -d
+curl -i http://localhost:8081/.well-known/security.txt
 docker compose down</code></pre></div>
 <p>Tiene que responder <code>200</code> con tu fichero. Si sale <code>404</code>, revisa el nombre de la carpeta, que empieza por punto.</p>
 <p>El corrector marca fallo si:</p>
@@ -47,18 +79,30 @@ docker compose down</code></pre></div>
 <li>Falta <code>web/.well-known/security.txt</code>, o tiene líneas que no son <code>Campo: valor</code>.</li>
 <li>Falta <code>Contact</code>, <code>Policy</code> o <code>Canonical</code> con los valores de tu <code>LEEME.md</code>, o <code>Preferred-Languages</code> con <code>es</code>.</li>
 <li>No hay un solo <code>Expires</code>, no es RFC 3339 o no es una fecha futura de dentro de menos de un año.</li>
-<li>Hay campos que no son de la RFC 9116.</li>
+<li>Hay campos que no son del RFC 9116.</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo, sube y etiqueta</h2>
+<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e2
 git add ra1/u1-e2
-git commit -m "feat(ra1-u1-e2): security.txt de la empresa"
-git push
-git tag -a entrega-ra1-u1-e2 -m "U1·E2 resuelto"
+git commit -m "feat(ra1-u1-e2): security.txt de la empresa"</code></pre></div>
+<p>Después pasa las mismas comprobaciones que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e2</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u1-e2</code></pre></div>
+<p>Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite.</p>
+
+<h2 class="step"><span class="n">6</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">7</span>Etiqueta</h2>
+<p>Cuando la fila de U1·E2 salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-ra1-u1-e2 -m "U1·E2 resuelto"
 git push origin entrega-ra1-u1-e2</code></pre></div>
-<p>Etiqueta cuando la fila de U1·E2 de <b>Corrector ra1</b> salga sin fallos.</p>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U1·E1 · ¿Hacking ético o delito?</a><a href="../../02-permisos-y-alcance/index.html">02 · Permisos y alcance →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

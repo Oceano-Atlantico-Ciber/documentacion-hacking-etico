@@ -11,22 +11,40 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">RA1</a> · <a href="../index.html">02 · Permisos y alcance</a></nav>
 
 <h1>U2·E2 · Un alcance con fallos</h1>
-<p class="lead">Otro auditor dejó firmado un alcance de doce cláusulas. Seis de ellas, si se trabaja así, meten en problemas al auditor, al cliente o a terceros, y cada una por un motivo distinto. Encuéntralas y di de qué tipo es cada fallo.</p>
+<p class="lead">Otro auditor dejó firmado el alcance de una prueba para Transportes Atlántico SL, con doce cláusulas. Seis de ellas meten en problemas al auditor, al cliente o a terceros, cada una por un motivo distinto: encuéntralas y di de qué tipo es cada fallo.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/02-autorizacion-y-alcance.html">2.2 · Autorización y alcance</a></dd>
+<dt>Aprendes</dt><dd>A leer un alcance con ojo crítico antes de firmarlo y a decir qué parte falla.</dd>
 <dt>Criterio</dt><dd>c</dd>
-<dt>Trabajas en</dt><dd><code>ra1/u2-e2/fallos.md</code></dd>
+<dt>Trabajas en</dt><dd><code>ra1/u2-e2/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-ra1-u2-e2</code> sobre <code>main</code></dd>
 </dl>
 
+<h2>Qué entregas</h2>
+<p>En <code>ra1/u2-e2/</code>:</p>
+<div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
+<tr><td><code>fallos.md</code></td><td>Las doce cláusulas, tal como las deja <code>preparar.py</code>, y la tabla de debajo rellena: una fila por cláusula, de C1 a C12.</td></tr>
+</tbody></table></div>
+<p>En cada fila va «no» o un tipo de fallo. Por ejemplo, con dos cláusulas inventadas, «C1. El cliente es Panadería Sol SL» (está bien) y «C2. Se prueba la wifi del local de al lado» (no es del cliente), las filas quedarían así:</p>
+<div class="cmd"><pre><code>| Cláusula | Fallo |
+|---|---|
+| C1 | no |
+| C2 | terceros |</code></pre></div>
+
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio</h2>
+<p>Desde tu repositorio de entregas:</p>
+<p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/01-hacking-etico/preparar.py u2-e2
+code ra1/u2-e2/fallos.md</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/01-hacking-etico/preparar.py u2-e2
 code ra1/u2-e2/fallos.md</code></pre></div>
 <p>Las cláusulas están en <code>fallos.md</code>, numeradas en un orden distinto para cada alumno.</p>
 
 <h2 class="step"><span class="n">2</span>Clasifica cada cláusula</h2>
-<p>En la columna <b>Fallo</b>, «no» si la cláusula está bien, o el tipo de fallo tal cual:</p>
+<p>En la columna <b>Fallo</b>, escribe «no» si la cláusula está bien, o el tipo de fallo tal cual:</p>
 <div class="tabla"><table><thead><tr><th>Tipo</th><th>El fallo está en…</th></tr></thead><tbody>
 <tr><td><code>autorización</code></td><td>quién autoriza o cómo.</td></tr>
 <tr><td><code>objetivos</code></td><td>qué se puede probar.</td></tr>
@@ -42,14 +60,27 @@ code ra1/u2-e2/fallos.md</code></pre></div>
 <li>Hay cláusulas mal clasificadas. Dice cuántas, no cuáles.</li>
 </ul>
 
-<h2 class="step"><span class="n">3</span>Pruébalo, sube y etiqueta</h2>
-<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e2
+<h2 class="step"><span class="n">3</span>Pruébalo en tu equipo</h2>
+<p>Primero guarda tu trabajo en un commit: las pruebas solo ven lo que está en commits.</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add ra1/u2-e2
-git commit -m "docs(ra1-u2-e2): fallos del alcance de Transportes Atlántico"
-git push
-git tag -a entrega-ra1-u2-e2 -m "U2·E2 resuelto"
+git commit -m "docs(ra1-u2-e2): fallos del alcance de Transportes Atlántico"</code></pre></div>
+<p>Después pasa las mismas comprobaciones públicas que el corrector:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e2</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/01-hacking-etico/pruebas.py u2-e2</code></pre></div>
+<p>Tiene que salir <b>✓ formato correcto</b>. Cada ✗ dice qué falla: corrige, haz otro commit y repite. Si cada cláusula está bien clasificada solo lo mira el corrector.</p>
+
+<h2 class="step"><span class="n">4</span>Sube y mira el corrector</h2>
+<div class="cmd"><pre><code>git push</code></pre></div>
+<p>En GitHub, abre tu repositorio y pulsa el icono ✓ o ✗ junto a tu último commit de <code>main</code>. Abre <b>Details</b> en la comprobación <b>Corrector ra1</b>: hay una fila por ejercicio, y se actualiza cuando el docente lanza la corrección.</p>
+
+<h2 class="step"><span class="n">5</span>Etiqueta</h2>
+<p>Cuando la fila de U2·E2 salga sin fallos:</p>
+<div class="cmd"><pre><code>git tag -a entrega-ra1-u2-e2 -m "U2·E2 resuelto"
 git push origin entrega-ra1-u2-e2</code></pre></div>
-<p>Etiqueta cuando la fila de U2·E2 de <b>Corrector ra1</b> salga sin fallos.</p>
+<p class="note">Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../../00-fundamentos/01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de la unidad"><a href="e1.html">← U2·E1 · El alcance de la clínica</a><a href="../../03-vulnerabilidades-y-ataques/index.html">03 · Vulnerabilidades y ataques →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

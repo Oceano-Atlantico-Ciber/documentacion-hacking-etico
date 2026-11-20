@@ -19,7 +19,7 @@
 <section class="seccion">
 <h2>Quién hace qué</h2>
 <div class="tabla"><table><thead><tr><th>Término</th><th>Qué lo define</th></tr></thead><tbody>
-<tr><td><b>Hacking</b></td><td>Entender un sistema a fondo para hacerle hacer cosas para las que no fue pensado. La palabra no dice si es legal o no.</td></tr>
+<tr><td><b>Hacking</b></td><td>Entender un sistema a fondo para conseguir que haga cosas para las que no se pensó. La palabra no dice si es legal o no.</td></tr>
 <tr><td><b>Hacking ético</b></td><td>Lo mismo, con permiso por escrito, dentro de un alcance y para que se corrija lo que se encuentre.</td></tr>
 <tr><td><b>Test de intrusión</b> (pentest)</td><td>Un encargo concreto de hacking ético: objetivos, fechas, reglas y un informe al final. Intenta entrar de verdad, con cuidado de no romper nada.</td></tr>
 <tr><td><b>Análisis de vulnerabilidades</b></td><td>Buscar fallos conocidos, normalmente con un escáner, sin intentar aprovecharlos. Más rápido y más superficial que un test de intrusión.</td></tr>
@@ -28,7 +28,7 @@
 <tr><td><b>Hacktivismo</b></td><td>Ataques con motivación política o social. Sin permiso es delito, por buena que sea la causa.</td></tr>
 <tr><td><b>Ciberdelito</b></td><td>Acceder, interceptar, alterar o interrumpir sistemas ajenos sin autorización. Lo ves con detalle en <a href="02-etica-y-ley.html">1.2 · Ética y ley</a>.</td></tr>
 </tbody></table></div>
-<p>Los sombreros son la forma informal de decir lo mismo: <b>white hat</b> trabaja con permiso, <b>black hat</b> sin permiso y para su beneficio, y <b>grey hat</b> entra sin permiso «para avisar». El gris también es delito.</p>
+<p>Los sombreros son la forma informal de decir lo mismo: el <b>white hat</b> (sombrero blanco) trabaja con permiso; el <b>black hat</b> (sombrero negro), sin permiso y para su beneficio; y el <b>grey hat</b> (sombrero gris) entra sin permiso «para avisar». Lo que hace el gris también es delito.</p>
 </section>
 
 <section class="seccion">
@@ -36,18 +36,31 @@
 <dl class="ficha">
 <dt>Activo</dt><dd>Lo que tiene valor y se protege: datos de clientes, un servidor, la web de la tienda, la reputación.</dd>
 <dt>Vulnerabilidad</dt><dd>Un fallo que permite hacer algo que no se debería. La contraseña por defecto de un router es una vulnerabilidad.</dd>
-<dt>Amenaza</dt><dd>Quién o qué podría aprovechar ese fallo: un atacante, un empleado descontento, un ransomware.</dd>
-<dt>Riesgo</dt><dd>Probabilidad de que la amenaza aproveche la vulnerabilidad, por el impacto que tendría. Sin activo valioso o sin amenaza, el riesgo baja.</dd>
+<dt>Amenaza</dt><dd>Quién o qué podría aprovechar ese fallo: un atacante, un empleado descontento, un ransomware (un programa que cifra los ficheros y pide un rescate por recuperarlos).</dd>
+<dt>Riesgo</dt><dd>La probabilidad de que la amenaza aproveche la vulnerabilidad, multiplicada por el impacto que tendría. Sin activo valioso o sin amenaza, el riesgo baja.</dd>
 <dt>Exploit</dt><dd>El código o la técnica que aprovecha una vulnerabilidad concreta.</dd>
-<dt>Payload</dt><dd>Lo que hace el exploit una vez dentro: abrir una consola, crear un usuario, cifrar ficheros.</dd>
-<dt>Día cero (0-day)</dt><dd>Una vulnerabilidad que el fabricante aún no conoce o no ha corregido. Nadie ha tenido «ningún día» para parchearla.</dd>
+<dt>Carga útil (payload)</dt><dd>Lo que hace el exploit una vez dentro: abrir una consola, crear un usuario, cifrar ficheros.</dd>
+<dt>Día cero (0-day)</dt><dd>Una vulnerabilidad que el fabricante aún no conoce o no ha corregido. El fabricante ha tenido cero días para corregirla, así que nadie ha podido parchear su sistema (instalar el parche, la actualización que corrige el fallo).</dd>
 <dt>Vector de ataque</dt><dd>El camino por el que llega el ataque: un correo, un puerto abierto, un USB, una web.</dd>
 <dt>Superficie de ataque</dt><dd>La suma de todo lo que un atacante puede tocar desde fuera. Cerrar servicios que no se usan la reduce.</dd>
 </dl>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 190" role="img" aria-label="Un activo con una vulnerabilidad y una amenaza que puede aprovecharla dan un riesgo: probabilidad por impacto">
+<defs><marker id="rg-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="rg-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-peligro" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja-ok" x="0" y="10" width="200" height="50" rx="8"/><text class="tit" x="100" y="32" text-anchor="middle">Activo</text><text class="tenue peq" x="100" y="50" text-anchor="middle">la base de datos de clientes</text>
+<rect class="caja" x="0" y="70" width="200" height="50" rx="8"/><text class="tit" x="100" y="92" text-anchor="middle">Vulnerabilidad</text><text class="tenue peq" x="100" y="110" text-anchor="middle">contraseña por defecto</text>
+<rect class="caja-peligro" x="0" y="130" width="200" height="50" rx="8"/><text class="tit" x="100" y="152" text-anchor="middle">Amenaza</text><text class="tenue peq" x="100" y="170" text-anchor="middle">un atacante que la prueba</text>
+<path class="linea" d="M200 35H300V85" /><path class="linea" d="M200 95H318" marker-end="url(#rg-f)"/><path class="linea" d="M200 155H300V105"/>
+<rect class="caja-acento" x="320" y="60" width="180" height="70" rx="8"/><text class="tit" x="410" y="88" text-anchor="middle">Riesgo</text><text class="peq" x="410" y="110" text-anchor="middle">probabilidad × impacto</text>
+<path class="linea-peligro discontinua" d="M500 95H578" marker-end="url(#rg-fp)"/>
+<rect class="caja" x="580" y="60" width="140" height="70" rx="8"/><text class="tit" x="650" y="84" text-anchor="middle">Qué se hace</text><text class="tenue peq" x="650" y="102" text-anchor="middle">corregir, reducir</text><text class="tenue peq" x="650" y="118" text-anchor="middle">o aceptar</text>
+</svg>
+<figcaption>Hacen falta las tres piezas: si falta una (nada valioso, ningún fallo o nadie que lo aproveche), el riesgo baja.</figcaption>
+</figure>
 </section>
 
 <section class="seccion">
-<h2>Los tres catálogos</h2>
+<h2>Las tres siglas</h2>
 <div class="tabla"><table><thead><tr><th>Sigla</th><th>Qué es</th><th>Ejemplo</th></tr></thead><tbody>
 <tr><td><b>CVE</b></td><td>El número de un fallo concreto en un producto concreto. Lo asigna una autoridad (CNA) y es público.</td><td>CVE-2021-44228, Log4Shell en Apache Log4j.</td></tr>
 <tr><td><b>CWE</b></td><td>El tipo de debilidad, sin producto. Sirve para aprender y para buscar cómo se corrige.</td><td>CWE-89, inyección SQL.</td></tr>

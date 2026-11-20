@@ -3,9 +3,9 @@
 
 Uso, desde ra1/u2-e1/:
 
-    py en_alcance.py 192.168.1.20 "2027-02-03 22:15"
+    py en_alcance.py 192.168.1.20 "2027-02-03 22:15"          (Windows; en Linux o macOS, python3)
 
-Es la misma regla que aplica el corrector, con otras direcciones y otros momentos que no ves.
+Es la misma regla que usan pruebas.py y el corrector para hacerle sus nueve preguntas a tu alcance.json.
 """
 
 from __future__ import annotations

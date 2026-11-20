@@ -12,7 +12,7 @@
 <header>
 <p class="eyebrow">RA1 · Vulnerabilidades y ataques · Tema 2 de 5 · Criterio e</p>
 <h1>Fases de un ataque</h1>
-<p class="lead">Un ataque no es un único paso. Quien ataca, y quien audita con permiso, sigue casi siempre el mismo orden. Conocerlo sirve para planificar una auditoría y, sobre todo, para saber en qué momento se puede detectar a un atacante.</p>
+<p class="lead">Un ataque no es un único paso. Quien ataca y quien audita con permiso siguen casi siempre el mismo orden. Conocerlo sirve para planificar una auditoría y, sobre todo, para saber en qué momento se puede detectar a un atacante.</p>
 <div class="meta"><span>Antes: <a href="01-propiedades.html">3.1 · Las propiedades de la seguridad</a></span><span>Ejercicio: <a href="../ejercicios/e3.html">U3·E3</a></span></div>
 </header>
 
@@ -25,13 +25,14 @@
 <tr><td><b>4. Mantener el acceso</b></td><td>Poder volver aunque se corrija el fallo por el que entró.</td><td>Crear un usuario, instalar un programa de acceso remoto.</td><td>RA4 · Sistemas comprometidos</td></tr>
 <tr><td><b>5. Borrar huellas</b></td><td>Que nadie note lo que pasó.</td><td>Borrar registros, ocultar ficheros.</td><td>RA4 · Sistemas comprometidos</td></tr>
 </tbody></table></div>
+<div class="flow"><span>1. Reconocimiento</span><i>→</i><span>2. Escaneo</span><i>→</i><span>3. Obtener acceso</span><i>→</i><span>4. Mantener el acceso</span><i>→</i><span>5. Borrar huellas</span></div>
 <p>El reconocimiento puede ser <b>pasivo</b> (sin enviar nada al objetivo: buscadores, redes sociales) o <b>activo</b> (preguntándole directamente). El pasivo no deja rastro en sus sistemas; el escaneo sí.</p>
 <p>Lo que hace el atacante una vez dentro (robar datos, cifrar ficheros y pedir rescate) es su <b>objetivo</b>. Hay modelos que lo cuentan como una fase más.</p>
 </section>
 
 <section class="seccion">
 <h2>Cyber Kill Chain</h2>
-<p>Lockheed Martin describió el ataque como una cadena de siete eslabones: reconocimiento, preparación del arma, entrega, explotación, instalación, mando y control, y acciones sobre el objetivo. La idea útil es que <b>romper cualquier eslabón para el ataque</b>: si el correo con el adjunto no llega, da igual lo bien preparado que esté.</p>
+<p>Lockheed Martin describió el ataque como una cadena de siete eslabones: reconocimiento, preparación del arma, entrega, explotación, instalación, mando y control, y acciones sobre el objetivo. La idea útil es que <b>romper cualquier eslabón detiene el ataque</b>: si el correo con el adjunto no llega, da igual lo bien preparado que esté.</p>
 </section>
 
 <section class="seccion" id="attack">
@@ -40,7 +41,7 @@
 <div class="tabla"><table><thead><tr><th>Técnica</th><th>Nombre</th><th>Fase</th></tr></thead><tbody>
 <tr><td><code>T1595</code></td><td>Active Scanning</td><td>Escaneo</td></tr>
 <tr><td><code>T1566.001</code></td><td>Phishing: Spearphishing Attachment</td><td>Obtener acceso</td></tr>
-<tr><td><code>T1053</code></td><td>Scheduled Task/Job</td><td>Mantener acceso</td></tr>
+<tr><td><code>T1053</code></td><td>Scheduled Task/Job</td><td>Mantener el acceso</td></tr>
 </tbody></table></div>
 <p>Las subtécnicas llevan un punto y tres cifras: <code>T1566.001</code>. Los informes de incidentes y las herramientas de defensa usan estos identificadores para hablar todos de lo mismo. Para buscar una técnica, usa el buscador de la web de ATT&amp;CK o pregunta a tu IA y comprueba la respuesta en la web.</p>
 </section>
