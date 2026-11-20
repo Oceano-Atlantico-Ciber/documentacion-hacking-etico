@@ -22,22 +22,24 @@
 <dl class="ficha">
 <dt>Montar</dt><dd>Hacer que algo de fuera aparezca dentro del contenedor, en una carpeta suya.</dd>
 <dt>Volumen</dt><dd>Un almacén de datos que crea y guarda Docker, fuera de cualquier contenedor.</dd>
-<dt>Bind mount</dt><dd>Una carpeta de tu equipo montada dentro del contenedor: los dos ven los mismos ficheros.</dd>
+<dt>Montaje de carpeta</dt><dd>En inglés, <i>bind mount</i>: una carpeta de tu equipo montada dentro del contenedor. Los dos ven los mismos ficheros.</dd>
 <dt>Dirección IP</dt><dd>El número que identifica a un equipo dentro de una red, como <code>192.168.1.23</code>.</dd>
 <dt>Interfaz de red</dt><dd>Cada conexión de tu equipo a una red: la wifi, el cable, la de Docker. Cada una tiene su IP.</dd>
 <dt><code>127.0.0.1</code></dt><dd>También llamada <code>localhost</code>: tu propio equipo. Solo se llega a ella desde él.</dd>
 <dt><code>0.0.0.0</code></dt><dd>«Todas mis interfaces a la vez»: llega cualquiera que llegue a tu equipo.</dd>
 <dt>Publicar un puerto</dt><dd>Conectar una puerta de tu equipo con una del contenedor. Lo hace <code>-p</code>.</dd>
 <dt>Red de Docker</dt><dd>Una red privada dentro de tu equipo en la que unos contenedores se ven con otros.</dd>
+<dt>Subred</dt><dd>El rango de direcciones IP que reparte una red, como <code>172.28.0.0/24</code>.</dd>
 <dt>DNS</dt><dd>El servicio que traduce un nombre, como <code>floci</code>, a su dirección IP.</dd>
+<dt>Floci</dt><dd>La nube simulada del curso: imita los servicios de AWS dentro de un contenedor.</dd>
 </dl>
 </section>
 
 <section class="seccion">
 <h2>Tres sitios para los datos</h2>
-<p>Lo que un contenedor escribe en su propia capa desaparece con <code>docker rm</code>. Para conservarlo, se monta en una de sus carpetas algo que vive fuera: un <b>volumen</b>, que gestiona Docker, o una carpeta de tu equipo, un <b>bind mount</b>.</p>
+<p>Lo que un contenedor escribe en su propia capa desaparece con <code>docker rm</code>. Para conservarlo, se monta en una de sus carpetas algo que vive fuera: un <b>volumen</b>, que gestiona Docker, o una carpeta de tu equipo, con un <b>montaje de carpeta</b> (<i>bind mount</i>).</p>
 <figure>
-<svg class="diagrama" viewBox="0 0 720 270" role="img" aria-label="La capa del contenedor se pierde al borrarlo; un volumen y un bind mount viven fuera y sobreviven">
+<svg class="diagrama" viewBox="0 0 720 270" role="img" aria-label="La capa del contenedor se pierde al borrarlo; un volumen y un montaje de carpeta viven fuera y sobreviven">
 <defs><marker id="dat-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
 <rect class="linea discontinua" x="180" y="4" width="360" height="92" rx="8"/><text class="tit" x="196" y="26">Contenedor</text>
 <rect class="caja" x="196" y="40" width="100" height="40" rx="6"/><text class="mono" x="246" y="65" text-anchor="middle">/tmp</text>
@@ -46,17 +48,19 @@
 <path class="linea" d="M246 80L110 146" marker-end="url(#dat-f)"/><path class="linea" d="M360 80V146" marker-end="url(#dat-f)"/><path class="linea" d="M474 80L610 146" marker-end="url(#dat-f)"/>
 <rect class="caja-peligro" x="0" y="148" width="220" height="112" rx="8"/><text class="tit" x="16" y="172">Capa del contenedor</text><text class="tenue peq" x="16" y="194">lo que no se monta</text><text class="tenue peq" x="16" y="212">nadie la ve desde fuera</text><text class="peligro fuerte" x="16" y="244">se pierde con docker rm</text>
 <rect class="caja-ok" x="250" y="148" width="220" height="112" rx="8"/><text class="tit" x="266" y="172">Volumen</text><text class="mono tenue peq" x="266" y="194">-v datos-db:/datos</text><text class="tenue peq" x="266" y="212">lo guarda Docker</text><text class="acento fuerte" x="266" y="244">sobrevive</text>
-<rect class="caja-ok" x="500" y="148" width="220" height="112" rx="8"/><text class="tit" x="516" y="172">Bind mount</text><text class="mono tenue peq" x="516" y="194">-v ./web:/web:ro</text><text class="tenue peq" x="516" y="212">una carpeta tuya</text><text class="acento fuerte" x="516" y="244">sobrevive y la editas</text>
+<rect class="caja-ok" x="500" y="148" width="220" height="112" rx="8"/><text class="tit" x="516" y="172">Montaje de carpeta</text><text class="mono tenue peq" x="516" y="194">-v ./web:/web:ro</text><text class="tenue peq" x="516" y="212">una carpeta tuya</text><text class="acento fuerte" x="516" y="244">sobrevive y la editas</text>
 </svg>
-<figcaption>Un volumen es para los datos del programa (una base de datos); un bind mount, para ficheros que quieres ver o editar desde tu equipo (una web, un Terraform).</figcaption>
+<figcaption>Un volumen es para los datos del programa (una base de datos); un montaje de carpeta, para ficheros que quieres ver o editar desde tu equipo (una web, un Terraform).</figcaption>
 </figure>
 <div class="tabla"><table><thead><tr><th>Orden</th><th>Qué hace</th></tr></thead><tbody>
 <tr><td><code>docker volume create datos-db</code></td><td>Crea un volumen. <code>docker run -v</code> también lo crea si no existe.</td></tr>
 <tr><td><code>docker run -v datos-db:/var/lib/postgresql/data …</code></td><td>Monta el volumen en esa carpeta del contenedor.</td></tr>
 <tr><td><code>docker run -v ./web:/usr/share/nginx/html:ro …</code></td><td>Monta tu carpeta <code>web/</code>. <code>:ro</code>: el contenedor la lee, pero no puede cambiarla.</td></tr>
+<tr><td><code>docker run -e NOMBRE=valor …</code></td><td>Da al contenedor una variable de entorno. Postgres, por ejemplo, lee su contraseña de <code>-e POSTGRES_PASSWORD=…</code>.</td></tr>
+<tr><td><code>docker run --restart unless-stopped …</code></td><td>Vuelve a arrancar el contenedor si se cae o si reinicias Docker, salvo que lo pares tú.</td></tr>
 <tr><td><code>docker volume ls</code> / <code>docker volume rm datos-db</code></td><td>Lista / borra volúmenes. Borrar uno borra sus datos.</td></tr>
 </tbody></table></div>
-<p class="note">Un bind mount sin <code>:ro</code> deja al contenedor escribir en tu carpeta, igual que un programa más. En los laboratorios, Trivy y la web montan lo tuyo en solo lectura por eso. Y cuando en la puesta en marcha haces <code>docker compose down -v</code>, la <code>-v</code> borra los volúmenes: Floci pierde todo lo que desplegaste.</p>
+<p class="note">Un montaje de carpeta sin <code>:ro</code> deja al contenedor escribir en tu carpeta, igual que un programa más. Por eso, en los laboratorios, Trivy y la web montan tus carpetas en solo lectura.</p>
 </section>
 
 <section class="seccion">
@@ -101,8 +105,8 @@
 </svg>
 <figcaption>Una cuenta AWS emulada con credenciales <code>test/test</code> abierta a toda la red es una exposición accidental de manual. Publica en <code>127.0.0.1</code> salvo que quieras que otros entren.</figcaption>
 </figure>
-<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
-docker port web          # 80/tcp -&gt; 127.0.0.1:8080</code></pre>
+<div class="cmd"><pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
+docker port web          # 80/tcp -&gt; 127.0.0.1:8080</code></pre></div>
 </section>
 
 <section class="seccion">
@@ -124,33 +128,13 @@ docker port web          # 80/tcp -&gt; 127.0.0.1:8080</code></pre>
 </svg>
 <figcaption>Por eso los compose del curso dicen <code>AWS_ENDPOINT_URL: http://floci:4566</code>: <code>floci</code> es el nombre del contenedor en la red <code>lab</code>.</figcaption>
 </figure>
-<pre><code>docker network create lab
+<div class="cmd"><pre><code>docker network create lab
 docker run -d --name web --network lab nginx:1.27-alpine
 docker run --rm --network lab curlimages/curl:8.11.1 -s http://web/    # llega por el nombre
-docker network inspect lab     # quién está conectado y con qué IP</code></pre>
-<p>Una red puede tener una subred fija y cada contenedor una IP fija. Los laboratorios de la empresa ficticia lo hacen para que el mapa de la empresa no cambie entre alumnos: la web siempre es <code>172.28.0.20</code>.</p>
-<pre><code>docker network create --subnet 172.28.0.0/24 lab-mini
-docker run -d --name web --network lab-mini --ip 172.28.0.20 nginx:1.27-alpine</code></pre>
-</section>
-
-<section class="seccion">
-<h2>Compartir la red de otro contenedor</h2>
-<p>Un sensor de red tiene que ver el tráfico que llega a un servidor. Para eso no se conecta a la red como uno más: se mete <b>dentro de la red del servidor</b>. Comparten tarjeta de red, IP y puertos, así que el sensor ve exactamente lo que ve el servidor. En el laboratorio de Suricata del RA1 (U4·E2), Suricata lo hace con la web.</p>
-<figure>
-<svg class="diagrama" viewBox="0 0 720 190" role="img" aria-label="nmap envía tráfico a 172.28.0.20; web y suricata comparten la misma tarjeta de red, así que suricata ve cada paquete que recibe web">
-<defs><marker id="sen-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
-<rect class="caja" x="0" y="64" width="150" height="56" rx="8"/><text class="tit" x="75" y="88" text-anchor="middle">auditor</text><text class="mono tenue peq" x="75" y="106" text-anchor="middle">nmap</text>
-<path class="linea-acento" d="M150 92H298" marker-end="url(#sen-fa)"/><text class="mono acento fuerte" x="224" y="82" text-anchor="middle">172.28.0.20</text>
-<rect class="linea discontinua" x="300" y="8" width="420" height="174" rx="10"/><text class="tenue peq" x="316" y="30">una sola pila de red: misma IP, mismos puertos</text>
-<rect class="caja-acento" x="316" y="70" width="80" height="44" rx="8"/><text class="mono tit" x="356" y="97" text-anchor="middle">eth0</text>
-<rect class="caja" x="440" y="44" width="260" height="48" rx="8"/><text class="tit" x="456" y="66">web</text><text class="tenue peq" x="456" y="83">nginx atiende la petición</text>
-<rect class="caja" x="440" y="112" width="260" height="56" rx="8"/><text class="tit" x="456" y="134">suricata</text><text class="mono tenue peq" x="456" y="152">network_mode: service:web</text>
-<path class="linea" d="M396 84L438 70M396 100L438 136"/>
-</svg>
-<figcaption>El sensor no tiene IP propia: cualquier paquete para la web pasa por la misma <code>eth0</code> que él escucha.</figcaption>
-</figure>
-<pre><code>docker run -d --name web --network lab nginx:1.27-alpine
-docker run -d --name sensor --network container:web …   # en compose: network_mode: service:web</code></pre>
+docker network inspect lab     # quién está conectado y con qué IP</code></pre></div>
+<p>Una red puede tener una <b>subred</b> fija y cada contenedor una IP fija. En <code>172.28.0.0/24</code>, el <code>/24</code> dice que las tres primeras cifras no cambian: la red reparte de <code>172.28.0.1</code> a <code>172.28.0.254</code>. Los laboratorios de la empresa ficticia lo hacen para que el mapa de la empresa no cambie entre alumnos: la web siempre es <code>172.28.0.20</code>.</p>
+<div class="cmd"><pre><code>docker network create --subnet 172.28.0.0/24 lab-mini
+docker run -d --name web --network lab-mini --ip 172.28.0.20 nginx:1.27-alpine</code></pre></div>
 </section>
 
 <section class="seccion">
@@ -158,9 +142,9 @@ docker run -d --name sensor --network container:web …   # en compose: network_
 <div class="tabla"><table><thead><tr><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead><tbody>
 <tr><td><code>Could not resolve host: web</code></td><td>Los dos contenedores no están en la misma red creada por ti.</td><td>Añade <code>--network</code> a los dos; mira <code>docker network inspect</code>.</td></tr>
 <tr><td>Funciona dentro pero no desde el navegador</td><td>No has publicado el puerto, o lo has publicado en otro.</td><td><code>docker port</code> y repite con <code>-p</code>.</td></tr>
-<tr><td>Los datos desaparecen al recrear</td><td>No había volumen, o lo has borrado con <code>-v</code>.</td><td>Monta un volumen con nombre y no uses <code>down -v</code> si quieres conservarlo.</td></tr>
-<tr><td><code>invalid mount config</code> con <code>./web</code></td><td>Docker antiguo, sin rutas relativas en <code>-v</code>.</td><td>Actualiza Docker Desktop (<code>winget upgrade Docker.DockerDesktop</code>).</td></tr>
-<tr><td>Windows pide permiso de firewall para Docker</td><td>Has publicado un puerto en todas las interfaces.</td><td>Publica en <code>127.0.0.1</code>; si no necesitas red, no lo permitas.</td></tr>
+<tr><td>Los datos desaparecen al recrear</td><td>No había volumen, o lo has borrado con <code>-v</code>.</td><td>Monta un volumen con nombre y no lo borres si quieres conservar los datos.</td></tr>
+<tr><td><code>invalid mount config</code> con <code>./web</code></td><td>Docker antiguo, sin rutas relativas en <code>-v</code>.</td><td>Actualiza Docker Desktop (en Windows, <code>winget upgrade Docker.DockerDesktop</code>).</td></tr>
+<tr><td>Windows pide permiso del cortafuegos para Docker</td><td>Has publicado un puerto en todas las interfaces.</td><td>Publica en <code>127.0.0.1</code>; si no necesitas red, no lo permitas.</td></tr>
 </tbody></table></div>
 </section>
 
@@ -173,11 +157,10 @@ docker run -d --name sensor --network container:web …   # en compose: network_
 <section class="seccion">
 <h2>Comprobación</h2>
 <ul class="check">
-<li>Sabes elegir entre volumen y bind mount, y para qué sirve <code>:ro</code></li>
+<li>Sabes elegir entre volumen y montaje de carpeta, y para qué sirve <code>:ro</code></li>
 <li>Sabes qué significa cada parte de <code>-p 127.0.0.1:8080:80</code> y quién puede llegar sin la dirección</li>
 <li>Sabes por qué <code>http://floci:4566</code> funciona dentro de la red <code>lab</code></li>
-<li>Sabes por qué Suricata ve el tráfico de la web en el laboratorio del U4·E2</li>
-<li>E5 y E6 superados en el check <b>Corrector docker</b> y con su etiqueta</li>
+<li>E5 y E6 superados en la comprobación <b>Corrector docker</b> de GitHub y con su etiqueta</li>
 </ul>
 </section>
 
@@ -185,5 +168,6 @@ docker run -d --name sensor --network container:web …   # en compose: network_
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>

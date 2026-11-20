@@ -26,7 +26,7 @@
 <h2>Palabras de este tema</h2>
 <dl class="ficha">
 <dt>Validar</dt><dd>Comprobar lo que llega antes de usarlo: que es JSON, que tiene los campos que tocan y solo esos, con su tipo y su tamaño.</dd>
-<dt>Problem Details</dt><dd>El formato estándar de los errores de una API (RFC 9457): un JSON con <code>type</code>, <code>title</code>, <code>status</code> y <code>detail</code>.</dd>
+<dt>Problem Details</dt><dd>El formato estándar de los errores de una API, definido en la RFC 9457 (una <b>RFC</b> es un documento público que fija un estándar de Internet): un JSON con <code>type</code>, <code>title</code>, <code>status</code> y <code>detail</code>.</dd>
 <dt>Paginar</dt><dd>Devolver una lista larga por trozos, con una forma de pedir el siguiente.</dd>
 <dt>Cursor</dt><dd>La marca de dónde se quedó una página. El cliente la devuelve para pedir la siguiente.</dd>
 <dt>ETag</dt><dd>Una etiqueta que identifica la versión actual de un recurso. Si el recurso cambia, cambia.</dd>
@@ -36,7 +36,7 @@
 
 <section class="seccion">
 <h2>Errores que ayudan</h2>
-<p>Un error tiene dos lectores. El programa cliente necesita un código y un formato fijo para decidir qué hacer; la persona que lo depura necesita una frase que diga qué falló. La <a href="https://www.rfc-editor.org/rfc/rfc9457">RFC 9457</a> define un formato para los dos, con su propio tipo, <code>application/problem+json</code>:</p>
+<p>Un error tiene dos lectores. El programa cliente necesita un código y un formato fijo para decidir qué hacer; la persona que lo depura necesita una frase que diga qué falló. La <a href="https://www.rfc-editor.org/rfc/rfc9457">RFC 9457</a> define un formato para los dos, con su propio <code>Content-Type</code>, <code>application/problem+json</code>:</p>
 <pre><code>HTTP/1.1 422 Unprocessable Content
 Content-Type: application/problem+json
 
@@ -54,7 +54,7 @@ Content-Type: application/problem+json
 <tr><td><code>500</code></td><td>Fallo del servidor</td><td>no debería verse nunca: si se ve, la validación no ha hecho su trabajo</td></tr>
 </tbody></table></div>
 <p class="note warn">Un error nunca lleva trazas, rutas de ficheros ni nombres de funciones. A quien usa bien la API no le sirven, y a quien la ataca le cuentan el lenguaje, el framework y cómo está organizado el código.</p>
-<p>Para que todos los errores salgan así, también los que genera el framework, cada lenguaje tiene su sitio:</p>
+<p>Cada lenguaje tiene su sitio para que todos los errores salgan así, también los que genera el framework por su cuenta:</p>
 <div class="opciones" id="elegir-lenguaje" role="group" aria-label="Lenguaje de los ejemplos">
 <button type="button" data-leng="go" aria-pressed="true">Go</button>
 <button type="button" data-leng="python" aria-pressed="false">Python</button>
@@ -112,7 +112,7 @@ app.use((req, res) =&gt; problema(res, 404, `No existe ${req.path}`));
 app.use((err, req, res, next) =&gt;
   problema(res, err.type === "entity.parse.failed" ? 400 : 500, "Petición no válida"));</code></pre></div>
 </div>
-<p>Las tres usan como <code>title</code> la frase estándar del código, y no todas dicen lo mismo. Para el <code>422</code>, Go y Node dicen <code>Unprocessable Entity</code>; Python 3.13 dice <code>Unprocessable Content</code>, el nombre que le dio la RFC 9110. Vale cualquiera de las dos: el cliente decide por <code>status</code> y <code>type</code>, y <code>title</code> solo lo lee una persona.</p>
+<p>El <code>title</code> puede variar entre lenguajes; el cliente decide por <code>status</code>.</p>
 </section>
 
 <section class="seccion">
@@ -145,12 +145,40 @@ GET /api/v1/incidencias?limit=2&amp;estado=abierta&amp;cursor=9
 <li>El <b>cursor</b> marca dónde se quedó la página: aquí, el último id devuelto. La siguiente empieza después. <code>null</code> significa que no hay más.</li>
 <li>Los filtros van en la consulta, con los mismos nombres que los campos. Un valor que no existe, <code>400</code>.</li>
 </ul>
-<p>¿Por qué cursor y no «página 3»? Si mientras recorres la lista alguien borra una incidencia, con números de página te saltas una; con cursor, no.</p>
+<p>¿Por qué cursor y no «página 2»? Si mientras recorres la lista alguien borra una incidencia, con números de página te saltas una; con cursor, no.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 200" role="img" aria-label="Lista de tres en tres. Tras leer la página 1 (incidencias 1, 2 y 3) se borra la 2. Con página 2, el servidor salta las tres primeras de la lista nueva y devuelve 5, 6 y 7: la 4 no sale nunca. Con cursor 3, devuelve las que van después de la 3: 4, 5 y 6, sin perder ninguna.">
+<defs><marker id="cu-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="tit" x="0" y="16">Con «página 2» (de tres en tres)</text>
+<rect class="caja" x="0" y="30" width="40" height="34" rx="6"/><text class="mono" x="20" y="52" text-anchor="middle">1</text>
+<rect class="caja" x="46" y="30" width="40" height="34" rx="6"/><text class="mono" x="66" y="52" text-anchor="middle">2</text>
+<rect class="caja" x="92" y="30" width="40" height="34" rx="6"/><text class="mono" x="112" y="52" text-anchor="middle">3</text>
+<text class="tenue peq" x="0" y="82">página 1</text>
+<path class="linea" d="M146 47H296" marker-end="url(#cu-f)"/><text class="peligro peq" x="221" y="39" text-anchor="middle">se borra la 2</text>
+<rect class="caja" x="300" y="30" width="40" height="34" rx="6"/><text class="mono" x="320" y="52" text-anchor="middle">5</text>
+<rect class="caja" x="346" y="30" width="40" height="34" rx="6"/><text class="mono" x="366" y="52" text-anchor="middle">6</text>
+<rect class="caja" x="392" y="30" width="40" height="34" rx="6"/><text class="mono" x="412" y="52" text-anchor="middle">7</text>
+<text class="tenue peq" x="300" y="82">página 2: salta las tres primeras</text>
+<text class="peligro fuerte" x="460" y="52">la 4 no sale nunca</text>
+<text class="tit" x="0" y="116">Con cursor</text>
+<rect class="caja" x="0" y="130" width="40" height="34" rx="6"/><text class="mono" x="20" y="152" text-anchor="middle">1</text>
+<rect class="caja" x="46" y="130" width="40" height="34" rx="6"/><text class="mono" x="66" y="152" text-anchor="middle">2</text>
+<rect class="caja" x="92" y="130" width="40" height="34" rx="6"/><text class="mono" x="112" y="152" text-anchor="middle">3</text>
+<text class="tenue peq" x="0" y="182">página 1</text>
+<path class="linea" d="M146 147H296" marker-end="url(#cu-f)"/><text class="peligro peq" x="221" y="139" text-anchor="middle">se borra la 2</text>
+<rect class="caja-ok" x="300" y="130" width="40" height="34" rx="6"/><text class="mono" x="320" y="152" text-anchor="middle">4</text>
+<rect class="caja-ok" x="346" y="130" width="40" height="34" rx="6"/><text class="mono" x="366" y="152" text-anchor="middle">5</text>
+<rect class="caja-ok" x="392" y="130" width="40" height="34" rx="6"/><text class="mono" x="412" y="152" text-anchor="middle">6</text>
+<text class="tenue peq" x="300" y="182">cursor=3: las que van después de la 3</text>
+<text class="bien fuerte" x="460" y="152">no falta ninguna</text>
+</svg>
+<figcaption>Al borrar la 2, la lista se corre un puesto. El número de página no se entera; el cursor sí, porque dice dónde te quedaste.</figcaption>
+</figure>
 </section>
 
 <section class="seccion">
 <h2>Caché: no mandar lo que ya tienes</h2>
-<p>Cada versión de un recurso lleva una etiqueta, el <code>ETag</code>. El cliente la guarda y, la próxima vez, pregunta si sigue valiendo:</p>
+<p>La <b>caché</b> es la copia que guarda el cliente de lo que ya pidió, para no descargarlo otra vez si no ha cambiado. Para saberlo, cada versión de un recurso lleva una etiqueta, el <code>ETag</code>. El cliente la guarda y, la próxima vez, pregunta si sigue valiendo:</p>
 <div class="par">
 <figure><figcaption>Primera vez</figcaption><pre><code>GET /api/v1/incidencias/7
 
@@ -167,7 +195,7 @@ ETag: "3"
 </code></pre></figure>
 </div>
 <p>Un <code>304</code> no lleva cuerpo: el cliente usa lo que ya tenía. En el contrato del curso el ETag es el número de versión de la incidencia entre comillas: empieza en <code>"1"</code> y sube con cada <code>PUT</code> o <code>PATCH</code>. Así las tres APIs del E5 dan el mismo.</p>
-<p>Las respuestas con datos de una persona, en una API con usuarios, llevan además <code>Cache-Control: private</code> o <code>no-store</code>, para que ningún intermediario las guarde y se las dé a otro.</p>
+<p>Las respuestas con datos de una persona, en una API con usuarios, llevan además <code>Cache-Control: private</code> o <code>no-store</code>, para que ningún intermediario de la red (un proxy) las guarde y se las dé a otro.</p>
 </section>
 
 <section class="seccion">

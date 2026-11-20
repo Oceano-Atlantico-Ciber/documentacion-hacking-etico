@@ -17,32 +17,35 @@
 <div class="cards">
 <a class="card" href="temas/01-imagenes-y-contenedores.html"><b>Docker 1 · Imágenes y contenedores</b><span>Qué es un contenedor, Docker en Windows, el nombre de una imagen y el ciclo de vida.</span></a>
 <a class="card" href="temas/02-construir-imagenes.html"><b>Docker 2 · Construir imágenes</b><span>El Dockerfile, ENTRYPOINT y CMD, capas, caché, .dockerignore y secretos en capas.</span></a>
-<a class="card" href="temas/03-datos-y-redes.html"><b>Docker 3 · Datos y redes</b><span>Volúmenes y bind mounts, quién llega a un puerto publicado y redes con nombres.</span></a>
+<a class="card" href="temas/03-datos-y-redes.html"><b>Docker 3 · Datos y redes</b><span>Volúmenes y montajes de carpeta, quién llega a un puerto publicado y redes con nombres.</span></a>
 <a class="card" href="temas/04-compose-y-seguridad.html"><b>Docker 4 · Compose y seguridad</b><span>Leer los compose del curso, up, run y exec, perfiles, variables y las puertas que abre un compose.</span></a>
 </div>
 
 <h2 id="ejercicios">Ejercicios</h2>
 <p class="note"><b>Antes de empezar:</b> Docker Desktop instalado (<a href="../../00-presentacion/temas/04-docker.html">Presentación · Docker</a>) y los pasos de instalación de <a href="temas/01-imagenes-y-contenedores.html#instalacion">Docker 1</a>: <code>docker login</code> con tu cuenta de Docker Hub. Las órdenes de Windows son de PowerShell; las de macOS y Linux, del Terminal.</p>
-<p>Ocho ejercicios en <code>fundamentos/docker/</code> de tu repositorio de entregas, todos en <code>main</code>. Los que tienen ficheros de partida empiezan con <code>preparar.py</code>, que los escribe a partir de tu usuario de GitHub; en E4 además construye la imagen que vas a auditar. Ejecútalo desde tu repositorio, con Docker Desktop en marcha:</p>
+<p>Ocho ejercicios en <code>fundamentos/docker/</code> de tu repositorio de entregas, todos en <code>main</code>. Cada uno sigue el mismo camino:</p>
+<div class="flow"><span><code>preparar.py</code></span><i>→</i><span>hacer el ejercicio</span><i>→</i><span>commit</span><i>→</i><span><code>pruebas.py</code></span><i>→</i><span>push</span><i>→</i><span>etiqueta</span></div>
+<p>Los que tienen ficheros de partida empiezan con <code>preparar.py</code>, que los escribe a partir de tu usuario de GitHub; en E4 además construye la imagen que vas a auditar. Ejecútalo desde tu repositorio, con Docker Desktop en marcha:</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/preparar.py e1</code></pre>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/preparar.py e1</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
-python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/preparar.py e1</code></pre>
-<p>Antes de etiquetar, compruébalo en tu equipo con <code>pruebas.py</code>: pasa exactamente las mismas comprobaciones que el corrector, sobre lo que ya tienes en commits, y dice qué falla y por qué, construyendo y levantando los contenedores como él (con Docker Desktop en marcha). Sin el número de ejercicio, los comprueba todos:</p>
+<div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
+python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/preparar.py e1</code></pre></div>
+<p>Antes de etiquetar, compruébalo en tu equipo con <code>pruebas.py</code>. Pasa exactamente las mismas comprobaciones que el corrector, sobre lo que ya tienes en commits. Construye y levanta los contenedores como él, así que necesita Docker Desktop en marcha. Si algo falla, dice qué y por qué. Sin el número de ejercicio, los comprueba todos:</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e1</code></pre>
+<div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e1</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e1</code></pre>
-<p>Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-docker-eN</code>, sobre <code>main</code>, igual que los de git.</p>
-<p class="note">Puedes entregar cada ejercicio cuando lo tengas, y mover su etiqueta siempre que lo corrijas. Antes de etiquetar, mira tu fila en el check <b>Corrector docker</b> junto al último commit de <code>main</code>; se actualiza cuando el docente lanza la corrección. El corrector construye tus imágenes y levanta tus contenedores de verdad. Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores, y E6 y E7 reutilizan lo de E2 y E5.</p>
+<div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e1</code></pre></div>
+<p>Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-docker-eN</code>, sobre <code>main</code>, igual que los de Git.</p>
+<p class="note">Puedes entregar cada ejercicio cuando lo tengas, y mover su etiqueta siempre que lo corrijas. El resultado del corrector aparece en GitHub como una <b>comprobación</b>: el icono ✓ o ✗ junto al último commit de <code>main</code>. Al pulsarlo verás <b>Corrector docker</b>, con una fila por ejercicio. Se actualiza cuando el docente lanza la corrección. El corrector construye tus imágenes y levanta tus contenedores de verdad.</p>
+<p>Hazlos en orden: cada uno usa solo lo visto en su tema y en los anteriores, y E6 y E7 reutilizan lo de E2 y E5.</p>
 <table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Tema</th></tr></thead><tbody>
 <tr><td><a href="ejercicios/e1.html">E1</a></td><td>Arrancar, cambiar, parar, rearrancar y borrar un nginx, y entregar lo que Docker sabe de él.</td><td>Docker 1</td></tr>
 <tr><td><a href="ejercicios/e2.html">E2</a></td><td>Empaquetar un sondeo de puertos en una imagen y usarlo contra otro contenedor.</td><td>Docker 2</td></tr>
 <tr><td><a href="ejercicios/e3.html">E3</a></td><td>Ordenar las capas para la caché y dejar fuera de la imagen el <code>.env</code> y las notas.</td><td>Docker 2</td></tr>
 <tr><td><a href="ejercicios/e4.html">E4</a></td><td>Recuperar una clave «borrada» de las capas de una imagen y reconstruirla sin ella.</td><td>Docker 2</td></tr>
-<tr><td><a href="ejercicios/e5.html">E5</a></td><td>Una base de datos con volumen y una web con bind mount en solo lectura.</td><td>Docker 3</td></tr>
+<tr><td><a href="ejercicios/e5.html">E5</a></td><td>Una base de datos con volumen y una web con su carpeta montada en solo lectura.</td><td>Docker 3</td></tr>
 <tr><td><a href="ejercicios/e6.html">E6</a></td><td>Una red propia con nombres y puertos publicados solo donde hacen falta.</td><td>Docker 3</td></tr>
 <tr><td><a href="ejercicios/e7.html">E7</a></td><td>E5 y E6 en un <code>docker-compose.yml</code>, con perfiles y la contraseña en <code>.env</code>.</td><td>Docker 4</td></tr>
 <tr><td><a href="ejercicios/e8.html">E8</a></td><td>Auditar y cerrar un compose con todas las puertas abiertas.</td><td>Docker 4</td></tr>
@@ -52,5 +55,6 @@ python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/prepa
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
 </body>
 </html>

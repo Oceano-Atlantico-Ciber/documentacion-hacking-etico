@@ -18,7 +18,7 @@
 <header>
 <p class="eyebrow">Fundamentos · API 2 de 4</p>
 <h1>Diseñar y construir</h1>
-<p class="lead">Primero se decide qué promete la API, en un contrato. Después se escribe el programa que lo cumple, en el lenguaje que sea. Aquí harás las dos cosas, y el programa, tres veces: en Go, en Python y en Node. Si las tres responden igual, has entendido que una API REST es HTTP y nada más.</p>
+<p class="lead">Primero se decide qué promete la API, en un contrato. Después se escribe el programa que lo cumple, en el lenguaje que sea. Aquí harás las dos cosas, y el programa lo escribirás tres veces: en Go, en Python y en Node. Si las tres responden igual, has entendido que una API REST es HTTP y nada más.</p>
 <div class="meta"><span>Antes: <a href="01-rest-es-http.html">API 1 · REST es HTTP</a></span><span>Ejercicios: <a href="../ejercicios/e2.html">E2</a>, <a href="../ejercicios/e3.html">E3</a>, <a href="../ejercicios/e4.html">E4</a> y <a href="../ejercicios/e5.html">E5</a></span></div>
 </header>
 
@@ -26,7 +26,7 @@
 <h2>Palabras de este tema</h2>
 <dl class="ficha">
 <dt>Contrato</dt><dd>La descripción de lo que la API promete: rutas, métodos, datos de entrada y salida, códigos. Es lo único que ve un cliente.</dd>
-<dt>OpenAPI</dt><dd>El formato estándar para escribir ese contrato, en YAML. Lo leen personas, editores y herramientas de pruebas.</dd>
+<dt>OpenAPI</dt><dd>El formato estándar para escribir ese contrato. Se escribe en <b>YAML</b>, un texto que ordena los datos con sangrías y líneas <code>clave: valor</code>. Lo leen personas, editores y herramientas de pruebas.</dd>
 <dt>Enrutador</dt><dd>La parte del servidor que mira el método y la ruta de cada petición y decide qué función la atiende.</dd>
 <dt>Manejador</dt><dd>La función que atiende una ruta: lee la petición y escribe la respuesta. En inglés, <i>handler</i>.</dd>
 <dt>Framework</dt><dd>Una biblioteca que da hecho el enrutador y otras piezas: FastAPI en Python, Express en Node. En Go basta la biblioteca estándar.</dd>
@@ -81,7 +81,7 @@ components:
         title: { type: string }
         status: { type: integer }
         detail: { type: string }</code></pre>
-<p>Para verlo como documentación, cópialo entero y pégalo en <a href="https://editor.swagger.io/">editor.swagger.io</a> o instala en VS Code la extensión <b>OpenAPI (Swagger) Editor</b>. Las dos señalan los errores de formato.</p>
+<p>El error <code>404</code> va como <code>application/problem+json</code> (el formato de los errores; lo verás en <a href="03-buenas-practicas.html">API 3</a>). Para verlo como documentación, cópialo entero y pégalo en <a href="https://editor.swagger.io/">editor.swagger.io</a> o instala en VS Code la extensión <b>OpenAPI (Swagger) Editor</b>. Las dos señalan los errores de formato.</p>
 <h3>Reglas de diseño</h3>
 <p>Son las que siguen las guías públicas de empresas con cientos de APIs, como las de Zalando y Microsoft, y las que comprueba el corrector del E2:</p>
 <div class="tabla"><table><thead><tr><th>Regla</th><th>Bien</th><th>Mal</th></tr></thead><tbody>
@@ -91,7 +91,7 @@ components:
 <tr><td>La versión va en la ruta</td><td><code>/api/v1/…</code></td><td>cambiar la API sin avisar</td></tr>
 <tr><td>Crear responde <code>201</code> y <code>Location</code></td><td><code>201 Created</code></td><td><code>200 OK</code> sin decir dónde quedó</td></tr>
 <tr><td>Borrar responde <code>204</code> sin cuerpo</td><td><code>204 No Content</code></td><td><code>200 {"ok": true}</code></td></tr>
-<tr><td>Cada operación declara sus errores</td><td><code>404</code>, <code>422</code>…</td><td>solo el caso feliz</td></tr>
+<tr><td>Cada operación declara sus errores</td><td><code>404</code>, <code>422</code>…</td><td>solo cuando todo va bien</td></tr>
 <tr><td>Un <code>GET</code> nunca cambia nada ni lleva cuerpo</td><td><code>GET /api/v1/incidencias</code></td><td><code>GET /api/v1/incidencias/7/borrar</code></td></tr>
 </tbody></table></div>
 </section>
@@ -100,22 +100,22 @@ components:
 <h2>Prepara los tres lenguajes</h2>
 <p>Python ya lo tienes de la <a href="../../../00-presentacion/temas/03-git-y-github.html">Presentación</a>. Instala Go y Node: en Windows con <code>winget</code>, en macOS con <a href="https://brew.sh/">Homebrew</a>.</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>winget install -e --id GoLang.Go
-winget install -e --id OpenJS.NodeJS.LTS</code></pre>
-<p class="so">macOS / Linux · Terminal</p>
-<pre><code>brew install go node</code></pre>
+<div class="cmd"><pre><code>winget install -e --id GoLang.Go
+winget install -e --id OpenJS.NodeJS.LTS</code></pre></div>
+<p class="so">macOS · Terminal</p>
+<div class="cmd"><pre><code>brew install go node</code></pre></div>
 <p>En Linux, instálalos con el gestor de paquetes de tu distribución o con los instaladores de <a href="https://go.dev/dl/">go.dev</a> y <a href="https://nodejs.org/">nodejs.org</a>; hace falta Go 1.22 o posterior y Node 20 o posterior.</p>
 <p>Cierra la terminal y vuelve a abrirla para que encuentre los programas nuevos, y comprueba que cada orden responde con un número de versión:</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>go version
+<div class="cmd"><pre><code>go version
 node --version
 npm --version
-py --version</code></pre>
+py --version</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>go version
+<div class="cmd"><pre><code>go version
 node --version
 npm --version
-python3 --version</code></pre>
+python3 --version</code></pre></div>
 <p class="note">Cada lenguaje trae su forma de instalar dependencias: Go las baja solo al compilar, Python usa <code>pip</code> dentro de un entorno virtual y Node usa <code>npm</code>. Ninguna se sube al repositorio: el <code>.gitignore</code> de cada esqueleto deja fuera <code>.venv/</code> y <code>node_modules/</code>.</p>
 </section>
 
@@ -147,6 +147,7 @@ python3 --version</code></pre>
 </div>
 
 <h3>Arrancar el proyecto</h3>
+<p>Desde tu repositorio de entregas, con el proyecto que deja <code>preparar.py</code> en el E3:</p>
 <div class="lenguaje">
 <div data-leng="go"><pre><code>cd fundamentos/api/e3
 go run .                       # compila y arranca; Ctrl+C para parar</code></pre></div>
@@ -166,11 +167,11 @@ python3 -m venv .venv                                # un entorno solo para este
 npm install                    # baja Express a node_modules/
 node --watch main.js           # --watch rearranca al guardar</code></pre></div>
 </div>
-<p>Con la API arrancada, abre otra pestaña de la terminal y pídele la salud. La respuesta es la misma en los tres:</p>
+<p>Con la API arrancada, abre otra pestaña de la terminal y pide la ruta de salud, <code>/api/v1/salud</code>: no lee datos, solo responde <code>{"estado": "ok"}</code> si la API está en marcha. La respuesta es la misma en los tres:</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>curl.exe -i http://localhost:8000/api/v1/salud</code></pre>
+<div class="cmd"><pre><code>curl.exe -i http://localhost:8000/api/v1/salud</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>curl -i http://localhost:8000/api/v1/salud</code></pre>
+<div class="cmd"><pre><code>curl -i http://localhost:8000/api/v1/salud</code></pre></div>
 
 <h3>Leer una incidencia</h3>
 <div class="lenguaje">
@@ -240,7 +241,7 @@ async def crear(request: Request):
   responder(res, 201, nueva);
 });</code></pre></div>
 </div>
-<p>Los tres ejemplos cumplen el contrato en el caso feliz. Fíjate en lo que cada uno resuelve a su manera: en Go, varias peticiones llegan a la vez y los datos compartidos se protegen con un <code>sync.Mutex</code> (<code>mu</code>); en Python, los valores por defecto se ponen antes de lo recibido; en Node, <code>express.json()</code> ya ha leído el cuerpo. Validar lo recibido llega en <a href="03-buenas-practicas.html">API 3</a>.</p>
+<p>Los tres ejemplos cumplen el contrato cuando todo va bien. Fíjate en lo que cada uno resuelve a su manera: en Go, varias peticiones llegan a la vez y los datos compartidos se protegen con un <code>sync.Mutex</code> (<code>mu</code>), un cerrojo que deja pasar a las peticiones de una en una; en Python, el diccionario lleva primero los valores por defecto y después lo recibido, que los sustituye si trae el mismo campo; en Node, <code>express.json()</code> ya ha leído el cuerpo. Validar lo recibido llega en <a href="03-buenas-practicas.html">API 3</a>.</p>
 </section>
 
 <section class="seccion">
@@ -291,34 +292,34 @@ USER node
 EXPOSE 8000
 ENTRYPOINT ["node", "main.js"]</code></pre></div>
 </div>
-<p>Desde la carpeta del proyecto, con Docker Desktop en marcha y la API de tu equipo parada (usan el mismo puerto):</p>
+<p>Desde la carpeta del proyecto, con Docker Desktop en marcha y la API de tu equipo detenida (usan el mismo puerto):</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>docker build -t api-incidencias:e3 .
+<div class="cmd"><pre><code>docker build -t api-incidencias:e3 .
 docker run -d --rm --name api -p 8000:8000 api-incidencias:e3
 curl.exe -i http://localhost:8000/api/v1/salud
-docker stop api</code></pre>
+docker stop api</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>docker build -t api-incidencias:e3 .
+<div class="cmd"><pre><code>docker build -t api-incidencias:e3 .
 docker run -d --rm --name api -p 8000:8000 api-incidencias:e3
 curl -i http://localhost:8000/api/v1/salud
-docker stop api</code></pre>
+docker stop api</code></pre></div>
 <p class="note">Dentro del contenedor la API tiene que escuchar en todas las interfaces (<code>0.0.0.0</code>), no solo en <code>localhost</code>: si no, el puerto publicado no llega (<a href="../../02-docker/temas/03-datos-y-redes.html">Docker 3</a>). Go y Express ya lo hacen; uvicorn hay que pedírselo con <code>--host 0.0.0.0</code>.</p>
 </section>
 
 <section class="seccion">
 <h2>Probar desde fuera</h2>
-<p>Cada esqueleto trae <code>pruebas.py</code>: unas pruebas que hablan con tu API solo por HTTP, sin mirar el código. Son las mismas para los tres lenguajes, porque prueban el contrato. Con la API recién arrancada, desde la carpeta del proyecto (las pruebas leen su <code>incidencias.json</code>):</p>
+<p>Cada esqueleto trae <code>pruebas.py</code>: unas pruebas de caja negra, que hablan con tu API solo por HTTP, sin mirar el código. Son las mismas para los tres lenguajes, porque prueban el contrato. Con la API recién arrancada, desde la carpeta del proyecto (las pruebas leen su <code>incidencias.json</code>):</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>py pruebas.py e3 http://localhost:8000</code></pre>
+<div class="cmd"><pre><code>py pruebas.py e3 http://localhost:8000</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>python3 pruebas.py e3 http://localhost:8000</code></pre>
+<div class="cmd"><pre><code>python3 pruebas.py e3 http://localhost:8000</code></pre></div>
 <pre><code>E3 · Lectura
   ✓ GET /api/v1/salud responde 200 {"estado": "ok"}
   ✓ La lista es JSON con Content-Type application/json
   ✗ La lista trae todas las incidencias, ordenadas por id y sin cambios  (lista vacía)
   …
 6 bien, 2 mal</code></pre>
-<p>Las pruebas crean y borran datos. Antes de repetirlas, para y vuelve a arrancar la API para que cargue de nuevo <code>incidencias.json</code>.</p>
+<p>Las pruebas crean y borran datos. Antes de repetirlas, detén la API y vuelve a arrancarla para que cargue de nuevo <code>incidencias.json</code>.</p>
 </section>
 
 <section class="seccion">

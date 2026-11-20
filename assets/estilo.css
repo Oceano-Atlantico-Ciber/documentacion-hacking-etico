@@ -73,6 +73,9 @@ th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: upp
 .check li::before { content: ""; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border: 1.5px solid var(--accent); border-radius: 3px; }
 .seccion { display: grid; gap: 14px; }
 .seccion > * { min-width: 0; }
+/* Bloques en rejilla o flex dentro de paneles y pestañas: que encojan y el <pre> desplace. */
+:is(.panel, .lenguaje) * { min-width: 0; }
+.panel :is(input, select, textarea) { max-width: 100%; }
 :not(pre) > code { overflow-wrap: anywhere; }
 .seccion > h2 { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
 nav.top { font-size: 14px; color: var(--muted); }

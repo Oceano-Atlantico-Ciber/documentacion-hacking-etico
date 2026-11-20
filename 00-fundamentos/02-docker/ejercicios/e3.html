@@ -23,13 +23,13 @@
 <p>En <code>fundamentos/docker/e3/</code>:</p>
 <div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
 <tr><td><code>Dockerfile</code></td><td>El de <code>preparar.py</code>, reordenado: la instalación de dependencias va antes de copiar <code>app.py</code>, para que salga de la caché. Mismo <code>FROM python:3.12-alpine</code>, mismo <code>CMD ["python", "app.py"]</code> y ningún <code>ENTRYPOINT</code>.</td></tr>
-<tr><td><code>.dockerignore</code></td><td>Lo escribes tú: un patrón por línea. Excluye al menos <code>.env</code> y <code>notas/</code>.</td></tr>
+<tr><td><code>.dockerignore</code></td><td>Lo escribes tú: un patrón por línea. Tiene que excluir <code>.env</code> y <code>notas/</code>, que es lo que mira el corrector. Excluir también <code>Dockerfile</code> y <code>.dockerignore</code> es opcional, pero recomendable.</td></tr>
 <tr><td><code>app.py</code></td><td>El de <code>preparar.py</code>. Puedes cambiar sus comentarios; lo que imprime tiene que seguir siendo <code>cliente de la API listo (requests 2.32.3)</code>.</td></tr>
 <tr><td><code>requirements.txt</code></td><td>El de <code>preparar.py</code>, <b>sin cambios</b>: <code>requests==2.32.3</code>.</td></tr>
 </tbody></table></div>
 <p><code>.env</code> no se sube: tu <code>.gitignore</code> ya lo excluye. <code>notas/</code> puede subirse o no; lo que cuenta es que no entre en la imagen. Un <code>.dockerignore</code> tiene esta forma (estos patrones son de ejemplo, no los que pide el ejercicio):</p>
-<div class="cmd"><pre><code>*.log
-borradores/</code></pre></div>
+<pre><code>*.log
+borradores/</code></pre>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
 <p>Desde tu repositorio, con Docker Desktop en marcha:</p>
@@ -51,7 +51,7 @@ docker run --rm e3-app:1.0 cat /app/.env</code></pre></div>
 <p>En <code>/app</code> están <code>.env</code>, <code>notas</code> y hasta el <code>Dockerfile</code>, y el segundo <code>docker run</code> imprime <code>API_TOKEN=oa-…</code>: el token y tus notas están dentro de la imagen.</p>
 <p>Ahora abre <code>app.py</code> con <code>code app.py</code>, cambia una letra del comentario de la primera línea (<code># Cliente de la API de la empresa.</code>), guarda y reconstruye:</p>
 <div class="cmd"><pre><code>docker build -t e3-app:1.0 .</code></pre></div>
-<p>El paso <code>RUN pip install</code> se repite entero, aunque <code>requirements.txt</code> no ha cambiado: <code>COPY . .</code> va antes y cualquier cambio en la carpeta invalida esa capa.</p>
+<p>El paso <code>RUN pip install</code> se repite entero, aunque <code>requirements.txt</code> no ha cambiado: <code>COPY . .</code> va antes y cualquier cambio en la carpeta obliga a rehacer esa capa.</p>
 
 <h2 class="step"><span class="n">3</span>Reordena las capas</h2>
 <div class="cmd"><pre><code>code Dockerfile</code></pre></div>
@@ -59,7 +59,7 @@ docker run --rm e3-app:1.0 cat /app/.env</code></pre></div>
 
 <h2 class="step"><span class="n">4</span>Deja fuera lo que no debe entrar</h2>
 <div class="cmd"><pre><code>code .dockerignore</code></pre></div>
-<p>El fichero se llama exactamente <code>.dockerignore</code>, con el punto delante y sin extensión. Excluye <code>.env</code> y <code>notas/</code>. Excluye también <code>Dockerfile</code> y <code>.dockerignore</code>, que no le hacen falta a la imagen.</p>
+<p>El fichero se llama exactamente <code>.dockerignore</code>, con el punto delante y sin extensión. Excluye <code>.env</code> y <code>notas/</code>: es lo obligatorio. Te recomendamos excluir también <code>Dockerfile</code> y <code>.dockerignore</code>, que la imagen no necesita.</p>
 
 <h2 class="step"><span class="n">5</span>Comprueba antes de subir</h2>
 <p>Construye una vez con los cambios:</p>
@@ -69,13 +69,15 @@ docker run --rm e3-app:1.0 cat /app/.env</code></pre></div>
 <div class="cmd"><pre><code>cmd /c "docker build --progress=plain -t e3-app:1.0 . 2&gt;&amp;1" | Select-String -Context 1,0 CACHED</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>docker build --progress=plain -t e3-app:1.0 . 2&gt;&amp;1 | grep -B1 CACHED</code></pre></div>
-<p>Entre lo que sale tiene que haber una pareja de líneas como esta, con el mismo número delante (el tuyo puede ser otro):</p>
-<div class="cmd"><pre><code>#8 [4/5] RUN pip install --no-cache-dir -r requirements.txt
-#8 CACHED</code></pre></div>
+<p>En Windows, <code>cmd /c "… 2&gt;&amp;1"</code> junta en una sola salida todo lo que escribe <code>docker build</code>, para poder filtrarla. Entre lo que sale verás una pareja de líneas parecida a esta, con el mismo número delante (el tuyo puede ser otro):</p>
+<pre><code>#8 [4/5] RUN pip install --no-cache-dir -r requirements.txt
+#8 CACHED</code></pre>
 <p>Por último, mira qué hay en la imagen y que el programa sigue funcionando:</p>
 <div class="cmd"><pre><code>docker run --rm e3-app:1.0 ls -a /app
 docker run --rm e3-app:1.0</code></pre></div>
-<p>En <code>/app</code> solo están <code>.</code>, <code>..</code>, <code>app.py</code> y <code>requirements.txt</code>, y el programa imprime <code>cliente de la API listo (requests 2.32.3)</code>.</p>
+<p>En <code>/app</code> ya no están <code>.env</code> ni <code>notas</code>. Si excluiste también los otros dos, solo quedan <code>.</code>, <code>..</code>, <code>app.py</code> y <code>requirements.txt</code>. El programa imprime <code>cliente de la API listo (requests 2.32.3)</code>.</p>
+
+<h2>Qué mira el corrector</h2>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta <code>Dockerfile</code>, <code>.dockerignore</code>, <code>app.py</code> o <code>requirements.txt</code>.</li>
@@ -87,20 +89,19 @@ docker run --rm e3-app:1.0</code></pre></div>
 <li>Al cambiar <code>app.py</code>, <code>pip install</code> no sale de la caché.</li>
 </ul>
 
-
 <h2 class="step"><span class="n">6</span>Pruébalo en tu equipo</h2>
 <p>Primero guarda tu trabajo en un commit, desde la raíz de tu repositorio: las pruebas solo ven lo que está en commits.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add .
 git commit -m "fix(docker-e3): capas en orden y contexto limpio"</code></pre></div>
-<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta, si existe; si no, <code>main</code>) y construyen y levantan contenedores como él.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e3</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e3</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar, se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">7</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push</code></pre></div>

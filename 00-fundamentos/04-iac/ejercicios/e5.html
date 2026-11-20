@@ -21,10 +21,10 @@
 
 <h2 id="que-entregas">Qué entregas</h2>
 <p>En <code>fundamentos/iac/e5/</code> de <code>main</code>, <code>main.tf</code> con el laboratorio (puedes repartirlo en varios <code>.tf</code> si prefieres), y <code>proveedor.tf</code> y <code>LEEME.md</code> tal como los deja <code>preparar.py</code>. El laboratorio tiene la forma de <a href="../temas/03-redes-y-servidores.html">IaC 3 · La forma de un laboratorio</a>:</p>
-<div class="tabla"><table><thead><tr><th>Pieza</th><th>Recursos</th><th>Cómo tiene que quedar</th></tr></thead><tbody>
+<div class="tabla"><table><thead><tr><th>Pieza</th><th>Recursos</th><th>Cómo debe quedar</th></tr></thead><tbody>
 <tr><td>Red</td><td><code>aws_vpc</code>, tres <code>aws_subnet</code></td><td>Una VPC con etiqueta <code>Name</code>; una subred pública y dos privadas en dos zonas (<code>eu-west-1a</code> y <code>eu-west-1b</code>).</td></tr>
 <tr><td>Servidor web</td><td><code>aws_security_group</code>, <code>aws_instance</code></td><td>Uno solo, en la subred pública. Su <code>user_data</code> escribe tu página en <code>/usr/share/nginx/html/index.html</code>. Su grupo abre el 80 a <code>0.0.0.0/0</code> y ningún otro puerto a todo el mundo.</td></tr>
-<tr><td>Base de datos</td><td><code>random_password</code>, <code>aws_security_group</code>, <code>aws_db_subnet_group</code>, <code>aws_db_instance</code></td><td>PostgreSQL en las dos subredes privadas, <code>publicly_accessible = false</code>. Su grupo solo admite el 5432 desde el grupo del servidor web, sin ninguna dirección. La contraseña la genera <code>random_password</code>: no se escribe en el código ni en el <code>user_data</code>.</td></tr>
+<tr><td>Base de datos</td><td><code>random_password</code>, <code>aws_security_group</code>, <code>aws_db_subnet_group</code>, <code>aws_db_instance</code></td><td>PostgreSQL en las dos subredes privadas, <code>publicly_accessible = false</code>. Su grupo solo admite el 5432 desde el grupo del servidor web, sin rangos de IP (<code>cidr_blocks</code>). La contraseña la genera <code>random_password</code>: no se escribe en el código ni en el <code>user_data</code>.</td></tr>
 <tr><td>Salida</td><td><code>output</code></td><td>La IP del servidor web.</td></tr>
 </tbody></table></div>
 <p>El corrector aplica tu código en una cuenta vacía, revisa con la CLI lo que ha quedado y después lo destruye. La etiqueta anotada <code>entrega-fundamentos-iac-e5</code> va sobre <code>main</code>, subida a GitHub.</p>
@@ -40,7 +40,7 @@ git switch main</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/preparar.py e5</code></pre></div>
 <pre><code>e5 preparado para &lt;tu-usuario&gt; en fundamentos/iac/e5/. Sigue el enunciado.</code></pre>
-<p>Deja <code>proveedor.tf</code> y un <code>LEEME.md</code> con la página que tiene que servir tu servidor web. Entra y léelo:</p>
+<p><code>preparar.py</code> ha dejado en <code>e5/</code> dos ficheros: <code>proveedor.tf</code>, que apunta a tu Floci, y un <code>LEEME.md</code> con la página que debe servir tu servidor web. Entra y léelo:</p>
 <div class="cmd"><pre><code>cd fundamentos/iac/e5
 code LEEME.md</code></pre></div>
 <p class="note"><code>code LEEME.md</code> lo abre en VS Code: léelo ahí y copia de ahí tus nombres.</p>
@@ -50,20 +50,20 @@ La página que tiene que servir tu servidor web, escrita por user_data en /usr/s
 
     Laboratorio de &lt;tu-usuario&gt; · 5e6f7a8b
 …</code></pre>
-<p>Esa línea, <code>Laboratorio de … · …</code>, es tu página. Cópiala tal cual, con el punto del medio: el corrector la busca exacta.</p>
+<p>Esa línea, <code>Laboratorio de … · …</code>, es tu página. Cópiala tal cual, con el punto medio (<code>·</code>): el corrector la busca exacta.</p>
 
 <h2 class="step"><span class="n">2</span>Escribe el laboratorio</h2>
 <div class="cmd"><pre><code>code main.tf</code></pre></div>
 <p>Escribe los recursos de la tabla de <a href="#que-entregas">Qué entregas</a>. Los ejemplos de <a href="../temas/03-redes-y-servidores.html">IaC 3</a> son casi el laboratorio entero: la VPC y las tres subredes, los grupos <code>web</code> y <code>db</code>, el servidor, la contraseña, el grupo de subredes y la base de datos, y la salida <code>ip_web</code>. Al juntarlos, cuida estos detalles, que son los que el corrector mira:</p>
 <ul>
 <li>Cada grupo de seguridad lleva <code>vpc_id = aws_vpc.lab.id</code>, y el servidor, <code>subnet_id</code> de la subred pública: si no, acaban en la VPC por defecto y el corrector no los encuentra en la tuya.</li>
-<li>El <code>user_data</code> escribe tu página, no «Hola». Pon la línea exacta de tu <code>LEEME.md</code>: su código no es la huella del E1, es otro.
+<li>El <code>user_data</code> escribe tu página, no «Hola». Pon la línea exacta de tu <code>LEEME.md</code>: el número del final no es tu huella del E1, es otro.
 <pre><code>  user_data = &lt;&lt;-SH
     #!/bin/sh
     echo "&lt;la línea de tu LEEME.md&gt;" &gt; /usr/share/nginx/html/index.html
   SH</code></pre></li>
 <li>El grupo <code>web</code> abre a <code>0.0.0.0/0</code> solo la web: el 80 (el 443 también se admitiría). Nada de 22 abierto «para administrar».</li>
-<li>El grupo <code>db</code> admite el 5432 con <code>security_groups = [aws_security_group.web.id]</code> y sin <code>cidr_blocks</code>.</li>
+<li>El grupo <code>db</code> admite el 5432 con <code>security_groups = [aws_security_group.web.id]</code> y sin rangos de IP (<code>cidr_blocks</code>).</li>
 <li>El grupo de subredes de la base de datos lleva las dos subredes privadas, una en cada zona.</li>
 <li>Un solo servidor EC2 en el laboratorio: el corrector toma el primero como servidor web.</li>
 </ul>
@@ -74,13 +74,13 @@ La página que tiene que servir tu servidor web, escrita por user_data en /usr/s
 <div class="cmd"><pre><code>terraform init
 terraform fmt
 terraform validate</code></pre></div>
-<p><code>init</code> descarga dos proveedores, <code>hashicorp/aws</code> y <code>hashicorp/random</code> (el de <code>random_password</code>). <code>validate</code> tiene que decir <code>Success! The configuration is valid.</code>; si no, te dice el fichero y la línea del error. Despliega (escribe <code>yes</code> cuando lo pida) y mira la salida:</p>
+<p><code>init</code> descarga dos proveedores, <code>hashicorp/aws</code> y <code>hashicorp/random</code> (el de <code>random_password</code>). <code>validate</code> debe decir <code>Success! The configuration is valid.</code>; si no, te dice el fichero y la línea del error. Despliega (escribe <code>yes</code> cuando lo pida) y mira la salida:</p>
 <div class="cmd"><pre><code>terraform apply
 terraform output</code></pre></div>
 <pre><code>Apply complete! Resources: 10 added, 0 changed, 0 destroyed.
 …
 ip_web = "10.0.1.…"</code></pre>
-<p>El número de recursos puede ser otro si has repartido distinto. Ahora revisa con la CLI lo que el corrector va a mirar. La primera orden da el <code>VpcId</code> de tu VPC (la que no es <code>IsDefault</code>); cámbialo en la segunda:</p>
+<p>El número de recursos puede ser otro si has repartido distinto. Ahora revisa con la CLI lo que el corrector va a mirar. La primera orden da el <code>VpcId</code> de cada VPC: la tuya es la que tiene <code>IsDefault</code> en <code>false</code>. Pon su <code>VpcId</code> en la segunda en lugar de <code>&lt;tu-vpc&gt;</code>:</p>
 <div class="cmd"><pre><code>aws ec2 describe-vpcs --query "Vpcs[].[VpcId,CidrBlock,IsDefault]"
 aws ec2 describe-security-groups --filters "Name=vpc-id,Values=&lt;tu-vpc&gt;" --query "SecurityGroups[].[GroupName,IpPermissions]"
 aws rds describe-db-instances --query "DBInstances[].[DBInstanceIdentifier,PubliclyAccessible]"</code></pre></div>
@@ -99,22 +99,23 @@ aws ec2 describe-vpcs --query "Vpcs[].[VpcId,IsDefault]"</code></pre></div>
 <li>El <code>user_data</code> del servidor no escribe tu página, tal cual la da <code>LEEME.md</code>.</li>
 <li>El grupo del servidor no abre el 80 a <code>0.0.0.0/0</code>, o abre a <code>0.0.0.0/0</code> algún puerto que no sea el 80 o el 443.</li>
 <li>No hay ninguna base de datos RDS en la VPC.</li>
-<li>La base de datos es accesible desde fuera (<code>publicly_accessible</code>), o su grupo admite direcciones, u otro grupo que no es el del servidor, o no deja entrar al servidor.</li>
+<li>La base de datos es accesible desde fuera (<code>publicly_accessible</code>), o su grupo admite rangos de IP (<code>cidr_blocks</code>), u otro grupo que no es el del servidor, o no deja entrar al servidor.</li>
 <li>Las salidas no dan la IP del servidor web.</li>
 <li><code>terraform destroy</code> falla, o después queda alguna VPC.</li>
 </ul>
 
-<h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">5</span>Haz commit y pruébalo</h2>
 <p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git status --short -uall fundamentos/iac/e5</code></pre></div>
 <pre><code>?? fundamentos/iac/e5/LEEME.md
 ?? fundamentos/iac/e5/main.tf
 ?? fundamentos/iac/e5/proveedor.tf</code></pre>
-<p>No tiene que salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
+<p>No debe salir ningún <code>terraform.tfstate</code> ni nada de <code>.terraform/</code>: el <code>.gitignore</code> de <code>fundamentos/iac/</code> los deja fuera, porque el estado puede guardar secretos.</p>
 <div class="cmd"><pre><code>git add fundamentos/iac/e5
 git commit -m "feat(iac-e5): laboratorio con web y base de datos privada"</code></pre></div>
-<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e5</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p><code>pruebas.py</code> evalúa tu etiqueta <code>entrega-fundamentos-iac-e5</code>, o la rama <code>main</code> si aún no la tienes, con las mismas comprobaciones que el corrector. Solo cuentan los commits: lo que no esté en un commit no se evalúa. Trabaja en una Floci aparte y vacía, así que no toca tu repositorio ni tu Floci.</p>
+<p>Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e5</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -139,10 +140,13 @@ git push origin entrega-fundamentos-iac-e5</code></pre></div>
 <p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
 <pre><code>E5 · etiqueta entrega-fundamentos-iac-e5 · 7a8b9c0 · comprobando…
   ✓ superado</code></pre>
-<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
 <p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
 <h3>Si hay que corregir algo después de etiquetar</h3>
-<p>Corrige en <code>fundamentos/iac/e5/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<ul>
+<li><b>Si has cambiado ficheros</b>: corrige en <code>fundamentos/iac/e5/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo con las dos órdenes de abajo. Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua.</li>
+<li><b>Si solo falla la etiqueta</b>, porque <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit: muévela, sin hacer ningún commit.</li>
+</ul>
+<p>Para mover la etiqueta, <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>):</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e5 main -m "E5 resuelto"
 git push -f origin entrega-fundamentos-iac-e5</code></pre></div>
 <p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>

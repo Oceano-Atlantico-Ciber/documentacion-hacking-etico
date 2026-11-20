@@ -27,14 +27,16 @@
 <pre><code>hacking-etico/
 ├── documentacion-hacking-etico/   el material del curso: preparar.py, plantillas y pruebas
 └── entregas-&lt;tu-usuario&gt;/         tu repositorio: aquí trabajas y entregas</code></pre>
-<p>Desde tu repositorio llegan al material con <code>../documentacion-hacking-etico/</code>. Si no tienes esa carpeta, clónala; esta orden es la misma en todos los sistemas y crea <code>hacking-etico/</code> si no existe:</p>
+<p>Desde tu repositorio, el material está en <code>../documentacion-hacking-etico/</code>. Si no tienes esa carpeta, clónala; esta orden es la misma en todos los sistemas y crea <code>hacking-etico/</code> si no existe:</p>
 <div class="cmd"><pre><code>cd ~
 git clone https://github.com/Oceano-Atlantico-Ciber/documentacion-hacking-etico.git hacking-etico/documentacion-hacking-etico</code></pre></div>
 <p>Si ya la tienes, tráete la última versión antes de cada ejercicio, porque las plantillas y las pruebas se corrigen durante el curso:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/documentacion-hacking-etico
 git pull</code></pre></div>
 <p>Tu repositorio <code>entregas-&lt;tu-usuario&gt;</code> tiene que estar también en <code>~/hacking-etico/</code>; si lo tienes en otro sitio, muévelo ahí o clónalo de nuevo.</p>
-<p>Ocho ejercicios en <code>fundamentos/api/</code> de tu repositorio de entregas, todos en <code>main</code>. Cada uno trabaja una buena práctica de HTTP y parte del anterior: en el E3 programas la API de incidencias en el lenguaje que prefieras, en el E5 la escribes en los otros dos y desde ahí sigues con las tres a la vez. Todos empiezan con <code>preparar.py</code>, que escribe los ficheros de partida con datos generados para tu usuario de GitHub. Ejecútalo desde tu repositorio, en la terminal de tu sistema:</p>
+<p>Ocho ejercicios en <code>fundamentos/api/</code> de tu repositorio de entregas, todos en <code>main</code>. Cada uno trabaja una buena práctica de HTTP y parte del anterior: en el E3 programas la API de incidencias en el lenguaje que prefieras, en el E5 la escribes en los otros dos y desde ahí sigues con las tres a la vez:</p>
+<div class="flow"><span>E3 · un lenguaje</span><i>→</i><span>E4 · escrituras</span><i>→</i><span>E5 · tres lenguajes</span><i>→</i><span>E6–E8 · las tres a la vez</span></div>
+<p>Todos empiezan con <code>preparar.py</code>, que escribe los ficheros de partida con datos generados para tu usuario de GitHub. Ejecútalo desde tu repositorio, en la terminal de tu sistema:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e1</code></pre></div>
@@ -42,7 +44,7 @@ py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e1</code></pre></div>
 <p class="note">Cuando una orden cambia según el sistema, la unidad la da en dos bloques seguidos: <b>Windows · PowerShell</b> y <b>macOS / Linux · Terminal</b>. En Windows, Python se llama <code>py</code> y curl se escribe <code>curl.exe</code>; en macOS y Linux, <code>python3</code> y <code>curl</code>. Las órdenes que no cambian, como <code>docker</code> o <code>git</code>, van en un solo bloque.</p>
-<p>Desde el E3, cada carpeta de lenguaje trae <code>pruebas.py</code>: las pruebas de caja negra del contrato, que hablan con tu API solo por HTTP. Pásalas antes de etiquetar; el corrector pasa exactamente las mismas, con las mismas explicaciones de cada fallo. Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-api-eN</code>, sobre <code>main</code>.</p>
+<p>Desde el E3, cada carpeta de lenguaje trae <code>pruebas.py</code>: las pruebas de caja negra del contrato (prueban la API solo desde fuera, por HTTP). Pásalas antes de etiquetar; el corrector pasa exactamente las mismas, con las mismas explicaciones de cada fallo. Cada ejercicio se entrega con su etiqueta anotada, <code>entrega-fundamentos-api-eN</code>, sobre <code>main</code>.</p>
 <div class="tabla"><table><thead><tr><th>Ej.</th><th>Qué haces</th><th>Buena práctica</th><th>Tema</th></tr></thead><tbody>
 <tr><td><a href="ejercicios/e1.html">E1</a></td><td>Escribir a mano dos peticiones HTTP, enviarlas y comparar con <code>curl</code>.</td><td>Entender el mensaje</td><td>API 1</td></tr>
 <tr><td><a href="ejercicios/e2.html">E2</a></td><td>Diseñar el contrato OpenAPI de la API de incidencias.</td><td>Recursos, métodos y códigos</td><td>API 2</td></tr>
@@ -54,7 +56,7 @@ python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/pre
 <tr><td><a href="ejercicios/e8.html">E8</a></td><td>Autenticar, autorizar y limitar.</td><td>OWASP API Top 10</td><td>API 4</td></tr>
 </tbody></table></div>
 <p>Ficheros: <a href="ejercicios/preparar.py"><code>preparar.py</code></a>, el <a href="ejercicios/plantillas/contrato.yaml">contrato de referencia</a>, <a href="ejercicios/plantillas/pruebas.py"><code>pruebas.py</code></a> y los esqueletos de <a href="ejercicios/plantillas/go/main.go">Go</a>, <a href="ejercicios/plantillas/python/main.py">Python</a> y <a href="ejercicios/plantillas/node/main.js">Node</a>.</p>
-<p class="note">«Hackea el ranking», la práctica del primer día, está ahora en la <a href="../../00-presentacion/index.html#hackea-el-ranking">Presentación</a>, con sus ficheros y cómo levantar el juego.</p>
+<p class="note">«Hackea el ranking», la práctica del primer día, está en la <a href="../../00-presentacion/index.html#hackea-el-ranking">Presentación</a>, con sus ficheros y cómo levantar el juego.</p>
 
 
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

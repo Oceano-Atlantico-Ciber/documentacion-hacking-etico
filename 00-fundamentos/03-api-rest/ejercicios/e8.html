@@ -38,8 +38,8 @@ cd fundamentos/api/e8</code></pre></div>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e8
 cd fundamentos/api/e8</code></pre></div>
-<p><code>preparar.py</code> copia tu E7 a <code>e8/</code> y añade a cada lenguaje <code>usuarios.json</code>: un administrador y dos técnicos, <code>lucia</code> y <code>marcos</code>, con su clave y su token. Son datos de prueba de tu laboratorio, generados para ti; aun así, trátalos como lo que son: no los copies en ningún otro sitio. Sí van en tu repositorio de entregas, porque la imagen los necesita: es tu repositorio privado y son datos de prueba. Añade <code>usuarios.json</code> a la imagen en el <code>Dockerfile</code> de cada lenguaje, junto a <code>incidencias.json</code>.</p>
-<p>Mientras programas, construye y arranca las tres como en el E7: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden para los contenedores del E7, si siguen en marcha. Desde <code>fundamentos/api/e8/</code>, en cualquier sistema:</p>
+<p><code>preparar.py</code> copia tu E7 a <code>e8/</code> y añade a cada lenguaje <code>usuarios.json</code>: un administrador y dos técnicos, <code>lucia</code> y <code>marcos</code>, con su clave y su token. Son datos de prueba generados para ti. Trátalos como secretos: no los copies fuera de tu repositorio de entregas, que es privado. Ahí sí van, porque la imagen los necesita. Añade <code>usuarios.json</code> a la imagen en el <code>Dockerfile</code> de cada lenguaje, junto a <code>incidencias.json</code>.</p>
+<p>Mientras programas, construye y arranca las tres como en el E7: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden detiene los contenedores del E7, si siguen en marcha. Desde <code>fundamentos/api/e8/</code>, en cualquier sistema:</p>
 <div class="cmd"><pre><code>docker stop e7-go e7-python e7-node
 docker build -t api-e8-go go
 docker build -t api-e8-python python
@@ -51,7 +51,7 @@ docker run -d --rm --name e8-node -p 8003:8000 api-e8-node</code></pre></div>
 
 <h2 class="step" id="paso-2"><span class="n">2</span>¿Quién eres?</h2>
 <ul>
-<li><code>POST /api/v1/sesiones</code> con <code>{"usuario", "clave"}</code>: <code>201</code> y <code>{"token": …}</code> si son buenos; <code>401</code> si no.</li>
+<li><code>POST /api/v1/sesiones</code> con <code>{"usuario": "lucia", "clave": "…"}</code>: <code>201</code> y <code>{"token": …}</code> si son buenos; <code>401</code> si no.</li>
 <li>Todas las rutas, salvo <code>/api/v1/salud</code> y <code>/api/v1/sesiones</code>, piden <code>Authorization: Bearer &lt;token&gt;</code>. Sin él o con uno que no existe: <code>401</code> con <code>WWW-Authenticate: Bearer</code>. Ninguna otra cabecera sirve para identificarse.</li>
 <li><code>GET /api/v1/usuarios/yo</code> devuelve <code>usuario</code>, <code>nombre</code> y <code>rol</code>.</li>
 </ul>
@@ -79,9 +79,20 @@ docker run -d --rm --name e8-node -p 8003:8000 api-e8-node</code></pre></div>
 <tr><td>BOLA: solo tus incidencias</td><td>API1</td><td><code>CWE-639</code></td></tr>
 <tr><td>Asignación masiva: no te cambias el rol</td><td>API3</td><td><code>CWE-915</code></td></tr>
 <tr><td>BFLA: borrar es de administración</td><td>API5</td><td><code>CWE-285</code></td></tr>
-<tr><td>Límite de intentos en el login</td><td>API2 y API4</td><td><code>CWE-307</code></td></tr>
+<tr><td>Límite de intentos en el inicio de sesión</td><td>API2 y API4</td><td><code>CWE-307</code></td></tr>
 <tr><td>Huella de la tecnología</td><td>API8</td><td><code>CWE-497</code></td></tr>
 </tbody></table></div>
+<p>Para no pegar tokens en las órdenes, guárdalos antes en variables de la terminal, sacándolos de tu <code>usuarios.json</code>. Desde <code>fundamentos/api/e8/</code>, en la pestaña donde vayas a lanzar los <code>curl</code>:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>$u = Get-Content go/usuarios.json -Raw | ConvertFrom-Json
+$LUCIA = ($u.usuarios | Where-Object usuario -eq lucia).token
+$ADMIN = ($u.usuarios | Where-Object usuario -eq admin).token
+$LUCIA</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>LUCIA=$(python3 -c 'import json; print(next(u["token"] for u in json.load(open("go/usuarios.json"))["usuarios"] if u["usuario"] == "lucia"))')
+ADMIN=$(python3 -c 'import json; print(next(u["token"] for u in json.load(open("go/usuarios.json"))["usuarios"] if u["usuario"] == "admin"))')
+echo $LUCIA</code></pre></div>
+<p>La última línea muestra el token de <code>lucia</code>: si sale vacía, no estás en <code>e8/</code> o falta <code>go/usuarios.json</code>. Las variables duran lo que esa pestaña; si abres otra, repítelo. Después, <code>-H "Authorization: Bearer $LUCIA"</code> se escribe igual en PowerShell que en macOS o Linux. Los tokens son datos de prueba de tu laboratorio: en <code>controles.md</code> escribe <code>$LUCIA</code> o <code>$ADMIN</code>, no su valor.</p>
 <p>El corrector busca en <code>controles.md</code> cuatro de ellos: <code>CWE-639</code>, <code>CWE-915</code>, <code>CWE-285</code> y <code>CWE-307</code>. Los otros dos apartados van igual de completos, con su CWE. Un apartado completo:</p>
 <pre><code>## Autorización por incidencia, BOLA (API1, CWE-639)
 
@@ -97,17 +108,6 @@ HTTP/1.1 404 Not Found
 Content-Type: application/problem+json
 …
 ```</code></pre>
-<p>Para no pegar tokens en las órdenes, guárdalos antes en variables de la terminal, sacándolos de tu <code>usuarios.json</code>. Desde <code>fundamentos/api/e8/</code>, en la pestaña donde vayas a lanzar los <code>curl</code>:</p>
-<p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>$u = Get-Content go/usuarios.json -Raw | ConvertFrom-Json
-$LUCIA = ($u.usuarios | Where-Object usuario -eq lucia).token
-$ADMIN = ($u.usuarios | Where-Object usuario -eq admin).token
-$LUCIA</code></pre></div>
-<p class="so">macOS / Linux · Terminal</p>
-<div class="cmd"><pre><code>LUCIA=$(python3 -c 'import json; print(next(u["token"] for u in json.load(open("go/usuarios.json"))["usuarios"] if u["usuario"] == "lucia"))')
-ADMIN=$(python3 -c 'import json; print(next(u["token"] for u in json.load(open("go/usuarios.json"))["usuarios"] if u["usuario"] == "admin"))')
-echo $LUCIA</code></pre></div>
-<p>La última línea enseña el token de <code>lucia</code>: si sale vacía, no estás en <code>e8/</code> o falta <code>go/usuarios.json</code>. Las variables duran lo que esa pestaña; si abres otra, repítelo. Después, <code>-H "Authorization: Bearer $LUCIA"</code> se escribe igual en PowerShell que en macOS o Linux. Los tokens son datos de prueba de tu laboratorio: en <code>controles.md</code> escribe <code>$LUCIA</code> o <code>$ADMIN</code>, no su valor.</p>
 
 <h2 class="step" id="paso-6"><span class="n">6</span>Pruébalo en las tres</h2>
 <p>Desde <code>fundamentos/api/e8/</code>, con los tres contenedores recién arrancados:</p>

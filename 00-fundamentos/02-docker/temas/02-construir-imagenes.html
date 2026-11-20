@@ -26,8 +26,9 @@
 <dt>Capa</dt><dd>Lo que añade un paso de la receta, guardado aparte. Una imagen es una pila de capas.</dd>
 <dt>Caché</dt><dd>Capas ya fabricadas que Docker reutiliza si su paso no ha cambiado. Por eso la segunda construcción es rápida.</dd>
 <dt>Contexto</dt><dd>La carpeta que se envía al motor para construir. <code>COPY</code> solo ve lo que hay en ella.</dd>
-<dt>Dependencia</dt><dd>Una librería que tu programa necesita y que se instala aparte, como <code>requests</code> con <code>pip</code>.</dd>
-<dt>Secreto</dt><dd>Un dato que da acceso a algo: una contraseña, un token o una clave de una API.</dd>
+<dt>Dependencia</dt><dd>Una librería que tu programa necesita y que se instala aparte, como <code>requests</code> con <code>pip</code>, el instalador de librerías de Python.</dd>
+<dt>Variable de entorno</dt><dd>Un par <code>NOMBRE=valor</code> que el programa lee al arrancar, como <code>MODO=seguro</code>. Sirve para configurarlo sin tocar su código.</dd>
+<dt>Secreto</dt><dd>Un dato que da acceso a algo: una contraseña, un token o la clave de una API (un servicio al que otro programa pide datos).</dd>
 </dl>
 </section>
 
@@ -52,13 +53,13 @@
 <tr><td><code>COPY sondeo.py .</code></td><td>Copia ficheros de tu carpeta a la imagen.</td></tr>
 <tr><td><code>RUN pip install requests</code></td><td>Ejecuta una orden durante la construcción y guarda lo que cambie.</td></tr>
 <tr><td><code>ENV MODO=seguro</code></td><td>Variable de entorno para el contenedor.</td></tr>
-<tr><td><code>USER nobody</code></td><td>Usuario con el que se ejecuta el programa. Sin ella, root (<a href="04-compose-y-seguridad.html">Docker 4</a>).</td></tr>
-<tr><td><code>ENTRYPOINT ["python", "sondeo.py"]</code></td><td>El programa que arranca el contenedor.</td></tr>
+<tr><td><code>USER nobody</code></td><td>Usuario con el que se ejecuta el programa. <code>nobody</code> es un usuario sin permisos especiales. Sin esta línea, el programa corre como <b>root</b>, el administrador del sistema (<a href="04-compose-y-seguridad.html">Docker 4</a>).</td></tr>
+<tr><td><code>ENTRYPOINT ["python", "sondeo.py"]</code></td><td>El programa que arranca el contenedor. Va en <b>forma de lista</b>: entre corchetes, con el programa y cada argumento entre comillas. Así, lo que escribas en <code>docker run</code> se añade detrás.</td></tr>
 <tr><td><code>CMD ["--ayuda"]</code></td><td>Argumentos por defecto, si al lanzarlo no das otros.</td></tr>
 </tbody></table></div>
-<pre><code>docker build -t sondeo:1.0 .     # construye con el Dockerfile de esta carpeta y lo llama sondeo:1.0
+<div class="cmd"><pre><code>docker build -t sondeo:1.0 .     # construye con el Dockerfile de esta carpeta y lo llama sondeo:1.0
 docker image ls sondeo           # ya está entre tus imágenes
-docker run --rm sondeo:1.0 …     # y se usa como cualquier otra</code></pre>
+docker run --rm sondeo:1.0 …     # y se usa como cualquier otra</code></pre></div>
 <p>El punto final de <code>docker build</code> no es decorativo: es la carpeta que se envía al motor, el <b>contexto</b>. Lo verás más abajo.</p>
 </section>
 
@@ -75,7 +76,7 @@ docker run --rm sondeo:1.0 …     # y se usa como cualquier otra</code></pre>
 <path class="linea" d="M150 104V150" marker-end="url(#ep-f)"/><path class="linea" d="M460 104V150" marker-end="url(#ep-f)"/>
 <rect class="caja-ok" x="100" y="152" width="520" height="44" rx="8"/><text class="tenue peq" x="116" y="179">se ejecuta</text><text class="mono tit" x="200" y="179">python sondeo.py web 80</text>
 </svg>
-<figcaption>Por eso en los laboratorios <code>docker compose run --rm aws s3 ls</code> funciona: el <code>ENTRYPOINT</code> de la imagen es <code>aws</code> y tú solo pones <code>s3 ls</code>.</figcaption>
+<figcaption>Por eso no repites <code>python sondeo.py</code> cada vez: el <code>ENTRYPOINT</code> ya lo pone y tú solo escribes a quién y qué puertos sondear.</figcaption>
 </figure>
 </section>
 
@@ -100,8 +101,8 @@ docker run --rm sondeo:1.0 …     # y se usa como cualquier otra</code></pre>
 </svg>
 <figcaption>La pila se lee de abajo arriba, en el orden en que se construyó.</figcaption>
 </figure>
-<pre><code>docker history sondeo:1.0        # las capas de una imagen, la más reciente arriba, con su tamaño
-docker image inspect sondeo:1.0  # su configuración: ENTRYPOINT, CMD, ENV, USER…</code></pre>
+<div class="cmd"><pre><code>docker history sondeo:1.0        # las capas de una imagen, la más reciente arriba, con su tamaño
+docker image inspect sondeo:1.0  # su configuración: ENTRYPOINT, CMD, ENV, USER…</code></pre></div>
 </section>
 
 <section class="seccion">
@@ -122,12 +123,12 @@ docker image inspect sondeo:1.0  # su configuración: ENTRYPOINT, CMD, ENV, USER
 </svg>
 <figcaption>Copiar primero solo la lista de dependencias permite que la instalación salga de la caché mientras esa lista no cambie.</figcaption>
 </figure>
-<pre><code>docker build --progress=plain -t app:1.0 .   # muestra cada paso; los reutilizados dicen CACHED</code></pre>
+<div class="cmd"><pre><code>docker build --progress=plain -t app:1.0 .   # muestra cada paso; los reutilizados dicen CACHED</code></pre></div>
 </section>
 
 <section class="seccion">
 <h2>El contexto y .dockerignore</h2>
-<p><code>docker build .</code> envía al motor toda la carpeta, y <code>COPY . .</code> mete en la imagen todo lo que llegó. Si en la carpeta hay un <code>.env</code> o tus notas, acaban dentro de la imagen y viajan con ella. <code>.dockerignore</code> es a Docker lo que <code>.gitignore</code> a git: lo que aparece ahí no se envía.</p>
+<p><code>docker build .</code> envía al motor toda la carpeta, y <code>COPY . .</code> mete en la imagen todo lo que llegó. Si en la carpeta hay un <code>.env</code> o tus notas, acaban dentro de la imagen y viajan con ella. <code>.dockerignore</code> es a Docker lo que <code>.gitignore</code> a Git: lo que aparece ahí no se envía.</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 216" role="img" aria-label="La carpeta tiene Dockerfile, app.py, requirements.txt, .env y notas; .dockerignore deja fuera .env y notas y al motor solo llegan los demás">
 <defs><marker id="ctx-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -164,24 +165,37 @@ notas/
 <figcaption>Borrar en una capa posterior no borra: la única forma de que un secreto no esté en la imagen es que nunca entre en una capa.</figcaption>
 </figure>
 <p>Para usar un secreto durante la construcción sin guardarlo, BuildKit (el constructor de Docker Desktop) lo monta solo mientras dura un <code>RUN</code>, en <code>/run/secrets/</code>, y no lo escribe en ninguna capa:</p>
-<pre><code># en el Dockerfile
-RUN --mount=type=secret,id=api python informe.py --comprobar /run/secrets/api
-
-# al construir: el secreto sale de un fichero tuyo, que no está en el contexto
-docker build --secret id=api,src=api.key -t informe:2.0 .</code></pre>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 220" role="img" aria-label="api.key se queda fuera del contexto; docker build --secret la entrega al motor; durante el RUN aparece en /run/secrets/api y al terminar desaparece, así que ninguna capa la guarda">
+<defs><marker id="bs-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="bs-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="20" width="150" height="72" rx="8"/><text class="mono tit" x="75" y="50" text-anchor="middle">api.key</text><text class="tenue peq" x="75" y="72" text-anchor="middle">fuera del contexto</text>
+<path class="linea-acento" d="M150 56H218" marker-end="url(#bs-fa)"/><text class="mono acento fuerte" x="184" y="46" text-anchor="middle">--secret</text>
+<rect class="caja-acento" x="222" y="20" width="250" height="72" rx="8"/><text class="tit" x="347" y="44" text-anchor="middle">Durante el RUN</text><text class="mono" x="347" y="64" text-anchor="middle">/run/secrets/api</text><text class="tenue peq" x="347" y="82" text-anchor="middle">solo existe mientras dura</text>
+<path class="linea" d="M472 56H540" marker-end="url(#bs-f)"/><text class="tenue peq" x="506" y="46" text-anchor="middle">termina</text>
+<rect class="caja-ok" x="544" y="20" width="176" height="72" rx="8"/><text class="tit" x="632" y="50" text-anchor="middle">Capas</text><text class="bien fuerte" x="632" y="72" text-anchor="middle">ninguna la guarda</text>
+<text class="tenue peq" x="0" y="130">El RUN puede leer la clave para lo que necesite (comprobarla, descargar algo), pero el resultado</text>
+<text class="tenue peq" x="0" y="148">que queda en la capa no la contiene. Con docker save no aparece en ningún sitio.</text>
+<rect class="caja-peligro" x="0" y="168" width="720" height="40" rx="8"/><text x="16" y="193">Ojo: si el propio RUN copia la clave a otra carpeta, esa copia sí acaba en la capa.</text>
+</svg>
+<figcaption>La clave entra por <code>--secret</code>, no por <code>COPY</code>: está disponible un momento y no viaja con la imagen.</figcaption>
+</figure>
+<p class="so">En el Dockerfile</p>
+<pre><code>RUN --mount=type=secret,id=api python informe.py --comprobar /run/secrets/api</code></pre>
+<p class="so">Al construir: el secreto sale de un fichero tuyo que no está en el contexto</p>
+<div class="cmd"><pre><code>docker build --secret id=api,src=api.key -t informe:2.0 .</code></pre></div>
 <p>Y para buscar secretos en una imagen ajena, como haría un auditor:</p>
 <p class="so">Windows · PowerShell</p>
-<pre><code>docker history --no-trunc imagen:versión        # qué hizo cada capa
+<div class="cmd"><pre><code>docker history --no-trunc imagen:versión        # qué hizo cada capa
 docker save imagen:versión -o imagen.tar         # todas las capas en un fichero
 New-Item -ItemType Directory -Force capas | Out-Null
 tar -xf imagen.tar -C capas                      # cada capa es un .tar en capas/blobs/sha256/
-foreach ($c in Get-ChildItem capas/blobs/sha256) { if (tar -tf $c.FullName 2&gt;$null | Select-String api.key) { $c.FullName } }</code></pre>
+foreach ($c in Get-ChildItem capas/blobs/sha256) { if (tar -tf $c.FullName 2&gt;$null | Select-String api.key) { $c.FullName } }</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>docker history --no-trunc imagen:versión        # qué hizo cada capa
+<div class="cmd"><pre><code>docker history --no-trunc imagen:versión        # qué hizo cada capa
 docker save imagen:versión -o imagen.tar         # todas las capas en un fichero
 mkdir -p capas
 tar -xf imagen.tar -C capas                      # cada capa es un .tar en capas/blobs/sha256/
-for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep -q api.key &amp;&amp; echo "$capa"; done</code></pre>
+for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep -q api.key &amp;&amp; echo "$capa"; done</code></pre></div>
 </section>
 
 <section class="seccion">
@@ -190,7 +204,7 @@ for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep -q ap
 <tr><td><code>failed to read dockerfile: open Dockerfile: no such file</code></td><td>No estás en la carpeta del <code>Dockerfile</code>, o se llama distinto.</td><td><code>cd</code> a su carpeta; se llama exactamente <code>Dockerfile</code>, sin extensión.</td></tr>
 <tr><td><code>COPY failed: … not found</code></td><td>El fichero no está en el contexto, o <code>.dockerignore</code> lo excluye.</td><td>Revisa la ruta, relativa a la carpeta del contexto, y tu <code>.dockerignore</code>.</td></tr>
 <tr><td>Cada construcción tarda lo mismo</td><td>Una capa de abajo cambia siempre, a menudo un <code>COPY . .</code>.</td><td>Copia primero lo que cambia poco.</td></tr>
-<tr><td><code>exec format error</code> o <code>no such file</code> al arrancar</td><td>Un script guardado en Windows: Linux no lo entiende tal cual.</td><td>En VS Code, haz clic en <b>CRLF</b>, abajo a la derecha, elige <b>LF</b> y guarda.</td></tr>
+<tr><td><code>exec format error</code> o <code>no such file</code> al arrancar</td><td>El script tiene los finales de línea de Windows (CRLF), que Linux no entiende.</td><td>En VS Code, haz clic en <b>CRLF</b>, abajo a la derecha, elige <b>LF</b> y guarda.</td></tr>
 </tbody></table></div>
 </section>
 
@@ -207,7 +221,7 @@ for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep -q ap
 <li>Sabes qué parte de <code>docker run imagen a b</code> pone el <code>ENTRYPOINT</code> y cuál sustituye al <code>CMD</code></li>
 <li>Sabes ordenar las capas para aprovechar la caché</li>
 <li>Sabes por qué un secreto borrado en una capa posterior sigue en la imagen, y cómo evitarlo</li>
-<li>E2, E3 y E4 superados en el check <b>Corrector docker</b> y con su etiqueta</li>
+<li>E2, E3 y E4 superados en la comprobación <b>Corrector docker</b> de GitHub y con su etiqueta</li>
 </ul>
 </section>
 
@@ -215,5 +229,6 @@ for capa in capas/blobs/sha256/*; do tar -tf "$capa" 2&gt;/dev/null | grep -q ap
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script src="../../../assets/nav.js" defer></script>
+<script src="../../../assets/copiar.js" defer></script>
 </body>
 </html>

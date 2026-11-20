@@ -27,7 +27,7 @@
 <tr><td><code>logs.txt</code></td><td>La salida de <code>docker logs e1-web</code>, sacada también en el paso 6. Tiene que haber al menos una petición a <code>/</code> respondida con <code>200</code> y con el tamaño de tu página.</td></tr>
 </tbody></table></div>
 <p>Una línea de <code>logs.txt</code> que sirve tu página tiene esta forma; el número tras el <code>200</code> es el tamaño de tu <code>index.html</code> (el tuyo será otro):</p>
-<div class="cmd"><pre><code>172.17.0.1 - - [12/Nov/2026:10:15:02 +0000] "GET / HTTP/1.1" 200 214 "-" "curl/8.9.1" "-"</code></pre></div>
+<pre><code>172.17.0.1 - - [12/Nov/2026:10:15:02 +0000] "GET / HTTP/1.1" 200 214 "-" "curl/8.9.1" "-"</code></pre>
 <p>Si en todas las líneas ese número es <code>615</code>, nginx solo sirvió su página de bienvenida: no copiaste tu página antes de pedirla.</p>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
@@ -63,7 +63,7 @@ curl.exe http://localhost:8080/</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>docker cp index.html e1-web:/usr/share/nginx/html/index.html
 curl http://localhost:8080/</code></pre></div>
-<p>Ahora responde con tu página, la que dice <code>Puesto de &lt;tu-usuario&gt;</code>. Has cambiado la capa escribible del contenedor, no la imagen. Esta petición es la que tiene que aparecer en <code>logs.txt</code>.</p>
+<p>Ahora responde con tu página, la que dice <code>Puesto de &lt;tu-usuario&gt;</code>. Has cambiado la capa de escritura del contenedor, no la imagen. Esta petición es la que tiene que aparecer en <code>logs.txt</code>.</p>
 
 <h2 class="step"><span class="n">5</span>Páralo y vuelve a arrancarlo</h2>
 <p class="so">Windows · PowerShell</p>
@@ -79,7 +79,7 @@ curl http://localhost:8080/</code></pre></div>
 <p>Mientras está parado, <code>docker ps -a</code> lo muestra como <code>Exited</code>. Al arrancarlo sigue sirviendo tu página: parar no borra la capa.</p>
 
 <h2 class="step"><span class="n">6</span>Guarda las pruebas</h2>
-<p>Con el contenedor otra vez en marcha (después del <code>docker start</code>), guarda lo que Docker sabe de él y su registro:</p>
+<p>Con el contenedor otra vez en marcha (después del <code>docker start</code>), guarda lo que Docker sabe de él y lo que ha escrito nginx (sus logs):</p>
 <div class="cmd"><pre><code>docker container inspect e1-web &gt; inspect.json
 docker logs e1-web &gt; logs.txt</code></pre></div>
 <p>La orden es la misma en todos los sistemas. <code>inspect.json</code> es todo lo que Docker sabe del contenedor: busca en él <code>"StartedAt"</code> y <code>"FinishedAt"</code>, y verás que arrancó después de pararse. <code>logs.txt</code> tiene una línea por cada petición que recibió nginx; ábrelo con <code>code logs.txt</code> y comprueba que hay un <code>"GET / HTTP/1.1" 200</code> con un tamaño distinto de <code>615</code>.</p>
@@ -92,6 +92,8 @@ curl.exe http://localhost:8080/</code></pre></div>
 <div class="cmd"><pre><code>docker rm -f e1-web
 curl http://localhost:8080/</code></pre></div>
 <p>El último <code>curl</code> falla (no se puede conectar): el contenedor y tu cambio ya no existen. Si lanzaras otro desde la imagen, volvería la página de bienvenida. <code>inspect.json</code> y <code>logs.txt</code> siguen en tu carpeta: son lo que entregas.</p>
+
+<h2>Qué mira el corrector</h2>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta <code>index.html</code>, <code>inspect.json</code> o <code>logs.txt</code>.</li>
@@ -102,20 +104,19 @@ curl http://localhost:8080/</code></pre></div>
 <li>En <code>logs.txt</code> no hay ninguna petición servida con tu página.</li>
 </ul>
 
-
 <h2 class="step"><span class="n">8</span>Pruébalo en tu equipo</h2>
 <p>Primero guarda tu trabajo en un commit, desde la raíz de tu repositorio: las pruebas solo ven lo que está en commits.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add .
 git commit -m "feat(docker-e1): ciclo de vida de e1-web"</code></pre></div>
-<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta, si existe; si no, <code>main</code>) y construyen y levantan contenedores como él.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e1</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e1</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar, se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">9</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push</code></pre></div>

@@ -33,7 +33,7 @@ cd fundamentos/api/e4</code></pre></div>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e4
 cd fundamentos/api/e4</code></pre></div>
-<p><code>preparar.py</code> copia tu E3 entero a <code>e4/</code>: sigues sobre tu propio código, y el E3 se queda como lo entregaste. No copia <code>node_modules/</code> ni <code>.venv/</code>: si usas Python o Node, vuelve a instalar las dependencias en la carpeta nueva, como en el paso 1 del <a href="e3.html">E3</a>. Desde ahora arrancas la API desde <code>fundamentos/api/e4/</code>, con las mismas órdenes que en el E3; antes, para la del E3 con <kbd>Ctrl</kbd>+<kbd>C</kbd>, porque las dos usan el puerto 8000.</p>
+<p><code>preparar.py</code> copia tu E3 entero a <code>e4/</code>: sigues sobre tu propio código, y el E3 se queda como lo entregaste. No copia <code>node_modules/</code> ni <code>.venv/</code>: si usas Python o Node, vuelve a instalar las dependencias en la carpeta nueva, como en el paso 1 del <a href="e3.html">E3</a>. Desde ahora arrancas la API desde <code>fundamentos/api/e4/</code>, con las mismas órdenes que en el E3; antes, detén la del E3 con <kbd>Ctrl</kbd>+<kbd>C</kbd>, porque las dos usan el puerto 8000.</p>
 
 <h2 class="step" id="paso-2"><span class="n">2</span>Programa las escrituras</h2>
 <div class="tabla"><table><thead><tr><th>Petición</th><th>Responde</th></tr></thead><tbody>
@@ -46,8 +46,8 @@ cd fundamentos/api/e4</code></pre></div>
 <tr><td>Un método que la ruta no tiene</td><td><code>405</code> y <code>Allow</code> con los que sí: <code>GET, POST</code> en la colección; <code>GET, PUT, PATCH, DELETE</code> en un elemento.</td></tr>
 </tbody></table></div>
 <p>Los ids nuevos nunca reutilizan uno existente ni uno borrado. Si a <code>Allow</code> se le añade <code>HEAD</code> u <code>OPTIONS</code>, no pasa nada: las pruebas no los cuentan. Go lo hace solo, con <code>Allow: GET, HEAD, POST</code> en la colección.</p>
-<p class="note warn">FastAPI no lo hace bien de serie. Con la versión de la plantilla (0.115.6), <code>DELETE /api/v1/incidencias</code> responde <code>405</code>, pero con <code>allow: GET</code>, sin <code>POST</code>: Starlette solo mira la primera ruta que coincide con la URL, y cada método es una ruta distinta. Si programas en Python, el <code>405</code> y su <code>Allow</code> completo los tienes que asegurar tú, en la colección y en el elemento.</p>
-<p>Para probar una escritura a mano, con tu API arrancada, escribe el cuerpo en un fichero y mándalo con <code>--data-binary</code>: Windows PowerShell quita las comillas dobles de un JSON escrito en la propia orden. Desde <code>fundamentos/api/e4/</code>, la primera orden crea <code>nueva.json</code>, la segunda crea una incidencia y la tercera prueba un método que la colección no tiene:</p>
+<p class="note warn">FastAPI no lo hace bien de serie: <code>DELETE /api/v1/incidencias</code> responde <code>405</code>, pero con <code>allow: GET</code>, sin <code>POST</code>. Si programas en Python, el <code>405</code> y su <code>Allow</code> completo los tienes que asegurar tú, en la colección y en el elemento.</p>
+<p>Para probar una escritura a mano, con tu API arrancada, escribe el cuerpo en un fichero, como en el <a href="e1.html#paso-4">E1</a>, y mándalo con <code>--data-binary</code>. Desde <code>fundamentos/api/e4/</code>, la primera orden crea <code>nueva.json</code>, la segunda crea una incidencia y la tercera prueba un método que la colección no tiene:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>New-Item nueva.json -Force -Value '{"titulo": "Impresora atascada (aula 2)", "prioridad": "alta"}'
 curl.exe -i -X POST http://localhost:8000/api/v1/incidencias -H "Content-Type: application/json" --data-binary "@nueva.json"
@@ -73,7 +73,7 @@ Allow: GET, POST
 <div class="cmd"><pre><code>py pruebas.py e4 http://localhost:8000</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 pruebas.py e4 http://localhost:8000</code></pre></div>
-<p>Pasa primero las del E3 y después las del E4. Está bien cuando la última línea dice <code>0 mal</code>. Las pruebas crean y borran: reinicia la API antes de repetirlas, o las del E3 fallarán porque la lista ya no es la de <code>incidencias.json</code>. Cuando salgan todas en ✓, para la API (<kbd>Ctrl</kbd>+<kbd>C</kbd>), que el contenedor usa el mismo puerto, y pásalas contra el contenedor, con Docker Desktop en marcha:</p>
+<p><code>pruebas.py e4</code> pasa primero las del E3 y después las del E4. Está bien cuando la última línea dice <code>0 mal</code>. Las pruebas crean y borran: reinicia la API antes de repetirlas, o las del E3 fallarán porque la lista ya no es la de <code>incidencias.json</code>. Cuando salgan todas en ✓, detén la API (<kbd>Ctrl</kbd>+<kbd>C</kbd>), porque el contenedor usa el mismo puerto, y pásalas contra el contenedor, con Docker Desktop en marcha:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker build -t api-incidencias:e4 .
 docker run -d --rm --name api -p 8000:8000 api-incidencias:e4

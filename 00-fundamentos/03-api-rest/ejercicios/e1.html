@@ -11,7 +11,7 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">03 · API REST</a></nav>
 
 <h1>E1 · HTTP a mano</h1>
-<p class="lead">Escribe dos peticiones HTTP en un fichero de texto, mándalas a una API por una conexión sin más y comprueba que recibes lo mismo que con <code>curl</code>.</p>
+<p class="lead">Escribe dos peticiones HTTP en un fichero de texto, mándalas a una API por una conexión directa, sin navegador ni curl, y comprueba que recibes lo mismo que con <code>curl</code>.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-rest-es-http.html">API 1 · REST es HTTP</a></dd>
 <dt>Aprendes</dt><dd>Que una API REST no es más que texto HTTP, y a leer y escribir ese texto.</dd>
@@ -49,7 +49,6 @@ curl -i http://localhost:8080/api/v1/incidencias</code></pre></div>
 <p><code>preparar.py</code> construye y arranca la API de incidencias del laboratorio en <code>http://localhost:8080</code>, con datos generados para tu usuario, y deja en <code>fundamentos/api/e1/</code> los ficheros <code>enviar.py</code> y <code>LEEME.md</code> y la carpeta <code>laboratorio/</code>. Al terminar escribe una línea como esta, con tu número:</p>
 <pre><code>La API del laboratorio escucha en http://localhost:8080. Tu incidencia es la 11.</code></pre>
 <p>El <code>curl -i</code> del final tiene que responder <code>HTTP/1.1 200 OK</code> y una lista en JSON. <code>preparar.py</code> no termina hasta que la API contesta, así que el <code>curl</code> funciona nada más acabar. Si <code>preparar.py</code> terminó con un error de <code>docker</code> (Docker Desktop no estaba en marcha), arranca Docker Desktop, espera a que diga que está en marcha y vuelve a ejecutar la misma orden <code>preparar.py e1</code> desde la raíz de tu repositorio: no toca tus ficheros, solo levanta el laboratorio.</p>
-<p>Tu número de incidencia también está en <code>LEEME.md</code>.</p>
 <p>Todas las órdenes que siguen se lanzan desde esta carpeta, <code>fundamentos/api/e1/</code>.</p>
 
 <h2 class="step" id="paso-2"><span class="n">2</span>Escribe la petición que lee tu incidencia</h2>
@@ -65,8 +64,8 @@ Host: localhost:8080
 <div class="cmd"><pre><code>py enviar.py peticion-get.txt | Tee-Object respuesta-get.txt</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 enviar.py peticion-get.txt | tee respuesta-get.txt</code></pre></div>
-<p><code>Tee-Object</code> y <code>tee</code> hacen lo mismo: enseñan la salida en pantalla y la guardan en el fichero. Si repites el envío, el fichero se sobrescribe.</p>
-<p><code>enviar.py</code> abre una conexión con la API, le escribe tu petición y enseña lo que vuelve. Es lo mismo que hace cualquier cliente HTTP, como el navegador o curl. Una respuesta válida empieza por <code>200 OK</code> y trae en el cuerpo <b>tu</b> número de incidencia:</p>
+<p><code>Tee-Object</code> y <code>tee</code> hacen lo mismo: muestran la salida en pantalla y la guardan en el fichero. Si repites el envío, el fichero se sobrescribe.</p>
+<p><code>enviar.py</code> abre una conexión con la API, le escribe tu petición y muestra lo que vuelve. Es lo mismo que hace cualquier cliente HTTP, como el navegador o curl. En la respuesta, la primera línea dice <code>200 OK</code> y el cuerpo trae <b>tu</b> número de incidencia:</p>
 <pre><code>--- Enviando a localhost:8080 ---
 GET /api/v1/incidencias/11 HTTP/1.1
 Host: localhost:8080
@@ -109,12 +108,12 @@ Content-Length: 112
 <p>Si <code>Content-Length</code> no cuadra, <code>enviar.py</code> te avisa y envía la petición igualmente, para que veas qué hace la API: si dice de más, la API se queda esperando el resto y a los cinco segundos <code>enviar.py</code> se rinde; si dice de menos o el JSON está mal, la API responde <code>400</code>. Prueba a propósito un <code>Content-Length</code> erróneo para ver qué pasa, y deja al final en <code>respuesta-post.txt</code> la salida del envío bueno.</p>
 
 <h2 class="step" id="paso-4"><span class="n">4</span>Lo mismo con curl</h2>
-<p>Primero escribe el cuerpo del alta en un fichero, <code>alta.json</code>, con el mismo JSON del paso 3. Va en un fichero porque Windows PowerShell quita las comillas dobles de un JSON escrito en la propia orden; así la orden es la misma en todos los sistemas. Si tu JSON es otro, cámbialo dentro de las comillas simples:</p>
+<p>Primero escribe el cuerpo del alta en un fichero, <code>alta.json</code>, con el mismo JSON del paso 3. Va en un fichero, como se explica en <a href="../temas/01-rest-es-http.html">API 1</a>: así la orden curl es la misma en todos los sistemas. Si tu JSON es otro, cámbialo dentro de las comillas simples:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>New-Item alta.json -Force -Value '{"titulo": "Monitor del aula 3 sin señal", "prioridad": "baja"}'</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>echo '{"titulo": "Monitor del aula 3 sin señal", "prioridad": "baja"}' &gt; alta.json</code></pre></div>
-<p><code>New-Item</code> crea el fichero con ese texto y lo enseña; <code>-Force</code> lo sobrescribe si ya existía.</p>
+<p><code>New-Item</code> crea el fichero con ese texto y lo muestra; <code>-Force</code> lo sobrescribe si ya existía.</p>
 <p>Después las dos peticiones. Cambia el <code>11</code> por tu incidencia:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>curl.exe -v --stderr curl-get.txt http://localhost:8080/api/v1/incidencias/11
@@ -122,12 +121,12 @@ curl.exe -v --stderr curl-post.txt -H "Content-Type: application/json" --data-bi
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>curl -v --stderr curl-get.txt http://localhost:8080/api/v1/incidencias/11
 curl -v --stderr curl-post.txt -H "Content-Type: application/json" --data-binary "@alta.json" http://localhost:8080/api/v1/incidencias</code></pre></div>
-<p><code>-v</code> enseña la conversación entera y <code>--stderr</code> la guarda en el fichero; en pantalla solo ves el cuerpo de la respuesta. <code>--data-binary "@alta.json"</code> manda el fichero tal cual como cuerpo y, por llevar cuerpo, curl ya usa <code>POST</code>. En el fichero, las líneas con <code>&gt;</code> son lo que envió curl y las de <code>&lt;</code>, lo que respondió la API. Para verlas sin el resto:</p>
+<p><code>-v</code> muestra la conversación entera y <code>--stderr</code> la guarda en el fichero; en pantalla solo ves el cuerpo de la respuesta. <code>--data-binary "@alta.json"</code> manda el fichero tal cual como cuerpo y, por llevar cuerpo, curl ya usa <code>POST</code>. En el fichero, las líneas con <code>&gt;</code> son lo que envió curl y las de <code>&lt;</code>, lo que respondió la API. Para verlas sin el resto:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>Select-String -Path curl-get.txt, curl-post.txt -Pattern '^[&lt;&gt;] '</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>grep '^[&lt;&gt;] ' curl-get.txt curl-post.txt</code></pre></div>
-<p><code>curl-get.txt</code> tiene que contener estas líneas, con tu número:</p>
+<p><code>curl-get.txt</code> tiene que contener estas líneas, con tu número (las versiones de curl y Python pueden ser otras):</p>
 <pre><code>&gt; GET /api/v1/incidencias/11 HTTP/1.1
 &gt; Host: localhost:8080
 &gt; User-Agent: curl/8.21.0
@@ -155,6 +154,20 @@ Yo solo escribí Host. curl añade User-Agent: … y Accept: …, que sirven par
 ## Qué cuenta el servidor
 
 La cabecera Server dice … Eso le dice a un atacante …</code></pre>
+
+<h2 class="step" id="paso-6"><span class="n">6</span>Comprueba</h2>
+<p>Este ejercicio no tiene <code>pruebas.py</code>: repásalo tú con lo que mira el corrector. Lista los ficheros de la carpeta:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>Get-ChildItem -Name</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>ls</code></pre></div>
+<p>Tienen que salir los siete de la tabla, con esos nombres exactos (y, además, <code>alta.json</code>, <code>enviar.py</code>, <code>LEEME.md</code> y <code>laboratorio/</code>, que no molestan). Después abre cada fichero y comprueba:</p>
+<ul class="check">
+<li><code>respuesta-get.txt</code> tiene <code>200 OK</code> y tu número de incidencia en el cuerpo.</li>
+<li><code>respuesta-post.txt</code> tiene <code>201 Created</code> y una línea <code>Location</code>.</li>
+<li><code>curl-get.txt</code> y <code>curl-post.txt</code> tienen líneas que empiezan por <code>&gt;</code> y por <code>&lt;</code>.</li>
+<li><code>comparacion.md</code> tiene los tres títulos <code>##</code> y habla de la cabecera <code>Server</code>.</li>
+</ul>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta alguno de los siete ficheros de la tabla, o tiene otro nombre.</li>
@@ -165,13 +178,13 @@ La cabecera Server dice … Eso le dice a un atacante …</code></pre>
 <li><code>comparacion.md</code> no tiene los tres apartados con título o no habla de la cabecera <code>Server</code>.</li>
 </ul>
 
-<h2 class="step" id="paso-6"><span class="n">6</span>Sube y etiqueta</h2>
+<h2 class="step" id="paso-7"><span class="n">7</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add .
 git commit -m "feat(api-e1): peticiones HTTP escritas a mano"
 git push
 git tag -a entrega-fundamentos-api-e1 -m "E1 resuelto"
 git push origin entrega-fundamentos-api-e1</code></pre></div>
-<p class="note">Cuando termines, para el laboratorio con <code>docker stop api-e1</code>. Si lo necesitas otra vez, <code>docker start api-e1</code>. Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
+<p class="note">Cuando termines, detén el laboratorio con <code>docker stop api-e1</code>. Si lo necesitas otra vez, <code>docker start api-e1</code>. Si el corrector marca fallos después de etiquetar, corrígelos, súbelos y <a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">mueve la etiqueta</a>.</p>
 
 <nav class="ejercicios" aria-label="Ejercicios de API REST"><a href="../index.html#ejercicios">← Ejercicios de API REST</a><a href="e2.html">E2 · Diseña el contrato →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

@@ -11,7 +11,7 @@
 <nav class="top"><a href="../../../index.html">Hacking ético</a> · <a href="../../index.html">Fundamentos</a> · <a href="../index.html">02 · Docker</a></nav>
 
 <h1>E7 · Tu primer compose</h1>
-<p class="lead">Lo que hiciste a mano en E5 y E6, en un solo docker-compose.yml, con la contraseña fuera del repositorio.</p>
+<p class="lead">Lo que hiciste a mano en E5 y E6, en un solo <code>docker-compose.yml</code>, con la contraseña fuera del repositorio.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/04-compose-y-seguridad.html">Docker 4 · Compose y seguridad</a></dd>
 <dt>Aprendes</dt><dd>A describir un laboratorio entero en un fichero, sin subir su contraseña.</dd>
@@ -27,7 +27,7 @@
 <tr><td><code>web/index.html</code></td><td>Tu página de E5, copiada en el paso 1. La web del compose la sirve tal cual.</td></tr>
 </tbody></table></div>
 <p><b><code>.env</code> no se sube</b>: lleva tu contraseña y tu <code>.gitignore</code> ya lo excluye. El corrector usa su propio <code>.env</code>. El <code>sondeo</code> se construye desde <code>../e2</code>, así que tu E2 tiene que estar en el repositorio. Las claves de primer nivel del compose son estas; lo de dentro de cada una lo escribes tú:</p>
-<div class="cmd"><pre><code>name: …
+<pre><code>name: …
 services:
   web:
     …
@@ -40,7 +40,7 @@ services:
 networks:
   …
 volumes:
-  …</code></pre></div>
+  …</code></pre>
 
 <h2 class="step"><span class="n">1</span>Prepara la carpeta</h2>
 <p>E7 no tiene ficheros de partida: reutiliza la web de E5. Desde tu repositorio, crea la carpeta, copia en ella <code>../e5/web</code> y abre el compose:</p>
@@ -59,7 +59,7 @@ code docker-compose.yml</code></pre></div>
 <p>Ahora tienes <code>web/index.html</code> dentro de <code>fundamentos/docker/e7</code>. Todas las órdenes que siguen se lanzan desde esa carpeta.</p>
 
 <h2 class="step"><span class="n">2</span>Escribe el compose</h2>
-<p>Proyecto <code>e7-lab</code> (clave <code>name</code>), una red <code>lab</code>, un volumen <code>datos</code> y exactamente cuatro servicios, <b>todos en la red <code>lab</code></b> y en ninguna otra:</p><div class="tabla"><table><thead><tr><th>Servicio</th><th>Qué es</th></tr></thead><tbody><tr><td><code>web</code></td><td><code>nginx:1.27-alpine</code>, publicado en <code>127.0.0.1:8087</code> (puerto 80 del contenedor), con <code>./web</code> montada en solo lectura en <code>/usr/share/nginx/html</code>. Sin perfil.</td></tr><tr><td><code>datos</code></td><td><code>postgres:16-alpine</code> con el volumen <code>datos</code> en <code>/var/lib/postgresql/data</code>, sin puertos publicados. <code>POSTGRES_PASSWORD</code> sale de <code>${POSTGRES_PASSWORD:?falta en .env}</code>. Sin perfil.</td></tr><tr><td><code>sondeo</code></td><td>Se construye desde <code>../e2</code> (<code>build</code>) con la imagen <code>sondeo:1.0</code> (<code>image</code>). En el perfil <code>herramientas</code>.</td></tr><tr><td><code>curl</code></td><td><code>curlimages/curl:8.11.1</code>. En el perfil <code>herramientas</code>.</td></tr></tbody></table></div><p>Cada clave equivale a una opción de <code>docker run</code>: la tabla está en <a href="../temas/04-compose-y-seguridad.html">Docker 4</a>. No añadas montajes, puertos ni redes que no estén en la tabla.</p>
+<p>Proyecto <code>e7-lab</code> (clave <code>name</code>), una red <code>lab</code>, un volumen <code>datos</code> y exactamente cuatro servicios, <b>todos en la red <code>lab</code></b> y en ninguna otra:</p><div class="tabla"><table><thead><tr><th>Servicio</th><th>Qué es</th></tr></thead><tbody><tr><td><code>web</code></td><td><code>nginx:1.27-alpine</code>, publicado en <code>127.0.0.1:8087</code> (puerto 80 del contenedor), con <code>./web</code> montada en solo lectura en <code>/usr/share/nginx/html</code>. Sin perfil.</td></tr><tr><td><code>datos</code></td><td><code>postgres:16-alpine</code> con el volumen <code>datos</code> en <code>/var/lib/postgresql/data</code>, sin puertos publicados. <code>POSTGRES_PASSWORD</code> sale de <code>${POSTGRES_PASSWORD:?falta en .env}</code>. Sin perfil.</td></tr><tr><td><code>sondeo</code></td><td>Se construye desde <code>../e2</code> (<code>build</code>), y la imagen resultante se llama <code>sondeo:1.0</code> (<code>image</code>). En el perfil <code>herramientas</code>.</td></tr><tr><td><code>curl</code></td><td><code>curlimages/curl:8.11.1</code>. En el perfil <code>herramientas</code>.</td></tr></tbody></table></div><p>Cada clave equivale a una opción de <code>docker run</code>: la tabla está en <a href="../temas/04-compose-y-seguridad.html">Docker 4</a>. No añadas montajes, puertos ni redes que no estén en la tabla.</p>
 
 <h2 class="step"><span class="n">3</span>La contraseña, en .env</h2>
 <p>Crea <code>.env.ejemplo</code> con la variable vacía, cópialo a <code>.env</code> y abre <code>.env</code>:</p>
@@ -74,7 +74,7 @@ code .env</code></pre></div>
 <p>En <code>.env</code>, escribe una contraseña detrás del <code>=</code> (solo letras y números) y guarda. <code>.env.ejemplo</code> se sube vacío; <code>.env</code> no aparece en <code>git status</code>.</p>
 
 <h2 class="step"><span class="n">4</span>Levántalo y pruébalo</h2>
-<p>Primero, que el compose se entienda:</p>
+<p>Primero, comprueba que Docker entiende el compose:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>docker compose config -q
 if ($LASTEXITCODE -eq 0) { "correcto" }</code></pre></div>
@@ -89,32 +89,33 @@ docker compose run --rm curl -s http://web/
 docker compose run --rm sondeo datos 5432
 docker compose down</code></pre></div>
 <p><code>up</code> solo levanta <code>web</code> y <code>datos</code>, y <code>ps</code> muestra esos dos; las herramientas del perfil se lanzan con <code>run</code>. <code>curl</code> imprime tu página y el sondeo imprime <code>datos:5432 abierto</code>; si sale <code>cerrado</code>, Postgres aún estaba arrancando: espera unos segundos y repite esa línea.</p>
+
+<h2>Qué mira el corrector</h2>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta <code>docker-compose.yml</code>, <code>.env.ejemplo</code> o <code>web/index.html</code>.</li>
 <li><code>.env</code> está en el repositorio.</li>
 <li><code>docker compose config</code> no falla sin <code>.env</code>, o falla con un <code>.env</code> completo.</li>
-<li>El compose abre alguna puerta sobre el equipo: <code>privileged</code>, el socket de Docker, carpetas o construcciones de fuera de tu repositorio…</li>
+<li>El compose abre alguna puerta sobre el equipo: <code>privileged</code>, el socket de Docker, o montajes o <code>build</code> que apunten fuera de tu repositorio.</li>
 <li>El proyecto no se llama <code>e7-lab</code>, o sus servicios no son exactamente <code>web</code>, <code>datos</code>, <code>sondeo</code> y <code>curl</code>.</li>
 <li>Algún servicio no cumple la tabla: imagen, puerto, montaje, red o perfil.</li>
 <li><code>POSTGRES_PASSWORD</code> de <code>datos</code> no sale de <code>.env</code>, o <code>sondeo</code> no se construye desde <code>../e2</code>.</li>
 <li><code>docker compose up</code> falla, o con <code>up</code>, <code>curl</code> no recibe tu página o el sondeo no ve el 5432 de <code>datos</code>.</li>
 </ul>
 
-
 <h2 class="step"><span class="n">5</span>Pruébalo en tu equipo</h2>
 <p>Primero guarda tu trabajo en un commit, desde la raíz de tu repositorio: las pruebas solo ven lo que está en commits.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add .
 git commit -m "feat(docker-e7): el laboratorio en un compose"</code></pre></div>
-<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta, si existe; si no, <code>main</code>) y construyen y levantan contenedores como él.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e7</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e7</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar, se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">6</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push</code></pre></div>

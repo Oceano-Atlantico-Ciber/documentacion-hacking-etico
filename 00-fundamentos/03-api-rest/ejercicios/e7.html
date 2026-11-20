@@ -14,7 +14,7 @@
 <p class="lead">Con 500 incidencias, pagina y filtra la lista, deja que los clientes no vuelvan a bajar lo que ya tienen y evita que dos técnicos se pisen los cambios.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/03-buenas-practicas.html">API 3 · Buenas prácticas</a></dd>
-<dt>Aprendes</dt><dd>Que paginar, cachear y controlar la concurrencia se resuelven con cabeceras de HTTP, igual en cualquier lenguaje.</dd>
+<dt>Aprendes</dt><dd>Que paginar, cachear y evitar que dos escrituras a la vez se pisen se resuelven con cabeceras de HTTP, igual en cualquier lenguaje.</dd>
 <dt>Buena práctica</dt><dd><code>limit</code> y <code>cursor</code>, <code>ETag</code> con <code>304</code>, <code>If-Match</code> con <code>412</code>.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/api/e7/</code>, con sus tres carpetas de lenguaje</dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e7</code> sobre <code>main</code></dd>
@@ -38,7 +38,7 @@ cd fundamentos/api/e7</code></pre></div>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e7
 cd fundamentos/api/e7</code></pre></div>
-<p><code>preparar.py</code> copia tu E6 a <code>e7/</code> y cambia <code>incidencias.json</code> de cada lenguaje por uno con 500 incidencias. Vuelve a construir las tres imágenes para que lleven los datos nuevos y arráncalas como en el E6: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden para los contenedores del E6, si siguen en marcha. Desde <code>fundamentos/api/e7/</code>, en cualquier sistema:</p>
+<p><code>preparar.py</code> copia tu E6 a <code>e7/</code> y cambia <code>incidencias.json</code> de cada lenguaje por uno con 500 incidencias. Vuelve a construir las tres imágenes para que lleven los datos nuevos y arráncalas como en el E6: Go en el 8001, Python en el 8002 y Node en el 8003. La primera orden detiene los contenedores del E6, si siguen en marcha. Desde <code>fundamentos/api/e7/</code>, en cualquier sistema:</p>
 <div class="cmd"><pre><code>docker stop e6-go e6-python e6-node
 docker build -t api-e7-go go
 docker build -t api-e7-python python
@@ -66,7 +66,7 @@ docker run -d --rm --name e7-node -p 8003:8000 api-e7-node</code></pre></div>
 
 <h2 class="step" id="paso-4"><span class="n">4</span>Reprodúcelo con dos terminales</h2>
 <p>Usa una de tus APIs arrancada con los datos recién cargados (aquí la de Go, en el 8001: si ya la has usado, reiníciala con <code>docker stop e7-go</code> y su <code>docker run</code>). Abre dos pestañas de la terminal en <code>fundamentos/api/e7/</code>, una por técnico.</p>
-<p>En cualquiera de las dos, prepara tres ficheros de una línea: los dos cuerpos y la cabecera con la versión que las dos leyeron. La cabecera va en un fichero porque Windows PowerShell quitaría las comillas de <code>"1"</code>, y el <code>ETag</code> las lleva; así la orden es la misma en todos los sistemas.</p>
+<p>En cualquiera de las dos, prepara tres ficheros de una línea: los dos cuerpos y la cabecera con la versión que las dos leyeron. Como el cuerpo en el <a href="e1.html#paso-4">E1</a>, la cabecera va en un fichero, porque el <code>ETag</code> lleva comillas (curl lee la cabecera del fichero con <code>-H "@version-1.txt"</code>); así la orden es la misma en todos los sistemas.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>New-Item cerrar.json -Force -Value '{"estado": "cerrada"}'
 New-Item prioridad.json -Force -Value '{"prioridad": "media"}'
@@ -77,9 +77,9 @@ echo '{"prioridad": "media"}' &gt; prioridad.json
 echo 'If-Match: "1"' &gt; version-1.txt</code></pre></div>
 <p>Elige una incidencia <b>abierta</b> de tus datos: el escenario es cerrarla. Tu API ya sabe filtrar, así que pídele unas cuantas:</p>
 <p class="so">Windows · PowerShell</p>
-<div class="cmd"><pre><code>curl.exe -s "http://localhost:8001/api/v1/incidencias?estado=abierta&amp;limit=3"</code></pre></div>
+<div class="cmd"><pre><code>curl.exe -s 'http://localhost:8001/api/v1/incidencias?estado=abierta&amp;limit=3'</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<div class="cmd"><pre><code>curl -s "http://localhost:8001/api/v1/incidencias?estado=abierta&amp;limit=3"</code></pre></div>
+<div class="cmd"><pre><code>curl -s 'http://localhost:8001/api/v1/incidencias?estado=abierta&amp;limit=3'</code></pre></div>
 <p>Quédate con el <code>id</code> de una de ellas. Las órdenes de aquí usan la 4: cambia el <code>4</code> por el tuyo en todas.</p>
 <p>Las dos pestañas leen esa incidencia y ven su <code>ETag</code>. En cada pestaña:</p>
 <p class="so">Windows · PowerShell</p>
@@ -129,7 +129,7 @@ ETag: "1"
 <li>Un parámetro que no vale no da <code>400</code>.</li>
 <li>Falta el <code>ETag</code>, no hay <code>304</code> cuando toca o un <code>If-Match</code> antiguo no da <code>412</code>, o tras el <code>412</code> la incidencia ha cambiado.</li>
 <li>Deja de pasar alguna prueba anterior, o las tres APIs dejan de responder igual.</li>
-<li><code>escenario.md</code> no tiene las dos peticiones, sus respuestas y la explicación.</li>
+<li><code>escenario.md</code> no tiene las tres peticiones, sus respuestas y la explicación.</li>
 </ul>
 
 <h2 class="step" id="paso-6"><span class="n">6</span>Sube y etiqueta</h2>

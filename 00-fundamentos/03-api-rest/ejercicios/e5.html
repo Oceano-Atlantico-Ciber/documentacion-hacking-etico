@@ -14,7 +14,7 @@
 <p class="lead">Escribe tu API del E4 en los otros dos lenguajes hasta que las tres respondan exactamente lo mismo a las mismas peticiones.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/02-disenar-y-construir.html#tres-lenguajes">API 2 · La misma API en tres lenguajes</a></dd>
-<dt>Aprendes</dt><dd>Que una API es su contrato, no su lenguaje: lo que no se ve desde fuera, no existe para el cliente.</dd>
+<dt>Aprendes</dt><dd>Que una API es su contrato, no su lenguaje: lo que no se ve desde fuera no existe para el cliente.</dd>
 <dt>Buena práctica</dt><dd>Que no se note el lenguaje: manda el contrato, no el framework.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/api/e5/go/</code>, <code>e5/python/</code> y <code>e5/node/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-api-e5</code> sobre <code>main</code></dd>
@@ -43,10 +43,17 @@ cd fundamentos/api/e5</code></pre></div>
 <p><code>preparar.py</code> copia tu E4 a la carpeta de su lenguaje (por ejemplo, <code>e5/go/</code> si lo hiciste en Go) y deja el esqueleto de los otros dos en las suyas, con los mismos datos y las mismas pruebas.</p>
 
 <h2 class="step" id="paso-2"><span class="n">2</span>Escribe las otras dos</h2>
-<p>Programa en cada esqueleto lo mismo que ya tienes, ruta a ruta, con su <code>Dockerfile</code>. Cada carpeta se arranca y se prueba como en el <a href="e3.html">E3</a>, desde dentro de ella y de una en una, porque en tu equipo todas escuchan en el 8000. Por ejemplo, para la de Python: <code>cd python</code>, las órdenes de Python del paso 1 del E3 y, en otra pestaña desde esa misma carpeta, <code>pruebas.py e4</code>. <code>preparar.py</code> no copia <code>.venv/</code> ni <code>node_modules/</code>, así que la primera vez, dentro de <code>e5/python/</code> crea el entorno e instala las dependencias (las tres órdenes de Python del E3) y dentro de <code>e5/node/</code> ejecuta <code>npm install</code>. Si te apoyas en la IA para traducir, pasa <code>pruebas.py e4</code> a cada una antes de seguir.</p>
+<p>Programa en cada esqueleto lo mismo que ya tienes, ruta a ruta, con su <code>Dockerfile</code>. Trabaja las carpetas de una en una, porque en tu equipo todas escuchan en el 8000. Para cada una:</p>
+<ol>
+<li>Entra en su carpeta, por ejemplo <code>cd python</code> desde <code>e5/</code>.</li>
+<li>La primera vez, prepara las dependencias: <code>preparar.py</code> no copia <code>.venv/</code> ni <code>node_modules/</code>. En <code>python/</code>, crea el entorno e instala (las dos primeras órdenes de Python del <a href="e3.html#paso-1">paso 1 del E3</a>); en <code>node/</code>, <code>npm install</code>.</li>
+<li>Arráncala como en el E3.</li>
+<li>En otra pestaña, desde esa misma carpeta, pasa <code>pruebas.py e4</code>.</li>
+<li>Si te apoyas en la IA para traducir, pásale las pruebas a lo que te proponga antes de seguir.</li>
+</ol>
 
 <h2 class="step" id="paso-3"><span class="n">3</span>Arranca las tres a la vez</h2>
-<p>Para las APIs que tengas arrancadas en tu equipo (<kbd>Ctrl</kbd>+<kbd>C</kbd>). Con Docker Desktop en marcha, construye las tres imágenes y arráncalas, cada una en su puerto: Go en el 8001, Python en el 8002 y Node en el 8003. Desde <code>fundamentos/api/e5/</code>, en cualquier sistema:</p>
+<p>Detén las APIs que tengas arrancadas en tu equipo (<kbd>Ctrl</kbd>+<kbd>C</kbd>). Con Docker Desktop en marcha, construye las tres imágenes y arráncalas, cada una en su puerto: Go en el 8001, Python en el 8002 y Node en el 8003. Desde <code>fundamentos/api/e5/</code>, en cualquier sistema:</p>
 <div class="cmd"><pre><code>docker build -t api-e5-go go
 docker build -t api-e5-python python
 docker build -t api-e5-node node
@@ -55,7 +62,7 @@ docker run -d --rm --name e5-python -p 8002:8000 api-e5-python
 docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 
 <h2 class="step" id="paso-4"><span class="n">4</span>Compáralas</h2>
-<p>Desde <code>fundamentos/api/e5/</code>, con los tres contenedores recién arrancados:</p>
+<p>Desde <code>fundamentos/api/e5/</code>, con los tres contenedores recién arrancados (cualquier copia de <code>pruebas.py</code> vale; usamos la de <code>go/</code>):</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py go/pruebas.py e5 http://localhost:8001 http://localhost:8002 http://localhost:8003</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -67,7 +74,7 @@ docker run -d --rm --name e5-node -p 8003:8000 api-e5-node</code></pre></div>
 <li><b><code>ETag</code>.</b> Express añade de serie una cabecera <code>ETag: W/"…"</code> a cada respuesta con cuerpo, y Go y FastAPI no ponen ninguna. Sale como <code>distinto: ETag</code> en muchas filas. Hasta el E7, donde las <code>ETag</code> las pondrás tú, apágala en Express (<code>app.set("etag", false)</code>).</li>
 <li><b><code>Allow</code> en FastAPI.</b> FastAPI responde el <code>405</code> con <code>allow: GET</code>, sin <code>POST</code>, como avisaba el <a href="e4.html">E4</a>. Sale como <code>distinto: Allow</code>.</li>
 </ul>
-<p>Está bien cuando la última línea dice <code>0 mal</code>. Para volver a probar, para los tres contenedores y arráncalos otra vez; si has cambiado código, reconstruye antes su imagen con su <code>docker build</code> del paso 3:</p>
+<p>Está bien cuando la última línea dice <code>0 mal</code>. Para volver a probar, detén los tres contenedores y arráncalos otra vez; si has cambiado código, reconstruye antes su imagen con su <code>docker build</code> del paso 3:</p>
 <div class="cmd"><pre><code>docker stop e5-go e5-python e5-node
 docker run -d --rm --name e5-go -p 8001:8000 api-e5-go
 docker run -d --rm --name e5-python -p 8002:8000 api-e5-python

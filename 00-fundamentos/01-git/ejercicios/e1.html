@@ -14,6 +14,7 @@
 <p class="lead">Configura tu identidad para que GitHub reconozca tus commits y versiona tres ficheros con un commit cada uno.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/01-modelo-y-commits.html">Git 1 · Modelo y commits</a></dd>
+<dt>Aprendes</dt><dd>Configurar tu identidad, hacer un commit por cambio y escribir mensajes con Conventional Commits.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/git/e1/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e1</code> sobre <code>main</code></dd>
 </dl>
@@ -41,22 +42,9 @@
 1a2b3c4 docs(e1): objetivo de la auditoría
  fundamentos/git/e1/objetivo.md | 4 ++++
  1 file changed, 4 insertions(+)</code></pre>
-<p class="note"><b>Etiqueta E1 en cuanto esté bien.</b> El corrector cuenta <b>todos</b> los commits que hayan tocado <code>fundamentos/git/e1/</code> en la historia hasta la etiqueta, y hasta la punta de <code>main</code> mientras no la tengas: también los que hagas después, aunque deshagan algo. Un <code>git add .</code> en otro ejercicio que toque <code>e1/</code> deja E1 con cuatro commits y suspendido. Por eso, añade siempre los ficheros por su ruta y crea la etiqueta en el último paso, antes de empezar E2.</p>
+<p class="note"><b>Etiqueta E1 en cuanto esté bien.</b> El corrector cuenta <b>todos</b> los commits que tocan <code>fundamentos/git/e1/</code> hasta la etiqueta, también los que hagas después. Añade siempre los ficheros por su ruta y etiqueta antes de empezar E2.</p>
 
-<h2 class="step"><span class="n">1</span>Comprueba tu identidad</h2>
-<p>Cada commit guarda el nombre y el correo con los que se creó, y no se cambian después sin reescribir la historia. Míralos <b>antes</b> de hacer ningún commit:</p>
-<div class="cmd"><pre><code>git config user.name
-git config user.email</code></pre></div>
-<pre><code>Ana García
-ana.garcia@ejemplo.com</code></pre>
-<p>El correo tiene que ser uno de los verificados en GitHub (<b>Settings → Emails</b>); el privado <code>…@users.noreply.github.com</code> de esa misma página también vale. Si sale vacío o es otro, cámbialo (con tus datos, entre comillas):</p>
-<div class="cmd"><pre><code>git config --global user.name "Tu Nombre"
-git config --global user.email "tu-correo-verificado@ejemplo.com"</code></pre></div>
-<p>Comprueba también que tienes sesión en el GitHub CLI: sin ella, <code>pruebas.py</code> no puede mirar si GitHub asocia tus commits a tu cuenta.</p>
-<div class="cmd"><pre><code>gh auth status</code></pre></div>
-<p>Debe decir <code>Logged in to github.com account &lt;tu-usuario&gt;</code>. Si no, inicia sesión con <code>gh auth login</code> (<a href="../../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a>).</p>
-
-<h2 class="step"><span class="n">2</span>Prepara el escenario</h2>
+<h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
 <p>Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material, vuelve a <code>main</code> y mira que no tengas nada a medias. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git -C ../documentacion-hacking-etico pull
@@ -76,6 +64,19 @@ git status</code></pre></div>
 <p>No cambies su contenido: el corrector lo compara con el que te ha generado.</p>
 <p class="note"><b>Nunca <code>git add .</code> ni <code>git add -A</code> en la raíz del repositorio.</b> Añade cada fichero por su ruta, como en los pasos: un <code>git add .</code> mete en el commit lo de otros ejercicios y lo estropea.</p>
 
+<h2 class="step"><span class="n">2</span>Comprueba tu identidad</h2>
+<p>Cada commit guarda el nombre y el correo con los que se creó, y no se cambian después sin reescribir la historia. Míralos <b>antes</b> de hacer ningún commit:</p>
+<div class="cmd"><pre><code>git config user.name
+git config user.email</code></pre></div>
+<pre><code>Ana García
+ana.garcia@ejemplo.com</code></pre>
+<p>El correo tiene que ser uno de los verificados en GitHub (<b>Settings → Emails</b>); el privado <code>…@users.noreply.github.com</code> de esa misma página también vale. Si sale vacío o es otro, cámbialo (con tus datos, entre comillas):</p>
+<div class="cmd"><pre><code>git config --global user.name "Tu Nombre"
+git config --global user.email "tu-correo-verificado@ejemplo.com"</code></pre></div>
+<p>Comprueba también que tienes sesión en <code>gh</code>, la herramienta de GitHub para la terminal: sin ella, <code>pruebas.py</code> no puede mirar si GitHub asocia tus commits a tu cuenta.</p>
+<div class="cmd"><pre><code>gh auth status</code></pre></div>
+<p>Debe decir <code>Logged in to github.com account &lt;tu-usuario&gt;</code>. Si no, inicia sesión con <code>gh auth login</code> (<a href="../../../00-presentacion/temas/03-git-y-github.html">03 · Git y GitHub</a>).</p>
+
 <h2 class="step"><span class="n">3</span>Primer commit: <code>objetivo.md</code></h2>
 <p>Añade solo ese fichero y haz el commit. El mensaje sigue <code>tipo(ámbito): descripción</code>: el tipo es <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code> o <code>chore</code>; el ámbito, entre paréntesis, es opcional; después de los dos puntos va un espacio. Puedes usar estos mensajes u otros con ese formato.</p>
 <div class="cmd"><pre><code>git add fundamentos/git/e1/objetivo.md
@@ -83,7 +84,7 @@ git commit -m "docs(e1): objetivo de la auditoría"</code></pre></div>
 <pre><code>[main 1a2b3c4] docs(e1): objetivo de la auditoría
  1 file changed, 4 insertions(+)
  create mode 100644 fundamentos/git/e1/objetivo.md</code></pre>
-<p>Tiene que decir <code>1 file changed</code>. Si git avisa <i>LF will be replaced by CRLF</i>, no es un error: puedes ignorarlo.</p>
+<p>Tiene que decir <code>1 file changed</code>. Si Git avisa <i>LF will be replaced by CRLF</i>, no es un error: puedes ignorarlo.</p>
 
 <h2 class="step"><span class="n">4</span>Segundo commit: <code>herramientas.md</code></h2>
 <div class="cmd"><pre><code>git add fundamentos/git/e1/herramientas.md
@@ -95,11 +96,11 @@ git commit -m "docs(e1): herramientas de la auditoría"</code></pre></div>
 git commit -m "docs(e1): notas del alcance"</code></pre></div>
 <p>Otra vez <code>1 file changed</code>.</p>
 
-<h2 class="step"><span class="n">6</span>Comprueba antes de subir</h2>
+<h2 class="step"><span class="n">6</span>Revisa el resultado</h2>
 <div class="cmd"><pre><code>git status --short -uall fundamentos/git/e1
 git log --oneline --stat -- fundamentos/git/e1</code></pre></div>
 <p>La primera orden no muestra nada: no queda nada de <code>e1/</code> sin commit. La segunda muestra tres commits, cada uno con <code>1 file changed</code>, como en <a href="#que-entregas">Qué entregas</a>.</p>
-<p>Si un commit ha salido mal y <b>todavía no has hecho <code>git push</code></b>, deshazlo y repite el paso: <code>git reset HEAD~1</code> quita el último commit y deja su fichero sin añadir, con el contenido intacto.</p>
+<p>Si un commit ha salido mal y <b>todavía no has hecho <code>git push</code></b>, deshazlo y repite el paso. <code>HEAD</code> es el commit en el que estás y <code>HEAD~1</code>, el anterior: <code>git reset HEAD~1</code> lleva la rama a ese commit, así que quita el último y deja su fichero sin añadir, con el contenido intacto.</p>
 <div class="cmd"><pre><code>git reset HEAD~1</code></pre></div>
 <p>Si ya lo has subido, no lo arregles con más commits: cada uno cuenta. Pregunta al docente.</p>
 <p>El corrector marca fallo si:</p>
@@ -114,22 +115,24 @@ git log --oneline --stat -- fundamentos/git/e1</code></pre></div>
 <li>La etiqueta no es anotada: se creó sin <code>-a</code>.</li>
 </ul>
 
-<h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">7</span>Pasa <code>pruebas.py</code></h2>
 <p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-git-e1</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. No cambia nada de tu repositorio. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>python3 ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e1</code></pre></div>
-<p>Antes de subir, un ejercicio bien hecho se ve así (tus SHA serán otros):</p>
+<p>Antes de subir, con sesión en <code>gh</code>, un ejercicio bien hecho se ve así (tus SHA serán otros):</p>
 <pre><code>E1 · rama main, todavía sin etiqueta (provisional) · 5d6e7f8
-  ✓ superado
+  ✗ 5d6e7f8 no está en GitHub: súbelo con git push antes de comprobar lo que depende de GitHub
+  ✗ 3c4d5e6 no está en GitHub: súbelo con git push antes de comprobar lo que depende de GitHub
+  ✗ 1a2b3c4 no está en GitHub: súbelo con git push antes de comprobar lo que depende de GitHub
   ! en GitHub main apunta a 0f9e8d7, no a tu 5d6e7f8: el corrector evaluará el de GitHub. Sube el tuyo (…)</code></pre>
 <ul>
 <li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
-<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
-<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide. Antes de subir es normal ver «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …»: desaparece al subir en el paso siguiente. En ese aviso, el primer SHA es lo que tiene GitHub (lo último que subiste) y el segundo, tu commit.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo como se explica en <a href="#corregir">Si hay que corregir algo</a> y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: lo que hay en GitHub no coincide con tu equipo. Antes de subir es normal; desaparece al hacer <code>git push</code>.</li>
 <li><b>sin empezar</b>: no hay etiqueta ni trabajo en <code>fundamentos/git/e1/</code> de <code>main</code>: falta preparar el ejercicio o hacer sus commits.</li>
-<li>En E1, con sesión en <code>gh</code>, antes de subir salen además tres ✗ «… no está en GitHub: súbelo con git push…», uno por commit: GitHub aún no los tiene y no puede decir de quién son. Es lo esperado: desaparecen al subir en el paso siguiente.</li>
+<li>En E1, antes de subir, los tres ✗ «… no está en GitHub…» del ejemplo son lo esperado: GitHub aún no tiene tus commits y no puede decir de quién son. Desaparecen al subir en el paso siguiente. Sin sesión en <code>gh</code> no salen, y verás <b>✓ superado</b>.</li>
 <li>Si al final sale <b>Aviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe GitHub: el autor de los commits de E1 y el commit filtrado de E8</b>, en este ejercicio te afecta el autor de tus commits (y si están en GitHub). El corrector sí lo comprueba. Inicia sesión con <code>gh auth login</code> y repite.</li>
 </ul>
 
@@ -143,16 +146,15 @@ git push origin entrega-fundamentos-git-e1</code></pre></div>
 <p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
 <pre><code>E1 · etiqueta entrega-fundamentos-git-e1 · 5d6e7f8
   ✓ superado</code></pre>
-<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
-<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio: ✅ entregado y superado, ❌ entregado con fallos, ✏️ provisional (aún sin etiqueta) y · sin empezar. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
-<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>Cuando el docente lance la corrección, verás el resultado en GitHub: <a href="../index.html#corrector">dónde mirarlo</a>.</p>
+<h2 id="corregir">Si hay que corregir algo</h2>
 <p>En E1 no se corrige con commits nuevos: cualquier commit más que toque <code>fundamentos/git/e1/</code>, aunque deshaga algo, hace cuatro y suspende. Depende de si ya has subido los commits:</p>
 <ul>
-<li><b>Aún no has hecho <code>git push</code> y el fallo está en el último commit</b> (su mensaje o su autor): rehazlo en el sitio con <code>--amend</code>, que lo sustituye en lugar de añadir otro. Para el mensaje:
+<li><b>Aún no has hecho <code>git push</code> y el fallo está en el último commit</b> (su mensaje o su autor): rehazlo con <code>--amend</code>, que lo sustituye. Para el mensaje:
 <div class="cmd"><pre><code>git commit --amend -m "docs(e1): notas del alcance"</code></pre></div>
-Para el autor, después de corregir <code>user.email</code> (paso 1):
+Para el autor, después de corregir <code>user.email</code> (paso 2):
 <div class="cmd"><pre><code>git commit --amend --reset-author --no-edit</code></pre></div></li>
-<li><b>Aún no has hecho <code>git push</code> y el fallo está en un commit anterior</b>: deshaz los commits de E1 con <code>git reset</code> (quita commits y deja los ficheros sin añadir, con su contenido intacto) y repite desde el paso 3. Con los tres commits de E1 en lo alto de <code>main</code>:
+<li><b>Aún no has hecho <code>git push</code> y el fallo está en un commit anterior</b>: deshaz los commits de E1 con <code>git reset</code> (quita commits y deja los ficheros sin añadir, con su contenido intacto) y repite desde el paso 3. Con los tres commits de E1 en lo alto de <code>main</code>, <code>HEAD~3</code> es el commit de debajo de ellos:
 <div class="cmd"><pre><code>git reset HEAD~3</code></pre></div></li>
 <li><b>Ya los has subido</b> (si etiquetaste siguiendo los pasos, es tu caso): no reescribas <code>main</code> ni añadas commits; pregunta al docente.</li>
 </ul>

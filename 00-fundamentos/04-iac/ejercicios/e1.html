@@ -35,7 +35,7 @@ aws iam put-user-policy --user-name lector-1a2b3c4d --policy-name lectura-notas 
 <p><code>ordenes.sh</code> es un fichero de texto con órdenes, no un programa que tengas que ejecutar: las lanzas tú a mano en los pasos 2 y 3, y el corrector las lee una a una y las repite en una cuenta vacía, desde <code>e1/</code>. Después comprueba la cuenta con la clave del lector. La etiqueta anotada <code>entrega-fundamentos-iac-e1</code> va sobre <code>main</code>, subida a GitHub.</p>
 
 <h2 class="step"><span class="n">1</span>Prepara el ejercicio y levanta tu nube</h2>
-<p>Antes, instala y configura la CLI de AWS y Terraform como dice <a href="../temas/01-la-nube-en-tu-portatil.html#instalar">IaC 1 · Prepara tu equipo</a>, y abre Docker Desktop. Si acabas de instalar algo con <code>winget</code>, cierra VS Code entero y vuelve a abrirlo: una terminal nueva dentro del mismo VS Code no ve el programa nuevo y <code>aws</code> sale como «no se reconoce». Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material y vuelve a <code>main</code>. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
+<p>Antes, instala y configura la CLI de AWS y Terraform como dice <a href="../temas/01-la-nube-en-tu-portatil.html#instalar">IaC 1 · Prepara tu equipo</a> (si <code>aws</code> sale como «no se reconoce», cierra VS Code entero y vuelve a abrirlo), y abre Docker Desktop. Abre la terminal de VS Code (<b>Terminal → New Terminal</b>; en Windows es PowerShell). Ve a tu repositorio, trae la última versión del material y vuelve a <code>main</code>. Cambia <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git -C ../documentacion-hacking-etico pull
 git switch main</code></pre></div>
@@ -52,7 +52,7 @@ aws sts get-caller-identity
 cd e1
 code LEEME.md</code></pre></div>
 <p class="note"><code>code LEEME.md</code> lo abre en VS Code: léelo ahí y copia de ahí tus nombres.</p>
-<p>La primera vez, <code>docker compose up -d</code> descarga la imagen de Floci. <code>aws sts get-caller-identity</code> tiene que responder un JSON con <code>"Account"</code>; si dice <code>Could not connect to the endpoint URL</code>, espera unos segundos y repite. <code>LEEME.md</code> tiene tus nombres:</p>
+<p>La primera vez, <code>docker compose up -d</code> descarga la imagen de Floci. <code>aws sts get-caller-identity</code> debe responder un JSON con <code>"Account"</code>; si dice <code>Could not connect to the endpoint URL</code>, espera unos segundos y repite. <code>LEEME.md</code> tiene tus nombres:</p>
 <pre><code># E1 · A mano, una vez
 
 Tus nombres para este ejercicio:
@@ -75,7 +75,7 @@ upload: ./notas.txt to s3://e1-notas-1a2b3c4d/notas.txt
 <p>La fecha y el tamaño serán otros, y en Windows la ruta del fichero sale como <code>.\notas.txt</code>. La última orden solo mira: no va en <code>ordenes.sh</code>.</p>
 
 <h2 class="step"><span class="n">3</span>Crea el lector y su política</h2>
-<p>El lector solo tiene que leer los ficheros de tu bucket: ni borrarlos, ni escribir, ni tocar IAM. Para eso basta <code>s3:GetObject</code> sobre <code>arn:aws:s3:::e1-notas-&lt;huella&gt;/*</code> (el <code>/*</code> son los objetos de dentro del bucket; mira <a href="../temas/01-la-nube-en-tu-portatil.html#politicas">IaC 1 · Políticas de IAM</a>). Crea el fichero en VS Code:</p>
+<p>El lector solo debe poder leer los ficheros de tu bucket: ni borrarlos, ni escribir, ni tocar IAM. Para eso basta <code>s3:GetObject</code> sobre <code>arn:aws:s3:::e1-notas-&lt;huella&gt;/*</code> (el <code>/*</code> son los objetos de dentro del bucket; mira <a href="../temas/01-la-nube-en-tu-portatil.html#politicas">IaC 1 · Políticas de IAM</a>). Crea el fichero en VS Code:</p>
 <div class="cmd"><pre><code>code politica.json</code></pre></div>
 <p>Escribe esto, con tu huella, y guarda (<b>Ctrl+S</b>; en macOS, <b>Cmd+S</b>):</p>
 <pre><code>{
@@ -112,7 +112,8 @@ aws iam list-users --profile lector</code></pre></div>
 Referencia: …
 delete failed: s3://e1-notas-1a2b3c4d/notas.txt An error occurred (AccessDenied) when calling the DeleteObject operation: …
 aws: [ERROR]: An error occurred (AccessDenied) when calling the ListUsers operation: …</code></pre>
-<p>La lectura enseña el fichero; las otras dos acaban en <code>AccessDenied</code>. Si sale otra cosa:</p>
+<p>En la primera orden, el <code>-</code> del final significa «a la pantalla»: en vez de copiar <code>notas.txt</code> a un fichero, lo escribe en la terminal. La lectura enseña el fichero; las otras dos acaban en <code>AccessDenied</code>. Si sale otra cosa:</p>
+
 <ul>
 <li>La lectura da <code>AccessDenied</code>: revisa el <code>Resource</code> de <code>politica.json</code> (tu huella, y el <code>/*</code> del final). Corrige el fichero y repite el <code>put-user-policy</code> del paso 3: sustituye la política.</li>
 <li>El borrado o el listado funcionan: tu política da de más. Corrígela igual. Si se ha llegado a borrar <code>notas.txt</code>, vuelve a subirlo con el <code>aws s3 cp</code> del paso 2.</li>
@@ -137,7 +138,7 @@ aws: [ERROR]: An error occurred (AccessDenied) when calling the ListUsers operat
 <li>Con una clave suya, el lector no puede leer <code>notas.txt</code>, o puede borrarlo, o puede listar los usuarios de IAM.</li>
 </ul>
 
-<h2 class="step"><span class="n">6</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">6</span>Haz commit y pruébalo</h2>
 <p>Primero, haz commit. Vuelve a la carpeta del repositorio y mira qué vas a añadir:</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git status --short -uall fundamentos/iac</code></pre></div>
@@ -150,7 +151,8 @@ git status --short -uall fundamentos/iac</code></pre></div>
 <div class="cmd"><pre><code>git add fundamentos/iac
 git commit -m "feat(iac-e1): bucket y lector creados a mano"</code></pre></div>
 <p>En Windows, <code>git add</code> puede avisar <code>LF will be replaced by CRLF</code>: no es un error, puedes ignorarlo.</p>
-<p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-iac-e1</code> si ya la tienes y, si no, la rama <code>main</code>. Solo mira commits: lo que no esté en un commit no cuenta. Trabaja sobre una copia y en una Floci nueva y vacía (el contenedor <code>iac-comprobar-floci</code>), así que no cambia nada de tu repositorio ni de tu Floci. Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
+<p><code>pruebas.py</code> evalúa tu etiqueta <code>entrega-fundamentos-iac-e1</code>, o la rama <code>main</code> si aún no la tienes, con las mismas comprobaciones que el corrector. Solo cuentan los commits: lo que no esté en un commit no se evalúa. Trabaja en una Floci aparte y vacía, así que no toca tu repositorio ni tu Floci.</p>
+<p>Necesita Docker Desktop en marcha. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/04-iac/ejercicios/pruebas.py e1</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -175,10 +177,13 @@ git push origin entrega-fundamentos-iac-e1</code></pre></div>
 <p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
 <pre><code>E1 · etiqueta entrega-fundamentos-iac-e1 · 7a8b9c0 · comprobando…
   ✓ superado</code></pre>
-<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
 <p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector iac</b>. Hay una fila por ejercicio. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
 <h3>Si hay que corregir algo después de etiquetar</h3>
-<p>Corrige en <code>fundamentos/iac/e1/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo: <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>). Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua. Haz solo esto, sin commits, si <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit:</p>
+<ul>
+<li><b>Si has cambiado ficheros</b>: corrige en <code>fundamentos/iac/e1/</code>, haz commit y súbelo con <code>git push</code>. Después mueve la etiqueta al commit nuevo con las dos órdenes de abajo. Hasta que la muevas, <code>pruebas.py</code> sigue evaluando la etiqueta antigua.</li>
+<li><b>Si solo falla la etiqueta</b>, porque <code>pruebas.py</code> marca <b>✗ la etiqueta no es anotada</b> o avisa de que en GitHub apunta a otro commit: muévela, sin hacer ningún commit.</li>
+</ul>
+<p>Para mover la etiqueta, <code>-f</code> la reemplaza en tu equipo y <code>git push -f</code>, en GitHub (<a href="../../01-git/temas/03-remotos-y-reescribir-historia.html#mover-etiqueta">Git 3 · Mover una etiqueta</a>):</p>
 <div class="cmd"><pre><code>git tag -fa entrega-fundamentos-iac-e1 main -m "E1 resuelto"
 git push -f origin entrega-fundamentos-iac-e1</code></pre></div>
 <p>Si <code>pruebas.py</code> dice que en GitHub ya existe la etiqueta y no la tienes aquí, la creaste en otro equipo: tráetela con <code>git fetch --tags</code>.</p>

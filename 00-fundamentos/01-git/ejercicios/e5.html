@@ -14,12 +14,13 @@
 <p class="lead">Un compañero ha subido un cambio a <code>main</code> mientras trabajabas en tu rama. Pon tu rama al día sin merges.</p>
 <dl class="ficha">
 <dt>Teoría</dt><dd><a href="../temas/03-remotos-y-reescribir-historia.html">Git 3 · Remotos y reescribir historia</a></dd>
+<dt>Aprendes</dt><dd>Poner una rama al día con rebase, sin merges.</dd>
 <dt>Trabajas en</dt><dd><code>fundamentos/git/e5/</code></dd>
 <dt>Etiqueta</dt><dd><code>entrega-fundamentos-git-e5</code> sobre <code>git/e5-feature</code></dd>
 </dl>
 
 <h2 id="que-entregas">Qué entregas</h2>
-<p>La rama <code>git/e5-feature</code> rebasada sobre <code>main</code>, en una sola línea, sin merges:</p>
+<p>La rama <code>git/e5-feature</code> con rebase sobre <code>main</code>, en una sola línea, sin merges:</p>
 <ul>
 <li>La rama termina en sus dos commits, en este orden: <code>feat(e5): escaneo de la red</code> y, encima, <code>feat(e5): informe del escaneo</code>. Nada más encima.</li>
 <li>Debajo de ellos está el commit del compañero, <code>chore(e5): cambio publicado en main</code>.</li>
@@ -53,26 +54,26 @@ git status</code></pre></div>
 *   8b9c0d1 (origin/main) Merge branch 'git/e4-b'</code></pre>
 <p>Las dos líneas se han separado: tu rama no tiene el cambio del compañero.</p>
 
-<h2 class="step"><span class="n">2</span>Rebasa la rama sobre <code>main</code></h2>
+<h2 class="step"><span class="n">2</span>Haz rebase de la rama sobre <code>main</code></h2>
 <div class="cmd"><pre><code>git switch git/e5-feature
 git rebase main</code></pre></div>
 <pre><code>Switched to branch 'git/e5-feature'
 Successfully rebased and updated refs/heads/git/e5-feature.</code></pre>
 <p>Git rehace tus dos commits encima del último de <code>main</code>. Aquí no hay conflicto, porque tocan ficheros distintos. Si lo hubiera: resuélvelo como en E4, <code>git add</code> del fichero y <code>git rebase --continue</code>. Con <code>git rebase --abort</code> vuelves a como estaba. No uses <code>git merge main</code>: el corrector quiere la rama sin merges.</p>
 
-<h2 class="step"><span class="n">3</span>Comprueba antes de subir</h2>
+<h2 class="step"><span class="n">3</span>Revisa el resultado</h2>
 <div class="cmd"><pre><code>git log --oneline --graph -4 git/e5-feature</code></pre></div>
 <p>Una sola línea: el commit del compañero y, encima, tus dos commits con SHA nuevos, como en <a href="#que-entregas">Qué entregas</a>.</p>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>La rama no termina en <code>feat(e5): escaneo de la red</code> y <code>feat(e5): informe del escaneo</code>, en ese orden: por ejemplo, porque tiene otro commit encima o un merge.</li>
 <li>Alguno de esos dos commits es un merge: hiciste un merge en lugar de un rebase.</li>
-<li>Tus commits no parten de <code>chore(e5): cambio publicado en main</code>: la rama no está rebasada sobre <code>main</code>.</li>
+<li>Tus commits no parten de <code>chore(e5): cambio publicado en main</code>: no hiciste rebase de la rama sobre <code>main</code>.</li>
 <li>Falta <code>escaneo.txt</code> o <code>informe.txt</code>, o su contenido no es el que dejó <code>preparar.py</code>.</li>
 <li>La etiqueta no es anotada: se creó sin <code>-a</code>.</li>
 </ul>
 
-<h2 class="step"><span class="n">4</span>Pruébalo en tu equipo</h2>
+<h2 class="step"><span class="n">4</span>Pasa <code>pruebas.py</code></h2>
 <p><code>pruebas.py</code> pasa las mismas comprobaciones que el corrector, con el mismo código. Evalúa la etiqueta <code>entrega-fundamentos-git-e5</code> si ya la tienes y, si no, la rama <code>git/e5-feature</code>. Solo mira commits: lo que no esté en un commit no cuenta. No cambia nada de tu repositorio. Desde la carpeta de tu repositorio:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py ../documentacion-hacking-etico/00-fundamentos/01-git/ejercicios/pruebas.py e5</code></pre></div>
@@ -84,8 +85,8 @@ Successfully rebased and updated refs/heads/git/e5-feature.</code></pre>
   ! git/e5-feature aún no está en GitHub: el corrector no lo verá hasta que lo subas</code></pre>
 <ul>
 <li><b>✓ superado</b>: pasa todas las comprobaciones.</li>
-<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo, haz commit y vuelve a lanzar <code>pruebas.py</code>.</li>
-<li><b>!</b> es un <b>aviso</b>: tu trabajo puede estar bien, pero el corrector evalúa lo que hay en <b>GitHub</b>, no tu equipo, y algo no coincide. Antes de subir es normal ver «aún no está en GitHub» o «en GitHub … apunta a …, no a tu …»: desaparece al subir en el paso siguiente. En ese aviso, el primer SHA es lo que tiene GitHub (lo último que subiste) y el segundo, tu commit.</li>
+<li><b>✗</b> es un <b>fallo</b>: el corrector también lo marcará. La línea dice qué ha encontrado y por qué no vale. Corrígelo como se explica en <a href="#corregir">Si hay que corregir algo</a> y vuelve a lanzar <code>pruebas.py</code>.</li>
+<li><b>!</b> es un <b>aviso</b>: lo que hay en GitHub no coincide con tu equipo. Antes de subir es normal; desaparece al hacer <code>git push</code>.</li>
 <li><b>sin empezar</b>: no hay etiqueta ni rama <code>git/e5-feature</code>: falta preparar el ejercicio.</li>
 <li>Si al final sale <b>Aviso: sin el GitHub CLI con sesión iniciada (gh auth login) no se ha comprobado lo que solo sabe GitHub: el autor de los commits de E1 y el commit filtrado de E8</b>, en este ejercicio no te afecta: todo lo que comprueba el corrector se comprueba también en tu equipo.</li>
 </ul>
@@ -102,16 +103,15 @@ git push origin entrega-fundamentos-git-e5</code></pre></div>
 <p>Lanza <code>pruebas.py</code> otra vez. Ahora evalúa la etiqueta:</p>
 <pre><code>E5 · etiqueta entrega-fundamentos-git-e5 · 9c0d1e2
   ✓ superado</code></pre>
-<p class="note">No hay fecha límite: entrega cada ejercicio cuando lo tengas. El progreso de cada alumno se ve en la tabla pública de entregas.</p>
-<p>En GitHub, el resultado del corrector está en la portada de tu repositorio: pulsa el ✓ o la ✗ junto al último commit de <code>main</code> y abre <b>Details</b> en <b>Corrector git</b>. Hay una fila por ejercicio: ✅ entregado y superado, ❌ entregado con fallos, ✏️ provisional (aún sin etiqueta) y · sin empezar. Se actualiza cuando el docente lanza la corrección, no en cada push.</p>
-<h3>Si hay que corregir algo después de etiquetar</h3>
+<p>Cuando el docente lance la corrección, verás el resultado en GitHub: <a href="../index.html#corrector">dónde mirarlo</a>.</p>
+<h2 id="corregir">Si hay que corregir algo</h2>
 <p>La rama tiene que terminar en tus dos commits: <b>no añadas nada encima</b>, ni siquiera un commit que arregle algo. Arréglala reescribiéndola, desde <code>git switch git/e5-feature</code>:</p>
 <ul>
-<li><b>Hiciste un merge en lugar del rebase, o la rama no está sobre <code>main</code></b>: vuelve a rebasar. <code>git rebase main</code> rehace tus dos commits encima de <code>main</code> y deja fuera los merges:
+<li><b>Hiciste un merge en lugar del rebase, o la rama no está sobre <code>main</code></b>: haz rebase otra vez. <code>git rebase main</code> rehace tus dos commits encima de <code>main</code> y deja fuera los merges:
 <div class="cmd"><pre><code>git rebase main</code></pre></div></li>
-<li><b>Hay un commit de más encima</b>: quítalo. <code>git reset --hard HEAD~1</code> borra el último commit y sus cambios; mira antes con <code>git log --oneline -3</code> que es el que sobra:
+<li><b>Hay un commit de más encima</b>: quítalo. <code>git reset --hard HEAD~1</code> lleva la rama al commit anterior (<code>HEAD~1</code>) y borra el último con sus cambios. <b>Cuidado:</b> también borra los cambios que no estén en un commit. Mira antes que <code>git status</code> no muestra nada a medias y que <code>git log --oneline -3</code> enseña arriba el commit que sobra:
 <div class="cmd"><pre><code>git reset --hard HEAD~1</code></pre></div></li>
-<li><b>Cambiaste un fichero del último commit</b> (<code>informe.txt</code>): corrígelo y mételo en ese mismo commit con <code>--amend</code>, que lo sustituye en lugar de añadir otro:
+<li><b><code>informe.txt</code> no tiene el contenido que dejó <code>preparar.py</code></b>: déjalo como estaba y guárdalo en el último commit, que es el que lo crea, con <code>--amend</code>. <code>--amend</code> sustituye ese commit en lugar de añadir otro:
 <div class="cmd"><pre><code>git add fundamentos/git/e5/informe.txt
 git commit --amend --no-edit</code></pre></div></li>
 </ul>

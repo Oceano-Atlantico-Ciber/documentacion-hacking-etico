@@ -21,7 +21,7 @@
 </dl>
 
 <h2>Qué entregas</h2>
-<p>Un solo fichero: <code>fundamentos/api/e2/contrato.yaml</code>, el contrato OpenAPI 3 que te deja <code>preparar.py</code>, completado con <b>todas</b> las rutas que piden los nueve requisitos. <code>requisitos.md</code> se queda como está. No hay que programar nada.</p>
+<p>Un solo fichero: <code>fundamentos/api/e2/contrato.yaml</code>, el contrato OpenAPI 3 que te deja <code>preparar.py</code>, completado con <b>todas</b> las rutas que piden los nueve requisitos (ejemplo en el paso 3). <code>requisitos.md</code> se queda como está. No hay que programar nada.</p>
 
 <h2 class="step" id="paso-1"><span class="n">1</span>Prepara el escenario</h2>
 <p>En la terminal, cambiando <code>&lt;tu-usuario&gt;</code> por tu usuario de GitHub:</p>
@@ -33,7 +33,7 @@ cd fundamentos/api/e2</code></pre></div>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/preparar.py e2
 cd fundamentos/api/e2</code></pre></div>
-<p>Deja <code>requisitos.md</code>, con lo que necesita el equipo de sistemas, y <code>contrato.yaml</code> con la ruta de salud ya escrita y el principio del esquema <code>Incidencia</code>.</p>
+<p><code>preparar.py</code> deja <code>requisitos.md</code>, con lo que necesita el equipo de sistemas, y <code>contrato.yaml</code> con la ruta de salud ya escrita y el principio del esquema <code>Incidencia</code>.</p>
 <p class="note"><code>requisitos.md</code> está escrito como habla el equipo de sistemas: «crítica», «en curso». En la API los valores van sin tildes ni espacios, en minúsculas, y son exactamente estos. Son los que usarán los datos de todos los ejercicios siguientes:</p>
 <ul>
 <li><code>prioridad</code>: <code>baja</code>, <code>media</code>, <code>alta</code> o <code>critica</code>.</li>
@@ -41,7 +41,7 @@ cd fundamentos/api/e2</code></pre></div>
 </ul>
 
 <h2 class="step" id="paso-2"><span class="n">2</span>Lee los requisitos como recursos</h2>
-<p>Antes de escribir, haz en un papel una tabla con una fila por requisito: qué <b>método</b> sobre qué <b>ruta</b> lo cumple. Primero, qué <b>recursos</b> hay (cosas con datos propios) y cuál cuelga de cuál. Los verbos de los requisitos («cerrar», «borrar las duplicadas») no van en las rutas: cerrar es cambiar el estado. Las dos primeras filas, para que veas la forma:</p>
+<p>Antes de escribir, piensa qué <b>recursos</b> hay (cosas con datos propios) y cuál cuelga de cuál. Después haz en un papel una tabla con una fila por requisito: qué <b>método</b> sobre qué <b>ruta</b> lo cumple. Los verbos de los requisitos («cerrar», «borrar las duplicadas») no van en las rutas: cerrar es cambiar el estado. Las dos primeras filas, para que veas la forma:</p>
 <div class="tabla"><table><thead><tr><th>Requisito</th><th>Método y ruta</th><th>Responde bien</th></tr></thead><tbody>
 <tr><td>1. Ver todas las incidencias</td><td><code>GET /api/v1/incidencias</code></td><td><code>200</code> con la lista</td></tr>
 <tr><td>2. Ver una incidencia concreta</td><td><code>GET /api/v1/incidencias/{id}</code></td><td><code>200</code>, o <code>404</code> si no existe</td></tr>
@@ -52,7 +52,7 @@ cd fundamentos/api/e2</code></pre></div>
 <div class="cmd"><pre><code>code contrato.yaml</code></pre></div>
 <p>Escribe debajo de <code># Escribe aquí el resto de rutas.</code> y completa los esquemas. Tiene que quedar:</p>
 <ul>
-<li>Una ruta por recurso y por elemento, bajo <code>/api/v1/</code>, con la colección en plural.</li>
+<li>Una ruta para cada colección y otra para cada elemento (<code>/incidencias</code> y <code>/incidencias/{id}</code>), bajo <code>/api/v1/</code>, con la colección en plural.</li>
 <li>Los cinco métodos (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code>) donde corresponda.</li>
 <li>Para cada operación, todas sus respuestas: la buena (<code>200</code>, <code>201</code> o <code>204</code>) y las de error (<code>400</code>, <code>404</code>, <code>422</code>…). Toda ruta con <code>{id}</code> declara el <code>404</code>.</li>
 <li>Los esquemas de los datos en <code>components/schemas</code>: <code>Incidencia</code> completo, lo que se envía al crear, lo que se envía al cambiar y <code>Comentario</code>.</li>
@@ -74,7 +74,7 @@ cd fundamentos/api/e2</code></pre></div>
 <p>Pega el fichero en <a href="https://editor.swagger.io/">editor.swagger.io</a> para ver que no tiene errores de formato y cómo queda como documentación.</p>
 
 <h2 class="step" id="paso-4"><span class="n">4</span>Compruébalo</h2>
-<p>Las pruebas del E2 leen tu contrato y aplican las reglas de diseño. Necesitan la librería PyYAML; la primera orden solo hace falta una vez. Las pruebas se lanzan desde la raíz de tu repositorio, no desde <code>e2/</code>:</p>
+<p>Las pruebas del E2 leen tu contrato y aplican las reglas de diseño. Necesitan la biblioteca PyYAML; la primera orden solo hace falta una vez. Las pruebas se lanzan desde la raíz de tu repositorio, no desde <code>e2/</code>:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>py -m pip install pyyaml
 cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
@@ -83,7 +83,7 @@ py ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/plantill
 <div class="cmd"><pre><code>python3 -m pip install --user pyyaml
 cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/plantillas/pruebas.py e2 fundamentos/api/e2/contrato.yaml</code></pre></div>
-<p>En macOS o Linux, si <code>pip</code> responde <code>externally-managed-environment</code> (Python de Homebrew, Debian o Ubuntu), repite la primera orden añadiendo <code>--break-system-packages</code> al final: instala PyYAML solo para tu usuario. Si en lugar de las pruebas sale <code>Falta PyYAML</code>, la instalación no ha funcionado.</p>
+<p>En macOS o Linux, si <code>pip</code> responde <code>externally-managed-environment</code> (Python de Homebrew, Debian o Ubuntu), repite la primera orden añadiendo <code>--break-system-packages</code> al final. Esa opción le permite a pip instalar en un Python que gestiona el sistema; como la orden ya lleva <code>--user</code>, PyYAML queda solo en tu carpeta personal y no toca los paquetes del sistema. Si en lugar de las pruebas sale <code>Falta PyYAML</code>, la instalación no ha funcionado.</p>
 <p>Cada regla sale con <code>✓</code> o con <code>✗</code> y el motivo. Está listo cuando la última línea dice <code>0 mal</code>. Un fallo se ve así:</p>
 <pre><code>  ✗ Ninguna ruta lleva un verbo: la acción la dice el método  (/api/v1/incidencias/{id}/cerrar)</code></pre>
 <p>El corrector marca fallo si:</p>
@@ -94,7 +94,7 @@ python3 ../documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/pla
 <li>Un <code>POST</code> que crea no responde <code>201</code> o un <code>DELETE</code> no responde <code>204</code>.</li>
 <li>Una operación no declara ningún error <code>4xx</code>, o una ruta con <code>{id}</code> no declara el <code>404</code>.</li>
 </ul>
-<p class="note">A partir del E3 se programa el contrato de referencia del curso, el mismo para todos, para que el corrector pueda probar todas las APIs igual. Compáralo con el tuyo cuando lo recibas: si has seguido las reglas, se parecerán mucho.</p>
+<p class="note">A partir del E3 se programa el contrato de referencia del curso, el mismo para todos, para que el corrector pueda probar todas las APIs igual. Lo recibirás en el E3, en <code>contrato.yaml</code>: compáralo con el tuyo. Si has seguido las reglas, se parecerán mucho.</p>
 
 <h2 class="step" id="paso-5"><span class="n">5</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git add .

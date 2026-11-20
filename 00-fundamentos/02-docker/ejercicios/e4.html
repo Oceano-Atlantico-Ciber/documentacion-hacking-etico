@@ -22,13 +22,13 @@
 <h2>Qué entregas</h2>
 <p>En <code>fundamentos/docker/e4/</code>:</p>
 <div class="tabla"><table><thead><tr><th>Fichero</th><th>Qué lleva</th></tr></thead><tbody>
-<tr><td><code>hallazgo.txt</code></td><td>Una línea con la clave que encontraste, <b>ocultada</b>: <code>oa-</code>, sus 8 primeros caracteres y <code>…</code>. Nunca la clave completa.</td></tr>
+<tr><td><code>hallazgo.txt</code></td><td>Una línea con la clave que encontraste, <b>ocultada</b>: <code>oa-</code>, los 8 caracteres que le siguen y <code>…</code> (también valen tres puntos, <code>...</code>). Nunca la clave completa.</td></tr>
 <tr><td><code>Dockerfile</code></td><td>El de <code>preparar.py</code>, cambiado para que la clave llegue solo como secreto de construcción (<code>RUN --mount=type=secret</code> con el id <code>api</code>): sin <code>COPY api.key</code>, sin <code>ARG</code> ni <code>ENV</code> con la clave.</td></tr>
 <tr><td><code>.dockerignore</code></td><td>Lo escribes tú, con <code>api.key</code>, <code>*.tar</code> y <code>capas/</code>, uno por línea.</td></tr>
 <tr><td><code>informe.py</code> y <code>.gitignore</code></td><td>Tal como los deja <code>preparar.py</code>, sin cambios.</td></tr>
 </tbody></table></div>
 <p>Una línea correcta de <code>hallazgo.txt</code> (con tu clave, no con esta):</p>
-<div class="cmd"><pre><code>oa-3f9c1a2b…</code></pre></div>
+<pre><code>oa-3f9c1a2b…</code></pre>
 <p><b>No se suben</b> <code>api.key</code>, <code>e4.tar</code> ni <code>capas/</code>. Si la clave completa aparece en cualquier fichero de tu repositorio, el ejercicio falla.</p>
 
 <h2 class="step"><span class="n">1</span>Prepara el escenario</h2>
@@ -41,7 +41,7 @@ cd fundamentos/docker/e4</code></pre></div>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/preparar.py e4
 cd fundamentos/docker/e4</code></pre></div>
-<p>Construye la imagen <code>e4-informe:1.0</code> con una clave distinta para cada alumno, y borra la clave de tu carpeta: solo queda dentro de la imagen. Deja también el <code>Dockerfile</code> que se usó, <code>informe.py</code> y un <code>.gitignore</code>. Todas las órdenes que siguen se lanzan desde <code>fundamentos/docker/e4</code> y <b>en la misma ventana</b>: el paso 5 usa lo que guarda el paso 3.</p>
+<p><code>preparar.py</code> construye la imagen <code>e4-informe:1.0</code>, con una clave distinta para cada alumno, y borra la clave de tu carpeta: solo queda dentro de la imagen. Deja también el <code>Dockerfile</code> que se usó, <code>informe.py</code> y un <code>.gitignore</code>. Todas las órdenes que siguen se lanzan desde <code>fundamentos/docker/e4</code> y <b>en la misma ventana</b>: el paso 5 usa lo que guarda el paso 3.</p>
 
 <h2 class="step"><span class="n">2</span>Comprueba que «no está»</h2>
 <div class="cmd"><pre><code>docker run --rm e4-informe:1.0 ls -a /app
@@ -60,7 +60,7 @@ foreach ($c in Get-ChildItem capas/blobs/sha256) { tar -tf $c.FullName 2&gt;$nul
 mkdir -p capas
 tar -xf e4.tar -C capas
 for c in capas/blobs/sha256/*; do tar -tf "$c" 2&gt;/dev/null | grep api.key | sed "s|^|$(basename "$c")  |"; done</code></pre></div>
-<p>Salen dos capas: una con <code>app/api.key</code>, la que la copió, y otra con <code>app/.wh.api.key</code>, la marca de «borrado» que dejó <code>rm</code>. Quédate con la primera y lee de ella la clave:</p>
+<p>Salen dos capas: una con <code>app/api.key</code>, la que la copió, y otra con <code>app/.wh.api.key</code>, la marca de «borrado» que dejó <code>rm</code>. Quédate con la que tiene <code>app/api.key</code> y lee de ella la clave:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>$capa = Get-ChildItem capas/blobs/sha256 | Where-Object { (tar -tf $_.FullName 2&gt;$null) -contains 'app/api.key' } | Select-Object -First 1
 tar -xOf $capa.FullName app/api.key</code></pre></div>
@@ -71,10 +71,10 @@ tar -xOf "$capa" app/api.key</code></pre></div>
 
 <h2 class="step"><span class="n">4</span>Redacta el hallazgo sin filtrar la clave</h2>
 <div class="cmd"><pre><code>code hallazgo.txt</code></pre></div>
-<p>Escribe una línea con la clave <b>ocultada</b>, como en un informe de auditoría: <code>oa-</code>, sus 8 primeros caracteres y <code>…</code> (por ejemplo, <code>oa-3f9c1a2b…</code>). Guarda. La clave completa no debe estar en ningún fichero de tu repositorio.</p>
+<p>Escribe una línea con la clave <b>ocultada</b>, como en un informe de auditoría: <code>oa-</code>, los 8 caracteres que le siguen y <code>…</code> (por ejemplo, <code>oa-3f9c1a2b…</code>). Si no sabes escribir <code>…</code>, pon tres puntos: también vale. Guarda. La clave completa no debe estar en ningún fichero de tu repositorio.</p>
 
 <h2 class="step"><span class="n">5</span>Reconstruye sin el secreto</h2>
-<p>Guarda la clave que encontraste en <code>api.key</code>, en la carpeta del ejercicio. Tu <code>.gitignore</code> excluye <code>*.key</code>, así que no se subirá:</p>
+<p>Guarda la clave que encontraste en <code>api.key</code>, en la carpeta del ejercicio. El <code>.gitignore</code> de la raíz de tu repositorio de entregas excluye <code>*.key</code>, así que no se subirá:</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>tar -xOf $capa.FullName app/api.key | Set-Content api.key</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
@@ -103,6 +103,8 @@ rm -r capas2 e4-2.tar</code></pre></div>
 <p>El bucle no muestra nada: ninguna capa contiene <code>api.key</code>. Comprueba también qué vas a subir:</p>
 <div class="cmd"><pre><code>git status</code></pre></div>
 <p>Aparecen <code>hallazgo.txt</code>, <code>.dockerignore</code> y los cambios del <code>Dockerfile</code>; no aparecen <code>api.key</code>, <code>e4.tar</code> ni <code>capas/</code>.</p>
+
+<h2>Qué mira el corrector</h2>
 <p>El corrector marca fallo si:</p>
 <ul class="falla">
 <li>Falta <code>Dockerfile</code>, <code>hallazgo.txt</code> o <code>.dockerignore</code>.</li>
@@ -112,20 +114,19 @@ rm -r capas2 e4-2.tar</code></pre></div>
 <li>Alguna capa de la imagen resultante contiene la clave.</li>
 </ul>
 
-
 <h2 class="step"><span class="n">7</span>Pruébalo en tu equipo</h2>
 <p>Primero guarda tu trabajo en un commit, desde la raíz de tu repositorio: las pruebas solo ven lo que está en commits.</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 git add .
 git commit -m "fix(docker-e4): la clave ya no entra en ninguna capa"</code></pre></div>
-<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta si existe, si no <code>main</code>) y construyen y levantan contenedores como él.</p>
+<p>Después, con Docker Desktop en marcha, pasa las mismas comprobaciones que el corrector. Trabajan sobre una copia de lo que ya está en commits (la etiqueta, si existe; si no, <code>main</code>) y construyen y levantan contenedores como él.</p>
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 py ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e4</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
 <div class="cmd"><pre><code>cd ~/hacking-etico/entregas-&lt;tu-usuario&gt;
 python3 ../documentacion-hacking-etico/00-fundamentos/02-docker/ejercicios/pruebas.py e4</code></pre></div>
-<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
+<p>Cada ✗ dice qué falla y por qué. Corrige, haz commit y repite hasta que salga <b>✓ superado</b>. Antes y después de comprobar, se quitan los contenedores, redes y volúmenes del laboratorio de este ejercicio, para empezar como en un equipo limpio.</p>
 
 <h2 class="step"><span class="n">8</span>Sube y etiqueta</h2>
 <div class="cmd"><pre><code>git push</code></pre></div>

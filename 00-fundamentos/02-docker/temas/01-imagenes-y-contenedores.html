@@ -22,11 +22,12 @@
 <dl class="ficha">
 <dt>Sistema operativo</dt><dd>El programa que hace funcionar el equipo: Windows, Linux, macOS. Su parte central, el <b>núcleo</b>, reparte el procesador, la memoria y el disco entre los demás programas.</dd>
 <dt>Máquina virtual</dt><dd>Un ordenador entero simulado dentro del tuyo, con su propio sistema operativo.</dd>
+<dt>Hipervisor</dt><dd>El programa que crea y reparte el equipo entre las máquinas virtuales, como Hyper-V o VirtualBox.</dd>
 <dt>Imagen</dt><dd>Un paquete con un programa y todo lo que necesita para funcionar. No cambia nunca: es el molde.</dd>
 <dt>Contenedor</dt><dd>Un programa en marcha creado a partir de una imagen y aislado del resto del equipo.</dd>
 <dt>Motor de Docker</dt><dd>El programa que crea, arranca y vigila los contenedores. La orden <code>docker</code> solo le da instrucciones.</dd>
 <dt>Registro</dt><dd>Un almacén de imágenes en Internet, como GitHub lo es del código. Docker usa Docker Hub si no dices otro.</dd>
-<dt>Etiqueta</dt><dd>La versión de una imagen: lo que va detrás de los dos puntos en <code>nginx:1.27-alpine</code>.</dd>
+<dt>Etiqueta</dt><dd>La versión de una imagen: lo que va detrás de los dos puntos en <code>nginx:1.27-alpine</code>. No la confundas con la etiqueta de Git con la que entregas los ejercicios: se llaman igual, pero son cosas distintas.</dd>
 <dt>Puerto</dt><dd>El número de la puerta por la que se llega a un programa dentro de un equipo. Un servidor web suele atender en el 80.</dd>
 <dt>JSON</dt><dd>Un formato de texto para datos, con llaves y pares <code>"nombre": valor</code>. Docker lo usa para describir sus contenedores.</dd>
 </dl>
@@ -90,20 +91,20 @@
 <rect class="caja" x="20" y="164" width="150" height="56" rx="8"/><text class="tit" x="95" y="188" text-anchor="middle">Navegador</text><text class="tenue peq mono" x="95" y="207" text-anchor="middle">localhost:4566</text>
 <path class="linea-acento" d="M170 204H460V188" marker-end="url(#win-fa)"/><text class="acento fuerte" x="290" y="196" text-anchor="middle">puerto publicado</text>
 </svg>
-<figcaption>Las órdenes van de PowerShell o el Terminal al motor; el navegador llega a un contenedor solo si este publica un puerto.</figcaption>
+<figcaption>Las órdenes van de PowerShell o el Terminal al motor; el navegador llega a un contenedor solo si este publica un puerto. En el dibujo, <b>Floci</b> es la nube simulada del curso y <b>Trivy</b>, un analizador de seguridad: los usarás en los laboratorios.</figcaption>
 </figure>
 <h3 id="instalacion">Instalación</h3>
 <ol>
-<li>Docker Desktop lo instalaste en <a href="../../../00-presentacion/temas/04-docker.html">Presentación · Docker</a>. Si no lo tienes en Windows, instálalo desde PowerShell y ábrelo; usa el motor WSL 2, que propone al arrancar la primera vez, y si te pide reiniciar, reinicia. En macOS y Linux, sigue esa misma página.
+<li>Docker Desktop lo instalaste en <a href="../../../00-presentacion/temas/04-docker.html">Presentación · Docker</a>. Si no lo tienes en Windows, instálalo desde PowerShell y ábrelo. La primera vez te propone el motor WSL 2: acéptalo. Si te pide reiniciar, reinicia. En macOS y Linux, sigue esa misma página.
 <p class="so">Windows · PowerShell</p>
 <div class="cmd"><pre><code>winget install -e --id Docker.DockerDesktop</code></pre></div></li>
-<li>Crea una cuenta gratuita en <a href="https://hub.docker.com/signup">Docker Hub</a> e inicia sesión desde PowerShell (en macOS y Linux, desde el Terminal); la orden es la misma. Docker Hub limita las descargas anónimas por dirección IP, y toda el aula sale a Internet por la misma; con sesión iniciada, cada uno tiene su propio cupo:
+<li>Crea una cuenta gratuita en <a href="https://hub.docker.com/signup">Docker Hub</a> e inicia sesión desde PowerShell (en macOS y Linux, desde el Terminal); la orden es la misma. Docker Hub limita las descargas sin sesión por dirección de red (IP), y toda el aula sale a Internet por la misma. Con sesión iniciada, cada uno tiene su propio cupo:
 <div class="cmd"><pre><code>docker login</code></pre></div></li>
 <li>Comprueba que todo responde:
 <div class="cmd"><pre><code>docker run --rm hello-world
 docker compose version</code></pre></div></li>
 </ol>
-<p>La primera orden de la lista ya hace cinco cosas seguidas. Son las mismas que hará cualquier laboratorio del curso:</p>
+<p><code>docker run --rm hello-world</code> hace cinco cosas seguidas. Son las mismas que hará cualquier laboratorio del curso:</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 236" role="img" aria-label="docker run --rm hello-world: PowerShell o el Terminal pasan la orden al motor, el motor descarga la imagen de Docker Hub si no la tiene, crea el contenedor, el programa escribe su saludo y termina, y --rm borra el contenedor">
 <defs><marker id="hw-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker><marker id="hw-fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta-acento" d="M0 0L10 5L0 10z"/></marker></defs>
@@ -142,9 +143,9 @@ docker compose version</code></pre></div></li>
 
 <section class="seccion">
 <h2>Imagen y contenedor</h2>
-<p>Una <b>imagen</b> es el molde: los ficheros de un programa y lo que necesita, de solo lectura. Un <b>contenedor</b> es una pieza sacada de ese molde y en marcha. De una imagen salen tantos contenedores como quieras, y cada uno tiene encima una capa propia donde escribe sus cambios.</p>
+<p>Una <b>imagen</b> es el molde: los ficheros de un programa y lo que necesita, de solo lectura. Un <b>contenedor</b> es una pieza sacada de ese molde y en marcha. De una imagen salen tantos contenedores como quieras, y cada uno tiene encima una <b>capa de escritura</b> propia, donde guarda sus cambios.</p>
 <figure>
-<svg class="diagrama" viewBox="0 0 720 220" role="img" aria-label="Una imagen de solo lectura y tres contenedores creados desde ella con docker run, cada uno con su propia capa escribible">
+<svg class="diagrama" viewBox="0 0 720 220" role="img" aria-label="Una imagen de solo lectura y tres contenedores creados desde ella con docker run, cada uno con su propia capa de escritura">
 <defs><marker id="img-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
 <text class="tit" x="110" y="40" text-anchor="middle">Imagen</text><text class="mono tenue peq" x="110" y="58" text-anchor="middle">nginx:1.27-alpine</text>
 <rect class="caja" x="20" y="72" width="180" height="28" rx="6"/><text x="110" y="91" text-anchor="middle">configuración de nginx</text>
@@ -153,9 +154,9 @@ docker compose version</code></pre></div></li>
 <text class="tenue peq" x="110" y="186" text-anchor="middle">solo lectura</text>
 <path class="linea" d="M200 118L396 44" marker-end="url(#img-f)"/><path class="linea" d="M200 118H396" marker-end="url(#img-f)"/><path class="linea" d="M200 118L396 192" marker-end="url(#img-f)"/>
 <text class="acento fuerte mono" x="300" y="110" text-anchor="middle">docker run</text>
-<rect class="caja-acento" x="400" y="20" width="300" height="48" rx="8"/><text class="tit" x="420" y="41">web-1</text><text class="tenue peq" x="420" y="58">su capa escribible: lo que cambie, solo aquí</text>
-<rect class="caja-acento" x="400" y="94" width="300" height="48" rx="8"/><text class="tit" x="420" y="115">web-2</text><text class="tenue peq" x="420" y="132">su capa escribible</text>
-<rect class="caja-acento" x="400" y="168" width="300" height="48" rx="8"/><text class="tit" x="420" y="189">web-3</text><text class="tenue peq" x="420" y="206">su capa escribible</text>
+<rect class="caja-acento" x="400" y="20" width="300" height="48" rx="8"/><text class="tit" x="420" y="41">web-1</text><text class="tenue peq" x="420" y="58">su capa de escritura: lo que cambie, solo aquí</text>
+<rect class="caja-acento" x="400" y="94" width="300" height="48" rx="8"/><text class="tit" x="420" y="115">web-2</text><text class="tenue peq" x="420" y="132">su capa de escritura</text>
+<rect class="caja-acento" x="400" y="168" width="300" height="48" rx="8"/><text class="tit" x="420" y="189">web-3</text><text class="tenue peq" x="420" y="206">su capa de escritura</text>
 </svg>
 <figcaption>Los tres contenedores comparten la imagen sin copiarla. Si borras un contenedor, se pierde su capa, no la imagen.</figcaption>
 </figure>
@@ -177,7 +178,7 @@ docker compose version</code></pre></div></li>
 </svg>
 <figcaption>Por eso <code>nginx:1.27-alpine</code> y <code>docker.io/library/nginx:1.27-alpine</code> son la misma imagen. <code>hashicorp/terraform:1.9</code> es del usuario <code>hashicorp</code>.</figcaption>
 </figure>
-<p><code>latest</code> no significa «la última»: es una etiqueta más, que el autor mueve cuando quiere. Dos alumnos que descargan <code>latest</code> en días distintos pueden tener versiones distintas. Por eso los laboratorios fijan la versión (<code>nginx:1.27-alpine</code>, <code>aquasec/trivy:0.58.0</code>). Floci se usa con <code>latest</code> a propósito, para recibir sus correcciones.</p>
+<p><code>latest</code> no significa «la última»: es una etiqueta más, que el autor mueve cuando quiere. Dos alumnos que descargan <code>latest</code> en días distintos pueden tener versiones distintas. Por eso los laboratorios fijan la versión (<code>nginx:1.27-alpine</code>, <code>aquasec/trivy:0.58.0</code>). Floci, la nube simulada del curso, se usa con <code>latest</code> a propósito, para recibir sus correcciones.</p>
 </section>
 
 <section class="seccion">
@@ -230,13 +231,13 @@ docker compose version</code></pre></div></li>
 <figcaption>La petición sale de curl, entra por el puerto publicado y la contesta nginx. 200 es «todo bien»; 404 es «esa página no existe».</figcaption>
 </figure>
 <p class="so">Windows · PowerShell</p>
-<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
+<div class="cmd"><pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
 curl.exe -i http://localhost:8080/   # -i: muestra también la línea de estado y las cabeceras
-docker logs web                      # nginx anota cada petición recibida</code></pre>
+docker logs web                      # nginx anota cada petición recibida</code></pre></div>
 <p class="so">macOS / Linux · Terminal</p>
-<pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
+<div class="cmd"><pre><code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine
 curl -i http://localhost:8080/       # -i: muestra también la línea de estado y las cabeceras
-docker logs web                      # nginx anota cada petición recibida</code></pre>
+docker logs web                      # nginx anota cada petición recibida</code></pre></div>
 <p>Así se lee esa primera orden, trozo a trozo:</p>
 <figure>
 <svg class="diagrama" viewBox="0 0 720 180" role="img" aria-label="docker run es la orden; -d, --name web y -p 127.0.0.1:8080:80 son opciones; nginx:1.27-alpine es la imagen y va detrás de las opciones">
@@ -263,9 +264,9 @@ docker logs web                      # nginx anota cada petición recibida</code
 <section class="seccion">
 <h2>Espacio en disco</h2>
 <p>Las imágenes del curso ocupan varios gigas dentro del disco de WSL 2. Revisa de vez en cuando qué ocupa sitio y borra lo que no uses:</p>
-<pre><code>docker system df            # imágenes, contenedores y volúmenes, y cuánto ocupan
+<div class="cmd"><pre><code>docker system df            # imágenes, contenedores y volúmenes, y cuánto ocupan
 docker container prune      # borra los contenedores parados
-docker image prune          # borra las imágenes sin nombre que han quedado sueltas</code></pre>
+docker image prune          # borra las imágenes sin nombre que han quedado sueltas</code></pre></div>
 </section>
 
 <section class="seccion">
@@ -291,7 +292,7 @@ docker image prune          # borra las imágenes sin nombre que han quedado sue
 <li>Sabes explicar la diferencia entre imagen y contenedor</li>
 <li>Sabes decir qué es cada trozo de <code>docker run -d --name web -p 127.0.0.1:8080:80 nginx:1.27-alpine</code></li>
 <li>Sabes parar, arrancar y borrar un contenedor, y qué se pierde en cada caso</li>
-<li>E1 superado en el check <b>Corrector docker</b> y con su etiqueta</li>
+<li>E1 superado en la comprobación <b>Corrector docker</b> de GitHub y con su etiqueta</li>
 </ul>
 </section>
 
