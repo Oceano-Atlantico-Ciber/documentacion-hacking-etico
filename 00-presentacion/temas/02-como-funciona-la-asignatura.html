@@ -10,30 +10,53 @@
 <div class="wrap">
 <nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Presentación</a></nav>
 <header>
-<p class="eyebrow">Presentación · Semana 1</p>
+<p class="eyebrow">Presentación · 02</p>
 <h1>Cómo funciona la asignatura</h1>
-<p class="lead">Aprendemos atacando entornos de prueba y, una vez sabemos cómo se rompen, los securizamos. Casi todo el tiempo es práctica.</p>
+<p class="lead">Aprendes atacando entornos de prueba y, cuando sabes cómo se rompen, los securizas. Casi todo el tiempo es práctica.</p>
 </header>
 <section class="seccion">
 <h2>Una empresa en la nube, simulada con Floci</h2>
-<p>Cada alumno tiene su propia cuenta AWS emulada con <b>Floci</b>, un contenedor que corre en vuestro portátil y responde a los mismos comandos que AWS. Ahí vive la empresa ficticia del curso: sus servidores, buckets, usuarios y permisos. Podéis desplegarla, romperla y volver a levantarla tantas veces como haga falta, sin coste y sin tocar nada real.</p>
+<p>AWS es la nube de Amazon: alquila servidores, almacenes de ficheros, bases de datos y permisos. En el curso no usas la real. Tienes tu propia copia simulada con <b>Floci</b>, un contenedor de Docker que se ejecuta en tu portátil y responde a las mismas órdenes que AWS.</p>
+<p>Ahí vive la empresa ficticia del curso: sus servidores, sus ficheros, sus usuarios y sus permisos. Puedes desplegarla, romperla y volver a levantarla tantas veces como quieras, sin coste y sin tocar nada real.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 110" role="img" aria-label="Tu portátil ejecuta Docker; Docker ejecuta Floci, la copia simulada de AWS; dentro de Floci vive la empresa ficticia del curso">
+<defs><marker id="emp-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="25" width="150" height="60" rx="8"/>
+<text class="tit" x="75" y="51" text-anchor="middle">Tu portátil</text>
+<text class="tenue peq" x="75" y="70" text-anchor="middle">Windows, macOS o Linux</text>
+<path class="linea" d="M150 55H188" marker-end="url(#emp-f)"/>
+<rect class="caja" x="190" y="25" width="150" height="60" rx="8"/>
+<text class="tit" x="265" y="51" text-anchor="middle">Docker</text>
+<text class="tenue peq" x="265" y="70" text-anchor="middle">ejecuta contenedores</text>
+<path class="linea" d="M340 55H378" marker-end="url(#emp-f)"/>
+<rect class="caja-acento" x="380" y="25" width="150" height="60" rx="8"/>
+<text class="tit" x="455" y="51" text-anchor="middle">Floci</text>
+<text class="tenue peq" x="455" y="70" text-anchor="middle">AWS simulado</text>
+<path class="linea" d="M530 55H568" marker-end="url(#emp-f)"/>
+<rect class="caja-peligro" x="570" y="25" width="150" height="60" rx="8"/>
+<text class="tit" x="645" y="51" text-anchor="middle">Empresa ficticia</text>
+<text class="tenue peq" x="645" y="70" text-anchor="middle">atacas y securizas</text>
+</svg>
+<figcaption>Todo se ejecuta en tu portátil: nada sale a la nube real.</figcaption>
+</figure>
 </section>
 <section class="seccion">
 <h2>Atacar para aprender a defender</h2>
-<p>En cada bloque seguimos el mismo ciclo:</p>
+<p>Cada bloque sigue el mismo ciclo:</p>
+<div class="flow"><span><b>Atacar</b></span><i>→</i><span><b>Entender</b></span><i>→</i><span><b>Securizar</b></span></div>
 <ol>
-<li><b>Atacar:</b> buscáis y aprovecháis los fallos del entorno de prueba, siempre dentro del alcance autorizado.</li>
-<li><b>Entender:</b> explicáis por qué ha funcionado el ataque y qué rastro ha dejado.</li>
-<li><b>Securizar:</b> corregís el fallo y comprobáis que el mismo ataque ya no funciona.</li>
+<li><b>Atacar:</b> buscas y aprovechas los fallos del entorno de prueba, siempre dentro del alcance autorizado.</li>
+<li><b>Entender:</b> explicas por qué ha funcionado el ataque y qué rastro ha dejado.</li>
+<li><b>Securizar:</b> corriges el fallo y compruebas que el mismo ataque ya no funciona.</li>
 </ol>
 </section>
 <section class="seccion">
 <h2>La IA, siempre que se pueda</h2>
-<p>Usamos la IA en todo el análisis: para interpretar la salida de una herramienta, entender un aviso, resumir registros o proponer una corrección. Lo que diga se comprueba siempre contra la salida real de la herramienta antes de darlo por bueno; si no coincide, gana la herramienta. Cómo prepararla está en <a href="05-ia.html">IA: local o en la nube</a>.</p>
+<p>Usas la IA en todo el análisis: para interpretar la salida de una herramienta, entender un aviso, resumir registros o proponer una corrección. Lo que diga se contrasta siempre con la salida real de la herramienta antes de darlo por bueno. Si no coincide, gana la herramienta. Cómo prepararla está en <a href="05-ia.html">IA: local o en la nube</a>.</p>
 </section>
 <section class="seccion">
 <h2>Material y entregas</h2>
-<p>El material está en esta web, organizado por bloques y temas. Cada alumno trabaja en su repositorio privado de git y hace una entrega por bloque con una etiqueta. Las normas completas están en la <a href="../../index.html#entregas">portada</a>, y cómo se corrige cada entrega, en <a href="08-como-se-corrige.html">Cómo se corrige tu entrega</a>.</p>
+<p>El material está en esta web, organizado por bloques y temas. Trabajas en tu repositorio privado de Git y entregas cada ejercicio con su propia etiqueta. Las normas completas están en la <a href="../../index.html#entregas">portada</a>, y cómo se corrige cada entrega, en <a href="08-como-se-corrige.html">Cómo se corrige tu entrega</a>.</p>
 </section>
 <nav class="temas" aria-label="Temas de la presentación"><a href="01-quien-soy.html">← Quién soy</a><a href="03-git-y-github.html">Git y GitHub →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>

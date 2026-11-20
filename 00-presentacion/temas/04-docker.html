@@ -10,29 +10,62 @@
 <div class="wrap">
 <nav class="top"><a href="../../index.html">Hacking ético</a> · <a href="../index.html">Presentación</a></nav>
 <header>
-<p class="eyebrow">Presentación · Semana 1</p>
+<p class="eyebrow">Presentación · 04</p>
 <h1>Docker</h1>
-<p class="lead">Docker levanta los laboratorios del curso, empezando por Floci, la cuenta AWS emulada.</p>
+<p class="lead">Docker arranca programas aislados del resto de tu equipo sin instalarlos. Con él levantas los laboratorios del curso, empezando por Floci, la copia simulada de AWS.</p>
 </header>
 <section class="seccion">
+<h2>Qué es</h2>
+<ul>
+<li>Una <b>imagen</b> es un paquete con un programa y todo lo que necesita para funcionar. Es el molde.</li>
+<li>Un <b>contenedor</b> es ese programa en marcha, creado a partir de la imagen y aislado del resto del equipo.</li>
+<li><b>Docker Desktop</b> es la aplicación que crea y vigila los contenedores en Windows y macOS.</li>
+</ul>
+<p>Los contenedores del curso son de Linux. En Windows, Docker Desktop los ejecuta dentro de <b>WSL 2</b>, una máquina Linux ligera que Windows trae de serie.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 110" role="img" aria-label="Tu equipo ejecuta Docker Desktop, y Docker Desktop ejecuta el contenedor de Floci">
+<defs><marker id="dk-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="25" width="200" height="60" rx="8"/>
+<text class="tit" x="100" y="51" text-anchor="middle">Tu equipo</text>
+<text class="tenue peq" x="100" y="70" text-anchor="middle">PowerShell o Terminal</text>
+<path class="linea" d="M200 55H258" marker-end="url(#dk-f)"/>
+<rect class="caja" x="260" y="25" width="200" height="60" rx="8"/>
+<text class="tit" x="360" y="51" text-anchor="middle">Docker Desktop</text>
+<text class="tenue peq" x="360" y="70" text-anchor="middle">en Windows, dentro de WSL 2</text>
+<path class="linea" d="M460 55H518" marker-end="url(#dk-f)"/>
+<rect class="caja-acento" x="520" y="25" width="200" height="60" rx="8"/>
+<text class="tit" x="620" y="51" text-anchor="middle">Contenedor de Floci</text>
+<text class="mono" x="620" y="70" text-anchor="middle">floci/floci</text>
+</svg>
+<figcaption>Las órdenes <code>docker</code> que escribes llegan a Docker Desktop, que ejecuta los contenedores.</figcaption>
+</figure>
+</section>
+<section class="seccion">
+<h2>Instalación</h2>
 <ol>
-<li>Instala Docker Desktop desde PowerShell y ábrelo. Usa el motor WSL 2, que propone al arrancar la primera vez; si te pide reiniciar, reinicia:
-<pre><code>winget install -e --id Docker.DockerDesktop</code></pre>
-Cuando diga que está en marcha, comprueba en Git Bash que responde:
-<pre><code>docker run --rm hello-world
-docker compose version</code></pre></li>
-<li>Con Docker funcionando podréis levantar Floci, la cuenta AWS emulada en la que trabajaremos todo el curso. Si hay tiempo, dejadla descargando: <code>docker pull floci/floci:latest</code>.</li>
+<li>Instala Docker Desktop y ábrelo.
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>winget install -e --id Docker.DockerDesktop</code></pre></div>
+<p>Al arrancar la primera vez te propone usar WSL 2: acéptalo. Si te pide reiniciar, reinicia.</p>
+<p class="so">macOS / Linux</p>
+<p>En macOS, descarga Docker Desktop de <a href="https://docs.docker.com/desktop/setup/install/mac-install/">docs.docker.com</a>. En Linux, instala Docker Engine siguiendo la guía de tu distribución en <a href="https://docs.docker.com/engine/install/">docs.docker.com</a>.</p></li>
+<li>Cuando Docker Desktop diga que está en marcha, comprueba que responde. Las órdenes son las mismas en PowerShell y en el Terminal:
+<div class="cmd"><pre><code>docker run --rm hello-world
+docker compose version</code></pre></div></li>
+<li>Con Docker funcionando ya puedes levantar Floci, la copia simulada de AWS en la que trabajarás todo el curso. Si tienes tiempo, deja descargando su imagen:
+<div class="cmd"><pre><code>docker pull floci/floci:latest</code></pre></div></li>
 </ol>
 </section>
 <section class="seccion">
 <h2>Comprobación</h2>
 <ul class="check">
-<li><code>docker run --rm hello-world</code> funciona</li>
+<li><code>docker run --rm hello-world</code> muestra su mensaje de saludo</li>
 </ul>
 </section>
 <nav class="temas" aria-label="Temas de la presentación"><a href="03-git-y-github.html">← Git y GitHub</a><a href="05-ia.html">IA: local o en la nube →</a></nav>
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </div>
 <script src="../../assets/nav.js" defer></script>
+<script src="../../assets/copiar.js" defer></script>
 </body>
 </html>

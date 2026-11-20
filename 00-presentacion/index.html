@@ -11,40 +11,75 @@
 <nav class="top"><a href="../index.html">Hacking ético</a></nav>
 
 <h1>Presentación</h1>
-<p class="lead">Semana 1 · 21 y 22 de octubre. Quién os da clase, cómo funciona la asignatura y el puesto de trabajo listo para el resto del curso. Al terminar se pasa a <a href="../00-fundamentos/index.html">Fundamentos</a>.</p>
+<p class="lead">Quién te da clase, cómo funciona la asignatura y tu puesto de trabajo listo para el resto del curso. Al terminar sigues con <a href="../00-fundamentos/index.html">Fundamentos</a>.</p>
 
 <h2 id="temas">Temas</h2>
 <div class="cards">
-<a class="card" href="temas/01-quien-soy.html"><b>01 · Quién soy</b><span>Alberto Vicente Bernad, SRE en adidas: a qué me dedico y qué tiene que ver con la seguridad.</span></a>
-<a class="card" href="temas/02-como-funciona-la-asignatura.html"><b>02 · Cómo funciona la asignatura</b><span>Entornos en la nube simulados con Floci, atacar y securizar, la IA en el análisis y las entregas.</span></a>
+<a class="card" href="temas/01-quien-soy.html"><b>01 · Quién soy</b><span>Alberto Vicente Bernad: a qué me dedico y qué tiene que ver con la seguridad.</span></a>
+<a class="card" href="temas/02-como-funciona-la-asignatura.html"><b>02 · Cómo funciona la asignatura</b><span>Una empresa en una nube simulada con Floci, atacar y securizar, la IA en el análisis y las entregas.</span></a>
 <a class="card" href="temas/03-git-y-github.html"><b>03 · Git y GitHub</b><span>Instalación, identidad y cuenta para tu repositorio privado.</span></a>
-<a class="card" href="temas/04-docker.html"><b>04 · Docker</b><span>Docker Desktop en Windows y primera imagen de Floci.</span></a>
+<a class="card" href="temas/04-docker.html"><b>04 · Docker</b><span>Docker Desktop y la primera imagen de Floci.</span></a>
 <a class="card" href="temas/05-ia.html"><b>05 · IA: local o en la nube</b><span>Ollama o un asistente en la nube, y la regla para usarla.</span></a>
 <a class="card" href="temas/06-primer-commit.html"><b>06 · Primer commit</b><span><code>fundamentos/puesto.txt</code> en tu repositorio.</span></a>
 <a class="card" href="temas/07-hackea-el-ranking.html"><b>07 · Hackea el ranking</b> · criterios c, e, h<span>La práctica del primer día: un minijuego para descubrir que el servidor no debe fiarse de lo que manda el navegador.</span></a>
-<a class="card" href="temas/08-como-se-corrige.html"><b>Cómo se corrige tu entrega</b><span>De la etiqueta al check y a la tabla de entregas: qué significa cada símbolo y cómo volver a entregar.</span></a>
+<a class="card" href="temas/08-como-se-corrige.html"><b>08 · Cómo se corrige tu entrega</b><span>De la etiqueta a la marca del corrector y a la tabla de entregas: qué significa cada símbolo y cómo volver a entregar.</span></a>
 </div>
 
 <h2 id="hackea-el-ranking">Hackea el ranking</h2>
 <dl class="ficha">
 <dt>Enunciado</dt><dd><a href="temas/07-hackea-el-ranking.html">Hackea el ranking</a>: los cuatro objetivos y qué entregar</dd>
-<dt>Solución</dt><dd><a href="hackea-el-ranking/solucion.html">Solución de «Hackea el ranking»</a>, reto a reto</dd>
 <dt>Ficheros</dt><dd><a href="hackea-el-ranking/docker-compose.yml"><code>docker-compose.yml</code></a>, <a href="hackea-el-ranking/server/server.py"><code>server/server.py</code></a> y <a href="hackea-el-ranking/web/index.html"><code>web/index.html</code></a></dd>
 <dt>Alcance</dt><dd>Solo la dirección del juego que proyecta el docente, solo durante la clase</dd>
 <dt>Entrega</dt><dd>La ficha de los fallos, en el <a href="../01-hacking-etico/03-vulnerabilidades-y-ataques/ejercicios/e1.html">U3·E1 del RA1</a> (<code>ra1/u3-e1/ranking.md</code>)</dd>
 </dl>
-<p>Se juega desde el navegador, F12, <code>curl</code> y la IA.</p>
+<p>Se juega con el navegador, las herramientas de desarrollo del navegador (F12), <code>curl.exe</code> y la IA.</p>
+<figure>
+<svg class="diagrama" viewBox="0 0 720 220" role="img" aria-label="Tu navegador abre el enlace de Pinggy, que lleva por un túnel al juego en el puerto 8080 del equipo del docente. Solo el enlace y ese puerto están en el alcance; el resto del equipo del docente queda fuera.">
+<defs><marker id="tun-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="punta" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="caja" x="0" y="70" width="150" height="60" rx="8"/>
+<text class="tit" x="75" y="96" text-anchor="middle">Tu navegador</text>
+<text class="tenue peq" x="75" y="116" text-anchor="middle">o curl.exe</text>
+<path class="linea" d="M150 100H198" marker-end="url(#tun-f)"/>
+<rect class="caja-acento" x="200" y="70" width="200" height="60" rx="8"/>
+<text class="tit" x="300" y="96" text-anchor="middle">Enlace de Pinggy</text>
+<text class="mono" x="300" y="116" text-anchor="middle">https://….pinggy.link</text>
+<path class="linea" d="M400 100H458" marker-end="url(#tun-f)"/>
+<text class="tenue peq" x="420" y="90" text-anchor="middle">túnel</text>
+<rect class="linea discontinua" x="440" y="10" width="279" height="200" rx="10"/>
+<text class="tenue peq" x="456" y="32">Equipo del docente</text>
+<rect class="caja-acento" x="460" y="70" width="240" height="60" rx="8"/>
+<text class="tit" x="580" y="96" text-anchor="middle">Juego · puerto 8080</text>
+<text class="mono" x="580" y="116" text-anchor="middle">localhost:8080</text>
+<text class="peligro peq" x="580" y="196" text-anchor="middle">el resto del equipo: fuera del alcance</text>
+<path class="linea-acento" d="M200 146V156H700V146"/>
+<text class="acento fuerte peq" x="320" y="174" text-anchor="middle">alcance de la práctica: solo esto</text>
+</svg>
+<figcaption>El enlace de Pinggy lleva por un túnel al juego del equipo del docente. Solo ese enlace y ese puerto están en el alcance.</figcaption>
+</figure>
+
 <h3>Levantar el juego (docente)</h3>
-<p>El servidor tiene dos modos: <code>trusted</code>, que acepta la puntuación que manda el navegador, y <code>validated</code>, que lleva la partida en el servidor. Se juega con el primero y se termina desplegando el segundo para ver que los mismos trucos ya no funcionan. Desde <code>00-presentacion/hackea-el-ranking/</code>:</p>
-<pre><code>MODE=trusted docker compose up -d --remove-orphans      # http://IP-DEL-DOCENTE:8080  (?scoreboard para el proyector)
-MODE=validated docker compose up -d --force-recreate --remove-orphans</code></pre>
-<p>El docente abre un túnel con Pinggy desde su equipo; la URL <code>https://….pinggy.link</code> que imprime es la dirección del juego y el alcance de la práctica. Se proyecta con <code>?scoreboard</code> al final.</p>
-<pre><code>ssh -p 443 -R0:localhost:8080 free@a.pinggy.io</code></pre>
-<p class="note">En el plan gratuito el túnel se cierra a los 60 minutos y al reabrirlo cambia la URL: hay que volver a proyectarla. El juego tiene que estar levantado antes de abrir el túnel o la URL responde 502.</p>
-<p>Para repetirlo en casa, levanta el juego en tu equipo desde Git Bash con la primera orden: la dirección pasa a ser <code>http://localhost:8080</code>.</p>
+<p>El servidor tiene dos modos: <code>trusted</code>, que acepta la puntuación que manda el navegador, y <code>validated</code>, que lleva la cuenta de la partida en el servidor. Se juega con el primero y al final se despliega el segundo para comprobar que los mismos trucos ya no funcionan. Las órdenes se lanzan desde la carpeta <code>00-presentacion/hackea-el-ranking/</code>.</p>
+<p>Modo <code>trusted</code>:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>$env:MODE = "trusted"
+docker compose up -d --remove-orphans</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>MODE=trusted docker compose up -d --remove-orphans</code></pre></div>
+<p>El juego queda en <code>http://localhost:8080</code>. Añade <code>?scoreboard</code> a la dirección para la vista del proyector, que solo muestra el marcador.</p>
+<p>Modo <code>validated</code>:</p>
+<p class="so">Windows · PowerShell</p>
+<div class="cmd"><pre><code>$env:MODE = "validated"
+docker compose up -d --force-recreate --remove-orphans</code></pre></div>
+<p class="so">macOS / Linux · Terminal</p>
+<div class="cmd"><pre><code>MODE=validated docker compose up -d --force-recreate --remove-orphans</code></pre></div>
+<p>Con el juego levantado, el docente abre el túnel de Pinggy. La orden es la misma en todos los sistemas e imprime la dirección <code>https://….pinggy.link</code>, que es la dirección del juego y el alcance de la práctica:</p>
+<div class="cmd"><pre><code>ssh -p 443 -R0:localhost:8080 free@a.pinggy.io</code></pre></div>
+<p class="note">En el plan gratuito el túnel se cierra a los 60 minutos y, al reabrirlo, cambia la dirección: hay que volver a proyectarla. Levanta el juego antes de abrir el túnel; si no, la dirección responde con un error 502.</p>
+<p>Para repetirlo en casa, levanta el juego en tu equipo con las órdenes del modo <code>trusted</code>. La dirección pasa a ser <code>http://localhost:8080</code>.</p>
 
 <footer><span>Hacking ético · Módulo profesional 5025</span></footer>
 </main>
 <script src="../assets/nav.js" defer></script>
+<script src="../assets/copiar.js" defer></script>
 </body>
 </html>
