@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-25T17:06+00:00",
+ "actualizado": "2026-11-25T19:32+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -556,14 +556,14 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "agracia90": {
-     "e1": "sin",
-     "e2": "sin",
-     "e3": "sin",
-     "e4": "sin",
-     "e5": "sin",
-     "e6": "sin",
-     "e7": "sin",
-     "e8": "sin"
+     "e1": "bien",
+     "e2": "bien",
+     "e3": "bien",
+     "e4": "bien",
+     "e5": "bien",
+     "e6": "bien",
+     "e7": "bien",
+     "e8": "bien"
     },
     "alfaro-cmd": {
      "e1": "sin",
@@ -576,7 +576,7 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "dayx33": {
-     "e1": "sin",
+     "e1": "bien",
      "e2": "sin",
      "e3": "sin",
      "e4": "sin",
@@ -586,7 +586,7 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "hugocampos646": {
-     "e1": "sin",
+     "e1": "bien",
      "e2": "sin",
      "e3": "sin",
      "e4": "sin",
@@ -606,14 +606,14 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "jancand": {
-     "e1": "sin",
-     "e2": "sin",
-     "e3": "sin",
-     "e4": "sin",
-     "e5": "sin",
-     "e6": "sin",
-     "e7": "sin",
-     "e8": "sin"
+     "e1": "bien",
+     "e2": "bien",
+     "e3": "bien",
+     "e4": "bien",
+     "e5": "bien",
+     "e6": "bien",
+     "e7": "bien",
+     "e8": "bien"
     },
     "juanadiego": {
      "e1": "sin",
@@ -636,7 +636,7 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "manuelciordiamartinez-glitch": {
-     "e1": "sin",
+     "e1": "bien",
      "e2": "sin",
      "e3": "sin",
      "e4": "sin",
@@ -693,24 +693,10 @@ window.ENTREGAS = {
      "e5": "bien",
      "e6": "bien",
      "e7": "bien",
-     "e8": "mal"
+     "e8": "bien"
     }
    },
-   "detalle": {
-    "vladukrisp-ctrl": {
-     "e8": [
-      {
-       "resumen": "Faltan controles por documentar",
-       "arreglo": "En controles.md, cada control con su CWE: BOLA CWE-639, asignación masiva CWE-915, permisos por rol (BFLA) CWE-285 y límite de intentos CWE-307.",
-       "obtenido": "controles.md documenta cada control con su CWE: faltan CWE-285",
-       "pruebas": [
-        "controles.md documenta cada control con su CWE"
-       ],
-       "enlace": "https://oceano-atlantico-ciber.github.io/documentacion-hacking-etico/00-fundamentos/03-api-rest/ejercicios/e8.html#paso-5"
-      }
-     ]
-    }
-   }
+   "detalle": {}
   },
   {
    "nombre": "Terraform y AWS",
