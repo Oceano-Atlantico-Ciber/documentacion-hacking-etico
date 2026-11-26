@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-26T17:30+00:00",
+ "actualizado": "2026-11-26T17:32+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -314,7 +314,7 @@ window.ENTREGAS = {
      "e1": "bien",
      "e2": "mal",
      "e3": "mal",
-     "e4": "sin",
+     "e4": "bien",
      "e5": "mal",
      "e6": "bien",
      "e7": "bien",
@@ -335,10 +335,10 @@ window.ENTREGAS = {
      "e2": "bien",
      "e3": "bien",
      "e4": "bien",
-     "e5": "sin",
-     "e6": "sin",
-     "e7": "sin",
-     "e8": "sin"
+     "e5": "bien",
+     "e6": "bien",
+     "e7": "bien",
+     "e8": "bien"
     },
     "dayx33": {
      "e1": "bien",
@@ -352,7 +352,7 @@ window.ENTREGAS = {
     },
     "hugocampos646": {
      "e1": "bien",
-     "e2": "mal",
+     "e2": "bien",
      "e3": "bien",
      "e4": "bien",
      "e5": "bien",
@@ -362,11 +362,11 @@ window.ENTREGAS = {
     },
     "igormillan": {
      "e1": "bien",
-     "e2": "sin",
-     "e3": "sin",
-     "e4": "sin",
-     "e5": "sin",
-     "e6": "sin",
+     "e2": "bien",
+     "e3": "bien",
+     "e4": "mal",
+     "e5": "mal",
+     "e6": "bien",
      "e7": "sin",
      "e8": "sin"
     },
@@ -484,10 +484,15 @@ window.ENTREGAS = {
       }
      ]
     },
-    "hugocampos646": {
-     "e2": [
+    "igormillan": {
+     "e4": [
       {
-       "resumen": "sondeo.txt no es el sondeo de 22, 80 y 443, con el 80 abierto: la línea 2 es «localhost:80 cerrado» y debería ser «localhost:80 abierto»"
+       "resumen": "falta fundamentos/docker/e4/Dockerfile, fundamentos/docker/e4/hallazgo.txt, fundamentos/docker/e4/.dockerignore"
+      }
+     ],
+     "e5": [
+      {
+       "resumen": "falta fundamentos/docker/e5/levantar.sh, fundamentos/docker/e5/consulta.txt, fundamentos/docker/e5/web/index.html"
       }
      ]
     },
