@@ -1,6 +1,6 @@
 // Lo genera docente-hacking-etico/tablero/generar.py tras cada corrección. No se edita a mano.
 window.ENTREGAS = {
- "actualizado": "2026-11-25T19:32+00:00",
+ "actualizado": "2026-11-26T17:30+00:00",
  "bloques": [
   {
    "nombre": "Git",
@@ -16,14 +16,14 @@ window.ENTREGAS = {
    ],
    "alumnos": {
     "adrian47gg": {
-     "e1": "mal",
-     "e2": "sin",
-     "e3": "mal",
-     "e4": "sin",
-     "e5": "sin",
-     "e6": "sin",
-     "e7": "sin",
-     "e8": "sin"
+     "e1": "bien",
+     "e2": "bien",
+     "e3": "bien",
+     "e4": "bien",
+     "e5": "bien",
+     "e6": "bien",
+     "e7": "bien",
+     "e8": "bien"
     },
     "agracia90": {
      "e1": "bien",
@@ -66,14 +66,14 @@ window.ENTREGAS = {
      "e8": "bien"
     },
     "igormillan": {
-     "e1": "sin",
-     "e2": "sin",
-     "e3": "sin",
-     "e4": "sin",
-     "e5": "sin",
-     "e6": "sin",
-     "e7": "sin",
-     "e8": "sin"
+     "e1": "bien",
+     "e2": "bien",
+     "e3": "bien",
+     "e4": "mal",
+     "e5": "bien",
+     "e6": "mal",
+     "e7": "bien",
+     "e8": "mal"
     },
     "jancand": {
      "e1": "bien",
@@ -167,33 +167,6 @@ window.ENTREGAS = {
     }
    },
    "detalle": {
-    "adrian47gg": {
-     "e1": [
-      {
-       "resumen": "se esperaban 3 commits en e1/ y hay 2 (e49fc61 «docs(e1): objetivo de la auditoría», f9f64e8 «Guarda cambios antes del ejercicio e4»): cada fichero va en su propio commit"
-      },
-      {
-       "resumen": "f9f64e8 debe cambiar un solo fichero de e1/ y cambia 6: e1/herramientas.md, e1/notas.md, fundamentos/docker/e3/Dockerfile, fundamentos/docker/e3/app.py, fundamentos/docker/e3/notas/pendiente.md, fundamentos/docker/e3/requirements.txt"
-      },
-      {
-       "resumen": "f9f64e8: el mensaje «Guarda cambios antes del ejercicio e4» no sigue Conventional Commits, tipo(ámbito): descripción, con tipo feat, fix, docs, style, refactor, test o chore"
-      }
-     ],
-     "e3": [
-      {
-       "resumen": "se esperaba un commit «feat(e3): rama para fast-forward» y no está en la historia: o falta integrar su rama, o se borró al reescribir la historia"
-      },
-      {
-       "resumen": "se esperaba un commit «feat(e3): rama para merge con commit» y no está en la historia: o falta integrar su rama, o se borró al reescribir la historia"
-      },
-      {
-       "resumen": "falta fundamentos/git/e3/ff.txt: no está en el commit evaluado"
-      },
-      {
-       "resumen": "falta fundamentos/git/e3/noff.txt: no está en el commit evaluado"
-      }
-     ]
-    },
     "dayx33": {
      "e1": [
       {
@@ -209,6 +182,29 @@ window.ENTREGAS = {
      "e4": [
       {
        "resumen": "puertos.txt no sigue la regla: no está ordenado por número de puerto: «53 dns» debe ir antes que «5432 postgresql»"
+      }
+     ]
+    },
+    "igormillan": {
+     "e4": [
+      {
+       "resumen": "puertos.txt no sigue la regla: faltan líneas: «110 pop3», «5432 postgresql»"
+      }
+     ],
+     "e6": [
+      {
+       "resumen": "el último commit debe llamarse «docs(e6): informe de alcance» y se llama «wip(e6): paso 4»"
+      },
+      {
+       "resumen": "quedan commits wip en la historia (4): fúndelos con squash o fixup en git rebase -i"
+      },
+      {
+       "resumen": "debe quedar un único commit que cree fundamentos/git/e6/informe.md y nada más: fundamentos/git/e6/informe.md ya existía en el commit anterior, 5d43787 «wip(e6): paso 3»"
+      }
+     ],
+     "e8": [
+      {
+       "resumen": "hallazgo.txt debe contener el SHA completo del commit que filtró la clave: no hay ningún SHA de 40 caracteres"
       }
      ]
     },
