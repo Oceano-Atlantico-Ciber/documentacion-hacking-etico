@@ -573,7 +573,7 @@ window.ENTREGAS = {
     },
     "dayx33": {
      "e1": "bien",
-     "e2": "sin",
+     "e2": "bien",
      "e3": "sin",
      "e4": "sin",
      "e5": "sin",
@@ -662,8 +662,8 @@ window.ENTREGAS = {
      "e8": "sin"
     },
     "rubenalondiaz2-hash": {
-     "e1": "sin",
-     "e2": "sin",
+     "e1": "bien",
+     "e2": "bien",
      "e3": "sin",
      "e4": "sin",
      "e5": "sin",
